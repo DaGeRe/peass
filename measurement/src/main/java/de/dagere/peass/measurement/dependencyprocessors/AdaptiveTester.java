@@ -10,7 +10,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dataloading.ResultLoader;
@@ -23,7 +23,7 @@ public class AdaptiveTester extends DependencyTester {
 
    private int finishedVMs = 0;
 
-   public AdaptiveTester(final PeassFolders folders, final MeasurementConfig measurementConfig, final EnvironmentVariables env, VersionComparatorInstance comparator) {
+   public AdaptiveTester(final PeassFolders folders, final MeasurementConfig measurementConfig, final EnvironmentVariables env, CommitComparatorInstance comparator) {
       super(folders, measurementConfig, env, comparator);
    }
 

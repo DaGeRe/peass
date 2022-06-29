@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CausePersistenceManager;
@@ -58,7 +58,7 @@ public class RCALevelContinueStarter implements Callable<Void> {
          CausePersistenceManager persistenceManager = new CausePersistenceManager(data, dataFull, alternateFolders);
 
          List<String> versions = GitUtils.getCommits(folders.getProjectFolder(), true, true);
-         VersionComparatorInstance comparator = new VersionComparatorInstance(versions);
+         CommitComparatorInstance comparator = new CommitComparatorInstance(versions);
          
          EnvironmentVariables emptyEnv = new EnvironmentVariables();
          final CauseTester measurer = new CauseTester(alternateFolders, measurementConfig, data.getCauseConfig(), emptyEnv, comparator);

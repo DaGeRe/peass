@@ -32,7 +32,7 @@ public class MavenRunningTester {
       this.modules = modules;
    }
 
-   public boolean isVersionRunning(final String version) {
+   public boolean isCommitRunning(final String commit) {
       File potentialPom = new File(folders.getProjectFolder(), "pom.xml");
       final File testFolder = new File(folders.getProjectFolder(), "src/test");
       boolean isRunning = false;
@@ -52,9 +52,9 @@ public class MavenRunningTester {
                if (measurementConfig.getExecutionConfig().getPl() != null) {
                   String[] projectListArray = new String[] { "-pl", measurementConfig.getExecutionConfig().getPl(), "-am" };
                   String[] withPl = CommandConcatenator.concatenateCommandArrays(withMavendefaults, projectListArray);
-                  isRunning = new ProcessSuccessTester(folders, measurementConfig, env).testRunningSuccess(version, withPl);
+                  isRunning = new ProcessSuccessTester(folders, measurementConfig, env).testRunningSuccess(commit, withPl);
                } else {
-                  isRunning = new ProcessSuccessTester(folders, measurementConfig, env).testRunningSuccess(version, withMavendefaults);
+                  isRunning = new ProcessSuccessTester(folders, measurementConfig, env).testRunningSuccess(commit, withMavendefaults);
                }
             } else {
                LOG.error("Expected src/test to exist");
@@ -64,7 +64,7 @@ public class MavenRunningTester {
             e.printStackTrace();
          }
       } else {
-         LOG.error("No pom.xml in {}", version);
+         LOG.error("No pom.xml in {}", commit);
       }
       return isRunning;
    }

@@ -25,7 +25,7 @@ import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionExecutor;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependency.traces.diff.DiffFileGenerator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -303,7 +303,7 @@ public class DependencyReader {
       coverageBasedSelection.getVersions().put(iterator.getTag(), new TestSet());
    }
 
-   public void readCompletedVersions(final StaticTestSelection initialdependencies, VersionComparatorInstance comparator) {
+   public void readCompletedVersions(final StaticTestSelection initialdependencies, CommitComparatorInstance comparator) {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);

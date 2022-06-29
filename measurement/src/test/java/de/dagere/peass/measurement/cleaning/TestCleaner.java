@@ -13,13 +13,13 @@ import org.junit.jupiter.api.Test;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 
 public class TestCleaner {
 
    @Test
    public void testParameterizedDataCleaner() throws IOException {
-      VersionComparatorInstance comparator = new VersionComparatorInstance(Arrays.asList(new String[] { "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b", "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b" }));
+      CommitComparatorInstance comparator = new CommitComparatorInstance(Arrays.asList(new String[] { "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b", "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b" }));
 
       File measurementsFolder = new File("src/test/resources/cleaning/measurementsFull");
 

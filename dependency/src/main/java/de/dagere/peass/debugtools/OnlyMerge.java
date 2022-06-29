@@ -10,7 +10,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.vcs.CommitUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
@@ -38,7 +38,7 @@ public class OnlyMerge implements Callable<Void>{
       final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), projectFolder);
       
       final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("deps*.json"));
-      VersionComparatorInstance instance = new VersionComparatorInstance(commits);
+      CommitComparatorInstance instance = new CommitComparatorInstance(commits);
       PartialDependenciesMerger.mergeVersions(new File(config.getResultBaseFolder(), "merged.json"), files, instance);
       return null;
    }

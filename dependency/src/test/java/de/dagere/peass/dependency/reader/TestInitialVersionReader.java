@@ -15,7 +15,7 @@ import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.vcs.VersionIterator;
 
@@ -45,7 +45,7 @@ public class TestInitialVersionReader {
       dependencyResult.getVersions().put(VERSION2, staticSelection);
 
       InitialVersionReader reader = new InitialVersionReader(dependencyResult, dependencyManagerMock, Mockito.mock(VersionIterator.class));
-      reader.readCompletedVersions(new VersionComparatorInstance(Arrays.asList(new String[] { VERSION1, VERSION2 })));
+      reader.readCompletedVersions(new CommitComparatorInstance(Arrays.asList(new String[] { VERSION1, VERSION2 })));
       
       Set<ChangedEntity> currentlyCalledClasses = currentTestDependencies.getDependencyMap().get(TESTCASE).getCalledClasses();
       MatcherAssert.assertThat(currentlyCalledClasses, 

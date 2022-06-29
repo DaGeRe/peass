@@ -15,7 +15,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -45,9 +45,9 @@ public class DependencyTester implements KiekerResultHandler {
    protected final EnvironmentVariables env;
    private ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
-   private final VersionComparatorInstance comparator;
+   private final CommitComparatorInstance comparator;
 
-   public DependencyTester(final PeassFolders folders, final MeasurementConfig measurementConfig, final EnvironmentVariables env, VersionComparatorInstance comparator) {
+   public DependencyTester(final PeassFolders folders, final MeasurementConfig measurementConfig, final EnvironmentVariables env, CommitComparatorInstance comparator) {
       this.folders = folders;
       this.configuration = measurementConfig;
       this.env = env;

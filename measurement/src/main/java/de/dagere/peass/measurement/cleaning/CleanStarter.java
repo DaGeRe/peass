@@ -16,7 +16,7 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.dataloading.VersionSorter;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.Constants;
@@ -46,7 +46,7 @@ public class CleanStarter implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       SelectedTests tests = VersionSorter.getSelectedTests(staticSelectionFile, executionfile);
-      VersionComparatorInstance comparator = new VersionComparatorInstance(tests);
+      CommitComparatorInstance comparator = new CommitComparatorInstance(tests);
       
       for (int i = 0; i < data.length; i++) {
          File folder = data[i];

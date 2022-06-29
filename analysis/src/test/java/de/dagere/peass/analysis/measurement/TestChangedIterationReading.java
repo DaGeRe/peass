@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 public class TestChangedIterationReading {
@@ -19,7 +19,7 @@ public class TestChangedIterationReading {
 
    @Test
    public void testChangedIterationReading() throws InterruptedException {
-      VersionComparatorInstance comparator = new VersionComparatorInstance(Arrays.asList(
+      CommitComparatorInstance comparator = new CommitComparatorInstance(Arrays.asList(
             "a23e385264c31def8dcda86c3cf64faa698c62d8", "33ce17c04b5218c25c40137d4d09f40fbb3e4f0f"));
 
       ProjectStatistics statistics = new ProjectStatistics(CommitByNameComparator.INSTANCE);

@@ -10,7 +10,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
@@ -115,7 +115,7 @@ public class CauseSearcherComplete extends CauseSearcher {
       config.getKiekerConfig().setUseKieker(true);
       
       List<String> commits = GitUtils.getCommits(folders.getProjectFolder(), true, true);
-      VersionComparatorInstance comparator = new VersionComparatorInstance(commits);
+      CommitComparatorInstance comparator = new CommitComparatorInstance(commits);
       
       final CauseTester calibrationMeasurer = new CauseTester(folders, config, causeSearchConfig, env, comparator);
       final AllDifferingDeterminer calibrationRunner = new AllDifferingDeterminer(predecessorNodeList, causeSearchConfig, config);

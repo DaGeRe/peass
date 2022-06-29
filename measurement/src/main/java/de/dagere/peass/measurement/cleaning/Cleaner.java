@@ -15,7 +15,7 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
@@ -48,7 +48,7 @@ public class Cleaner extends DataAnalyser {
       return read;
    }
 
-   public Cleaner(final File cleanFolder, VersionComparatorInstance comparator) {
+   public Cleaner(final File cleanFolder, CommitComparatorInstance comparator) {
       super(comparator);
       this.cleanFolder = cleanFolder;
    }

@@ -15,7 +15,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -46,7 +46,7 @@ public class CauseTester extends AdaptiveTester {
    private final CauseSearchFolders folders;
    private int levelId = 0;
 
-   public CauseTester(final CauseSearchFolders project, final MeasurementConfig measurementConfig, final CauseSearcherConfig causeConfig, final EnvironmentVariables env, VersionComparatorInstance comparator) {
+   public CauseTester(final CauseSearchFolders project, final MeasurementConfig measurementConfig, final CauseSearcherConfig causeConfig, final EnvironmentVariables env, CommitComparatorInstance comparator) {
       super(project, measurementConfig, env, comparator);
       this.testcase = causeConfig.getTestCase();
       this.causeConfig = causeConfig;

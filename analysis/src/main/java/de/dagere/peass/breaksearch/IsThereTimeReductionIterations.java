@@ -13,7 +13,7 @@ import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.analysis.measurement.TestStatistic;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.dataloading.DataReader;
 import de.dagere.peass.measurement.statistics.data.EvaluationPair;
@@ -56,7 +56,7 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
       System.out.println("Average Iterations: " + avgcount / vms);
    }
    
-   public IsThereTimeReductionIterations(VersionComparatorInstance comparator) {
+   public IsThereTimeReductionIterations(CommitComparatorInstance comparator) {
       super(comparator);
    }
    

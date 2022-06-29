@@ -11,7 +11,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.vcs.VersionIterator;
 
@@ -23,10 +23,10 @@ public final class OneReader implements Runnable {
    private final VersionIterator reserveIterator;
    final FirstRunningVersionFinder firstRunningVersionFinder;
    private final DependencyReader reader;
-   private final VersionComparatorInstance comparator;
+   private final CommitComparatorInstance comparator;
 
    public OneReader(final String minimumCommit, final VersionIterator reserveIterator, final DependencyReader reader,
-         final FirstRunningVersionFinder firstRunningVersionFinder, VersionComparatorInstance comparator) {
+         final FirstRunningVersionFinder firstRunningVersionFinder, CommitComparatorInstance comparator) {
       this.minimumCommit = minimumCommit;
       this.reserveIterator = reserveIterator;
       this.firstRunningVersionFinder = firstRunningVersionFinder;

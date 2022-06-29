@@ -6,17 +6,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.statistics.data.TestData;
 
 public abstract class DataAnalyser {
    
    private boolean isFinished = false;
-   protected final VersionComparatorInstance comparator;
+   protected final CommitComparatorInstance comparator;
    
    private static final Logger LOG = LogManager.getLogger(DataAnalyser.class);
 
-   public DataAnalyser(VersionComparatorInstance comparator) {
+   public DataAnalyser(CommitComparatorInstance comparator) {
       this.comparator = comparator;
    }
    

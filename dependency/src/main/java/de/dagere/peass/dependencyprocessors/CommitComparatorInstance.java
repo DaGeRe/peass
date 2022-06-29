@@ -7,17 +7,17 @@ import java.util.List;
 
 import de.dagere.peass.dependency.persistence.SelectedTests;
 
-public class VersionComparatorInstance implements Comparator<String> {
+public class CommitComparatorInstance implements Comparator<String> {
    
    public static final String NO_BEFORE = "NO_BEFORE";
    
    private final List<String> versions;
 
-   public VersionComparatorInstance(List<String> versions) {
+   public CommitComparatorInstance(List<String> versions) {
       this.versions = versions;
    }
    
-   public VersionComparatorInstance(final SelectedTests dependencies2) {
+   public CommitComparatorInstance(final SelectedTests dependencies2) {
       versions = new LinkedList<>();
       Arrays.stream(dependencies2.getVersionNames()).forEach(version -> versions.add(version));
    }

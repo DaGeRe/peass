@@ -19,7 +19,7 @@ import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -38,7 +38,7 @@ public class ContinuousExecutor {
    private final String version;
    private final String versionOld;
    private final VersionIteratorGit iterator;
-   private final VersionComparatorInstance comparator;
+   private final CommitComparatorInstance comparator;
 
    private final File originalProjectFolder;
    private final File localFolder;
@@ -78,7 +78,7 @@ public class ContinuousExecutor {
       LOG.debug("Version: {} VersionOld: {}", version, versionOld);
 
       List<String> commits = GitUtils.getCommits(projectFolderLocal, false, true);
-      comparator = new VersionComparatorInstance(commits);
+      comparator = new CommitComparatorInstance(commits);
    }
 
    private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {

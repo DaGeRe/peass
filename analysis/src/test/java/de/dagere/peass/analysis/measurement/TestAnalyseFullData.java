@@ -19,7 +19,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.utils.Constants;
 
@@ -33,7 +33,7 @@ public class TestAnalyseFullData {
    @Test
    public void testReading() throws InterruptedException {
       List<String> versions = Arrays.asList(new String[] {"946e4318267b56838aa35da0a2a4e5c0528bfe04","fd79b2039667c09167c721b2823425629fad6d11" });
-      VersionComparatorInstance comparator = new VersionComparatorInstance(versions);
+      CommitComparatorInstance comparator = new CommitComparatorInstance(versions);
       
       File baseFolder = new File(DATA_READING_FOLDER, "android-example-correct");
       ModuleClassMapping mapping = new ModuleClassMapping(baseFolder, new ProjectModules(new File(baseFolder, "app")), new ExecutionConfig());
@@ -50,7 +50,7 @@ public class TestAnalyseFullData {
    @Test
    public void testReadingWithParams() throws InterruptedException {
       List<String> versions = Arrays.asList(new String[] {"49f75e8877c2e9b7cf6b56087121a35fdd73ff8b","a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b" });
-      VersionComparatorInstance comparator = new VersionComparatorInstance(versions);
+      CommitComparatorInstance comparator = new CommitComparatorInstance(versions);
       
       ModuleClassMapping mapping = Mockito.mock(ModuleClassMapping.class);
       ProjectStatistics statistics = new ProjectStatistics(CommitByNameComparator.INSTANCE);

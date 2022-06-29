@@ -10,13 +10,13 @@ import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReaderUtil;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.vcs.GitCommit;
 
 public class TestMerging {
    @Test
    public void testMerging() {
-      VersionComparatorInstance comparator = ParallelTestUtil.getCommits();
+      CommitComparatorInstance comparator = ParallelTestUtil.getCommits();
 
       StaticTestSelection deps1 = new StaticTestSelection(), deps2 = new StaticTestSelection();
       deps1.setInitialversion(new InitialVersion());
@@ -35,7 +35,7 @@ public class TestMerging {
 
    @Test
    public void testMergingStrangeDistribution() {
-      VersionComparatorInstance comparator = ParallelTestUtil.getCommits();
+      CommitComparatorInstance comparator = ParallelTestUtil.getCommits();
 
       StaticTestSelection deps1 = new StaticTestSelection(), deps2 = new StaticTestSelection();
       deps1.setInitialversion(new InitialVersion());
@@ -62,7 +62,7 @@ public class TestMerging {
       commits.add("E");
       commits.add("F");
       
-      VersionComparatorInstance comparator = new VersionComparatorInstance(commits);
+      CommitComparatorInstance comparator = new CommitComparatorInstance(commits);
       
       StaticTestSelection deps1 = new StaticTestSelection(), deps2 = new StaticTestSelection();
       deps1.setInitialversion(new InitialVersion());

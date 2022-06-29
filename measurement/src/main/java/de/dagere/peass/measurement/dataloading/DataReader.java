@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.statistics.data.TestData;
 
 /**
@@ -34,7 +34,7 @@ public final class DataReader {
 
    }
 
-   public static Thread startReadVersionDataMap(final File fullDataFolder, LinkedBlockingQueue<TestData> myQueue, VersionComparatorInstance comparator) {
+   public static Thread startReadVersionDataMap(final File fullDataFolder, LinkedBlockingQueue<TestData> myQueue, CommitComparatorInstance comparator) {
       final Thread readerThread = new Thread(new Runnable() {
 
          @Override
@@ -51,7 +51,7 @@ public final class DataReader {
       return readerThread;
    }
 
-   private static void readDataToQueue(final File fullDataFolder, final LinkedBlockingQueue<TestData> measurements, VersionComparatorInstance comparator) {
+   private static void readDataToQueue(final File fullDataFolder, final LinkedBlockingQueue<TestData> measurements, CommitComparatorInstance comparator) {
       LOG.info("Loading folder: {}", fullDataFolder);
 
       for (final File clazzFile : fullDataFolder.listFiles()) {
@@ -73,7 +73,7 @@ public final class DataReader {
       }
    }
 
-   public static Map<String, TestData> readClassFolder(final File clazzFile, VersionComparatorInstance comparator) {
+   public static Map<String, TestData> readClassFolder(final File clazzFile, CommitComparatorInstance comparator) {
       final Map<String, TestData> currentMeasurement = new HashMap<>();
       for (final File versionOfPair : clazzFile.listFiles()) {
          if (versionOfPair.isDirectory()) {
@@ -94,7 +94,7 @@ public final class DataReader {
       return currentMeasurement;
    }
 
-   private static void readMeasurementFile(final Map<String, TestData> currentMeasurement, final File versionOfPair, final File versionCurrent, final File measurementFile, VersionComparatorInstance comparator) {
+   private static void readMeasurementFile(final Map<String, TestData> currentMeasurement, final File versionOfPair, final File versionCurrent, final File measurementFile, CommitComparatorInstance comparator) {
       final Kopemedata resultData = JSONDataLoader.loadData(measurementFile);
       final String testclazz = resultData.getClazz();
       TestCase testcase = new TestCase(resultData);

@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 public class ProjectStatistics {
@@ -24,7 +24,7 @@ public class ProjectStatistics {
       statistics = VersionComparator.hasVersions() ? new TreeMap<>(CommitByNameComparator.INSTANCE) : new LinkedHashMap<>();
    }
    
-   public ProjectStatistics(VersionComparatorInstance comparator) {
+   public ProjectStatistics(CommitComparatorInstance comparator) {
       statistics = new TreeMap<>(comparator);
    }
    

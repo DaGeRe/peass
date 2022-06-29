@@ -36,7 +36,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.utils.Constants;
 
 /**
@@ -165,7 +165,7 @@ public class DependencyReaderUtil {
       }
    }
 
-   public static StaticTestSelection mergeDependencies(final StaticTestSelection deps1, final StaticTestSelection deps2, VersionComparatorInstance comparator) {
+   public static StaticTestSelection mergeDependencies(final StaticTestSelection deps1, final StaticTestSelection deps2, CommitComparatorInstance comparator) {
       final StaticTestSelection merged;
       final StaticTestSelection newer;
       if (comparator.isBefore(deps1.getInitialversion().getVersion(), deps2.getInitialversion().getVersion())) {

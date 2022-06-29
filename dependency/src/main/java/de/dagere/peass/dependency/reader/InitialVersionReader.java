@@ -21,7 +21,7 @@ import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.vcs.VersionIterator;
 
 public class InitialVersionReader {
@@ -72,7 +72,7 @@ public class InitialVersionReader {
       return initialversion;
    }
    
-   public void readCompletedVersions(VersionComparatorInstance comparator) {
+   public void readCompletedVersions(CommitComparatorInstance comparator) {
       fillInitialTestDependencies();
       checkCorrectness();
 

@@ -17,7 +17,7 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependency.reader.DependencyReaderUtil;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 
@@ -29,7 +29,7 @@ public class PartialDependenciesMerger {
 
    }
 
-   public static StaticTestSelection mergeVersions(final File out, final File[] partFiles, VersionComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
+   public static StaticTestSelection mergeVersions(final File out, final File[] partFiles, CommitComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
       final List<StaticTestSelection> deps = readDependencies(partFiles);
       StaticTestSelection merged = mergeDependencies(deps, comparator);
 
@@ -37,7 +37,7 @@ public class PartialDependenciesMerger {
       return merged;
    }
 
-   public static void mergeVersions(final File out, final ResultsFolders[] partFolders, VersionComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
+   public static void mergeVersions(final File out, final ResultsFolders[] partFolders, CommitComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
       File[] partFiles = new File[partFolders.length];
       for (int i = 0; i < partFolders.length; i++) {
          partFiles[i] = partFolders[i].getStaticTestSelectionFile();
@@ -60,7 +60,7 @@ public class PartialDependenciesMerger {
       return deps;
    }
 
-   public static StaticTestSelection mergeDependencies(final List<StaticTestSelection> deps, VersionComparatorInstance comparator) {
+   public static StaticTestSelection mergeDependencies(final List<StaticTestSelection> deps, CommitComparatorInstance comparator) {
       LOG.debug("Sorting {} dependencies", deps.size());
       deps.sort(new Comparator<StaticTestSelection>() {
          @Override

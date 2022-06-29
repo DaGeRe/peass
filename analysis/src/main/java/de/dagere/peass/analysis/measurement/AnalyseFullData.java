@@ -19,7 +19,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.statistics.Relation;
 import de.dagere.peass.measurement.statistics.data.EvaluationPair;
@@ -45,7 +45,7 @@ public class AnalyseFullData extends DataAnalyser {
 
    private final ProjectStatistics info;
 
-   public AnalyseFullData(final File changesFile, final ProjectStatistics info, final ModuleClassMapping mapping, final StatisticsConfig statisticConfig, VersionComparatorInstance comparator) {
+   public AnalyseFullData(final File changesFile, final ProjectStatistics info, final ModuleClassMapping mapping, final StatisticsConfig statisticConfig, CommitComparatorInstance comparator) {
       super(comparator);
       this.changeFile = changesFile;
       this.mapping = mapping;

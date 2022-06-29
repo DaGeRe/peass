@@ -7,7 +7,7 @@ import java.util.LinkedList;
  * @author DaGeRe
  *
  */
-public class CommitByNameComparator extends VersionComparatorInstance {
+public class CommitByNameComparator extends CommitComparatorInstance {
    
    public static final CommitByNameComparator INSTANCE = new CommitByNameComparator();
    
@@ -16,8 +16,8 @@ public class CommitByNameComparator extends VersionComparatorInstance {
    }
 
    @Override
-   public int compare(String version1, String version2) {
-      return version1.compareTo(version2);
+   public int compare(String commit1, String commit2) {
+      return commit1.compareTo(commit2);
    }
 
 }

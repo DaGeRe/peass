@@ -30,7 +30,7 @@ import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.dependencytests.helper.FakeVersionIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -76,7 +76,7 @@ public class TestVersionSplitting {
 
    @Test
    public void testSplittingNonRunning() throws IOException {
-      VersionComparatorInstance comparator = ParallelTestUtil.getCommits();
+      CommitComparatorInstance comparator = ParallelTestUtil.getCommits();
       int count = 3;
       int size = comparator.getCommits().size() > 2 * count ? comparator.getCommits().size() / count : 2;
 
@@ -100,13 +100,13 @@ public class TestVersionSplitting {
    
    @Test
    public void testEmptyMerging() {
-      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(new LinkedList<>(), new VersionComparatorInstance(new LinkedList<>()));
+      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(new LinkedList<>(), new CommitComparatorInstance(new LinkedList<>()));
       Assert.assertEquals(0, merged.getVersions().size());
    }
 
    @Test
    public void testSplitting() throws IOException {
-      VersionComparatorInstance comparator = ParallelTestUtil.getCommits();
+      CommitComparatorInstance comparator = ParallelTestUtil.getCommits();
 
       int count = 3;
       int size = comparator.getCommits().size() > 2 * count ? comparator.getCommits().size() / count : 2;
@@ -125,7 +125,7 @@ public class TestVersionSplitting {
 
    @Test
    public void testSplittingStrangeDistribution() throws IOException {
-      VersionComparatorInstance comparator  = ParallelTestUtil.getCommits();
+      CommitComparatorInstance comparator  = ParallelTestUtil.getCommits();
 
       List<StaticTestSelection> dependencies = new LinkedList<>();
       readUntilMax(comparator.getCommits(), dependencies, 0, 0, 6);

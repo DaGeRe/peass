@@ -28,7 +28,7 @@ import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -130,7 +130,7 @@ public class ContinuousDependencyReader {
          } else {
             LOG.debug("Partially loading dependencies");
             dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
-            VersionComparatorInstance comparator = new VersionComparatorInstance(dependencies);
+            CommitComparatorInstance comparator = new CommitComparatorInstance(dependencies);
             
             if (iterator != null) {
                executePartialRTS(dependencies, iterator, comparator);
@@ -144,7 +144,7 @@ public class ContinuousDependencyReader {
       }
    }
 
-   private void executePartialRTS(final StaticTestSelection dependencies, final VersionIterator newIterator, VersionComparatorInstance comparator) throws FileNotFoundException {
+   private void executePartialRTS(final StaticTestSelection dependencies, final VersionIterator newIterator, CommitComparatorInstance comparator) throws FileNotFoundException {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
          File logFile = resultsFolders.getRTSLogFile(newIterator.getTag(), newIterator.getPredecessor());
          LOG.info("Executing regression test selection update - Log goes to {}", logFile.getAbsolutePath());
@@ -157,7 +157,7 @@ public class ContinuousDependencyReader {
 
    }
 
-   private void doPartialRCS(final StaticTestSelection dependencies, final VersionIterator newIterator, VersionComparatorInstance comparator) {
+   private void doPartialRCS(final StaticTestSelection dependencies, final VersionIterator newIterator, CommitComparatorInstance comparator) {
       DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator,
             new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
       newIterator.goTo0thCommit();

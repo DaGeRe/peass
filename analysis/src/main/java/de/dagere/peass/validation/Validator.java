@@ -18,7 +18,7 @@ import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.validation.data.ProjectValidation;
@@ -91,7 +91,7 @@ public class Validator {
 
       LOG.info("Project: " + projectName);
 
-      VersionComparatorInstance comparator = GitUtils.getCommitsForURL(changedTests.getUrl());
+      CommitComparatorInstance comparator = GitUtils.getCommitsForURL(changedTests.getUrl());
 
       Map<String, String> sortedCommits = VersionComparator.INSTANCE.sort(commits);
       for (final Map.Entry<String, String> commit : sortedCommits.entrySet()) {

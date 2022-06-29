@@ -12,7 +12,7 @@ import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
@@ -91,7 +91,7 @@ public class SearchCauseStarter extends MeasureStarter {
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders, new EnvironmentVariables(measurementConfiguration.getExecutionConfig().getProperties()));
 
-      VersionComparatorInstance comparator = new VersionComparatorInstance(staticTestSelection);
+      CommitComparatorInstance comparator = new CommitComparatorInstance(staticTestSelection);
       final CauseSearcher tester = getCauseSeacher(measurementConfiguration, causeSearcherConfig, alternateFolders, reader, comparator);
       tester.search();
 
@@ -124,7 +124,7 @@ public class SearchCauseStarter extends MeasureStarter {
    }
 
    public static CauseSearcher getCauseSeacher(final MeasurementConfig measurementConfiguration,
-         final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader, VersionComparatorInstance comparator) throws IOException, InterruptedException {
+         final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader, CommitComparatorInstance comparator) throws IOException, InterruptedException {
       if (measurementConfiguration.getKiekerConfig().isOnlyOneCallRecording()) {
          throw new RuntimeException("isOnlyOneCallRecording is not allowed to be set to true for RCA!");
       }

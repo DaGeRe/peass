@@ -15,7 +15,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.parallel.OneReader;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -30,7 +30,7 @@ public class DependencyParallelReader {
    private final String url;
    private final VersionKeeper nonRunning;
    private final VersionKeeper nonChanges;
-   private final VersionComparatorInstance comparator;
+   private final CommitComparatorInstance comparator;
    private final PeassFolders folders;
    private final int sizePerThread;
    private final ResultsFolders[] outFolders;
@@ -40,7 +40,7 @@ public class DependencyParallelReader {
    private final KiekerConfig kiekerConfig;
    private final EnvironmentVariables env;
 
-   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final VersionComparatorInstance commits,
+   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final CommitComparatorInstance commits,
          final TestSelectionConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       url = GitUtils.getURL(projectFolder);
       this.dependencyConfig = dependencyConfig;

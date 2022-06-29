@@ -28,10 +28,10 @@ public class ProcessSuccessTester {
       this.env = env;
    }
 
-   public boolean testRunningSuccess(final String version, final String[] vars) {
+   public boolean testRunningSuccess(final String commit, final String[] vars) {
       boolean isRunning = false;
       try {
-         isRunning = testRunning(version, vars);
+         isRunning = testRunning(commit, vars);
       } catch (final IOException e) {
          e.printStackTrace();
       } catch (final InterruptedException e) {
@@ -40,10 +40,10 @@ public class ProcessSuccessTester {
       return isRunning;
    }
 
-   private boolean testRunning(final String version, final String[] vars) throws IOException, InterruptedException, FileNotFoundException {
+   private boolean testRunning(final String commit, final String[] vars) throws IOException, InterruptedException, FileNotFoundException {
       boolean isRunning;
       LOG.debug("Executing run success test {}", folders.getProjectFolder());
-      final File logFile = folders.getDependencyLogSuccessRunFile(version);
+      final File logFile = folders.getDependencyLogSuccessRunFile(commit);
 
       Process process = startProcess(vars, logFile);
       if (process.isAlive()) {

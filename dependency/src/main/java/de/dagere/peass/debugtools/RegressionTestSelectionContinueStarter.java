@@ -35,7 +35,7 @@ import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -91,7 +91,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       final File dependencyFileIn = getDependencyInFile();
 
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, StaticTestSelection.class);
-      VersionComparatorInstance comparator = new VersionComparatorInstance(GitUtils.getCommits(projectFolder, false));
+      CommitComparatorInstance comparator = new CommitComparatorInstance(GitUtils.getCommits(projectFolder, false));
       
       VersionComparator.setVersions(GitUtils.getCommits(projectFolder, false));
 
@@ -128,7 +128,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
     * @param dependencies
     * @return
     */
-   static String getPreviousVersion(final String startversion, final File projectFolder, final StaticTestSelection dependencies, VersionComparatorInstance comparator) {
+   static String getPreviousVersion(final String startversion, final File projectFolder, final StaticTestSelection dependencies, CommitComparatorInstance comparator) {
       String previousVersion;
       if (startversion != null) {
          String[] versionNames = dependencies.getVersionNames();
@@ -172,7 +172,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
    /**
     * Removes every version from the map that is before the given startversion
     */
-   public static void truncateVersions(final String startversion, final Map<String, VersionStaticSelection> versions, VersionComparatorInstance comparator) {
+   public static void truncateVersions(final String startversion, final Map<String, VersionStaticSelection> versions, CommitComparatorInstance comparator) {
       for (final java.util.Iterator<Entry<String, VersionStaticSelection>> it = versions.entrySet().iterator(); it.hasNext();) {
          final Entry<String, VersionStaticSelection> version = it.next();
          if (comparator.isBefore(startversion, version.getKey()) || version.getKey().equals(startversion)) {
