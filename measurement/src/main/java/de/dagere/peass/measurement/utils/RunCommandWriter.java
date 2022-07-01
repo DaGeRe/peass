@@ -57,7 +57,7 @@ public class RunCommandWriter {
             + "-timeout " + config.getTimeoutInSeconds() + " "
             + "-measurementStrategy PARALLEL "
 //            + "-useGC false "
-            + "-version " + endversion + " "
+            + "-commit " + endversion + " "
             + "-executionfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + "-folder ../projekte/" + name + "/ "
             + " &> measurement_" + endversion.substring(0, 6) + "_" + testcaseName
