@@ -259,7 +259,7 @@ public class ChangeReader {
          final int repetitions = (int) exampleResult.getRepetitions();
          final int vms = describedChunk.getCurrent().size();
 
-         final int versionIndex = Arrays.binarySearch(selectedTests.getVersionNames(), versions[1]);
+         final int versionIndex = Arrays.binarySearch(selectedTests.getCommitNames(), versions[1]);
 
          runCommandWriter.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
                (int) exampleResult.getWarmup(), iterations, repetitions, vms);

@@ -112,7 +112,7 @@ public class CreateScriptStarter implements Callable<Void> {
 
    public static void generateExecuteCommands(final StaticTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
          throws IOException {
-      final String[] versions = dependencies.getVersionNames();
+      final String[] versions = dependencies.getCommitNames();
       for (int versionIndex = 0; versionIndex < versions.length; versionIndex++) {
          final String endversion = versions[versionIndex];
          // System.out.println("-startversion " + startversion + " -endversion " + endversion);

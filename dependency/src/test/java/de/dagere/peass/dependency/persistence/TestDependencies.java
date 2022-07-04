@@ -22,14 +22,14 @@ public class TestDependencies {
       dependencies.getVersions().put("2", new VersionStaticSelection());
       dependencies.getVersions().put("3", new VersionStaticSelection());
       
-      String[] versionNames = dependencies.getVersionNames();
+      String[] versionNames = dependencies.getCommitNames();
       
       Assert.assertEquals("0", versionNames[0]);
       Assert.assertEquals("1", versionNames[1]);
       Assert.assertEquals("2", versionNames[2]);
       Assert.assertEquals("3", versionNames[3]);
       
-      Assert.assertEquals("3", dependencies.getNewestVersion());
+      Assert.assertEquals("3", dependencies.getNewestCommit());
    }
    
    @Test
@@ -39,10 +39,10 @@ public class TestDependencies {
       dependencies.setInitialcommit(new InitialCommit());
       dependencies.getInitialcommit().setCommit("0");
       
-      String[] versionNames = dependencies.getVersionNames();
+      String[] versionNames = dependencies.getCommitNames();
       
       Assert.assertEquals("0", versionNames[0]);
-      Assert.assertEquals("0", dependencies.getNewestVersion());
+      Assert.assertEquals("0", dependencies.getNewestCommit());
    }
    
    @Test
@@ -61,13 +61,13 @@ public class TestDependencies {
       running3.setRunning(true);
       dependencies.getVersions().put("3", running3);
       
-      String[] versionNames = dependencies.getRunningVersionNames();
+      String[] versionNames = dependencies.getRunningCommitNames();
       
       Assert.assertEquals("0", versionNames[0]);
       Assert.assertEquals("1", versionNames[1]);
       Assert.assertEquals("3", versionNames[2]);
       
-      Assert.assertEquals("3", dependencies.getNewestVersion());
+      Assert.assertEquals("3", dependencies.getNewestCommit());
    }
    
    private static final String OLD_DATA_EXAMPLE = "{\n"
@@ -112,6 +112,7 @@ public class TestDependencies {
       
       StaticTestSelection deserializedOldData = Constants.OBJECTMAPPER.readValue(OLD_DATA_EXAMPLE, StaticTestSelection.class);
       Assert.assertEquals(deserializedOldData.getInitialcommit().getCommit(), "asdasd");
+      Assert.assertNull(deserializedOldData.getInitialversion());
       
    }
 }

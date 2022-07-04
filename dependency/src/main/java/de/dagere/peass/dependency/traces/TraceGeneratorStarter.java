@@ -61,7 +61,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       StaticTestSelection staticTestSelection = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
-      String newestVersion = staticTestSelection.getNewestVersion();
+      String newestVersion = staticTestSelection.getNewestCommit();
 
       VersionStaticSelection version = staticTestSelection.getVersions().get(newestVersion);
       TestSet tests = version.getTests();

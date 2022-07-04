@@ -55,13 +55,13 @@ public final class OneReader implements Runnable {
    }
 
    private void readRemaining(final DependencyReader reader) throws FileNotFoundException, IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
-      String newest = reader.getDependencies().getNewestVersion();
+      String newest = reader.getDependencies().getNewestCommit();
       reader.setIterator(reserveIterator);
       while (reserveIterator.hasNextCommit() && comparator.isBefore(newest, minimumCommit)) {
          reserveIterator.goToNextCommit();
          LOG.debug("Remaining: {} This: {}", reserveIterator.getTag(), this);
          reader.readVersion();
-         newest = reader.getDependencies().getNewestVersion();
+         newest = reader.getDependencies().getNewestCommit();
       }
    }
 }

@@ -68,6 +68,7 @@ public class StaticTestSelection extends SelectedTests {
       // This hack asures that data with the old name initialversion are copied to initialcommit; it will obviusly not work if getInitialcommit is not called 
       if (initialversion != null) {
          initialcommit = initialversion;
+         initialversion = null;
       }
       return initialcommit;
    }
@@ -85,7 +86,7 @@ public class StaticTestSelection extends SelectedTests {
    }
 
    @JsonIgnore
-   public String[] getVersionNames() {
+   public String[] getCommitNames() {
       final String[] versionNames = versions.keySet().toArray(new String[0]);
       String[] withStartversion = new String[versionNames.length + 1];
       withStartversion[0] = initialcommit.getCommit();
@@ -94,8 +95,8 @@ public class StaticTestSelection extends SelectedTests {
    }
 
    @JsonIgnore
-   public String getNewestVersion() {
-      final String[] versions = getVersionNames();
+   public String getNewestCommit() {
+      final String[] versions = getCommitNames();
       if (versions.length > 0) {
          return versions[versions.length - 1];
       } else if (initialcommit != null) {
@@ -106,7 +107,7 @@ public class StaticTestSelection extends SelectedTests {
    }
 
    @JsonIgnore
-   public String[] getRunningVersionNames() {
+   public String[] getRunningCommitNames() {
       String[] versionNames = versions.entrySet().stream()
             .filter((entry) -> entry.getValue().isRunning())
             .map(entry -> entry.getKey())
@@ -119,8 +120,8 @@ public class StaticTestSelection extends SelectedTests {
    }
 
    @JsonIgnore
-   public String getNewestRunningVersion() {
-      final String[] versions = getRunningVersionNames();
+   public String getNewestRunningCommit() {
+      final String[] versions = getRunningCommitNames();
       if (versions.length > 0) {
          return versions[versions.length - 1];
       } else if (initialcommit != null) {

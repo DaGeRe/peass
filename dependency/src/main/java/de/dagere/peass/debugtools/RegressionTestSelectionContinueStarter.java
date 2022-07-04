@@ -131,13 +131,13 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
    static String getPreviousVersion(final String startversion, final File projectFolder, final StaticTestSelection dependencies, CommitComparatorInstance comparator) {
       String previousVersion;
       if (startversion != null) {
-         String[] versionNames = dependencies.getVersionNames();
+         String[] versionNames = dependencies.getCommitNames();
          int startVersionIndex = Arrays.asList(versionNames).indexOf(startversion);
          String versionAfterStartVersion = versionNames[startVersionIndex - 1];
          previousVersion = versionAfterStartVersion;
          truncateVersions(startversion, dependencies.getVersions(), comparator);
       } else {
-         String[] versionNames = dependencies.getVersionNames();
+         String[] versionNames = dependencies.getCommitNames();
          String newestVersion = versionNames[versionNames.length - 1];
          previousVersion = newestVersion;
       }

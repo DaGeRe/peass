@@ -8,10 +8,10 @@ public class TestExecutionData {
    public void testConversion() {
       StaticTestSelection dependencies = buildExampleDependencies();
 
-      Assert.assertArrayEquals(new String[] { "000001", "000002", "000004", "000005" }, dependencies.getVersionNames());
+      Assert.assertArrayEquals(new String[] { "000001", "000002", "000004", "000005" }, dependencies.getCommitNames());
 
       ExecutionData executions = new ExecutionData(dependencies);
-      Assert.assertArrayEquals(new String[] { "000001", "000002", "000004", "000005" }, executions.getVersionNames());
+      Assert.assertArrayEquals(new String[] { "000001", "000002", "000004", "000005" }, executions.getCommitNames());
    }
 
    public static StaticTestSelection buildExampleDependencies() {

@@ -32,7 +32,7 @@ public class KoPeMeDataHelper {
    }
 
    private static String[] filterVersions(SelectedTests selectedTests, final String[] versions) {
-      String[] versionNames = selectedTests.getVersionNames();
+      String[] versionNames = selectedTests.getCommitNames();
       List<String> versionOrderList = Arrays.asList(versionNames);
       int firstIndex = versionOrderList.indexOf(versions[0]);
       int secondIndex = versionOrderList.indexOf(versions[1]);

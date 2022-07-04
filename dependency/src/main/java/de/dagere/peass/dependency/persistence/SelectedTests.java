@@ -35,5 +35,5 @@ public abstract class SelectedTests {
       return name;
    }
    
-   public abstract String[] getVersionNames();
+   public abstract String[] getCommitNames();
 }

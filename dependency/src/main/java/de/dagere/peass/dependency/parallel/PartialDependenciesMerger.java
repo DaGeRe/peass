@@ -76,7 +76,7 @@ public class PartialDependenciesMerger {
          if (deps.size() > 1) {
             for (int i = 1; i < deps.size(); i++) {
                final StaticTestSelection newMergeDependencies = deps.get(i);
-               LOG.debug("Merge: {} Vals: {}", i, newMergeDependencies.getVersionNames());
+               LOG.debug("Merge: {} Vals: {}", i, newMergeDependencies.getCommitNames());
                if (newMergeDependencies != null) {
                   merged = DependencyReaderUtil.mergeDependencies(merged, newMergeDependencies, comparator);
                }

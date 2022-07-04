@@ -45,7 +45,7 @@ public class Validator {
 
       final File dependencyFile = new File(dependencyFolder, ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
-      firstVersion = dependencies.getVersionNames()[0];
+      firstVersion = dependencies.getCommitNames()[0];
 
       File changeFile = getChangefile(changeFolder, project);
       if (changeFile.exists()) {

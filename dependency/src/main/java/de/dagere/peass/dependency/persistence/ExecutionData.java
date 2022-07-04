@@ -115,7 +115,7 @@ public class ExecutionData extends SelectedTests {
 
    @JsonIgnore
    @Override
-   public String[] getVersionNames() {
+   public String[] getCommitNames() {
       return versions.keySet().toArray(new String[0]);
    }
 

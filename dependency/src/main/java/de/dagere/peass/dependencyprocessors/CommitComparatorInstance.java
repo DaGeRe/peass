@@ -19,7 +19,7 @@ public class CommitComparatorInstance implements Comparator<String> {
    
    public CommitComparatorInstance(final SelectedTests dependencies2) {
       versions = new LinkedList<>();
-      Arrays.stream(dependencies2.getVersionNames()).forEach(version -> versions.add(version));
+      Arrays.stream(dependencies2.getCommitNames()).forEach(version -> versions.add(version));
    }
 
    @Override

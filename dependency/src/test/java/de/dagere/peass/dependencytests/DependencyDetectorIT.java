@@ -72,7 +72,7 @@ public class DependencyDetectorIT {
       StaticTestSelection dependencies = reader.getDependencies();
       System.out.println(dependencies.getVersions());
 
-      Assert.assertTrue(dependencies.getVersions().get(dependencies.getNewestVersion()).isRunning());
+      Assert.assertTrue(dependencies.getVersions().get(dependencies.getNewestCommit()).isRunning());
 
       // DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }

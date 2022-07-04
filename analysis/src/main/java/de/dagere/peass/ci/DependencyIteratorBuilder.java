@@ -30,7 +30,7 @@ public class DependencyIteratorBuilder {
    public DependencyIteratorBuilder(final ExecutionConfig executionConfig, final StaticTestSelection dependencies, final PeassFolders folders) {
       version = GitUtils.getName(executionConfig.getCommit() != null ? executionConfig.getCommit() : "HEAD", folders.getProjectFolder());
 
-      String newestAnalyzedVersionName = dependencies != null ? dependencies.getNewestVersion() : null;
+      String newestAnalyzedVersionName = dependencies != null ? dependencies.getNewestCommit() : null;
 
       String oldVersionCommit = getOldVersionCommit(executionConfig, newestAnalyzedVersionName, folders);
 
@@ -41,7 +41,7 @@ public class DependencyIteratorBuilder {
       } else if (oldVersionCommit.equals(version)) {
          LOG.error("Version {} is equal to predecessing version {}, some error occured - not executing RTS", version, oldVersionCommit);
          iterator = null;
-         versionOld = dependencies.getNewestRunningVersion();
+         versionOld = dependencies.getNewestRunningCommit();
       } else {
          if (dependencies != null && 
                dependencies.getVersions().get(newestAnalyzedVersionName) != null && 
@@ -61,7 +61,7 @@ public class DependencyIteratorBuilder {
    }
 
    private String getPrePredecessor(final StaticTestSelection dependencies) {
-      String[] versionNames = dependencies.getVersionNames();
+      String[] versionNames = dependencies.getCommitNames();
       if (versionNames.length > 1) {
          String prePredecessor = versionNames[versionNames.length - 2];
          return prePredecessor;
