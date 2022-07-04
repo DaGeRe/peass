@@ -6,7 +6,6 @@ import java.util.List;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
-import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.VersionIterator;
 
 /**

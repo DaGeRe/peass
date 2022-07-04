@@ -30,7 +30,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
-import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -38,7 +37,6 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
-import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 /**
  * Handles the running of tests

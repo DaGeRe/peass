@@ -4,13 +4,12 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sun.tools.xjc.addon.code_injector.Const;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.utils.Constants;
 
-public class TestDependencies {
+public class TestStaticTestSelection {
    
    @Test
    public void testWithVersions() {

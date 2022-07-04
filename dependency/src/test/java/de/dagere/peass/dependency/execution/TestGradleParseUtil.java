@@ -1,6 +1,5 @@
 package de.dagere.peass.dependency.execution;
 
-import java.awt.image.AffineTransformOp;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,7 +23,6 @@ import de.dagere.peass.execution.gradle.SettingsFileParser;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
-import de.dagere.peass.testtransformation.JUnitVersions;
 
 public class TestGradleParseUtil {
 

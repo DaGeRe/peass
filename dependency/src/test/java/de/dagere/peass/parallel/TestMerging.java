@@ -9,9 +9,7 @@ import org.junit.jupiter.api.Test;
 import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReaderUtil;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
-import de.dagere.peass.vcs.GitCommit;
 
 public class TestMerging {
    @Test

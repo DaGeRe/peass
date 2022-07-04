@@ -3,7 +3,6 @@ package de.dagere.peass.dependency;
 import java.io.File;
 import java.io.IOException;
 
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

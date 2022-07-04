@@ -2,7 +2,6 @@ package de.dagere.peass.analysis.data;
 
 import java.io.File;
 
-
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 

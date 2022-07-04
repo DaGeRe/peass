@@ -3,8 +3,6 @@ package de.dagere.peass.dependency;
 import java.io.File;
 import java.io.IOException;
 
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
