@@ -279,7 +279,7 @@ public class DependencyReader {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
-      InitialVersionReader initialVersionReader = new InitialVersionReader(dependencyResult, dependencyManager, iterator);
+      InitialCommitReader initialVersionReader = new InitialCommitReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialVersion()) {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
          lastRunningVersion = iterator.getTag();
@@ -311,7 +311,7 @@ public class DependencyReader {
       dependencyResult.setVersions(initialdependencies.getVersions());
       dependencyResult.setInitialversion(initialdependencies.getInitialversion());
 
-      InitialVersionReader initialVersionReader = new InitialVersionReader(initialdependencies, dependencyManager, iterator);
+      InitialCommitReader initialVersionReader = new InitialCommitReader(initialdependencies, dependencyManager, iterator);
       initialVersionReader.readCompletedVersions(comparator);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
       lastRunningVersion = iterator.getTag();

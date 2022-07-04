@@ -24,9 +24,13 @@ import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.vcs.VersionIterator;
 
-public class InitialVersionReader {
+/**
+ * Identifies the first commit that is analyzable by Peass (i.e. runnable with current JDK, Maven and dependencies) 
+ *
+ */
+public class InitialCommitReader {
    
-   private static final Logger LOG = LogManager.getLogger(InitialVersionReader.class);
+   private static final Logger LOG = LogManager.getLogger(InitialCommitReader.class);
    
    protected final StaticTestSelection dependencyResult;
    protected DependencyManager dependencyManager;
@@ -34,7 +38,7 @@ public class InitialVersionReader {
    protected TestDependencies dependencyMap;
    
    
-   public InitialVersionReader(final StaticTestSelection dependencyResult, final DependencyManager dependencyManager, final VersionIterator iterator) {
+   public InitialCommitReader(final StaticTestSelection dependencyResult, final DependencyManager dependencyManager, final VersionIterator iterator) {
       this.dependencyResult = dependencyResult;
       this.dependencyManager = dependencyManager;
       this.iterator = iterator;

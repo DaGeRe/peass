@@ -44,7 +44,7 @@ public class TestInitialVersionReader {
       staticSelection.getChangedClazzes().put(new ChangedEntity("de.dagere.peass.MyCallee#method"), new TestSet(TESTCASE));
       dependencyResult.getVersions().put(VERSION2, staticSelection);
 
-      InitialVersionReader reader = new InitialVersionReader(dependencyResult, dependencyManagerMock, Mockito.mock(VersionIterator.class));
+      InitialCommitReader reader = new InitialCommitReader(dependencyResult, dependencyManagerMock, Mockito.mock(VersionIterator.class));
       reader.readCompletedVersions(new CommitComparatorInstance(Arrays.asList(new String[] { VERSION1, VERSION2 })));
       
       Set<ChangedEntity> currentlyCalledClasses = currentTestDependencies.getDependencyMap().get(TESTCASE).getCalledClasses();
