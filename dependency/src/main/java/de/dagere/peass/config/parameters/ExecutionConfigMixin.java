@@ -9,6 +9,7 @@ import picocli.CommandLine.Option;
 public class ExecutionConfigMixin {
    public final static String CLAZZ_FOLDERS_DEFAULT = ExecutionConfig.SRC_MAIN_JAVA + ":" + ExecutionConfig.SRC_JAVA;
    public final static String TEST_FOLDERS_DEFAULT = ExecutionConfig.SRC_TEST_JAVA + ":" + ExecutionConfig.SRC_TEST + ":" + ExecutionConfig.SRC_ANDROID_TEST_JAVA;
+   public final static int DEFAULT_KIEKER_WAIT_TIME = ExecutionConfig.DEFAULT_KIEKER_WAIT_TIME;
 
    @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
    protected int timeout = 5;
@@ -77,7 +78,7 @@ public class ExecutionConfigMixin {
    protected boolean useAlternativeBuildfile = false;
 
    @Option(names = { "-kiekerWaitTime", "--kiekerWaitTime" }, description = "Time that KoPeMe should wait until Kieker writing is finshed in seconds (default: 10)")
-   protected int kiekerWaitTime = 5;
+   protected int kiekerWaitTime = DEFAULT_KIEKER_WAIT_TIME;
 
    @Option(names = { "-classFolder", "--classFolder" }, description = "Folder that contains java classes")
    protected String clazzFolder = CLAZZ_FOLDERS_DEFAULT;
