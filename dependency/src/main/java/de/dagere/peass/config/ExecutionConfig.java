@@ -18,10 +18,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ExecutionConfig implements Serializable {
 
-   public static final String GRADLE_JAVA_DEFAULT_NAME = "java";
-
-   public static final String GRADLE_SPRING_DEFAULT_NAME = "org.springframework.boot";
-
    public static final String CLASSPATH_SEPARATOR = ":";
 
    public static final String DEFAULT_TEST_TRANSFORMER = "de.dagere.peass.testtransformation.JUnitTestTransformer";
