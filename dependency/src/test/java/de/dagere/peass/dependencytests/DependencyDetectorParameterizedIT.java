@@ -48,11 +48,11 @@ public class DependencyDetectorParameterizedIT {
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
-      System.out.println(reader.getDependencies().getInitialversion().getInitialDependencies());
+      System.out.println(reader.getDependencies().getInitialcommit().getInitialDependencies());
       VersionStaticSelection firstVersion = reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1);
       System.out.println(firstVersion.getChangedClazzes());
 
-      Assert.assertEquals(3, reader.getDependencies().getInitialversion().getInitialDependencies().size());
+      Assert.assertEquals(3, reader.getDependencies().getInitialcommit().getInitialDependencies().size());
       TestSet selectedTest = firstVersion.getChangedClazzes().get(new ChangedEntity("defaultpackage.NormalDependency#onlyCalledWithOne"));
       Assert.assertEquals(new TestCase("TestMe#testMe(JUNIT_PARAMETERIZED-2)"), selectedTest.getTests().iterator().next());
    }

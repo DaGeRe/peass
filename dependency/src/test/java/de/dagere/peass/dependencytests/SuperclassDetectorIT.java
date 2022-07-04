@@ -84,7 +84,7 @@ public class SuperclassDetectorIT {
    }
 
    private void checkInitialDependencies(final DependencyReader reader) {
-      List<ChangedEntity> initialDependencies = reader.getDependencies().getInitialversion().getInitialDependencies().values().iterator().next().getEntities();
+      List<ChangedEntity> initialDependencies = reader.getDependencies().getInitialcommit().getInitialDependencies().values().iterator().next().getEntities();
       LOG.debug("Initial Dependencies: " + initialDependencies);
       MatcherAssert.assertThat(initialDependencies, Matchers.anyOf(Matchers.hasSize(4), Matchers.hasSize(5)));
    }

@@ -31,9 +31,9 @@ public class CompareDependencies {
 		int addedCount = 0, missingCount = 0;
 		
 		final List<TestCase> notFoundNewDependencies = new LinkedList<>();
-		notFoundNewDependencies.addAll(newDependencies.getInitialversion().getInitialDependencies().keySet());
-		for (final Entry<TestCase, InitialCallList> initialDepOld : oldDependencies.getInitialversion().getInitialDependencies().entrySet()) {
-			for (final Entry<TestCase, InitialCallList> initialDepNew : newDependencies.getInitialversion().getInitialDependencies().entrySet()) {
+		notFoundNewDependencies.addAll(newDependencies.getInitialcommit().getInitialDependencies().keySet());
+		for (final Entry<TestCase, InitialCallList> initialDepOld : oldDependencies.getInitialcommit().getInitialDependencies().entrySet()) {
+			for (final Entry<TestCase, InitialCallList> initialDepNew : newDependencies.getInitialcommit().getInitialDependencies().entrySet()) {
 				if (initialDepNew.getKey().equals(initialDepOld.getKey())) {
 					final List<String> missing = getDifference(initialDepOld.getValue(), initialDepNew.getValue());
 

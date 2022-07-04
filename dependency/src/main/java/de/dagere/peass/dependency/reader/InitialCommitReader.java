@@ -18,7 +18,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.InitialCallList;
-import de.dagere.peass.dependency.persistence.InitialVersion;
+import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
@@ -49,14 +49,14 @@ public class InitialCommitReader {
       if (!dependencyManager.initialyGetTraces(iterator.getTag())) {
          return false;
       }
-      final InitialVersion initialversion = createInitialVersion();
-      dependencyResult.setInitialversion(initialversion);
+      final InitialCommit initialversion = createInitialVersion();
+      dependencyResult.setInitialcommit(initialversion);
       return true;
    }
 
-   private InitialVersion createInitialVersion() {
+   private InitialCommit createInitialVersion() {
       int jdkversion = dependencyManager.getExecutor().getJDKVersion();
-      final InitialVersion initialversion = new InitialVersion();
+      final InitialCommit initialversion = new InitialCommit();
       initialversion.setCommit(iterator.getTag());
       initialversion.setJdk(jdkversion);
       LOG.debug("Starting writing: {}", dependencyMap.getDependencyMap().size());
@@ -80,8 +80,8 @@ public class InitialCommitReader {
       fillInitialTestDependencies();
       checkCorrectness();
 
-      final InitialVersion initialversion = createInitialVersion();
-      dependencyResult.setInitialversion(initialversion);
+      final InitialCommit initialversion = createInitialVersion();
+      dependencyResult.setInitialcommit(initialversion);
 
       if (dependencyResult.getVersions().size() > 0) {
          for (final Map.Entry<String, VersionStaticSelection> version : dependencyResult.getVersions().entrySet()) {
@@ -115,7 +115,7 @@ public class InitialCommitReader {
    }
 
    private void fillInitialTestDependencies() {
-      for (final Entry<TestCase, InitialCallList> dependency : dependencyResult.getInitialversion().getInitialDependencies().entrySet()) {
+      for (final Entry<TestCase, InitialCallList> dependency : dependencyResult.getInitialcommit().getInitialDependencies().entrySet()) {
          for (final ChangedEntity dependentClass : dependency.getValue().getEntities()) {
             TestCase testClassName = dependency.getKey();
             addDependencies(testClassName, dependentClass);

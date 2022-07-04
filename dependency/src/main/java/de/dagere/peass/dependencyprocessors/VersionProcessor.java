@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.dependency.persistence.InitialVersion;
+import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
@@ -83,7 +83,7 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    public void processCommandline() {
       LOG.debug("Processing initial");
-      processInitialVersion(staticTestSelection.getInitialversion());
+      processInitialVersion(staticTestSelection.getInitialcommit());
 
       if (threads != 1) {
          throw new RuntimeException("Parallel processing is not possible or implemented; do not set threads!");
@@ -96,7 +96,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       postEvaluate();
    }
 
-   protected void processInitialVersion(final InitialVersion version) {
+   protected void processInitialVersion(final InitialCommit version) {
 
    }
 

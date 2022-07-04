@@ -37,8 +37,8 @@ public class TestInitialVersionReader {
       Mockito.when(testExecutorMock.getJDKVersion()).thenReturn(11);
 
       StaticTestSelection dependencyResult = new StaticTestSelection();
-      dependencyResult.getInitialversion().setCommit(VERSION1);
-      dependencyResult.getInitialversion().addDependency(TESTCASE, new ChangedEntity("de.dagere.peass.MyCallee#method"));
+      dependencyResult.getInitialcommit().setCommit(VERSION1);
+      dependencyResult.getInitialcommit().addDependency(TESTCASE, new ChangedEntity("de.dagere.peass.MyCallee#method"));
 
       VersionStaticSelection staticSelection = new VersionStaticSelection();
       staticSelection.getChangedClazzes().put(new ChangedEntity("de.dagere.peass.MyCallee#method"), new TestSet(TESTCASE));

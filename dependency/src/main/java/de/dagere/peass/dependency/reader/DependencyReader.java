@@ -295,7 +295,7 @@ public class DependencyReader {
    }
 
    private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, ViewNotFoundException, InterruptedException {
-      TestSet initialTests = dependencyResult.getInitialversion().getInitialTests();
+      TestSet initialTests = dependencyResult.getInitialcommit().getInitialTests();
       TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), traceFileMapping, kiekerConfig, testSelectionConfig);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
 
@@ -309,7 +309,7 @@ public class DependencyReader {
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       
       dependencyResult.setVersions(initialdependencies.getVersions());
-      dependencyResult.setInitialversion(initialdependencies.getInitialversion());
+      dependencyResult.setInitialcommit(initialdependencies.getInitialcommit());
 
       InitialCommitReader initialVersionReader = new InitialCommitReader(initialdependencies, dependencyManager, iterator);
       initialVersionReader.readCompletedVersions(comparator);

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.InitialCallList;
-import de.dagere.peass.dependency.persistence.InitialVersion;
+import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 
 /**
@@ -26,7 +26,7 @@ public abstract class PairProcessor extends VersionProcessor{
 	}
 
 	@Override
-	public void processInitialVersion(final InitialVersion versioninfo) {
+	public void processInitialVersion(final InitialCommit versioninfo) {
 		for (final Map.Entry<TestCase, InitialCallList> initDependency : versioninfo.getInitialDependencies().entrySet()) {
          final TestCase testcase = initDependency.getKey();
 			lastTestcaseCalls.put(testcase, versioninfo.getCommit());

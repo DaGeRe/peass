@@ -91,7 +91,7 @@ public class DependencyDetectorIncludesTest {
    private void checkInitialDependency(final DependencyReader reader, final String notIncludedMethod) {
       System.out.println(reader.getDependencies());
       
-      Map<TestCase, InitialCallList> initialDependencies = reader.getDependencies().getInitialversion().getInitialDependencies();
+      Map<TestCase, InitialCallList> initialDependencies = reader.getDependencies().getInitialcommit().getInitialDependencies();
       TestCase removeMeEntity = new TestCase("defaultpackage.TestMe", notIncludedMethod, "");
       System.out.println(initialDependencies.get(removeMeEntity));
       Assert.assertNull(initialDependencies.get(removeMeEntity));

@@ -17,7 +17,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
 import de.dagere.peass.utils.Constants;
 
-public class InitialVersion {
+public class InitialCommit {
 
    private String commit;
 

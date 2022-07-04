@@ -25,7 +25,7 @@ import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.parallel.OneReader;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
-import de.dagere.peass.dependency.persistence.InitialVersion;
+import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
@@ -57,8 +57,8 @@ public class TestCommitSplitting {
       @Override
       public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException {
          dependencyManager = new DependencyManager(folders, new ExecutionConfig(60), new KiekerConfig(true), new EnvironmentVariables());
-         dependencyResult.setInitialversion(new InitialVersion());
-         dependencyResult.getInitialversion().setCommit(iterator.getTag());
+         dependencyResult.setInitialcommit(new InitialCommit());
+         dependencyResult.getInitialcommit().setCommit(iterator.getTag());
          return true;
       }
 

@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.TestSelectionConfig;
-import de.dagere.peass.dependency.persistence.InitialVersion;
+import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -28,7 +28,7 @@ public class TestContinuousDependencyReader {
       ResultsFolders resultsFolders = new ResultsFolders(new File("target/current_results"), "current");
       
       StaticTestSelection value = new StaticTestSelection();
-      value.setInitialversion(new InitialVersion());
+      value.setInitialcommit(new InitialCommit());
       value.getVersions().put("A", new VersionStaticSelection());
       Constants.OBJECTMAPPER.writeValue(resultsFolders.getStaticTestSelectionFile(), value);
       

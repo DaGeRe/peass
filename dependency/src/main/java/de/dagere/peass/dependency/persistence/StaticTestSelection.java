@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -13,7 +14,12 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 public class StaticTestSelection extends SelectedTests {
 
    private String testGoal;
-   private InitialVersion initialversion = new InitialVersion();
+   private InitialCommit initialcommit = new InitialCommit();
+   
+   @JsonInclude(value = JsonInclude.Include.NON_NULL)
+   private InitialCommit initialversion = null;
+   
+   
    private Map<String, VersionStaticSelection> versions = new LinkedHashMap<>();
 
    public StaticTestSelection() {
@@ -24,7 +30,7 @@ public class StaticTestSelection extends SelectedTests {
       setUrl(executiondata.getUrl());
       // ExecutionData contain an empty first analyzed version; therefore, the initialversion of the dependencies is this first version
       String first = executiondata.getVersions().keySet().iterator().next();
-      initialversion.setCommit(first);
+      initialcommit.setCommit(first);
       for (Map.Entry<String, TestSet> version : executiondata.getVersions().entrySet()) {
          if (!version.getKey().equals(first)) {
             VersionStaticSelection versionDependencies = new VersionStaticSelection();
@@ -33,7 +39,7 @@ public class StaticTestSelection extends SelectedTests {
             String versionHash = version.getKey();
             versions.put(versionHash, versionDependencies);
             for (TestCase test : version.getValue().getTests()) {
-               initialversion.addDependency(test, new ChangedEntity(test.getClazz(), ""));
+               initialcommit.addDependency(test, new ChangedEntity(test.getClazz(), ""));
             }
          }
       }
@@ -46,13 +52,28 @@ public class StaticTestSelection extends SelectedTests {
    public String getTestGoal() {
       return testGoal;
    }
-
-   public InitialVersion getInitialversion() {
+   
+   // These getters/setters are only present for old data deserialization
+   @Deprecated
+   public InitialCommit getInitialversion() {
       return initialversion;
    }
 
-   public void setInitialversion(final InitialVersion initialversion) {
+   @Deprecated
+   public void setInitialversion(final InitialCommit initialversion) {
       this.initialversion = initialversion;
+   }
+
+   public InitialCommit getInitialcommit() {
+      // This hack asures that data with the old name initialversion are copied to initialcommit; it will obviusly not work if getInitialcommit is not called 
+      if (initialversion != null) {
+         initialcommit = initialversion;
+      }
+      return initialcommit;
+   }
+
+   public void setInitialcommit(final InitialCommit initialversion) {
+      this.initialcommit = initialversion;
    }
 
    public Map<String, VersionStaticSelection> getVersions() {
@@ -67,7 +88,7 @@ public class StaticTestSelection extends SelectedTests {
    public String[] getVersionNames() {
       final String[] versionNames = versions.keySet().toArray(new String[0]);
       String[] withStartversion = new String[versionNames.length + 1];
-      withStartversion[0] = initialversion.getCommit();
+      withStartversion[0] = initialcommit.getCommit();
       System.arraycopy(versionNames, 0, withStartversion, 1, versionNames.length);
       return withStartversion;
    }
@@ -77,8 +98,8 @@ public class StaticTestSelection extends SelectedTests {
       final String[] versions = getVersionNames();
       if (versions.length > 0) {
          return versions[versions.length - 1];
-      } else if (initialversion != null) {
-         return initialversion.getCommit();
+      } else if (initialcommit != null) {
+         return initialcommit.getCommit();
       } else {
          return null;
       }
@@ -92,7 +113,7 @@ public class StaticTestSelection extends SelectedTests {
             .toArray(String[]::new);
 
       String[] withStartversion = new String[versionNames.length + 1];
-      withStartversion[0] = initialversion.getCommit();
+      withStartversion[0] = initialcommit.getCommit();
       System.arraycopy(versionNames, 0, withStartversion, 1, versionNames.length);
       return withStartversion;
    }
@@ -102,8 +123,8 @@ public class StaticTestSelection extends SelectedTests {
       final String[] versions = getRunningVersionNames();
       if (versions.length > 0) {
          return versions[versions.length - 1];
-      } else if (initialversion != null) {
-         return initialversion.getCommit();
+      } else if (initialcommit != null) {
+         return initialcommit.getCommit();
       } else {
          return null;
       }

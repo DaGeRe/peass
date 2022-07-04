@@ -116,8 +116,8 @@ public class DependencyDetectorMultimoduleIT {
    }
    
    private void checkInitialVersion(final StaticTestSelection dependencies) {
-      LOG.debug(dependencies.getInitialversion().getInitialDependencies());
-      final InitialCallList dependency = dependencies.getInitialversion().getInitialDependencies()
+      LOG.debug(dependencies.getInitialcommit().getInitialDependencies());
+      final InitialCallList dependency = dependencies.getInitialcommit().getInitialDependencies()
             .get(new TestCase("de.AnotherTest", "testMeAlso", "using-module"));
       LOG.debug(dependency.getEntities());
       MatcherAssert.assertThat(dependency.getEntities(), IsIterableContaining.hasItem(new ChangedEntity("de.dagere.base.BaseChangeable", "base-module", "doSomething")));

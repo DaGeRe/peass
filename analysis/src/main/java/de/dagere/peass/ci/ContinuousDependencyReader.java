@@ -85,7 +85,7 @@ public class ContinuousDependencyReader {
 
          // final Set<TestCase> tests = selectIncludedTests(dependencies);
          NonIncludedTestRemover.removeNotIncluded(tests, measurementConfig.getExecutionConfig());
-      } else if (!dependencies.getInitialversion().isRunning()) {
+      } else if (!dependencies.getInitialcommit().isRunning()) {
          tests = new HashSet<>();
          result = new RTSResult(tests, false);
          LOG.info("No test executed - predecessor test is not running.");
@@ -241,8 +241,8 @@ public class ContinuousDependencyReader {
    private void createFailedSelection(final VersionIterator iterator) throws IOException, StreamWriteException, DatabindException {
       LOG.debug("Predecessor version is not running, skipping execution");
       StaticTestSelection initialVersionFailed = new StaticTestSelection();
-      initialVersionFailed.getInitialversion().setCommit(iterator.getTag());
-      initialVersionFailed.getInitialversion().setRunning(false);
+      initialVersionFailed.getInitialcommit().setCommit(iterator.getTag());
+      initialVersionFailed.getInitialcommit().setRunning(false);
       Constants.OBJECTMAPPER.writeValue(resultsFolders.getStaticTestSelectionFile(), initialVersionFailed);
    }
 }

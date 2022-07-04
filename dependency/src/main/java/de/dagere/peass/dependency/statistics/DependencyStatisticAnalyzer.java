@@ -81,9 +81,9 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependenciesFile, StaticTestSelection.class);
       final Map<String, VersionStaticSelection> versions = dependencies.getVersions();
 
-      final int startTestCound = dependencies.getInitialversion().getInitialDependencies().size();
+      final int startTestCound = dependencies.getInitialcommit().getInitialDependencies().size();
       final List<TestCase> currentContainedTests = new LinkedList<>();
-      for (final TestCase dependency : dependencies.getInitialversion().getInitialDependencies().keySet()) {
+      for (final TestCase dependency : dependencies.getInitialcommit().getInitialDependencies().keySet()) {
          currentContainedTests.add(dependency);
       }
 

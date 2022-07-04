@@ -103,7 +103,7 @@ public class TestContinuousExecutor {
          public RTSResult answer(InvocationOnMock invocation) throws Throwable {
             File staticTestSelectionFile = new File(fullPeassFolder, "staticTestSelection_current.json");
             StaticTestSelection staticSelection = new StaticTestSelection();
-            staticSelection.getInitialversion().setCommit("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f");
+            staticSelection.getInitialcommit().setCommit("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f");
             staticSelection.getVersions().put(NEWER_VERSION, new VersionStaticSelection());
             Constants.OBJECTMAPPER.writeValue(staticTestSelectionFile, staticSelection);
             return mockedResult;
