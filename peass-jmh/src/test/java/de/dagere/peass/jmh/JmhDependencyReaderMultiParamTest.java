@@ -69,7 +69,7 @@ public class JmhDependencyReaderMultiParamTest {
 
          DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
                "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new KiekerConfig(true), new EnvironmentVariables());
-         reader.readInitialVersion();
+         reader.readInitialCommit();
 
          checkInitialVersion(resultsFolders);
 

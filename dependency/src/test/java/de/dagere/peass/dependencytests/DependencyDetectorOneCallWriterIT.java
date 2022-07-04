@@ -62,7 +62,7 @@ public class DependencyDetectorOneCallWriterIT {
          kiekerConfig.setUseSourceInstrumentation(false);
          final DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(DependencyTestConstants.CURRENT),
                resultsFolders, null, fakeIterator, changeManager, config, kiekerConfig, new EnvironmentVariables());
-         boolean success = reader.readInitialVersion();
+         boolean success = reader.readInitialCommit();
          Assert.assertTrue(success);
          fakeIterator.goToNextCommit();
 

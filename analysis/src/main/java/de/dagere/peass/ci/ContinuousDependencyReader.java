@@ -162,7 +162,7 @@ public class ContinuousDependencyReader {
             new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
       newIterator.goTo0thCommit();
 
-      reader.readCompletedVersions(dependencies, comparator);
+      reader.readCompletedCommits(dependencies, comparator);
 
       try {
          ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
@@ -203,7 +203,7 @@ public class ContinuousDependencyReader {
          throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException, ParseException, ViewNotFoundException {
       final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, kiekerConfig, env);
       iterator.goToPreviousCommit();
-      if (!reader.readInitialVersion()) {
+      if (!reader.readInitialCommit()) {
          LOG.error("Analyzing first version did not yield results");
       } else {
          reader.readDependencies();

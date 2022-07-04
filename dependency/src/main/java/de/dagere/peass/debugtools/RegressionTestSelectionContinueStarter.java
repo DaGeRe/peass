@@ -104,7 +104,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
 
       ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), config.getProjectFolder().getName() + "_out");
       final DependencyReader reader = createReader(config, resultsFolders, dependencies, previousVersion, timeout, vcs);
-      reader.readCompletedVersions(dependencies, comparator);
+      reader.readCompletedCommits(dependencies, comparator);
       reader.readDependencies();
 
       return null;

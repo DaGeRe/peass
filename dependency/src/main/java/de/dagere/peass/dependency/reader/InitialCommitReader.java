@@ -45,7 +45,7 @@ public class InitialCommitReader {
       dependencyMap = dependencyManager.getDependencyMap();
    }
    
-   public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
+   public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException {
       if (!dependencyManager.initialyGetTraces(iterator.getTag())) {
          return false;
       }

@@ -45,7 +45,7 @@ public class DependencyViewGeneratorTest {
 
          DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
                "", iteratorspied, new VersionKeeper(new File("/dev/null")), new ExecutionConfig(), new KiekerConfig(true), new EnvironmentVariables());
-         reader.readInitialVersion();
+         reader.readInitialCommit();
          try {
             reader.readDependencies();
          } catch (Throwable t) {

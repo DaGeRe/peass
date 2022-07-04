@@ -113,7 +113,7 @@ public class DependencyDetectorTestUtil {
       try {
          final DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(DependencyTestConstants.CURRENT),
                resultsFolders, null, fakeIterator, changeManager, config, new KiekerConfig(true), new EnvironmentVariables());
-         boolean success = reader.readInitialVersion();
+         boolean success = reader.readInitialCommit();
          Assert.assertTrue(success);
          fakeIterator.goToNextCommit();
 

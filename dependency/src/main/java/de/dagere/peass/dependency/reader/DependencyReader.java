@@ -275,12 +275,12 @@ public class DependencyReader {
       dependencyResult.getVersions().put(version, newVersionInfo);
    }
 
-   public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       InitialCommitReader initialVersionReader = new InitialCommitReader(dependencyResult, dependencyManager, iterator);
-      if (initialVersionReader.readInitialVersion()) {
+      if (initialVersionReader.readInitialCommit()) {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
          lastRunningVersion = iterator.getTag();
 
@@ -303,7 +303,7 @@ public class DependencyReader {
       coverageBasedSelection.getVersions().put(iterator.getTag(), new TestSet());
    }
 
-   public void readCompletedVersions(final StaticTestSelection initialdependencies, CommitComparatorInstance comparator) {
+   public void readCompletedCommits(final StaticTestSelection initialdependencies, CommitComparatorInstance comparator) {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);

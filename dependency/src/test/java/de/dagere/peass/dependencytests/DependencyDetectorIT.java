@@ -139,7 +139,7 @@ public class DependencyDetectorIT {
 
       final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT),
             DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
-      final boolean success = reader.readInitialVersion();
+      final boolean success = reader.readInitialCommit();
       Assert.assertTrue(success);
 
       final StaticTestSelection dependencies = reader.getDependencies();

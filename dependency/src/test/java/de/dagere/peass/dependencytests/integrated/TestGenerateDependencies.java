@@ -44,7 +44,7 @@ public class TestGenerateDependencies {
       ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
       final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
 
-      final boolean success = reader.readInitialVersion();
+      final boolean success = reader.readInitialCommit();
       Assert.assertTrue(success);
 
       iterator.goToNextCommit();
