@@ -42,4 +42,20 @@ public class TestKiekerDataTransformation {
       Assert.assertEquals(10, collectors.get(0).getResults().get(0).getFulldata().getValues().size());
       Assert.assertEquals(1656326191802823160L, collectors.get(0).getResults().get(0).getDate());
    }
+   
+   @Test
+   public void testEmptyTransformation() {
+      PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
+      try {
+         FileUtils.cleanDirectory(folders.getTempMeasurementFolder());
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+      
+      DirectKiekerMeasurementTransformer transformer = new DirectKiekerMeasurementTransformer(folders);
+      TestCase test = new TestCase("defaultpackage.TestMe#testMe");
+      
+      // Failed tests should not yield an exception, therefore this is checked here
+      transformer.transform(test);
+   }
 }
