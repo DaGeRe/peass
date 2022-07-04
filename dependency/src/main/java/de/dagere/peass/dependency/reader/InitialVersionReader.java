@@ -53,7 +53,7 @@ public class InitialVersionReader {
    private InitialVersion createInitialVersion() {
       int jdkversion = dependencyManager.getExecutor().getJDKVersion();
       final InitialVersion initialversion = new InitialVersion();
-      initialversion.setVersion(iterator.getTag());
+      initialversion.setCommit(iterator.getTag());
       initialversion.setJdk(jdkversion);
       LOG.debug("Starting writing: {}", dependencyMap.getDependencyMap().size());
       for (final Entry<TestCase, CalledMethods> dependencyEntry : dependencyMap.getDependencyMap().entrySet()) {

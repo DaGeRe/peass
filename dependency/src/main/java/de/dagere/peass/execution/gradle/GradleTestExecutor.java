@@ -161,7 +161,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public boolean isVersionRunning(final String version) {
+   public boolean isCommitRunning(final String version) {
       boolean isRunning = false;
       if (doesBuildfileExist()) {
          boolean isAndroid = false;

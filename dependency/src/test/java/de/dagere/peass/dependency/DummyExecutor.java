@@ -32,7 +32,7 @@ public class DummyExecutor extends TestExecutor{
    }
 
    @Override
-   public boolean isVersionRunning(final String version) {
+   public boolean isCommitRunning(final String version) {
       // TODO Auto-generated method stub
       return false;
    }

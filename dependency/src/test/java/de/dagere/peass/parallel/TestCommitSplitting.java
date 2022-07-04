@@ -38,7 +38,7 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.VersionIterator;
 
-public class TestVersionSplitting {
+public class TestCommitSplitting {
 
    @BeforeEach
    public void before() throws IOException {
@@ -58,7 +58,7 @@ public class TestVersionSplitting {
       public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
          dependencyManager = new DependencyManager(folders, new ExecutionConfig(60), new KiekerConfig(true), new EnvironmentVariables());
          dependencyResult.setInitialversion(new InitialVersion());
-         dependencyResult.getInitialversion().setVersion(iterator.getTag());
+         dependencyResult.getInitialversion().setCommit(iterator.getTag());
          return true;
       }
 

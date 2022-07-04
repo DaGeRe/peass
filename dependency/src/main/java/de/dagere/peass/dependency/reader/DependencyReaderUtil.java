@@ -168,7 +168,7 @@ public class DependencyReaderUtil {
    public static StaticTestSelection mergeDependencies(final StaticTestSelection deps1, final StaticTestSelection deps2, CommitComparatorInstance comparator) {
       final StaticTestSelection merged;
       final StaticTestSelection newer;
-      if (comparator.isBefore(deps1.getInitialversion().getVersion(), deps2.getInitialversion().getVersion())) {
+      if (comparator.isBefore(deps1.getInitialversion().getCommit(), deps2.getInitialversion().getCommit())) {
          merged = deps1;
          newer = deps2;
       } else {

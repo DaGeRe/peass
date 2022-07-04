@@ -65,8 +65,8 @@ public class PartialDependenciesMerger {
       deps.sort(new Comparator<StaticTestSelection>() {
          @Override
          public int compare(final StaticTestSelection o1, final StaticTestSelection o2) {
-            final int indexOf = comparator.getVersionIndex(o1.getInitialversion().getVersion());
-            final int indexOf2 = comparator.getVersionIndex(o2.getInitialversion().getVersion());
+            final int indexOf = comparator.getVersionIndex(o1.getInitialversion().getCommit());
+            final int indexOf2 = comparator.getVersionIndex(o2.getInitialversion().getCommit());
             return indexOf - indexOf2;
          }
       });

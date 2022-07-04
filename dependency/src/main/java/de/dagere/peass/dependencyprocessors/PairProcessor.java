@@ -29,7 +29,7 @@ public abstract class PairProcessor extends VersionProcessor{
 	public void processInitialVersion(final InitialVersion versioninfo) {
 		for (final Map.Entry<TestCase, InitialCallList> initDependency : versioninfo.getInitialDependencies().entrySet()) {
          final TestCase testcase = initDependency.getKey();
-			lastTestcaseCalls.put(testcase, versioninfo.getVersion());
+			lastTestcaseCalls.put(testcase, versioninfo.getCommit());
 		}
 	}
 }

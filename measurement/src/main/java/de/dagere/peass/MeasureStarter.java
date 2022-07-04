@@ -65,7 +65,7 @@ public class MeasureStarter extends PairProcessor {
          test = null;
       }
 
-      versions.add(staticTestSelection.getInitialversion().getVersion());
+      versions.add(staticTestSelection.getInitialversion().getCommit());
 
       staticTestSelection.getVersions().keySet().forEach(version -> versions.add(version));
 

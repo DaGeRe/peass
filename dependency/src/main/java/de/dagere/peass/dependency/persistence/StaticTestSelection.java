@@ -24,7 +24,7 @@ public class StaticTestSelection extends SelectedTests {
       setUrl(executiondata.getUrl());
       // ExecutionData contain an empty first analyzed version; therefore, the initialversion of the dependencies is this first version
       String first = executiondata.getVersions().keySet().iterator().next();
-      initialversion.setVersion(first);
+      initialversion.setCommit(first);
       for (Map.Entry<String, TestSet> version : executiondata.getVersions().entrySet()) {
          if (!version.getKey().equals(first)) {
             VersionStaticSelection versionDependencies = new VersionStaticSelection();
@@ -67,7 +67,7 @@ public class StaticTestSelection extends SelectedTests {
    public String[] getVersionNames() {
       final String[] versionNames = versions.keySet().toArray(new String[0]);
       String[] withStartversion = new String[versionNames.length + 1];
-      withStartversion[0] = initialversion.getVersion();
+      withStartversion[0] = initialversion.getCommit();
       System.arraycopy(versionNames, 0, withStartversion, 1, versionNames.length);
       return withStartversion;
    }
@@ -78,7 +78,7 @@ public class StaticTestSelection extends SelectedTests {
       if (versions.length > 0) {
          return versions[versions.length - 1];
       } else if (initialversion != null) {
-         return initialversion.getVersion();
+         return initialversion.getCommit();
       } else {
          return null;
       }
@@ -92,7 +92,7 @@ public class StaticTestSelection extends SelectedTests {
             .toArray(String[]::new);
 
       String[] withStartversion = new String[versionNames.length + 1];
-      withStartversion[0] = initialversion.getVersion();
+      withStartversion[0] = initialversion.getCommit();
       System.arraycopy(versionNames, 0, withStartversion, 1, versionNames.length);
       return withStartversion;
    }
@@ -103,7 +103,7 @@ public class StaticTestSelection extends SelectedTests {
       if (versions.length > 0) {
          return versions[versions.length - 1];
       } else if (initialversion != null) {
-         return initialversion.getVersion();
+         return initialversion.getCommit();
       } else {
          return null;
       }

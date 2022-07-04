@@ -31,7 +31,7 @@ public class ExecutionData extends SelectedTests {
    
    public ExecutionData(final StaticTestSelection dependencies) {
       setUrl(dependencies.getUrl());
-      versions.put(dependencies.getInitialversion().getVersion(), new TestSet());
+      versions.put(dependencies.getInitialversion().getCommit(), new TestSet());
       for (Map.Entry<String, VersionStaticSelection> version : dependencies.getVersions().entrySet()) {
          TestSet tests = version.getValue().getTests();
          versions.put(version.getKey(), tests);

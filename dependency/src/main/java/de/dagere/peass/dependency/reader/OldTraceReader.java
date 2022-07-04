@@ -49,7 +49,7 @@ public class OldTraceReader {
    private void addInitialVersion() {
       for (Entry<TestCase, InitialCallList> classDependency : dependencyResult.getInitialversion().getInitialDependencies().entrySet()) {
          TestCase testcase = classDependency.getKey();
-         String initialVersion = dependencyResult.getInitialversion().getVersion();
+         String initialVersion = dependencyResult.getInitialversion().getCommit();
          addPotentialTracefile(testcase, initialVersion);
       }
    }

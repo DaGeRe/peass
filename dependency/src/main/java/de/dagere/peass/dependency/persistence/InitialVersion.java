@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -14,18 +15,44 @@ import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserial
 
 public class InitialVersion {
    
+   private String commit;
+   
+   // To asure compatibility to old versions, this field still needs to stay here; but in all future serializations, it should be replaced by commit
+   @Deprecated
+   @JsonInclude(value = JsonInclude.Include.NON_NULL)
    private String version;
+   
+   
    private int jdk = 8;
+   private boolean running = true;
 
    @JsonDeserialize(keyUsing = TestcaseKeyDeserializer.class)
    private Map<TestCase, InitialCallList> initialDependencies = new TreeMap<>();
 
+   public String getCommit() {
+      return commit;
+   }
+   
+   public void setCommit(String commit) {
+      this.commit = commit;
+   }
+   
    public String getVersion() {
       return version;
    }
 
    public void setVersion(final String version) {
-      this.version = version;
+      this.version = null;
+      this.commit = version;
+   }
+   
+   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+   public boolean isRunning() {
+      return running;
+   }
+   
+   public void setRunning(boolean running) {
+      this.running = running;
    }
 
    public Map<TestCase, InitialCallList> getInitialDependencies() {

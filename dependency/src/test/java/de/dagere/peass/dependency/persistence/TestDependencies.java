@@ -10,7 +10,7 @@ public class TestDependencies {
       StaticTestSelection dependencies = new StaticTestSelection();
       
       dependencies.setInitialversion(new InitialVersion());
-      dependencies.getInitialversion().setVersion("0");
+      dependencies.getInitialversion().setCommit("0");
       dependencies.getVersions().put("1", new VersionStaticSelection());
       dependencies.getVersions().put("2", new VersionStaticSelection());
       dependencies.getVersions().put("3", new VersionStaticSelection());
@@ -30,7 +30,7 @@ public class TestDependencies {
       StaticTestSelection dependencies = new StaticTestSelection();
       
       dependencies.setInitialversion(new InitialVersion());
-      dependencies.getInitialversion().setVersion("0");
+      dependencies.getInitialversion().setCommit("0");
       
       String[] versionNames = dependencies.getVersionNames();
       
@@ -43,7 +43,7 @@ public class TestDependencies {
       StaticTestSelection dependencies = new StaticTestSelection();
       
       dependencies.setInitialversion(new InitialVersion());
-      dependencies.getInitialversion().setVersion("0");
+      dependencies.getInitialversion().setCommit("0");
       VersionStaticSelection running1 = new VersionStaticSelection();
       running1.setRunning(true);
       dependencies.getVersions().put("1", running1);

@@ -53,7 +53,7 @@ public class FirstRunningVersionFinder {
    private boolean tryCommit(final VersionIterator iterator, final TestTransformer testTransformer) {
       boolean isVersionRunning;
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
-      isVersionRunning = executor.isVersionRunning(iterator.getTag());
+      isVersionRunning = executor.isCommitRunning(iterator.getTag());
 
       if (!isVersionRunning) {
          LOG.debug("Buildfile does not exist / version is not running {}", iterator.getTag());

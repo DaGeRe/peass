@@ -20,12 +20,12 @@ public class TestMerging {
 
       StaticTestSelection deps1 = new StaticTestSelection(), deps2 = new StaticTestSelection();
       deps1.setInitialversion(new InitialVersion());
-      deps1.getInitialversion().setVersion("0");
+      deps1.getInitialversion().setCommit("0");
       for (String commit : comparator.getCommits().subList(1, 6)) {
          deps1.getVersions().put(commit, null);
       }
       deps2.setInitialversion(new InitialVersion());
-      deps2.getInitialversion().setVersion("5");
+      deps2.getInitialversion().setCommit("5");
       for (String commit : comparator.getCommits().subList(5, 10)) {
          deps2.getVersions().put(commit, null);
       }
@@ -39,12 +39,12 @@ public class TestMerging {
 
       StaticTestSelection deps1 = new StaticTestSelection(), deps2 = new StaticTestSelection();
       deps1.setInitialversion(new InitialVersion());
-      deps1.getInitialversion().setVersion("0");
+      deps1.getInitialversion().setCommit("0");
       for (String commit : comparator.getCommits().subList(1, 8)) {
          deps1.getVersions().put(commit, null);
       }
       deps2.setInitialversion(new InitialVersion());
-      deps2.getInitialversion().setVersion("7");
+      deps2.getInitialversion().setCommit("7");
       for (String commit : comparator.getCommits().subList(8, 10)) {
          deps2.getVersions().put(commit, null);
       }
@@ -66,12 +66,12 @@ public class TestMerging {
       
       StaticTestSelection deps1 = new StaticTestSelection(), deps2 = new StaticTestSelection();
       deps1.setInitialversion(new InitialVersion());
-      deps1.getInitialversion().setVersion("A");
+      deps1.getInitialversion().setCommit("A");
       deps1.getVersions().put("C", null);
       deps1.getVersions().put("B", null);
       deps1.getVersions().put("G", null);
       deps2.setInitialversion(new InitialVersion());
-      deps2.getInitialversion().setVersion("G");
+      deps2.getInitialversion().setCommit("G");
       deps2.getVersions().put("E", null);
       deps2.getVersions().put("F", null);
       StaticTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2, comparator);

@@ -140,7 +140,7 @@ public abstract class TestExecutor {
     */
    public abstract boolean doesBuildfileExist();
 
-   public abstract boolean isVersionRunning(String version);
+   public abstract boolean isCommitRunning(String version);
 
    /**
     * Deletes temporary files, in order to not get memory problems
