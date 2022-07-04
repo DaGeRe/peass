@@ -27,9 +27,9 @@ public class TreeReader extends KiekerResultManager {
    
    TreeReader(final PeassFolders folders, final MeasurementConfig config, final EnvironmentVariables env) throws InterruptedException, IOException {
       super(folders, config.getExecutionConfig(), config.getKiekerConfig(), env);
-      fakeConfig.getKiekerConfig().setUseKieker(true);
-      fakeConfig.getKiekerConfig().setUseAggregation(false);
-      fakeConfig.getKiekerConfig().setRecord(AllowedKiekerRecord.OPERATIONEXECUTION);
+      testTransformer.getConfig().getKiekerConfig().setUseKieker(true);
+      testTransformer.getConfig().getKiekerConfig().setUseAggregation(false);
+      testTransformer.getConfig().getKiekerConfig().setRecord(AllowedKiekerRecord.OPERATIONEXECUTION);
       this.realConfig = config;
    }
 

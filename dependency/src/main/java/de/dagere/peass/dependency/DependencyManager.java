@@ -248,10 +248,10 @@ public class DependencyManager extends KiekerResultManager {
 
       if (forbiddenMethodCalled(allCalledClasses)) {
          testExcluded = true;
-         fakeConfig.getExecutionConfig().getExcludes().add(testcase.getExecutable());
+         testTransformer.getConfig().getExecutionConfig().getExcludes().add(testcase.getExecutable());
       }
       
-      if (getTraceSize(kiekerResultFolders) > fakeConfig.getKiekerConfig().getTraceSizeInMb()) {
+      if (getTraceSize(kiekerResultFolders) > testTransformer.getConfig().getKiekerConfig().getTraceSizeInMb()) {
          testExcluded = true;
       }
 
@@ -261,7 +261,7 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private boolean forbiddenMethodCalled(final Map<ChangedEntity, Set<String>> allCalledClasses) {
-      List<String> forbiddenMethods = fakeConfig.getExecutionConfig().getForbiddenMethods();
+      List<String> forbiddenMethods = testTransformer.getConfig().getExecutionConfig().getForbiddenMethods();
 
       for (String forbiddenMethod : forbiddenMethods) {
          if (traceContainsMethod(allCalledClasses, forbiddenMethod)) {
@@ -305,7 +305,7 @@ public class DependencyManager extends KiekerResultManager {
       for (File kiekerResultFolder : kiekerResultFolders) {
          LOG.debug("Reading Kieker folder: {}", kiekerResultFolder.getAbsolutePath());
          
-         CalledMethodLoader calledMethodLoader = new CalledMethodLoader(kiekerResultFolder, mapping, fakeConfig.getKiekerConfig());
+         CalledMethodLoader calledMethodLoader = new CalledMethodLoader(kiekerResultFolder, mapping, testTransformer.getConfig().getKiekerConfig());
          final Map<ChangedEntity, Set<String>> calledMethods = calledMethodLoader.getCalledMethods();
          for (Map.Entry<ChangedEntity, Set<String>> calledMethod : calledMethods.entrySet()) {
             if (!allCalledClasses.containsKey(calledMethod.getKey())) {

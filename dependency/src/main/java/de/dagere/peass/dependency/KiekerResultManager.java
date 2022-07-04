@@ -53,23 +53,10 @@ public class KiekerResultManager {
    protected final TestExecutor executor;
    protected final PeassFolders folders;
    protected final TestTransformer testTransformer;
-   protected final MeasurementConfig fakeConfig;
 
    public KiekerResultManager(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.folders = folders;
-      ExecutionConfig fakeExecutionConfig = new ExecutionConfig(executionConfig);
-      KiekerConfig fakeKiekerConfig = new KiekerConfig(kiekerConfig);
-      fakeConfig = new MeasurementConfig(1, fakeExecutionConfig, fakeKiekerConfig);
-      fakeConfig.setIterations(1);
-      fakeConfig.setWarmup(0);
-      // Structure discovery runs never need adaptive monitoring
-      fakeConfig.getKiekerConfig().setEnableAdaptiveMonitoring(false);
-      fakeConfig.getKiekerConfig().setUseAggregation(false);
-      fakeConfig.getExecutionConfig().setRedirectToNull(false);
-      fakeConfig.getKiekerConfig().setRecord(AllowedKiekerRecord.OPERATIONEXECUTION);
-      fakeConfig.setShowStart(true);
-
-      testTransformer = ExecutorCreator.createTestTransformer(folders, executionConfig, fakeConfig);
+      this.testTransformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, kiekerConfig);
 
       // testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
       executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
@@ -79,7 +66,6 @@ public class KiekerResultManager {
       this.executor = executor;
       this.folders = folders;
       this.testTransformer = executor.getTestTransformer();
-      fakeConfig = testTransformer.getConfig();
    }
 
    public TestTransformer getTestTransformer() {

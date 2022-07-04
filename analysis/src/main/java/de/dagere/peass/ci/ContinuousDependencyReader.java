@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
@@ -19,6 +21,8 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
+import de.dagere.peass.dependency.ExecutorCreator;
+import de.dagere.peass.dependency.RTSTestTransformerBuilder;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -31,8 +35,10 @@ import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
+import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
+import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.VersionIterator;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
@@ -79,10 +85,14 @@ public class ContinuousDependencyReader {
 
          // final Set<TestCase> tests = selectIncludedTests(dependencies);
          NonIncludedTestRemover.removeNotIncluded(tests, measurementConfig.getExecutionConfig());
+      } else if (!dependencies.getInitialversion().isRunning()) {
+         tests = new HashSet<>();
+         result = new RTSResult(tests, false);
+         LOG.info("No test executed - predecessor test is not running.");
       } else {
          tests = new HashSet<>();
          result = new RTSResult(tests, true);
-         LOG.info("No test executed - version did not contain changed tests.");
+         LOG.info("No test executed - commit did not contain changed tests.");
       }
       return result;
    }
@@ -107,6 +117,7 @@ public class ContinuousDependencyReader {
 
    /**
     * Fetches the test set from the current version; it is required to allow null, in case a compile error occured
+    * 
     * @param version
     * @param executionData
     * @return
@@ -122,7 +133,8 @@ public class ContinuousDependencyReader {
       try {
          StaticTestSelection dependencies;
 
-         final VersionKeeper noChanges = new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
+         final VersionKeeper noChanges = new VersionKeeper(
+               new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
 
          if (!resultsFolders.getStaticTestSelectionFile().exists()) {
             LOG.debug("Fully loading dependencies");
@@ -131,7 +143,7 @@ public class ContinuousDependencyReader {
             LOG.debug("Partially loading dependencies");
             dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
             CommitComparatorInstance comparator = new CommitComparatorInstance(dependencies);
-            
+
             if (iterator != null) {
                executePartialRTS(dependencies, iterator, comparator);
             }
@@ -203,12 +215,34 @@ public class ContinuousDependencyReader {
          throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException, ParseException, ViewNotFoundException {
       final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, kiekerConfig, env);
       iterator.goToPreviousCommit();
-      if (!reader.readInitialCommit()) {
-         LOG.error("Analyzing first version did not yield results");
+
+      boolean isVersionRunning = checkCommitRunning(iterator);
+      if (!isVersionRunning) {
+         createFailedSelection(iterator);
       } else {
-         reader.readDependencies();
+         if (!reader.readInitialCommit()) {
+            LOG.error("Analyzing first version did not yield results");
+         } else {
+            reader.readDependencies();
+         }
       }
+
       StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       return dependencies;
+   }
+
+   private boolean checkCommitRunning(VersionIterator iterator) {
+      TestTransformer temporaryTransformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, kiekerConfig);
+      TestExecutor executor = ExecutorCreator.createExecutor(folders, temporaryTransformer, env);
+      boolean isVersionRunning = executor.isCommitRunning(iterator.getTag());
+      return isVersionRunning;
+   }
+
+   private void createFailedSelection(final VersionIterator iterator) throws IOException, StreamWriteException, DatabindException {
+      LOG.debug("Predecessor version is not running, skipping execution");
+      StaticTestSelection initialVersionFailed = new StaticTestSelection();
+      initialVersionFailed.getInitialversion().setCommit(iterator.getTag());
+      initialVersionFailed.getInitialversion().setRunning(false);
+      Constants.OBJECTMAPPER.writeValue(resultsFolders.getStaticTestSelectionFile(), initialVersionFailed);
    }
 }
