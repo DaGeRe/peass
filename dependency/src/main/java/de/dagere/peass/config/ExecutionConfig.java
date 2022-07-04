@@ -18,10 +18,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ExecutionConfig implements Serializable {
 
-   public static final String GRADLE_JAVA_DEFAULT_NAME = "java";
-
-   public static final String GRADLE_SPRING_DEFAULT_NAME = "org.springframework.boot";
-
    public static final String CLASSPATH_SEPARATOR = ":";
 
    public static final String DEFAULT_TEST_TRANSFORMER = "de.dagere.peass.testtransformation.JUnitTestTransformer";
@@ -33,6 +29,8 @@ public class ExecutionConfig implements Serializable {
    public static final String SRC_TEST_JAVA = "src/test/java";
    public static final String SRC_TEST = "src/test";
    public static final String SRC_ANDROID_TEST_JAVA = "src/androidTest/java/";
+
+   public static final int DEFAULT_KIEKER_WAIT_TIME = 5;
 
    private static final long serialVersionUID = -6642358125854337047L;
 
@@ -53,7 +51,7 @@ public class ExecutionConfig implements Serializable {
    protected String startcommit;
    protected String endcommit;
    private String pl;
-   private int kiekerWaitTime = 10;
+   private int kiekerWaitTime = DEFAULT_KIEKER_WAIT_TIME;
 
    private boolean redirectSubprocessOutputToFile = true;
    private boolean useTieredCompilation = false;
@@ -445,26 +443,6 @@ public class ExecutionConfig implements Serializable {
       @Override
       public boolean equals(Object obj) {
          if (obj instanceof String && DEFAULT_TEST_TRANSFORMER.equals(obj)) {
-            return true;
-         }
-         return super.equals(obj);
-      }
-   }
-
-   private static final class GradleJavaPluginNameFilter {
-      @Override
-      public boolean equals(Object obj) {
-         if (obj instanceof String && GRADLE_JAVA_DEFAULT_NAME.equals(obj)) {
-            return true;
-         }
-         return super.equals(obj);
-      }
-   }
-
-   private static final class SpringBootPluginNameFilter {
-      @Override
-      public boolean equals(Object obj) {
-         if (obj instanceof String && GRADLE_SPRING_DEFAULT_NAME.equals(obj)) {
             return true;
          }
          return super.equals(obj);
