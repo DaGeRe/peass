@@ -17,7 +17,7 @@ import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 public class DependencyDetectorJUnit5IT {
 
@@ -38,7 +38,7 @@ public class DependencyDetectorJUnit5IT {
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
-      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(NORMAL_CHANGE));
+      final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(NORMAL_CHANGE));
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 

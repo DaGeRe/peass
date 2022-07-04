@@ -30,7 +30,7 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
-import de.dagere.peass.vcs.VersionIteratorGit;
+import de.dagere.peass.vcs.CommitIteratorGit;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ContinuousDependencyReaderIT {
@@ -53,7 +53,7 @@ public class ContinuousDependencyReaderIT {
    public void testBasicVersionReading() throws Exception {
       builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/normal_change"), "test 1");
 
-      VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
+      CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
       iterator.goToFirstCommit();
       iterator.goToNextCommit();
 
@@ -81,7 +81,7 @@ public class ContinuousDependencyReaderIT {
 
       String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/basic_state"), "test 2");
 
-      VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
+      CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
 
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setCommit(newVersion);
@@ -107,7 +107,7 @@ public class ContinuousDependencyReaderIT {
 
       String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/only_comment_change"), "test 2");
 
-      VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
+      CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
 
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setCommit(newVersion);

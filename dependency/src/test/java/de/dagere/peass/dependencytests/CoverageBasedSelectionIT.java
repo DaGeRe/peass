@@ -23,7 +23,7 @@ import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.GitUtils;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 public class CoverageBasedSelectionIT {
 
@@ -40,7 +40,7 @@ public class CoverageBasedSelectionIT {
       try (MockedStatic<GitUtils> staticMock = Mockito.mockStatic(GitUtils.class)) {
          final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
-         final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(DependencyTestConstants.COVERAGE_NORMAL_CHANGE));
+         final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(DependencyTestConstants.COVERAGE_NORMAL_CHANGE));
 
          final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5),
                DependencyTestConstants.DEFAULT_CONFIG_WITH_COVERAGE, DependencyTestConstants.TARGET_RESULTS_FOLDERS);

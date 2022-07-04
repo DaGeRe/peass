@@ -43,8 +43,8 @@ import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.CommitUtil;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
-import de.dagere.peass.vcs.VersionIterator;
-import de.dagere.peass.vcs.VersionIteratorGit;
+import de.dagere.peass.vcs.CommitIterator;
+import de.dagere.peass.vcs.CommitIteratorGit;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
@@ -148,7 +148,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
-         final VersionIterator iterator = createIterator(config, previousVersion);
+         final CommitIterator iterator = createIterator(config, previousVersion);
          ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
          reader = new DependencyReader(config.getDependencyConfig(), new PeassFolders(config.getProjectFolder()), 
                resultsFolders, dependencies.getUrl(), iterator, new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), 
@@ -162,10 +162,10 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       return reader;
    }
 
-   private VersionIterator createIterator(final TestSelectionConfigMixin config, final String previousVersion) {
+   private CommitIterator createIterator(final TestSelectionConfigMixin config, final String previousVersion) {
       final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
       commits.add(0, previousVersion);
-      final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previousVersion);
+      final CommitIterator iterator = new CommitIteratorGit(config.getProjectFolder(), commits, previousVersion);
       return iterator;
    }
 

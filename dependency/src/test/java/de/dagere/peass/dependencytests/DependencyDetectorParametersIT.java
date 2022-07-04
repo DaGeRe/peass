@@ -19,7 +19,7 @@ import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 public class DependencyDetectorParametersIT {
 
@@ -37,7 +37,7 @@ public class DependencyDetectorParametersIT {
 
       final ChangeManager changeManager = changeManagerWithParameter();
 
-      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(DependencyTestConstants.NORMAL_CHANGE_PARAMETERS));
+      final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(DependencyTestConstants.NORMAL_CHANGE_PARAMETERS));
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 

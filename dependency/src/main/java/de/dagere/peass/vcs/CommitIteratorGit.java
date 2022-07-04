@@ -31,15 +31,15 @@ import de.dagere.peass.dependency.analysis.data.VersionDiff;
  * @author reichelt
  *
  */
-public class VersionIteratorGit extends VersionIterator {
+public class CommitIteratorGit extends CommitIterator {
 
-   private static final Logger LOG = LogManager.getLogger(VersionIteratorGit.class);
+   private static final Logger LOG = LogManager.getLogger(CommitIteratorGit.class);
 
    private final List<String> entries;
    private final String previous;
    private final int previousIndex;
 
-   public VersionIteratorGit(final File projectFolder) {
+   public CommitIteratorGit(final File projectFolder) {
       super(projectFolder);
       previous = GitUtils.getName("HEAD~1", projectFolder);
       entries = GitUtils.getCommits(projectFolder, false);
@@ -53,7 +53,7 @@ public class VersionIteratorGit extends VersionIterator {
     * @param entries List of commits
     * @param previousCommit Previous commit before start (NO_BEFORE, if it is the first one)
     */
-   public VersionIteratorGit(final File projectFolder, final List<String> entries, final String previousCommit) {
+   public CommitIteratorGit(final File projectFolder, final List<String> entries, final String previousCommit) {
       super(projectFolder);
       this.entries = entries;
       this.previous = previousCommit;

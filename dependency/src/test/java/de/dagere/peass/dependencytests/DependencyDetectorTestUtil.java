@@ -31,7 +31,7 @@ import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 public class DependencyDetectorTestUtil {
 
@@ -104,12 +104,12 @@ public class DependencyDetectorTestUtil {
       Assert.assertEquals(testMethod, testcase.getMethod());
    }
 
-   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
+   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final CommitIterator fakeIterator)
          throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
-   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final TestSelectionConfig dependencyConfig, final ResultsFolders resultsFolders) {
+   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final CommitIterator fakeIterator, final ExecutionConfig config, final TestSelectionConfig dependencyConfig, final ResultsFolders resultsFolders) {
       try {
          final DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(DependencyTestConstants.CURRENT),
                resultsFolders, null, fakeIterator, changeManager, config, new KiekerConfig(true), new EnvironmentVariables());

@@ -23,7 +23,7 @@ import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.vcs.VersionIteratorGit;
+import de.dagere.peass.vcs.CommitIteratorGit;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DependenciesOnlyStartversionIT {
@@ -40,7 +40,7 @@ public class DependenciesOnlyStartversionIT {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
 
-      VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
+      CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
       iterator.goToFirstCommit();
 
       ExecutionConfig executionConfig = new ExecutionConfig();
@@ -58,7 +58,7 @@ public class DependenciesOnlyStartversionIT {
    public void testBasicVersionReading() throws Exception {
       builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/changed_class"), "test 1");
 
-      VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
+      CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
       iterator.goToFirstCommit();
       iterator.goToNextCommit();
 

@@ -26,7 +26,7 @@ import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitUtils;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 import difflib.DiffUtils;
 import difflib.Patch;
 
@@ -41,11 +41,11 @@ public class ChangeManager {
    private static final Logger LOG = LogManager.getLogger(ChangeManager.class);
 
    private final PeassFolders folders;
-   private final VersionIterator iterator;
+   private final CommitIterator iterator;
    private final ExecutionConfig config;
    private final TestExecutor testExecutor;
 
-   public ChangeManager(final PeassFolders folders, final VersionIterator iterator, final ExecutionConfig config, TestExecutor testExecutor) {
+   public ChangeManager(final PeassFolders folders, final CommitIterator iterator, final ExecutionConfig config, TestExecutor testExecutor) {
       this.folders = folders;
       this.iterator = iterator;
       this.config = config;

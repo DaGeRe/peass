@@ -21,7 +21,7 @@ import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 public class DependencyDetectorIncludesTest {
    @BeforeEach
@@ -99,7 +99,7 @@ public class DependencyDetectorIncludesTest {
 
    
    private DependencyReader executeWithInclude(final String includeName, final File secondVersion, final ChangeManager changeManager) throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
+      final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
       ExecutionConfig config = new ExecutionConfig(5);
      

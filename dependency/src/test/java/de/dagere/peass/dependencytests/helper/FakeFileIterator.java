@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 class CopyFileVisitor extends SimpleFileVisitor<Path> {
    private final Path targetPath;
@@ -42,7 +42,7 @@ class CopyFileVisitor extends SimpleFileVisitor<Path> {
    }
 }
 
-public class FakeFileIterator extends VersionIterator {
+public class FakeFileIterator extends CommitIterator {
 
    private static final Logger LOG = LogManager.getLogger(FakeFileIterator.class);
    

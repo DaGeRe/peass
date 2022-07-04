@@ -13,19 +13,19 @@ import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 public final class OneReader implements Runnable {
 
    private static final Logger LOG = LogManager.getLogger(OneReader.class);
 
    private final String minimumCommit;
-   private final VersionIterator reserveIterator;
+   private final CommitIterator reserveIterator;
    final FirstRunningVersionFinder firstRunningVersionFinder;
    private final DependencyReader reader;
    private final CommitComparatorInstance comparator;
 
-   public OneReader(final String minimumCommit, final VersionIterator reserveIterator, final DependencyReader reader,
+   public OneReader(final String minimumCommit, final CommitIterator reserveIterator, final DependencyReader reader,
          final FirstRunningVersionFinder firstRunningVersionFinder, CommitComparatorInstance comparator) {
       this.minimumCommit = minimumCommit;
       this.reserveIterator = reserveIterator;

@@ -33,7 +33,7 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitCommitWriter;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 /**
  * Shared functions for dependency reading, which are both used if dependencies are read fully or if one continues a dependency reading process.
@@ -55,7 +55,7 @@ public class DependencyReader {
    protected final ResultsFolders resultsFolders;
    
    protected final PeassFolders folders;
-   protected VersionIterator iterator;
+   protected CommitIterator iterator;
    protected String lastRunningVersion;
    private final VersionKeeper skippedNoChange;
 
@@ -71,7 +71,7 @@ public class DependencyReader {
    private final TraceFileMapping traceFileMapping = new TraceFileMapping();
 
    public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders,
-         final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
+         final ResultsFolders resultsFolders, final String url, final CommitIterator iterator,
          final ChangeManager changeManager, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.testSelectionConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
@@ -107,7 +107,7 @@ public class DependencyReader {
     * @param iterator
     */
    public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
-         final VersionIterator iterator,
+         final CommitIterator iterator,
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.testSelectionConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
@@ -329,7 +329,7 @@ public class DependencyReader {
       return coverageBasedSelection;
    }
 
-   public void setIterator(final VersionIterator reserveIterator) {
+   public void setIterator(final CommitIterator reserveIterator) {
       this.iterator = reserveIterator;
    }
 

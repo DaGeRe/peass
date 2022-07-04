@@ -40,7 +40,7 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class ContinuousDependencyReader {
@@ -67,7 +67,7 @@ public class ContinuousDependencyReader {
       this.env = env;
    }
 
-   public RTSResult getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfig measurementConfig) {
+   public RTSResult getTests(final CommitIterator iterator, final String url, final String version, final MeasurementConfig measurementConfig) {
       final StaticTestSelection dependencies = getDependencies(iterator, url);
 
       RTSResult result;
@@ -129,7 +129,7 @@ public class ContinuousDependencyReader {
       return tests;
    }
 
-   StaticTestSelection getDependencies(final VersionIterator iterator, final String url) {
+   StaticTestSelection getDependencies(final CommitIterator iterator, final String url) {
       try {
          StaticTestSelection dependencies;
 
@@ -156,7 +156,7 @@ public class ContinuousDependencyReader {
       }
    }
 
-   private void executePartialRTS(final StaticTestSelection dependencies, final VersionIterator newIterator, CommitComparatorInstance comparator) throws FileNotFoundException {
+   private void executePartialRTS(final StaticTestSelection dependencies, final CommitIterator newIterator, CommitComparatorInstance comparator) throws FileNotFoundException {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
          File logFile = resultsFolders.getRTSLogFile(newIterator.getTag(), newIterator.getPredecessor());
          LOG.info("Executing regression test selection update - Log goes to {}", logFile.getAbsolutePath());
@@ -169,7 +169,7 @@ public class ContinuousDependencyReader {
 
    }
 
-   private void doPartialRCS(final StaticTestSelection dependencies, final VersionIterator newIterator, CommitComparatorInstance comparator) {
+   private void doPartialRCS(final StaticTestSelection dependencies, final CommitIterator newIterator, CommitComparatorInstance comparator) {
       DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator,
             new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
       newIterator.goTo0thCommit();
@@ -197,7 +197,7 @@ public class ContinuousDependencyReader {
 
    }
 
-   private StaticTestSelection fullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
+   private StaticTestSelection fullyLoadDependencies(final String url, final CommitIterator iterator, final VersionKeeper nonChanges)
          throws Exception {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
          File logFile = resultsFolders.getRTSLogFile(iterator.getTag(), iterator.getPredecessor());
@@ -211,7 +211,7 @@ public class ContinuousDependencyReader {
       }
    }
 
-   private StaticTestSelection doFullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
+   private StaticTestSelection doFullyLoadDependencies(final String url, final CommitIterator iterator, final VersionKeeper nonChanges)
          throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException, ParseException, ViewNotFoundException {
       final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, kiekerConfig, env);
       iterator.goToPreviousCommit();
@@ -231,14 +231,14 @@ public class ContinuousDependencyReader {
       return dependencies;
    }
 
-   private boolean checkCommitRunning(VersionIterator iterator) {
+   private boolean checkCommitRunning(CommitIterator iterator) {
       TestTransformer temporaryTransformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, kiekerConfig);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, temporaryTransformer, env);
       boolean isVersionRunning = executor.isCommitRunning(iterator.getTag());
       return isVersionRunning;
    }
 
-   private void createFailedSelection(final VersionIterator iterator) throws IOException, StreamWriteException, DatabindException {
+   private void createFailedSelection(final CommitIterator iterator) throws IOException, StreamWriteException, DatabindException {
       LOG.debug("Predecessor version is not running, skipping execution");
       StaticTestSelection initialVersionFailed = new StaticTestSelection();
       initialVersionFailed.getInitialcommit().setCommit(iterator.getTag());

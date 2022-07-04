@@ -46,6 +46,7 @@ public class ExecutionData extends SelectedTests {
       return versions;
    }
    
+   @JsonIgnore
    public void addEmptyCommit(final String version, final String predecessor) {
       TestSet tests = new TestSet();
       tests.setPredecessor(predecessor);
@@ -53,28 +54,28 @@ public class ExecutionData extends SelectedTests {
    }
 
    @JsonIgnore
-   public void addCall(final String version, final TestSet tests) {
-      final TestSet executes = versions.get(version);
+   public void addCall(final String commit, final TestSet tests) {
+      final TestSet executes = versions.get(commit);
       if (executes == null) {
-         versions.put(version, tests);
+         versions.put(commit, tests);
       } else {
          executes.addTestSet(tests);
       }
    }
 
    @JsonIgnore
-   public void addCall(final String version, final TestCase testcase) {
-      TestSet executes = versions.get(version);
+   public void addCall(final String commit, final TestCase testcase) {
+      TestSet executes = versions.get(commit);
       if (executes == null) {
          executes = new TestSet();
-         versions.put(version, executes);
+         versions.put(commit, executes);
       }
       executes.addTest(testcase);
    }
 
    @JsonIgnore
-   public boolean versionContainsTest(final String version, final TestCase currentIterationTest) {
-      final TestSet clazzExecutions = versions.get(version);
+   public boolean commitContainsTest(final String commit, final TestCase currentIterationTest) {
+      final TestSet clazzExecutions = versions.get(commit);
       if (clazzExecutions != null) {
          for (final Map.Entry<TestCase, Set<String>> clazz : clazzExecutions.entrySet()) {
             final TestCase testclazz = clazz.getKey();
@@ -94,11 +95,11 @@ public class ExecutionData extends SelectedTests {
          unsorted.putAll(versions);
          versions.clear();
 
-         final List<String> versionNames = new LinkedList<>();
-         versionNames.addAll(unsorted.keySet());
-         Collections.sort(versionNames, new VersionComparator());
+         final List<String> commitNames = new LinkedList<>();
+         commitNames.addAll(unsorted.keySet());
+         Collections.sort(commitNames, new VersionComparator());
 
-         for (final String version : versionNames) {
+         for (final String version : commitNames) {
             versions.put(version, unsorted.get(version));
          }
       }

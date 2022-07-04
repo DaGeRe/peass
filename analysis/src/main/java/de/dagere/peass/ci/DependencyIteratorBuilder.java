@@ -11,7 +11,7 @@ import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
-import de.dagere.peass.vcs.VersionIteratorGit;
+import de.dagere.peass.vcs.CommitIteratorGit;
 
 /**
  * Identifies the versions that should be analyzed, by: (1) Using the versions from ExecutionConfig, if both are given and != null (resolving HEAD and HEAD~1 to the real versions)
@@ -25,7 +25,7 @@ public class DependencyIteratorBuilder {
    private static final Logger LOG = LogManager.getLogger(DependencyIteratorBuilder.class);
 
    private final String version, versionOld;
-   private final VersionIteratorGit iterator;
+   private final CommitIteratorGit iterator;
 
    public DependencyIteratorBuilder(final ExecutionConfig executionConfig, final StaticTestSelection dependencies, final PeassFolders folders) {
       version = GitUtils.getName(executionConfig.getCommit() != null ? executionConfig.getCommit() : "HEAD", folders.getProjectFolder());
@@ -54,7 +54,7 @@ public class DependencyIteratorBuilder {
             commits.add(oldVersionCommit);
             commits.add(version);
             LOG.info("Analyzing {} - {}", oldVersionCommit, currentCommit);
-            iterator = new VersionIteratorGit(folders.getProjectFolder(), commits, oldVersionCommit);
+            iterator = new CommitIteratorGit(folders.getProjectFolder(), commits, oldVersionCommit);
             versionOld = oldVersionCommit;
          }
       }
@@ -90,7 +90,7 @@ public class DependencyIteratorBuilder {
       return versionOld;
    }
 
-   public VersionIteratorGit getIterator() {
+   public CommitIteratorGit getIterator() {
       return iterator;
    }
 

@@ -26,7 +26,7 @@ import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
-import de.dagere.peass.vcs.VersionIteratorGit;
+import de.dagere.peass.vcs.CommitIteratorGit;
 
 public class ContinuousExecutor {
 
@@ -37,7 +37,7 @@ public class ContinuousExecutor {
 
    private final String version;
    private final String versionOld;
-   private final VersionIteratorGit iterator;
+   private final CommitIteratorGit iterator;
    private final CommitComparatorInstance comparator;
 
    private final File originalProjectFolder;

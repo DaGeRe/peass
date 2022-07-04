@@ -27,12 +27,12 @@ import de.dagere.peass.dependency.analysis.data.VersionDiff;
  * @author reichelt
  *
  */
-public abstract class VersionIterator {
+public abstract class CommitIterator {
 
 	protected final File projectFolder;
 	protected int tagid = 0;
 
-	public VersionIterator(final File projectFolder) {
+	public CommitIterator(final File projectFolder) {
 		this.projectFolder = projectFolder;
 	}
 

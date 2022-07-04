@@ -22,7 +22,7 @@ import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 public class DependencyDetectorOneCallWriterIT {
 
@@ -41,7 +41,7 @@ public class DependencyDetectorOneCallWriterIT {
       
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
-      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(DependencyTestConstants.NORMAL_CHANGE));
+      final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(DependencyTestConstants.NORMAL_CHANGE));
 
       final DependencyReader reader = readTwoVersions(changeManager, fakeIterator);
 
@@ -50,12 +50,12 @@ public class DependencyDetectorOneCallWriterIT {
       DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }
    
-   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
+   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final CommitIterator fakeIterator)
          throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
-   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final TestSelectionConfig dependencyConfig, final ResultsFolders resultsFolders) {
+   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final CommitIterator fakeIterator, final ExecutionConfig config, final TestSelectionConfig dependencyConfig, final ResultsFolders resultsFolders) {
       try {
          KiekerConfig kiekerConfig = new KiekerConfig(true);
          kiekerConfig.setOnlyOneCallRecording(true);

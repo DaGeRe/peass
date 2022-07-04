@@ -10,7 +10,7 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 public class FirstRunningVersionFinder {
    
@@ -18,11 +18,11 @@ public class FirstRunningVersionFinder {
 
    private final PeassFolders folders;
    private final VersionKeeper nonRunning;
-   private final VersionIterator iterator;
+   private final CommitIterator iterator;
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
-   public FirstRunningVersionFinder(final PeassFolders folders, final VersionKeeper nonRunning, final VersionIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public FirstRunningVersionFinder(final PeassFolders folders, final VersionKeeper nonRunning, final CommitIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
       this.nonRunning = nonRunning;
       this.iterator = iterator;
@@ -50,7 +50,7 @@ public class FirstRunningVersionFinder {
       return isVersionRunning;
    }
 
-   private boolean tryCommit(final VersionIterator iterator, final TestTransformer testTransformer) {
+   private boolean tryCommit(final CommitIterator iterator, final TestTransformer testTransformer) {
       boolean isVersionRunning;
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
       isVersionRunning = executor.isCommitRunning(iterator.getTag());
@@ -67,7 +67,7 @@ public class FirstRunningVersionFinder {
       return isVersionRunning;
    }
 
-   private void goToCommit(final VersionIterator iterator) {
+   private void goToCommit(final CommitIterator iterator) {
       boolean successGettingCommit = iterator.goToFirstCommit();
       while (!successGettingCommit && iterator.hasNextCommit()) {
          successGettingCommit = iterator.goToNextCommit();

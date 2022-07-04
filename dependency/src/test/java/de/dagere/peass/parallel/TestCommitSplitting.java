@@ -31,10 +31,10 @@ import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
-import de.dagere.peass.dependencytests.helper.FakeVersionIterator;
+import de.dagere.peass.dependencytests.helper.FakeCommitIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 public class TestCommitSplitting {
 
@@ -48,7 +48,7 @@ public class TestCommitSplitting {
 
    static class DummyReader extends DependencyReader {
 
-      public DummyReader(final File dummyFolder, final VersionIterator iterator, final ChangeManager manager) throws IOException {
+      public DummyReader(final File dummyFolder, final CommitIterator iterator, final ChangeManager manager) throws IOException {
          super(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(dummyFolder), null, null, iterator, manager, new ExecutionConfig(1), new KiekerConfig(true), new EnvironmentVariables());
       }
 
@@ -154,7 +154,7 @@ public class TestCommitSplitting {
          newBufferedWriter.write("<project></project>");
       }
 
-      final VersionIterator fakeIterator = new FakeVersionIterator(dummyFolder, currentCommits);
+      final CommitIterator fakeIterator = new FakeCommitIterator(dummyFolder, currentCommits);
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(null);
 
@@ -167,7 +167,7 @@ public class TestCommitSplitting {
       
       DummyReader dummy = new DummyReader(dummyFolder, fakeIterator, changeManager);
       System.out.println(minimumCommit);
-      final VersionIterator reserveIterator = new FakeVersionIterator(dummyFolder, reserveCommits);
+      final CommitIterator reserveIterator = new FakeCommitIterator(dummyFolder, reserveCommits);
       OneReader reader = new OneReader(minimumCommit, reserveIterator, dummy, finder, ParallelTestUtil.getCommits());
       reader.run();
 

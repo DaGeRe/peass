@@ -6,18 +6,18 @@ import java.util.List;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 /**
  * An iterator which only goes to the versions but does not change anything on the filesystem
  * @author reichelt
  *
  */
-public class FakeVersionIterator extends VersionIterator {
+public class FakeCommitIterator extends CommitIterator {
 
    List<String> commits;
 
-   public FakeVersionIterator(final File folder, final List<String> commits) {
+   public FakeCommitIterator(final File folder, final List<String> commits) {
       super(folder);
       this.commits = commits;
    }

@@ -35,7 +35,7 @@ import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.GitUtils;
-import de.dagere.peass.vcs.VersionIteratorGit;
+import de.dagere.peass.vcs.CommitIteratorGit;
 import de.dagere.requitur.Sequitur;
 import difflib.Delta;
 import difflib.Delta.TYPE;
@@ -218,7 +218,7 @@ public class PropertyReadHelper {
 
    private Map<ChangedEntity, ClazzChangeData> getChanges(final PeassFolders folders) {
       List<String> commits = Arrays.asList(new String[] { version, versionOld });
-      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, versionOld);
+      final CommitIteratorGit iterator = new CommitIteratorGit(projectFolder, commits, versionOld);
       final ChangeManager changeManager = new ChangeManager(folders, iterator, config, testExecutor);
       final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(versionOld, version);
       return changes;

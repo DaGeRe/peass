@@ -35,7 +35,7 @@ import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.CommitIterator;
 
 public class DependencyDetectorMultimoduleIT {
 
@@ -60,7 +60,7 @@ public class DependencyDetectorMultimoduleIT {
    @Test
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
-      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
+      final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
       final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
 
@@ -86,7 +86,7 @@ public class DependencyDetectorMultimoduleIT {
    public void testTwoChanges()
          throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final File thirdVersion = new File(VERSIONS_FOLDER, "another_change");
-      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(thirdVersion));
+      final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(thirdVersion));
 
       ChangeManager changeManager = mockChangeManager();
       
