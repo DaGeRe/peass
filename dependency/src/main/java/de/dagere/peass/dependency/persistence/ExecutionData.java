@@ -46,7 +46,7 @@ public class ExecutionData extends SelectedTests {
       return versions;
    }
    
-   public void addEmptyVersion(final String version, final String predecessor) {
+   public void addEmptyCommit(final String version, final String predecessor) {
       TestSet tests = new TestSet();
       tests.setPredecessor(predecessor);
       versions.put(version, tests);

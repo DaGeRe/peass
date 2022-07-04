@@ -49,9 +49,9 @@ public class SourceReader {
 
    public void executeSourceReading(final Set<TestCase> tests) {
       ExecutionData executionData = new ExecutionData();
-      executionData.addEmptyVersion(version, versionOld);
+      executionData.addEmptyCommit(version, versionOld);
       if (versionOld != null) {
-         executionData.addEmptyVersion(versionOld, null);
+         executionData.addEmptyCommit(versionOld, null);
       }
       for (TestCase test : tests) {
          executionData.addCall(version, test);

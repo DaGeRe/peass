@@ -87,18 +87,18 @@ public class StaticTestSelection extends SelectedTests {
 
    @JsonIgnore
    public String[] getCommitNames() {
-      final String[] versionNames = versions.keySet().toArray(new String[0]);
-      String[] withStartversion = new String[versionNames.length + 1];
-      withStartversion[0] = initialcommit.getCommit();
-      System.arraycopy(versionNames, 0, withStartversion, 1, versionNames.length);
-      return withStartversion;
+      final String[] commitNames = versions.keySet().toArray(new String[0]);
+      String[] withStartcommit = new String[commitNames.length + 1];
+      withStartcommit[0] = initialcommit.getCommit();
+      System.arraycopy(commitNames, 0, withStartcommit, 1, commitNames.length);
+      return withStartcommit;
    }
 
    @JsonIgnore
    public String getNewestCommit() {
-      final String[] versions = getCommitNames();
-      if (versions.length > 0) {
-         return versions[versions.length - 1];
+      final String[] commits = getCommitNames();
+      if (commits.length > 0) {
+         return commits[commits.length - 1];
       } else if (initialcommit != null) {
          return initialcommit.getCommit();
       } else {
@@ -108,22 +108,22 @@ public class StaticTestSelection extends SelectedTests {
 
    @JsonIgnore
    public String[] getRunningCommitNames() {
-      String[] versionNames = versions.entrySet().stream()
+      String[] commitNames = versions.entrySet().stream()
             .filter((entry) -> entry.getValue().isRunning())
             .map(entry -> entry.getKey())
             .toArray(String[]::new);
 
-      String[] withStartversion = new String[versionNames.length + 1];
-      withStartversion[0] = initialcommit.getCommit();
-      System.arraycopy(versionNames, 0, withStartversion, 1, versionNames.length);
-      return withStartversion;
+      String[] withStartcommit = new String[commitNames.length + 1];
+      withStartcommit[0] = initialcommit.getCommit();
+      System.arraycopy(commitNames, 0, withStartcommit, 1, commitNames.length);
+      return withStartcommit;
    }
 
    @JsonIgnore
    public String getNewestRunningCommit() {
-      final String[] versions = getRunningCommitNames();
-      if (versions.length > 0) {
-         return versions[versions.length - 1];
+      final String[] commits = getRunningCommitNames();
+      if (commits.length > 0) {
+         return commits[commits.length - 1];
       } else if (initialcommit != null) {
          return initialcommit.getCommit();
       } else {

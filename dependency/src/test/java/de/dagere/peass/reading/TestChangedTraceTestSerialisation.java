@@ -45,9 +45,9 @@ public class TestChangedTraceTestSerialisation {
    @Test
    public void testVersionContent() throws IOException {
       final ExecutionData tests = new ExecutionData();
-      tests.addEmptyVersion("v1", "v0");
+      tests.addEmptyCommit("v1", "v0");
       tests.addCall("v1", new TestCase("Test1#test"));
-      tests.addEmptyVersion("v2", "v1");
+      tests.addEmptyCommit("v2", "v1");
       tests.addCall("v2", new TestCase("Test1#test"));
       
       final ObjectMapper mapper = Constants.OBJECTMAPPER;

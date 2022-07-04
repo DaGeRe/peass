@@ -117,7 +117,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
          int currentTraceChangedTests = 0;
          if (changedTests != null) {
             for (final TestCase currentIterationTest : currentContainedTests) {
-               if (changedTests.versionContainsTest(version.getKey(), currentIterationTest)) {
+               if (changedTests.commitContainsTest(version.getKey(), currentIterationTest)) {
                   currentTraceChangedTests++;
                }
             }

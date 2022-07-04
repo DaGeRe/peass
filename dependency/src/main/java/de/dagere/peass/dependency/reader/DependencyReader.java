@@ -219,8 +219,8 @@ public class DependencyReader {
       emptyVersion.setPredecessor(input.getPredecessor());
       dependencyResult.getVersions().put(version, emptyVersion);
       if (testSelectionConfig.isGenerateTraces()) {
-         executionResult.addEmptyVersion(version, null);
-         coverageBasedSelection.addEmptyVersion(version, null);
+         executionResult.addEmptyCommit(version, null);
+         coverageBasedSelection.addEmptyCommit(version, null);
       }
       skippedNoChange.addVersion(version, "No Change at all");
    }
@@ -234,8 +234,8 @@ public class DependencyReader {
          traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
 
          if (testSelectionConfig.isGenerateTraces()) {
-            executionResult.addEmptyVersion(version, newVersionInfo.getPredecessor());
-            coverageBasedSelection.addEmptyVersion(version, newVersionInfo.getPredecessor());
+            executionResult.addEmptyCommit(version, newVersionInfo.getPredecessor());
+            coverageBasedSelection.addEmptyCommit(version, newVersionInfo.getPredecessor());
             TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, traceFileMapping, kiekerConfig, testSelectionConfig);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
 
