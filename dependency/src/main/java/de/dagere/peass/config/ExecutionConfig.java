@@ -453,26 +453,6 @@ public class ExecutionConfig implements Serializable {
       }
    }
 
-   private static final class GradleJavaPluginNameFilter {
-      @Override
-      public boolean equals(Object obj) {
-         if (obj instanceof String && GRADLE_JAVA_DEFAULT_NAME.equals(obj)) {
-            return true;
-         }
-         return super.equals(obj);
-      }
-   }
-
-   private static final class SpringBootPluginNameFilter {
-      @Override
-      public boolean equals(Object obj) {
-         if (obj instanceof String && GRADLE_SPRING_DEFAULT_NAME.equals(obj)) {
-            return true;
-         }
-         return super.equals(obj);
-      }
-   }
-
    private static final class ClazzFoldersFilter {
       @Override
       public boolean equals(Object obj) {
