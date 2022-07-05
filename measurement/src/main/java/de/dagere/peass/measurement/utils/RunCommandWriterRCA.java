@@ -2,7 +2,6 @@ package de.dagere.peass.measurement.utils;
 
 import java.io.PrintStream;
 
-import de.dagere.peass.SearchCauseStarter;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.folders.ResultsFolders;

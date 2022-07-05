@@ -3,8 +3,6 @@ package de.dagere.peass.measurement.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;

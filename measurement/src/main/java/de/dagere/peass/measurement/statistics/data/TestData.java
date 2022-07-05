@@ -1,7 +1,6 @@
 package de.dagere.peass.measurement.statistics.data;
 
 import java.io.File;
-import java.util.Comparator;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -11,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 
 /**
