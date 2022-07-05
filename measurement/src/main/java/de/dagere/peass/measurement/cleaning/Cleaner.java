@@ -64,31 +64,31 @@ public class Cleaner extends DataAnalyser {
    public void cleanTestVersionPair(final Entry<String, EvaluationPair> entry) {
       TestCase testcase = entry.getValue().getTestcase();
       if (entry.getValue().getPrevius().size() >= 2 && entry.getValue().getCurrent().size() >= 2) {
-         final VMResultChunk currentChunk = new VMResultChunk();
+         final VMResultChunk cleanedChunk = new VMResultChunk();
          final long minExecutionCount = MultipleVMTestUtil.getMinIterationCount(entry.getValue().getPrevius());
 
          final List<VMResult> previous = getChunk(entry.getValue().getPreviousCommit(), minExecutionCount, entry.getValue().getPrevius());
-         currentChunk.getResults().addAll(previous);
+         cleanedChunk.getResults().addAll(previous);
 
          final List<VMResult> current = getChunk(entry.getValue().getCommit(), minExecutionCount, entry.getValue().getCurrent());
-         currentChunk.getResults().addAll(current);
+         cleanedChunk.getResults().addAll(current);
 
-         handleChunk(entry, testcase, currentChunk);
+         handleChunk(entry, testcase, cleanedChunk);
       }
    }
 
-   private void handleChunk(final Entry<String, EvaluationPair> entry, TestCase testcase, final VMResultChunk currentChunk) {
+   private void handleChunk(final Entry<String, EvaluationPair> entry, TestCase testcase, final VMResultChunk cleanedChunk) {
       final MeasurementFileFinder finder = new MeasurementFileFinder(cleanFolder, testcase);
       final File measurementFile = finder.getMeasurementFile();
       final Kopemedata oneResultData = finder.getOneResultData();
       DatacollectorResult datacollector = finder.getDataCollector();
 
-      if (checkChunk(currentChunk)) {
-         datacollector.getChunks().add(currentChunk);
+      if (checkChunk(cleanedChunk)) {
+         datacollector.getChunks().add(cleanedChunk);
          JSONDataStorer.storeData(measurementFile, oneResultData);
          correct++;
       } else {
-         printFailureInfo(entry, currentChunk, measurementFile);
+         printFailureInfo(entry, cleanedChunk, measurementFile);
       }
    }
 
