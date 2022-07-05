@@ -19,20 +19,20 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
  */
 public class EvaluationPair {
 
-   private final String previousVersion, currentVersion;
+   private final String previousCommit, currentCommit;
    private final List<VMResult> previous = new LinkedList<>();
    private final List<VMResult> current = new LinkedList<>();
    private final TestCase testcase;
 
-   public EvaluationPair(final String currentVersion, final String previousVersion, final TestCase testcase) {
-      this.currentVersion = currentVersion;
-      this.previousVersion = previousVersion;
+   public EvaluationPair(final String currentCommit, final String previousCommit, final TestCase testcase) {
+      this.currentCommit = currentCommit;
+      this.previousCommit = previousCommit;
       this.testcase = testcase;
-      if (currentVersion.equals(previousVersion)) {
-         throw new RuntimeException("Unexpected behaviour: Previous " + previousVersion + " == Current " + currentVersion + " version.");
+      if (currentCommit.equals(previousCommit)) {
+         throw new RuntimeException("Unexpected behaviour: Previous " + previousCommit + " == Current " + currentCommit + " version.");
       }
-      if (currentVersion == null || previousVersion == null) {
-         throw new RuntimeException("Version == null: " + currentVersion + " " + previousVersion + " " + testcase);
+      if (currentCommit == null || previousCommit == null) {
+         throw new RuntimeException("Version == null: " + currentCommit + " " + previousCommit + " " + testcase);
       }
    }
    
@@ -84,11 +84,11 @@ public class EvaluationPair {
       return isComplete;
    }
 
-   public String getPreviousVersion() {
-      return previousVersion;
+   public String getPreviousCommit() {
+      return previousCommit;
    }
 
-   public String getVersion() {
-      return currentVersion;
+   public String getCommit() {
+      return currentCommit;
    }
 }

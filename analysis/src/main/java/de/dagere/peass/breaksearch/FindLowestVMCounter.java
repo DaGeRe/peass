@@ -43,7 +43,7 @@ public class FindLowestVMCounter extends DataAnalyser {
             int equal = 0;
             for (int i = 3; i < entry.getValue().getCurrent().size(); i++) {
                // entry.getValue().
-               final EvaluationPair shortenedPair = new EvaluationPair(entry.getKey(), entry.getValue().getPreviousVersion(), entry.getValue().getTestcase());
+               final EvaluationPair shortenedPair = new EvaluationPair(entry.getKey(), entry.getValue().getPreviousCommit(), entry.getValue().getTestcase());
                shortenedPair.getCurrent().addAll(entry.getValue().getCurrent().subList(0, i));
                shortenedPair.getPrevius().addAll(entry.getValue().getPrevius().subList(0, i));
                final TestStatistic statistic = new TestStatistic(shortenedPair);

@@ -78,13 +78,13 @@ public class TestStatistic {
 
    private void addToInfo(final EvaluationPair data, final ProjectStatistics info, final int resultslength) {
       if (info != null) {
-         info.addMeasurement(data.getVersion(), data.getTestcase(), statisticsPrevious, statisticsCurrent, resultslength);
+         info.addMeasurement(data.getCommit(), data.getTestcase(), statisticsPrevious, statisticsCurrent, resultslength);
       }
    }
 
    private void checkData(final EvaluationPair data, final List<VMResult> previous, final List<VMResult> current) {
       if (previous.size() == 0 || current.size() == 0) {
-         LOG.error("Data empty: {} {}", data.getVersion());
+         LOG.error("Data empty: {} {}", data.getCommit());
          if (previous.size() == 0) {
             LOG.error("Previous  empty");
          }

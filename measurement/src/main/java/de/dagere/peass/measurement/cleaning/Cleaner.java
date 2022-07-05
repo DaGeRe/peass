@@ -67,10 +67,10 @@ public class Cleaner extends DataAnalyser {
          final VMResultChunk currentChunk = new VMResultChunk();
          final long minExecutionCount = MultipleVMTestUtil.getMinIterationCount(entry.getValue().getPrevius());
 
-         final List<VMResult> previous = getChunk(entry.getValue().getPreviousVersion(), minExecutionCount, entry.getValue().getPrevius());
+         final List<VMResult> previous = getChunk(entry.getValue().getPreviousCommit(), minExecutionCount, entry.getValue().getPrevius());
          currentChunk.getResults().addAll(previous);
 
-         final List<VMResult> current = getChunk(entry.getValue().getVersion(), minExecutionCount, entry.getValue().getCurrent());
+         final List<VMResult> current = getChunk(entry.getValue().getCommit(), minExecutionCount, entry.getValue().getCurrent());
          currentChunk.getResults().addAll(current);
 
          handleChunk(entry, testcase, currentChunk);

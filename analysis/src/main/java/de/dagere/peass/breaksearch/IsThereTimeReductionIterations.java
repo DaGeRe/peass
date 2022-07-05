@@ -88,7 +88,7 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
             }
          } else {
             lessfound++;
-            System.out.println("Wrong: " + version + " " + entry.getValue().getVersion());
+            System.out.println("Wrong: " + version + " " + entry.getValue().getCommit());
          }
       }
    }

@@ -115,7 +115,7 @@ public class AnalyseFullData extends DataAnalyser {
       projectChanges.setVersionCount(versions.size());
       projectChanges.setTestcaseCount(testcases);
 
-      LOG.info("Version: {} vs {} Klasse: {}#{}", version, entry.getValue().getPreviousVersion(), measurementEntry.getTestClass(),
+      LOG.info("Version: {} vs {} Klasse: {}#{}", version, entry.getValue().getPreviousCommit(), measurementEntry.getTestClass(),
             measurementEntry.getTestMethod());
       LOG.debug("Confidence Interval Comparison: {}", teststatistic.getConfidenceResult());
 
