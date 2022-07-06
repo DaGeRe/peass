@@ -15,7 +15,7 @@ public class RunCommandWriter {
    protected String name;
    protected String url;
    protected int nice = 1000000;
-   private MeasurementConfig config;
+   protected MeasurementConfig config;
 
    public RunCommandWriter(MeasurementConfig config, final PrintStream goal, final String experimentId, final SelectedTests dependencies) {
       this.config = config;
@@ -39,7 +39,7 @@ public class RunCommandWriter {
    public void setNice(final int nice) {
       this.nice = nice;
    }
-   
+
    public void createFullVersionCommand(final int commitIndex, final String commit, final Set<TestCase> tests) {
       for (TestCase testcase : tests) {
          final String testcaseName = testcase.getClazz() + "#" + testcase.getMethod();
@@ -50,13 +50,14 @@ public class RunCommandWriter {
    public void createSingleMethodCommand(final int commitIndex, final String commit, final String testcaseName) {
       goal.println("./peass measure "
             + "-test " + testcaseName + " "
-            + "-warmup " + config.getWarmup() + " " 
+            + "-warmup " + config.getWarmup() + " "
             + "-iterations " + config.getIterations() + " "
             + "-repetitions " + config.getRepetitions() + " "
             + "-vms " + config.getVms() + " "
             + "-timeout " + config.getTimeoutInSeconds() + " "
-            + "-measurementStrategy PARALLEL "
-//            + "-useGC false "
+            + "-measurementStrategy " + config.getMeasurementStrategy() + " "
+            + (config.getExecutionConfig().isExcludeLog4jToSlf4j() ? "-excludeLog4jToSlf4j " : "")
+            + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")
             + "-commit " + commit + " "
             + "-executionfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + "-folder ../projekte/" + name + "/ "

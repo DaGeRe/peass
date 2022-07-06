@@ -23,18 +23,20 @@ public class RunCommandWriterRCA extends RunCommandWriter {
             + "-rcaStrategy UNTIL_SOURCE_CHANGE "
             + "-propertyFolder results/properties_" + name + " "
             + "-test " + testcaseName + " "
-            + "-warmup " + warmup + " "
-            + "-iterations " + iterations + " "
+            + "-warmup " + config.getWarmup() + " "
+            + "-iterations " + config.getIterations() + " "
             + "-repetitions " + repetitions + " "
             + "-vms " + vms + " "
-            + "-timeout 10 "
+            + "-timeout " + config.getTimeoutInSeconds() + " "
             + "-type1error 0.2 "
             + "-type2error 0.1 "
+            + "-measurementStrategy " + config.getMeasurementStrategy() + " "
+            + (config.getExecutionConfig().isExcludeLog4jToSlf4j() ? "-excludeLog4jToSlf4j " : "")
+            + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")
             + "-commit " + commit + " "
             + "-folder ../projects/" + name + "/ "
-            + "-staticSelectionFile $PEASS_REPOS/dependencies-final/" + ResultsFolders.STATIC_SELECTION_PREFIX + name + ".json &> rca_" + commit.substring(0, 6) + "_"
-            + testcaseName
-            + ".txt");
+            + "-executionfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
+            + " &> rca_" + commit.substring(0, 6) + "_" + testcaseName + ".txt");
    }
 
 }
