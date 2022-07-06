@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.folders.ResultsFolders;
+import de.dagere.peass.measurement.rca.RCAStrategy;
 
 public class RunCommandWriterRCA extends RunCommandWriter {
 
@@ -20,7 +21,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
    public void createSingleMethodCommand(final int versionIndex, final String commit, final String testcaseName, final int warmup, final int iterations, final int repetitions,
          final int vms) {
       goal.println("./peass searchcause "
-            + "-rcaStrategy UNTIL_SOURCE_CHANGE "
+            + "-rcaStrategy " + RCAStrategy.UNTIL_SOURCE_CHANGE + " "
             + "-propertyFolder results/properties_" + name + " "
             + "-test " + testcaseName + " "
             + "-warmup " + config.getWarmup() + " "
@@ -35,7 +36,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
             + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")
             + "-commit " + commit + " "
             + "-folder ../projects/" + name + "/ "
-            + "-executionfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
+            + "-executionfile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + " &> rca_" + commit.substring(0, 6) + "_" + testcaseName + ".txt");
    }
 
