@@ -13,14 +13,15 @@ public class RunCommandWriterRCA extends RunCommandWriter {
    }
 
    @Override
-   public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName) {
-      createSingleMethodCommand(versionIndex, endversion, testcaseName, 1000, 10000, 10000, 100);
+   public void createSingleMethodCommand(final int versionIndex, final String commit, final String testcaseName) {
+      createSingleMethodCommand(versionIndex, commit, testcaseName, 1000, 10000, 10000, 100);
    }
 
-   public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName, final int warmup, final int iterations, final int repetitions,
+   public void createSingleMethodCommand(final int versionIndex, final String commit, final String testcaseName, final int warmup, final int iterations, final int repetitions,
          final int vms) {
       goal.println("./peass searchcause "
             + "-rcaStrategy UNTIL_SOURCE_CHANGE "
+            + "-propertyFolder results/properties_" + name
             + "-test " + testcaseName + " "
             + "-warmup " + warmup + " "
             + "-iterations " + iterations + " "
@@ -29,10 +30,9 @@ public class RunCommandWriterRCA extends RunCommandWriter {
             + "-timeout 10 "
             + "-type1error 0.2 "
             + "-type2error 0.1 "
-            + "-commit " + endversion + " "
-            + "-executionfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
+            + "-commit " + commit + " "
             + "-folder ../projects/" + name + "/ "
-            + "-staticSelectionFile $PEASS_REPOS/dependencies-final/" + ResultsFolders.STATIC_SELECTION_PREFIX + name + ".json &> measurement_" + endversion.substring(0, 6) + "_"
+            + "-staticSelectionFile $PEASS_REPOS/dependencies-final/" + ResultsFolders.STATIC_SELECTION_PREFIX + name + ".json &> rca_" + commit.substring(0, 6) + "_"
             + testcaseName
             + ".txt");
    }
