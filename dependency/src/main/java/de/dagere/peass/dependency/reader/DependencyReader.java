@@ -176,7 +176,7 @@ public class DependencyReader {
     * @param dependencyManager
     * @param dependencies
     * @param dependencyResult
-    * @param version
+    * @param commit
     * @return
     * @throws IOException
     * @throws XmlPullParserException

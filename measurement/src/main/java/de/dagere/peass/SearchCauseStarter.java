@@ -43,13 +43,13 @@ public class SearchCauseStarter extends MeasureStarter {
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
 
-   public static void main(final String[] args) throws  IOException {
+   public static void main(final String[] args) throws IOException {
       final SearchCauseStarter command = new SearchCauseStarter();
       final CommandLine commandLine = new CommandLine(command);
       System.exit(commandLine.execute(args));
    }
 
-   public SearchCauseStarter() throws  IOException {
+   public SearchCauseStarter() throws IOException {
       super();
    }
 
@@ -61,13 +61,13 @@ public class SearchCauseStarter extends MeasureStarter {
 
       initVersionProcessor();
 
-      if (version == null) {
-         version = executionData.getVersions().keySet().iterator().next();
-         LOG.info("Version was not defined, using " + version);
+      if (commit == null) {
+         commit = executionData.getVersions().keySet().iterator().next();
+         LOG.info("Commit was not defined, using " + commit);
       }
 
       final TestCase test = new TestCase(testName);
-      final VersionStaticSelection versionInfo = staticTestSelection.getVersions().get(version);
+      final VersionStaticSelection versionInfo = staticTestSelection.getVersions().get(commit);
       boolean found = versionInfo.getTests().getTests().contains(test);
       if (!found) {
          LOG.error("Test " + test + " is not contained in regression test selection result, therefore it is unlikely to have a performance change!");
@@ -89,7 +89,8 @@ public class SearchCauseStarter extends MeasureStarter {
       }
 
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
-      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders, new EnvironmentVariables(measurementConfiguration.getExecutionConfig().getProperties()));
+      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders,
+            new EnvironmentVariables(measurementConfiguration.getExecutionConfig().getProperties()));
 
       CommitComparatorInstance comparator = new CommitComparatorInstance(staticTestSelection);
       final CauseSearcher tester = getCauseSeacher(measurementConfiguration, causeSearcherConfig, alternateFolders, reader, comparator);
@@ -101,7 +102,7 @@ public class SearchCauseStarter extends MeasureStarter {
    private MeasurementConfig getConfiguration(final String predecessor) {
       final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, kiekerConfigMixin);
       measurementConfiguration.getKiekerConfig().setUseKieker(true);
-      measurementConfiguration.getExecutionConfig().setCommit(version);
+      measurementConfiguration.getExecutionConfig().setCommit(commit);
       measurementConfiguration.getExecutionConfig().setCommitOld(predecessor);
 
       if (causeSearchConfigMixin.getStrategy().equals(RCAStrategy.COMPLETE)) {
@@ -124,14 +125,15 @@ public class SearchCauseStarter extends MeasureStarter {
    }
 
    public static CauseSearcher getCauseSeacher(final MeasurementConfig measurementConfiguration,
-         final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader, CommitComparatorInstance comparator) throws IOException, InterruptedException {
+         final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader, CommitComparatorInstance comparator)
+         throws IOException, InterruptedException {
       if (measurementConfiguration.getKiekerConfig().isOnlyOneCallRecording()) {
          throw new RuntimeException("isOnlyOneCallRecording is not allowed to be set to true for RCA!");
       }
       if (measurementConfiguration.isDirectlyMeasureKieker()) {
          throw new RuntimeException("directlyMeasureKieker is not allowed to be set to true for RCA!");
       }
-      
+
       EnvironmentVariables env = reader.getEnv();
       final CauseSearcher tester;
       final CauseTester measurer = new CauseTester(alternateFolders, measurementConfiguration, causeSearcherConfig, env, comparator);

@@ -44,9 +44,9 @@ public abstract class VersionProcessor implements Callable<Void> {
    protected StaticTestSelection staticTestSelection;
    protected ExecutionData executionData;
 
-   protected String startversion;
-   protected String endversion;
-   protected String version;
+   protected String startcommit;
+   protected String endcommit;
+   protected String commit;
 
    @Option(names = { "-threads", "--threads" }, description = "Number of parallel threads for analysis")
    protected int threads = 1;
@@ -60,24 +60,24 @@ public abstract class VersionProcessor implements Callable<Void> {
    public VersionProcessor(final File projectFolder, final StaticTestSelection dependencies) {
       this.folders = new PeassFolders(projectFolder);
       this.staticTestSelection = dependencies;
-      startversion = null;
-      endversion = null;
+      startcommit = null;
+      endcommit = null;
       threads = 1;
    }
 
    public void setStartversion(final String startversion) {
-      this.startversion = startversion;
+      this.startcommit = startversion;
    }
 
    public void setEndversion(final String endversion) {
-      this.endversion = endversion;
+      this.endcommit = endversion;
    }
 
    public VersionProcessor() {
       if (executionMixin != null) {
-         startversion = executionMixin.getStartcommit();
-         endversion = executionMixin.getEndcommit();
-         version = executionMixin.getCommit();
+         startcommit = executionMixin.getStartcommit();
+         endcommit = executionMixin.getEndcommit();
+         commit = executionMixin.getCommit();
       }
    }
 
@@ -114,9 +114,9 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    protected void initVersionProcessor() throws IOException, JsonParseException, JsonMappingException {
       if (executionMixin != null) {
-         startversion = executionMixin.getStartcommit();
-         endversion = executionMixin.getEndcommit();
-         version = executionMixin.getCommit();
+         startcommit = executionMixin.getStartcommit();
+         endcommit = executionMixin.getEndcommit();
+         commit = executionMixin.getCommit();
       }
 
       if (staticSelectionFile != null) {
@@ -137,21 +137,21 @@ public abstract class VersionProcessor implements Callable<Void> {
       }
       folders = new PeassFolders(projectFolder);
 
-      if (startversion != null || endversion != null) {
-         LOG.info("Version: " + startversion + " - " + endversion);
+      if (startcommit != null || endcommit != null) {
+         LOG.info("Version: " + startcommit + " - " + endcommit);
       }
 
-      if (executionMixin.getCommitOld() != null && startversion == null) {
+      if (executionMixin.getCommitOld() != null && startcommit == null) {
          throw new RuntimeException("If versionOld is specified, always specify version!");
       }
 
-      if (version != null) {
-         if (startversion != null || endversion != null) {
+      if (commit != null) {
+         if (startcommit != null || endcommit != null) {
             throw new RuntimeException("Both, version and (startversion or endversion), are defined - define version, or startversion/endversion!");
          }
-         startversion = version;
-         endversion = version;
-         LOG.info("Version: " + startversion + " - " + endversion);
+         startcommit = commit;
+         endcommit = commit;
+         LOG.info("Version: " + startcommit + " - " + endcommit);
       }
 
       VersionComparator.setDependencies(staticTestSelection);

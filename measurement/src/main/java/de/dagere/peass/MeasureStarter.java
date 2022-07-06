@@ -98,12 +98,12 @@ public class MeasureStarter extends PairProcessor {
     * @return index of the start version
     */
    private int getStartVersionIndex() {
-      int currentStartindex = startversion != null ? versions.indexOf(startversion) : 0;
+      int currentStartindex = startcommit != null ? versions.indexOf(startcommit) : 0;
       // Only bugfix if static selection file and execution file do not fully match
       if (executionData != null) {
-         if (startversion != null && currentStartindex == -1) {
+         if (startcommit != null && currentStartindex == -1) {
             String potentialStart = "";
-            if (executionData.getVersions().containsKey(startversion)) {
+            if (executionData.getVersions().containsKey(startcommit)) {
                for (final String executionVersion : executionData.getVersions().keySet()) {
                   for (final String dependencyVersion : staticTestSelection.getVersions().keySet()) {
                      if (dependencyVersion.equals(executionVersion)) {
@@ -111,7 +111,7 @@ public class MeasureStarter extends PairProcessor {
                         break;
                      }
                   }
-                  if (executionVersion.equals(startversion)) {
+                  if (executionVersion.equals(startcommit)) {
                      break;
                   }
                }
@@ -119,7 +119,7 @@ public class MeasureStarter extends PairProcessor {
             LOG.debug("Version only in executefile, next version in static selection file: {}", potentialStart);
             currentStartindex = versions.indexOf(potentialStart);
             if (currentStartindex == -1) {
-               throw new RuntimeException("Did not find " + startversion + " in given PRONTO-files!");
+               throw new RuntimeException("Did not find " + startcommit + " in given PRONTO-files!");
             }
          }
       }
@@ -132,12 +132,12 @@ public class MeasureStarter extends PairProcessor {
     * @return index of the end version
     */
    private int getEndVersion() {
-      int currentEndindex = endversion != null ? versions.indexOf(endversion) : versions.size();
+      int currentEndindex = endcommit != null ? versions.indexOf(endcommit) : versions.size();
       // Only bugfix if static selection file and execution file do not fully match
       if (executionData != null) {
-         if (endversion != null && currentEndindex == -1) {
+         if (endcommit != null && currentEndindex == -1) {
             String potentialStart = "";
-            if (executionData.getVersions().containsKey(endversion)) {
+            if (executionData.getVersions().containsKey(endcommit)) {
                for (final String executionVersion : executionData.getVersions().keySet()) {
                   boolean next = false;
                   for (final String dependencyVersion : staticTestSelection.getVersions().keySet()) {
@@ -149,7 +149,7 @@ public class MeasureStarter extends PairProcessor {
                         next = true;
                      }
                   }
-                  if (executionVersion.equals(endversion)) {
+                  if (executionVersion.equals(endcommit)) {
                      break;
                   }
                }
