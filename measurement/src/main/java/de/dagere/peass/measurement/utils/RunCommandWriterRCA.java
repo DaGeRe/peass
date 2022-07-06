@@ -21,7 +21,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
          final int vms) {
       goal.println("./peass searchcause "
             + "-rcaStrategy UNTIL_SOURCE_CHANGE "
-            + "-propertyFolder results/properties_" + name
+            + "-propertyFolder results/properties_" + name + " "
             + "-test " + testcaseName + " "
             + "-warmup " + warmup + " "
             + "-iterations " + iterations + " "
