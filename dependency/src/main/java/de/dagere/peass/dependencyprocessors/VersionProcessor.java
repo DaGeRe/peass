@@ -118,12 +118,12 @@ public abstract class VersionProcessor implements Callable<Void> {
          endversion = executionMixin.getEndcommit();
          version = executionMixin.getCommit();
       }
-      
+
       if (staticSelectionFile != null) {
-          staticTestSelection = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
-          VersionComparator.setDependencies(staticTestSelection);
-          executionData = new ExecutionData(staticTestSelection);
-       }
+         staticTestSelection = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
+         VersionComparator.setDependencies(staticTestSelection);
+         executionData = new ExecutionData(staticTestSelection);
+      }
       if (executionfile != null) {
          executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
          staticTestSelection = new StaticTestSelection(executionData);
@@ -131,7 +131,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       if (executionData == null && staticTestSelection == null) {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
       }
-      
+
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(staticTestSelection.getUrl(), projectFolder);
       }
