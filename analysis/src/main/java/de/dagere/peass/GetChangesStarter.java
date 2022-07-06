@@ -10,6 +10,9 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.parameters.ExecutionConfigMixin;
+import de.dagere.peass.config.parameters.KiekerConfigMixin;
+import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
@@ -42,7 +45,16 @@ public class GetChangesStarter implements Callable<Void> {
    private File out = new File("results");
 
    @Mixin
-   protected StatisticsConfigMixin statisticConfigMixin;
+   ExecutionConfigMixin executionMixin;
+   
+   @Mixin
+   MeasurementConfigurationMixin measurementConfigMixin;
+   
+   @Mixin
+   KiekerConfigMixin kiekerConfigMixin;
+   
+   @Mixin
+   private StatisticsConfigMixin statisticConfigMixin;
 
    public GetChangesStarter() {
 
@@ -64,7 +76,9 @@ public class GetChangesStarter implements Callable<Void> {
       LOG.info("Errors: 1: {} 2: {}", statisticConfigMixin.getType1error(), statisticConfigMixin.getType2error());
 
       ResultsFolders folders = new ResultsFolders(out, "out");
-      final ChangeReader reader = createReader(folders, selectedTests);
+      
+      MeasurementConfig config = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, kiekerConfigMixin);
+      final ChangeReader reader = createReader(folders, selectedTests, config);
 
       if (staticSelectionFile != null) {
          StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
@@ -82,18 +96,18 @@ public class GetChangesStarter implements Callable<Void> {
       return null;
    }
 
-   private ChangeReader createReader(final ResultsFolders resultsFolders, final SelectedTests selectedTests) throws FileNotFoundException {
+   private ChangeReader createReader(final ResultsFolders resultsFolders, final SelectedTests selectedTests, MeasurementConfig config) throws FileNotFoundException {
       RunCommandWriterRCA runCommandWriter = null;
       RunCommandWriterSlurmRCA runCommandWriterSlurm = null;
       if (selectedTests.getUrl() != null && !selectedTests.getUrl().isEmpty()) {
          final PrintStream runCommandPrinter = new PrintStream(new File(resultsFolders.getStatisticsFile().getParentFile(), "run-rca-" + selectedTests.getName() + ".sh"));
-         runCommandWriter = new RunCommandWriterRCA(new MeasurementConfig(30), runCommandPrinter, "default", selectedTests);
+         runCommandWriter = new RunCommandWriterRCA(config, runCommandPrinter, "default", selectedTests);
          final PrintStream runCommandPrinterRCA = new PrintStream(new File(resultsFolders.getStatisticsFile().getParentFile(), "run-rca-slurm-" + selectedTests.getName() + ".sh"));
-         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(new MeasurementConfig(30), runCommandPrinterRCA, "default", selectedTests);
+         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(config, runCommandPrinterRCA, "default", selectedTests);
       }
      
       final ChangeReader reader = new ChangeReader(resultsFolders, runCommandWriter, runCommandWriterSlurm, selectedTests);
-      reader.setConfig(statisticConfigMixin.getStasticsConfig());
+      reader.setConfig(config.getStatisticsConfig());
       return reader;
    }
 

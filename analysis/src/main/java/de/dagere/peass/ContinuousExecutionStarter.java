@@ -40,6 +40,9 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    MeasurementConfigurationMixin measurementConfigMixin;
    
    @Mixin
+   KiekerConfigMixin kiekerConfigMixin;
+   
+   @Mixin
    private StatisticsConfigMixin statisticConfigMixin;
 
    @Option(names = { "-threads", "--threads" }, description = "Count of threads")
@@ -62,7 +65,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      final MeasurementConfig measurementConfig = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, new KiekerConfigMixin());
+      final MeasurementConfig measurementConfig = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, kiekerConfigMixin);
       TestSelectionConfig dependencyConfig = new TestSelectionConfig(threads, false, useViews, generateCoverageSelection, true);
       EnvironmentVariables env = new EnvironmentVariables(measurementConfig.getExecutionConfig().getProperties());
       final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, dependencyConfig, env);
