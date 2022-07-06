@@ -40,14 +40,14 @@ public class RunCommandWriter {
       this.nice = nice;
    }
    
-   public void createFullVersionCommand(final int versionIndex, final String endversion, final Set<TestCase> tests) {
+   public void createFullVersionCommand(final int commitIndex, final String commit, final Set<TestCase> tests) {
       for (TestCase testcase : tests) {
          final String testcaseName = testcase.getClazz() + "#" + testcase.getMethod();
-         createSingleMethodCommand(versionIndex, endversion, testcaseName);
+         createSingleMethodCommand(commitIndex, commit, testcaseName);
       }
    }
 
-   public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName) {
+   public void createSingleMethodCommand(final int commitIndex, final String commit, final String testcaseName) {
       goal.println("./peass measure "
             + "-test " + testcaseName + " "
             + "-warmup " + config.getWarmup() + " " 
@@ -57,10 +57,10 @@ public class RunCommandWriter {
             + "-timeout " + config.getTimeoutInSeconds() + " "
             + "-measurementStrategy PARALLEL "
 //            + "-useGC false "
-            + "-commit " + endversion + " "
+            + "-commit " + commit + " "
             + "-executionfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + "-folder ../projekte/" + name + "/ "
-            + " &> measurement_" + endversion.substring(0, 6) + "_" + testcaseName
+            + " &> measurement_" + commit.substring(0, 6) + "_" + testcaseName
             + ".txt");
    }
 
