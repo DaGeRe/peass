@@ -39,6 +39,8 @@ public class TestCleaner {
       TestMethod testcase1 = data.getFirstMethodResult();
       Assert.assertEquals("test", testcase1.getMethod());
       Assert.assertEquals(10, testcase1.getDatacollectorResults().get(0).getChunks().get(0).getResults().size());
+      
+      Assert.assertEquals(1644748811732l, testcase1.getDatacollectorResults().get(0).getChunks().get(0).getChunkStartTime());
 
       File expectedCleanedFolder_2 = new File(goalFolder, "ExampleTest_test(JUNIT_PARAMETERIZED-1).json");
       MatcherAssert.assertThat(expectedCleanedFolder_2, FileMatchers.anExistingFile());

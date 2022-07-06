@@ -72,9 +72,23 @@ public class Cleaner extends DataAnalyser {
 
          final List<VMResult> current = getChunk(entry.getValue().getCommit(), minExecutionCount, entry.getValue().getCurrent());
          cleanedChunk.getResults().addAll(current);
+         
+         long chunkStartTime = getChunkStartTime(previous, current);
+         cleanedChunk.setChunkStartTime(chunkStartTime);
 
          handleChunk(entry, testcase, cleanedChunk);
       }
+   }
+
+   private long getChunkStartTime(final List<VMResult> previous, final List<VMResult> current) {
+      long chunkStartTime = Long.MAX_VALUE;
+      for (VMResult previousResult : previous) {
+         chunkStartTime = Math.min(previousResult.getDate(), chunkStartTime);
+      }
+      for (VMResult previousResult : current) {
+         chunkStartTime = Math.min(previousResult.getDate(), chunkStartTime);
+      }
+      return chunkStartTime;
    }
 
    private void handleChunk(final Entry<String, EvaluationPair> entry, TestCase testcase, final VMResultChunk cleanedChunk) {
