@@ -66,14 +66,9 @@ public class SearchCauseStarter extends MeasureStarter {
          LOG.info("Commit was not defined, using " + commit);
       }
 
-      final TestCase test = new TestCase(testName);
-      final VersionStaticSelection versionInfo = staticTestSelection.getVersions().get(commit);
-      boolean found = versionInfo.getTests().getTests().contains(test);
-      if (!found) {
-         LOG.error("Test " + test + " is not contained in regression test selection result, therefore it is unlikely to have a performance change!");
-      }
+      TestCase test = determineTest();
 
-      final String predecessor = versionInfo.getPredecessor();
+      final String predecessor = staticTestSelection.getVersions().get(commit).getPredecessor();
 
       LOG.debug("Timeout in minutes: {}", executionMixin.getTimeout());
       final MeasurementConfig measurementConfiguration = getConfiguration(predecessor);
@@ -97,6 +92,23 @@ public class SearchCauseStarter extends MeasureStarter {
       tester.search();
 
       return null;
+   }
+
+   private TestCase determineTest() {
+      TestCase test = new TestCase(testName);
+      final VersionStaticSelection versionInfo = staticTestSelection.getVersions().get(commit);
+      // boolean found = versionInfo.getTests().getTests().contains(test);
+      boolean found = false;
+      for (TestCase selectedTest : versionInfo.getTests().getTests()) {
+         if (selectedTest.getClazz().equals(test.getClazz()) && selectedTest.getMethodWithParams().equals(test.getMethodWithParams())) {
+            found = true;
+            test = selectedTest; // required to add module
+         }
+      }
+      if (!found) {
+         LOG.error("Test " + test + " is not contained in regression test selection result, therefore it is unlikely to have a performance change!");
+      }
+      return test;
    }
 
    private MeasurementConfig getConfiguration(final String predecessor) {
