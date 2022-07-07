@@ -24,6 +24,7 @@ import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kiekerReading.KiekerDurationReader;
 import kieker.analysis.exception.AnalysisConfigurationException;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
@@ -137,6 +138,9 @@ public class KiekerResultReader {
    }
 
    private boolean isSameNodeWithoutModifier(String nodeCall, String kiekerCall) {
+      if (CauseSearchData.ADDED.equals(nodeCall)) {
+         return false;
+      }
       String executable = testcase.getExecutable().replace("#", ".");
       String pureCall = nodeCall.substring("public ".length());
       return nodeCall.contains(executable) && pureCall.equals(kiekerCall);
