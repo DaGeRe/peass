@@ -41,6 +41,7 @@ public class MeasurementConfig implements Serializable {
 
    private StatisticsConfig statisticsConfig = new StatisticsConfig();
    private final ExecutionConfig executionConfig;
+   private FixedCommitConfig fixedCommitConfig;
 
    public MeasurementConfig(final int vms) {
       executionConfig = new ExecutionConfig(20);
@@ -57,9 +58,10 @@ public class MeasurementConfig implements Serializable {
    public MeasurementConfig(final int vms, final String version, final String versionOld) {
       executionConfig = new ExecutionConfig(20);
       kiekerConfig = new KiekerConfig();
+      fixedCommitConfig = new FixedCommitConfig();
       this.vms = vms;
-      executionConfig.setCommit(version);
-      executionConfig.setCommitOld(versionOld);
+      fixedCommitConfig.setCommit(version);
+      fixedCommitConfig.setCommitOld(versionOld);
    }
 
    public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin,
@@ -94,8 +96,9 @@ public class MeasurementConfig implements Serializable {
    public MeasurementConfig(final int timeout, final int vms, final boolean earlyStop, final String version, final String versionOld) {
       executionConfig = new ExecutionConfig();
       executionConfig.setTimeout(timeout);
-      executionConfig.setCommit(version);
-      executionConfig.setCommitOld(versionOld);
+      fixedCommitConfig = new FixedCommitConfig();
+      fixedCommitConfig.setCommit(version);
+      fixedCommitConfig.setCommitOld(versionOld);
       kiekerConfig = new KiekerConfig();
       this.vms = vms;
       this.earlyStop = earlyStop;
@@ -110,6 +113,7 @@ public class MeasurementConfig implements Serializable {
       executionConfig = new ExecutionConfig(other.getExecutionConfig());
       statisticsConfig = new StatisticsConfig(other.getStatisticsConfig());
       kiekerConfig = new KiekerConfig(other.getKiekerConfig());
+      fixedCommitConfig = new FixedCommitConfig(other.getFixedCommitConfig());
       this.vms = other.vms;
       this.earlyStop = other.earlyStop;
       this.warmup = other.warmup;
@@ -124,6 +128,14 @@ public class MeasurementConfig implements Serializable {
       this.directlyMeasureKieker = other.directlyMeasureKieker;
    }
 
+   public FixedCommitConfig getFixedCommitConfig() {
+      return fixedCommitConfig;
+   }
+
+   public void setFixedCommitConfig(FixedCommitConfig fixedVersionConfig) {
+      this.fixedCommitConfig = fixedVersionConfig;
+   }
+   
    public StatisticsConfig getStatisticsConfig() {
       return statisticsConfig;
    }

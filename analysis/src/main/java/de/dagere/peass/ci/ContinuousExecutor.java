@@ -69,12 +69,12 @@ public class ContinuousExecutor {
          dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       }
 
-      DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getExecutionConfig(), dependencies, folders);
+      DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getFixedCommitConfig(), dependencies, folders);
       iterator = iteratorBuiler.getIterator();
       version = iteratorBuiler.getVersion();
       versionOld = iteratorBuiler.getVersionOld();
-      measurementConfig.getExecutionConfig().setCommit(version);
-      measurementConfig.getExecutionConfig().setCommitOld(versionOld);
+      measurementConfig.getFixedCommitConfig().setCommit(version);
+      measurementConfig.getFixedCommitConfig().setCommitOld(versionOld);
       LOG.debug("Version: {} VersionOld: {}", version, versionOld);
 
       List<String> commits = GitUtils.getCommits(projectFolderLocal, false, true);
@@ -88,11 +88,11 @@ public class ContinuousExecutor {
             throw new RuntimeException("Was not able to clone project to " + projectFolderLocal.getAbsolutePath() + " (folder not existing)");
          }
       } else {
-         LOG.debug("Going to commit {} on existing folder", measurementConfig.getExecutionConfig().getCommit());
+         LOG.debug("Going to commit {} on existing folder", measurementConfig.getFixedCommitConfig().getCommit());
          GitUtils.reset(projectFolderLocal);
          GitUtils.clean(projectFolderLocal);
          GitUtils.pull(projectFolderLocal);
-         GitUtils.goToTag(measurementConfig.getExecutionConfig().getCommit(), projectFolderLocal);
+         GitUtils.goToTag(measurementConfig.getFixedCommitConfig().getCommit(), projectFolderLocal);
       }
    }
 

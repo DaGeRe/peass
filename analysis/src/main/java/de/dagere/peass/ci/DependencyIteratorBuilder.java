@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitCommit;
@@ -27,7 +28,7 @@ public class DependencyIteratorBuilder {
    private final String version, versionOld;
    private final CommitIteratorGit iterator;
 
-   public DependencyIteratorBuilder(final ExecutionConfig executionConfig, final StaticTestSelection dependencies, final PeassFolders folders) {
+   public DependencyIteratorBuilder(final FixedCommitConfig executionConfig, final StaticTestSelection dependencies, final PeassFolders folders) {
       version = GitUtils.getName(executionConfig.getCommit() != null ? executionConfig.getCommit() : "HEAD", folders.getProjectFolder());
 
       String newestAnalyzedVersionName = dependencies != null ? dependencies.getNewestCommit() : null;
@@ -70,7 +71,7 @@ public class DependencyIteratorBuilder {
       }
    }
 
-   private static String getOldVersionCommit(final ExecutionConfig executionConfig, final String newestRunningVersionName, final PeassFolders folders) {
+   private static String getOldVersionCommit(final FixedCommitConfig executionConfig, final String newestRunningVersionName, final PeassFolders folders) {
       String oldVersion;
       if (executionConfig.getCommitOld() != null) {
          oldVersion = executionConfig.getCommitOld();

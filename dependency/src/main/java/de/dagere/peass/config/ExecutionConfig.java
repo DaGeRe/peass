@@ -45,9 +45,7 @@ public class ExecutionConfig implements Serializable {
    private List<String> excludeByRule = new LinkedList<>();
 
    private List<String> forbiddenMethods = new LinkedList<>();
-
-   private String commit = "HEAD";
-   private String commitOld = "HEAD~1";
+   
    protected String startcommit;
    protected String endcommit;
    private String pl;
@@ -96,8 +94,6 @@ public class ExecutionConfig implements Serializable {
       this.includeByRule = other.getIncludeByRule();
       this.excludeByRule = other.getExcludeByRule();
       this.forbiddenMethods = other.getForbiddenMethods();
-      this.commit = other.getCommit();
-      this.commitOld = other.getCommitOld();
       this.startcommit = other.getStartcommit();
       this.endcommit = other.getEndcommit();
       this.kiekerWaitTime = other.kiekerWaitTime;
@@ -212,22 +208,6 @@ public class ExecutionConfig implements Serializable {
    @JsonIgnore
    public long getTimeoutInSeconds() {
       return timeout / 1000;
-   }
-
-   public String getCommit() {
-      return commit;
-   }
-
-   public void setCommit(final String commit) {
-      this.commit = commit;
-   }
-
-   public String getCommitOld() {
-      return commitOld;
-   }
-
-   public void setCommitOld(final String commitOld) {
-      this.commitOld = commitOld;
    }
 
    @JsonInclude(JsonInclude.Include.NON_NULL)

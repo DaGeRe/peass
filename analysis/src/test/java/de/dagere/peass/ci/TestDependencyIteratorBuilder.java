@@ -8,6 +8,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
@@ -26,7 +27,7 @@ public class TestDependencyIteratorBuilder {
       try (MockedStatic<GitUtils> gitUtil = Mockito.mockStatic(GitUtils.class)) {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
          
-         ExecutionConfig config = new ExecutionConfig();
+         FixedCommitConfig config = new FixedCommitConfig();
          config.setCommitOld(SIMPLE_PREDECESSOR);
          config.setCommit("HEAD");
 
@@ -44,7 +45,7 @@ public class TestDependencyIteratorBuilder {
       try (MockedStatic<GitUtils> gitUtil = Mockito.mockStatic(GitUtils.class)) {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
          
-         ExecutionConfig config = new ExecutionConfig();
+         FixedCommitConfig config = new FixedCommitConfig();
          config.setCommitOld(null);
          config.setCommit("HEAD");
 
@@ -63,7 +64,7 @@ public class TestDependencyIteratorBuilder {
       try (MockedStatic<GitUtils> gitUtil = Mockito.mockStatic(GitUtils.class)) {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
          
-         ExecutionConfig config = new ExecutionConfig();
+         FixedCommitConfig config = new FixedCommitConfig();
          config.setCommitOld(null);
          config.setCommit("HEAD");
 
@@ -83,7 +84,7 @@ public class TestDependencyIteratorBuilder {
       try (MockedStatic<GitUtils> gitUtil = Mockito.mockStatic(GitUtils.class)) {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
          
-         ExecutionConfig config = new ExecutionConfig();
+         FixedCommitConfig config = new FixedCommitConfig();
          config.setCommitOld(null);
          config.setCommit("HEAD");
 
@@ -102,7 +103,7 @@ public class TestDependencyIteratorBuilder {
       try (MockedStatic<GitUtils> gitUtil = Mockito.mockStatic(GitUtils.class)) {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
          
-         ExecutionConfig config = new ExecutionConfig();
+         FixedCommitConfig config = new FixedCommitConfig();
          config.setCommitOld(null);
          config.setCommit("HEAD");
          
@@ -121,7 +122,7 @@ public class TestDependencyIteratorBuilder {
          gitUtil.when(() -> GitUtils.getName("HEAD", TEMPORARY_FOLDER)).thenReturn(VERSION_2);
          gitUtil.when(() -> GitUtils.getName("HEAD~1", TEMPORARY_FOLDER)).thenReturn(SIMPLE_PREDECESSOR);
          
-         ExecutionConfig config = new ExecutionConfig();
+         FixedCommitConfig config = new FixedCommitConfig();
          config.setCommitOld(null);
          config.setCommit("HEAD");
 

@@ -114,8 +114,8 @@ public class SearchCauseStarter extends MeasureStarter {
    private MeasurementConfig getConfiguration(final String predecessor) {
       final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, kiekerConfigMixin);
       measurementConfiguration.getKiekerConfig().setUseKieker(true);
-      measurementConfiguration.getExecutionConfig().setCommit(commit);
-      measurementConfiguration.getExecutionConfig().setCommitOld(predecessor);
+      measurementConfiguration.getFixedCommitConfig().setCommit(commit);
+      measurementConfiguration.getFixedCommitConfig().setCommitOld(predecessor);
 
       if (causeSearchConfigMixin.getStrategy().equals(RCAStrategy.COMPLETE)) {
          measurementConfiguration.getKiekerConfig().setEnableAdaptiveMonitoring(false);

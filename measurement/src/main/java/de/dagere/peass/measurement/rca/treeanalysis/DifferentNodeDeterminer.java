@@ -37,7 +37,7 @@ public abstract class DifferentNodeDeterminer {
       final Iterator<CallTreeNode> predecessorIterator = measurePredecessor.iterator();
       for (; predecessorIterator.hasNext();) {
          final CallTreeNode currentPredecessorNode = predecessorIterator.next();
-         CompareData cd = currentPredecessorNode.getComparableStatistics(measurementConfig.getExecutionConfig().getCommitOld(), measurementConfig.getExecutionConfig().getCommit());
+         CompareData cd = currentPredecessorNode.getComparableStatistics(measurementConfig.getFixedCommitConfig().getCommitOld(), measurementConfig.getFixedCommitConfig().getCommit());
          calculateNodeDifference(currentPredecessorNode, cd);
       }
    }

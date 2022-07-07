@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
@@ -147,13 +148,13 @@ public class CallTreeNode extends BasicNode {
       if (getOtherKiekerPattern() == null) {
          throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
       }
-      if (getOtherKiekerPattern().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getCommit())) {
+      if (getOtherKiekerPattern().equals(CauseSearchData.ADDED) && version.equals(config.getFixedCommitConfig().getCommit())) {
          LOG.error("Error occured in version {}", version);
          LOG.error("Node: {}", kiekerPattern);
          LOG.error("Other version node: {}", getOtherKiekerPattern());
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
-      if (call.equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getCommitOld())) {
+      if (call.equals(CauseSearchData.ADDED) && version.equals(config.getFixedCommitConfig().getCommitOld())) {
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
    }
@@ -230,10 +231,10 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public TestcaseStatistic getTestcaseStatistic() {
-      LOG.debug("Creating statistics for {} {} Keys: {}", config.getExecutionConfig().getCommit(), config.getExecutionConfig().getCommitOld(), data.keySet());
-      final CallTreeStatistics currentVersionStatistics = data.get(config.getExecutionConfig().getCommit());
+      LOG.debug("Creating statistics for {} {} Keys: {}", config.getFixedCommitConfig().getCommit(), config.getFixedCommitConfig().getCommitOld(), data.keySet());
+      final CallTreeStatistics currentVersionStatistics = data.get(config.getFixedCommitConfig().getCommit());
       final SummaryStatistics current = currentVersionStatistics.getStatistics();
-      final CallTreeStatistics previousVersionStatistics = data.get(config.getExecutionConfig().getCommitOld());
+      final CallTreeStatistics previousVersionStatistics = data.get(config.getFixedCommitConfig().getCommitOld());
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
       try {
          final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current,
@@ -248,9 +249,9 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public TestcaseStatistic getPartialTestcaseStatistic() {
-      final CallTreeStatistics currentVersionStatistics = data.get(config.getExecutionConfig().getCommit());
+      final CallTreeStatistics currentVersionStatistics = data.get(config.getFixedCommitConfig().getCommit());
       final SummaryStatistics current = currentVersionStatistics.getStatistics();
-      final CallTreeStatistics previousVersionStatistics = data.get(config.getExecutionConfig().getCommitOld());
+      final CallTreeStatistics previousVersionStatistics = data.get(config.getFixedCommitConfig().getCommitOld());
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
 
       if (firstHasValues(current, previous)) {
@@ -276,10 +277,10 @@ public class CallTreeNode extends BasicNode {
    }
 
    public void initVersions() {
-      LOG.debug("Init versions: {}", config.getExecutionConfig().getCommit(), config.getExecutionConfig().getCommitOld());
+      LOG.debug("Init versions: {}", config.getFixedCommitConfig().getCommit(), config.getFixedCommitConfig().getCommitOld());
       resetStatistics();
-      newVersion(config.getExecutionConfig().getCommitOld());
-      newVersion(config.getExecutionConfig().getCommit());
+      newVersion(config.getFixedCommitConfig().getCommitOld());
+      newVersion(config.getFixedCommitConfig().getCommit());
    }
 
    @JsonIgnore
@@ -347,7 +348,7 @@ public class CallTreeNode extends BasicNode {
    }
 
    private boolean isAdded(String version) {
-      ExecutionConfig executionConfig = config.getExecutionConfig();
+      FixedCommitConfig executionConfig = config.getFixedCommitConfig();
       if (executionConfig.getCommit().equals(version) && call.equals(CauseSearchData.ADDED)) {
          return true;
       }

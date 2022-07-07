@@ -5,10 +5,9 @@ import java.util.Set;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsIterableContaining;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -16,7 +15,7 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 public class TestPatternSetGenerator {
    @Test
    public void generatePattern() {
-      ExecutionConfig config = new ExecutionConfig(5);
+      FixedCommitConfig config = new FixedCommitConfig();
       config.setCommit("000001");
       config.setCommitOld("000000");
       PatternSetGenerator generator = new PatternSetGenerator(config, new TestCase("de.pack.Clazz#myTest"));

@@ -39,11 +39,11 @@ public class TestCallTreeNode {
    public void testEOI() {
       TreeBuilderBig builder = new TreeBuilderBig(false);
 
-      Assert.assertEquals(0, builder.getRoot().getEoi(TreeBuilder.VERSION_OLD));
-      Assert.assertEquals(1, builder.getA().getEoi(TreeBuilder.VERSION_OLD));
-      Assert.assertEquals(2, builder.getB().getEoi(TreeBuilder.VERSION_OLD));
-      Assert.assertEquals(3, builder.getC().getEoi(TreeBuilder.VERSION_OLD));
-      Assert.assertEquals(4, builder.getB2().getEoi(TreeBuilder.VERSION_OLD));
+      Assert.assertEquals(0, builder.getRoot().getEoi(TreeBuilder.COMMIT_OLD));
+      Assert.assertEquals(1, builder.getA().getEoi(TreeBuilder.COMMIT_OLD));
+      Assert.assertEquals(2, builder.getB().getEoi(TreeBuilder.COMMIT_OLD));
+      Assert.assertEquals(3, builder.getC().getEoi(TreeBuilder.COMMIT_OLD));
+      Assert.assertEquals(4, builder.getB2().getEoi(TreeBuilder.COMMIT_OLD));
    }
 
    @Test

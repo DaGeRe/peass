@@ -85,7 +85,7 @@ public class CauseTester extends AdaptiveTester {
 
       initEvaluation(testcase);
 
-      final File logFolder = folders.getRCALogFolder(configuration.getExecutionConfig().getCommit(), testcase, levelId);
+      final File logFolder = folders.getRCALogFolder(configuration.getFixedCommitConfig().getCommit(), testcase, levelId);
 
       try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())) {
          evaluateWithAdaption(testcase, logFolder, writer);
@@ -97,7 +97,7 @@ public class CauseTester extends AdaptiveTester {
       final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
       TestTransformer testTransformer = testExecutor.getTestTransformer();
       testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
-      PatternSetGenerator patternSetGenerator = new PatternSetGenerator(configuration.getExecutionConfig(), testcase);
+      PatternSetGenerator patternSetGenerator = new PatternSetGenerator(configuration.getFixedCommitConfig(), testcase);
       includedPattern = patternSetGenerator.generatePatternSet(includedNodes, version);
       final HashSet<String> includedMethodPattern = new HashSet<>(includedPattern);
       testExecutor.setIncludedMethods(includedMethodPattern);
@@ -107,8 +107,8 @@ public class CauseTester extends AdaptiveTester {
    @Override
    public boolean checkIsDecidable(final TestCase testcase, final int vmid) {
       try {
-         getDurationsVersion(configuration.getExecutionConfig().getCommit());
-         getDurationsVersion(configuration.getExecutionConfig().getCommitOld());
+         getDurationsVersion(configuration.getFixedCommitConfig().getCommit());
+         getDurationsVersion(configuration.getFixedCommitConfig().getCommitOld());
          boolean allDecidable = super.checkIsDecidable(testcase, vmid);
          LOG.debug("Super decidable: {}", allDecidable);
          for (final CallTreeNode includedNode : includedNodes) {
@@ -122,8 +122,8 @@ public class CauseTester extends AdaptiveTester {
    }
 
    private boolean checkLevelDecidable(final int vmid, final boolean allDecidable, final CallTreeNode includedNode) {
-      final SummaryStatistics statisticsOld = includedNode.getStatistics(configuration.getExecutionConfig().getCommitOld());
-      final SummaryStatistics statistics = includedNode.getStatistics(configuration.getExecutionConfig().getCommit());
+      final SummaryStatistics statisticsOld = includedNode.getStatistics(configuration.getFixedCommitConfig().getCommitOld());
+      final SummaryStatistics statistics = includedNode.getStatistics(configuration.getFixedCommitConfig().getCommit());
       final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsOld, statistics);
       final boolean nodeDecidable = decider.isBreakPossible(vmid);
       LOG.debug("{} decideable: {}", includedNode.getKiekerPattern(), allDecidable);
@@ -137,7 +137,7 @@ public class CauseTester extends AdaptiveTester {
       if (getCurrentOrganizer().testSuccess(version)) {
          LOG.info("Did succeed in measurement - analyse values");
 
-         boolean isOtherVersion = version.equals(configuration.getExecutionConfig().getCommit());
+         boolean isOtherVersion = version.equals(configuration.getFixedCommitConfig().getCommit());
          final KiekerResultReader kiekerResultReader = new KiekerResultReader(configuration.getKiekerConfig().isUseAggregation(), configuration.getKiekerConfig().getRecord(),
                includedNodes, version, testcase,
                isOtherVersion);
@@ -156,13 +156,13 @@ public class CauseTester extends AdaptiveTester {
 
    public void getDurations(final int levelId)
          throws FileNotFoundException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
-      getDurationsVersion(configuration.getExecutionConfig().getCommit());
-      getDurationsVersion(configuration.getExecutionConfig().getCommitOld());
+      getDurationsVersion(configuration.getFixedCommitConfig().getCommit());
+      getDurationsVersion(configuration.getFixedCommitConfig().getCommitOld());
    }
 
    public void cleanup(final int levelId) throws IOException {
-      organizeMeasurements(levelId, configuration.getExecutionConfig().getCommit(), configuration.getExecutionConfig().getCommit());
-      organizeMeasurements(levelId, configuration.getExecutionConfig().getCommit(), configuration.getExecutionConfig().getCommitOld());
+      organizeMeasurements(levelId, configuration.getFixedCommitConfig().getCommit(), configuration.getFixedCommitConfig().getCommit());
+      organizeMeasurements(levelId, configuration.getFixedCommitConfig().getCommit(), configuration.getFixedCommitConfig().getCommitOld());
    }
 
    private void organizeMeasurements(final int levelId, final String mainVersion, final String version) throws IOException {
@@ -175,13 +175,13 @@ public class CauseTester extends AdaptiveTester {
       FileUtils.moveDirectory(testcaseFolder, adaptiveRunFolder);
    }
 
-   private void getDurationsVersion(final String version) throws ViewNotFoundException, AnalysisConfigurationException {
-      includedNodes.forEach(node -> node.createStatistics(version));
+   private void getDurationsVersion(final String commit) throws ViewNotFoundException, AnalysisConfigurationException {
+      includedNodes.forEach(node -> node.createStatistics(commit));
    }
 
-   public void setCurrentVersion(final String version) {
-      configuration.getExecutionConfig().setCommit(version);
-      configuration.getExecutionConfig().setCommitOld(version + "~1");
+   public void setCurrentVersion(final String commit) {
+      configuration.getFixedCommitConfig().setCommit(commit);
+      configuration.getFixedCommitConfig().setCommitOld(commit + "~1");
    }
 
 }

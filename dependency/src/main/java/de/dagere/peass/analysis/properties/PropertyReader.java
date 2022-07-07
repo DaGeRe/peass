@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -77,10 +78,10 @@ public class PropertyReader {
 
       final ChangedEntity entity = new ChangedEntity(testclazz.getKey().getClazz(), testclazz.getKey().getModule());
       // TODO eventually, we need to set change the version of the config here to  version.getKey(), version.getValue().getPredecessor(),
-      ExecutionConfig copyConfig = new ExecutionConfig(config);
+      FixedCommitConfig copyConfig = new FixedCommitConfig();
       copyConfig.setCommit(version.getKey());
       copyConfig.setCommitOld(version.getValue().getPredecessor());
-      final PropertyReadHelper reader = new PropertyReadHelper(copyConfig,
+      final PropertyReadHelper reader = new PropertyReadHelper(config, copyConfig,
             entity, testcaseChange,
             projectFolder,
             resultsFolders.getViewFolder(), methodSourceFolder, changedTests);

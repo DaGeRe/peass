@@ -187,7 +187,7 @@ public class ResultsFolders {
    }
 
    public File getVersionFullResultsFolder(final MeasurementConfig measurementConfig) {
-      return getVersionFullResultsFolder(measurementConfig.getExecutionConfig().getCommit(), measurementConfig.getExecutionConfig().getCommitOld());
+      return getVersionFullResultsFolder(measurementConfig.getFixedCommitConfig().getCommit(), measurementConfig.getFixedCommitConfig().getCommitOld());
    }
 
    /**

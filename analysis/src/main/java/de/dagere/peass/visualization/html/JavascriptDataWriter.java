@@ -32,9 +32,9 @@ public class JavascriptDataWriter {
       File outputJS = new File(output.getParentFile(), jsName);
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputJS))) {
          fileWriter.write("if (document.getElementById('testcaseDiv') != null) { \n   document.getElementById('testcaseDiv').innerHTML=\"Version: <a href='"
-               + "javascript:fallbackCopyTextToClipboard(\\\"-version " + data.getMeasurementConfig().getExecutionConfig().getCommit() +
+               + "javascript:fallbackCopyTextToClipboard(\\\"-version " + data.getMeasurementConfig().getFixedCommitConfig().getCommit() +
                " -test " + data.getTestcase() + "\\\")'>"
-               + data.getMeasurementConfig().getExecutionConfig().getCommit() + "</a><br>");
+               + data.getMeasurementConfig().getFixedCommitConfig().getCommit() + "</a><br>");
          fileWriter.write("Test Case: " + data.getTestcase() + "<br>\";\n");
          writeDashboardLink(data, fileWriter);
          fileWriter.write("}\n");
@@ -42,7 +42,7 @@ public class JavascriptDataWriter {
          fileWriter.write("\n");
          if (propertyFolder != null) {
             final File methodSourceFolder = new File(propertyFolder, "methods");
-            final SourceWriter writer = new SourceWriter(root, fileWriter, methodSourceFolder, data.getMeasurementConfig().getExecutionConfig().getCommit());
+            final SourceWriter writer = new SourceWriter(root, fileWriter, methodSourceFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
             writer.writeSources();
          }
          writeColoredTree(fileWriter);

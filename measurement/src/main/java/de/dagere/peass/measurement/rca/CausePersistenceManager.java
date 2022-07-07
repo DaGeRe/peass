@@ -30,7 +30,7 @@ public class CausePersistenceManager {
       this.dataDetails = finishedDataFull;
       this.folders = folders;
 
-      String version = finishedData.getMeasurementConfig().getExecutionConfig().getCommit();
+      String version = finishedData.getMeasurementConfig().getFixedCommitConfig().getCommit();
       TestCase testCase = finishedData.getCauseConfig().getTestCase();
       final File treeDataFolder = folders.getRcaTreeFolder(version, testCase);
       treeDataFile = folders.getRcaTreeFile(version, testCase);

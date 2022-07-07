@@ -87,8 +87,8 @@ public class VisualizeRCAStarter implements Callable<Void> {
 
    private void getFullTree(final RCAGenerator rcaGenerator, final CauseSearchData data, final File treeFolder) throws IOException, JsonParseException, JsonMappingException {
       if (treeFolder.exists()) {
-         final File potentialCacheFileOld = new File(treeFolder, data.getMeasurementConfig().getExecutionConfig().getCommitOld());
-         final File potentialCacheFile = new File(treeFolder, data.getMeasurementConfig().getExecutionConfig().getCommit());
+         final File potentialCacheFileOld = new File(treeFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommitOld());
+         final File potentialCacheFile = new File(treeFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
 
          final CallTreeNode rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
          final CallTreeNode rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
@@ -108,7 +108,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
       if (visualizeFull) {
          final CauseSearchData data = rcaGenerator.getData();
 
-         final File treeFolder = folders.getTreeCacheFolder(data.getMeasurementConfig().getExecutionConfig().getCommit(), data.getCauseConfig().getTestCase());
+         final File treeFolder = folders.getTreeCacheFolder(data.getMeasurementConfig().getFixedCommitConfig().getCommit(), data.getCauseConfig().getTestCase());
          getFullTree(rcaGenerator, data, treeFolder);
       }
       rcaGenerator.createVisualization();

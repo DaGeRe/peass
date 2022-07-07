@@ -32,8 +32,8 @@ public class AllDifferingDeterminer extends DifferentNodeDeterminer {
    public List<CallTreeNode> getIncludableNodes() {
       final List<CallTreeNode> includeable = new LinkedList<CallTreeNode>();
       for (final CallTreeNode node : measurePredecessor) {
-         final SummaryStatistics statistics = node.getStatistics(measurementConfig.getExecutionConfig().getCommit());
-         final SummaryStatistics statisticsOld = node.getStatistics(measurementConfig.getExecutionConfig().getCommitOld());
+         final SummaryStatistics statistics = node.getStatistics(measurementConfig.getFixedCommitConfig().getCommit());
+         final SummaryStatistics statisticsOld = node.getStatistics(measurementConfig.getFixedCommitConfig().getCommitOld());
          if (statistics.getMean() > causeSearchConfig.getMinTime() &&
                statisticsOld.getMean() > causeSearchConfig.getMinTime()) {
             includeable.add(node);

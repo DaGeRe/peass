@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty.TraceChange;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.ExecutorCreator;
@@ -84,19 +85,19 @@ public class PropertyReadHelper {
       change.setMethod("testFILEUPLOAD135");
       final File projectFolder2 = new File("../../projekte/commons-fileupload");
       final File viewFolder2 = new File("/home/reichelt/daten3/diss/repos/preprocessing/4/commons-fileupload/views_commons-fileupload/");
-      ExecutionConfig demoConfig = new ExecutionConfig();
+      FixedCommitConfig demoConfig = new FixedCommitConfig();
       demoConfig.setCommit("96f8f56556a8592bfed25c82acedeffc4872ac1f");
       demoConfig.setCommitOld("09d16c");
 
-      final PropertyReadHelper propertyReadHelper = new PropertyReadHelper(demoConfig, ce, change, projectFolder2, viewFolder2,
+      final PropertyReadHelper propertyReadHelper = new PropertyReadHelper(new ExecutionConfig(), demoConfig, ce, change, projectFolder2, viewFolder2,
             new File("/tmp/"), null);
       propertyReadHelper.read();
    }
 
-   public PropertyReadHelper(final ExecutionConfig config, final ChangedEntity clazz,
+   public PropertyReadHelper(final ExecutionConfig config, FixedCommitConfig commitConfig, final ChangedEntity clazz,
          final Change change, final File projectFolder, final File viewFolder, final File methodSourceFolder, final ExecutionData changedTests) {
-      this.version = config.getCommit();
-      this.versionOld = config.getCommitOld();
+      this.version = commitConfig.getCommit();
+      this.versionOld = commitConfig.getCommitOld();
       this.config = config;
       if (clazz.getMethod() != null) {
          throw new RuntimeException("Method must not be set!");

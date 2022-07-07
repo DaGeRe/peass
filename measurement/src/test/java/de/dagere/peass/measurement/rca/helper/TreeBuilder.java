@@ -12,16 +12,16 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
 public class TreeBuilder {
    
-   public static final String VERSION_OLD = "000001~1";
-   public static final String VERSION = "000001";
+   public static final String COMMIT_OLD = "000001~1";
+   public static final String COMMIT = "000001";
    
    protected final CallTreeNode root, a, b, c, constructor;
 
    private CallTreeNode d;
    private CallTreeNode e;
 
-   protected String versionPredecessor = VERSION_OLD;
-   protected String version = VERSION;
+   protected String versionPredecessor = COMMIT_OLD;
+   protected String version = COMMIT;
 
    private boolean useFullLogAPI = true;
    private boolean addOutlier = false;
@@ -34,8 +34,8 @@ public class TreeBuilder {
 
    public TreeBuilder(final MeasurementConfig config, final boolean useFullLogAPI) {
       this.config = config;
-      config.getExecutionConfig().setCommitOld(VERSION_OLD);
-      config.getExecutionConfig().setCommit(VERSION);
+      config.getFixedCommitConfig().setCommitOld(COMMIT_OLD);
+      config.getFixedCommitConfig().setCommit(COMMIT);
       
       this.useFullLogAPI = useFullLogAPI;
 

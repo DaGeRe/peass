@@ -58,8 +58,8 @@ public class ContinuousDependencyReaderIT {
       iterator.goToNextCommit();
 
       ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setCommit(iterator.getTag());
-      executionConfig.setCommitOld(iterator.getPredecessor());
+      executionConfig.setEndcommit(iterator.getTag());
+      executionConfig.setStartcommit(iterator.getPredecessor());
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
@@ -84,8 +84,8 @@ public class ContinuousDependencyReaderIT {
       CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
 
       ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setCommit(newVersion);
-      executionConfig.setCommitOld(iterator.getPredecessor());
+      executionConfig.setEndcommit(newVersion);
+      executionConfig.setStartcommit(iterator.getPredecessor());
 
       final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig,
             new KiekerConfig(true),
@@ -110,8 +110,8 @@ public class ContinuousDependencyReaderIT {
       CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
 
       ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setCommit(newVersion);
-      executionConfig.setCommitOld(iterator.getPredecessor());
+      executionConfig.setEndcommit(newVersion);
+      executionConfig.setStartcommit(iterator.getPredecessor());
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());

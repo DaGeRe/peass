@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
+import de.dagere.peass.config.parameters.FixedCommitMixin;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -35,6 +36,9 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    @Mixin
    protected ExecutionConfigMixin executionMixin;
+   
+   @Mixin
+   protected FixedCommitMixin fixedVersionMixin;
 
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
@@ -77,7 +81,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       if (executionMixin != null) {
          startcommit = executionMixin.getStartcommit();
          endcommit = executionMixin.getEndcommit();
-         commit = executionMixin.getCommit();
+         commit = fixedVersionMixin.getCommit();
       }
    }
 
@@ -116,7 +120,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       if (executionMixin != null) {
          startcommit = executionMixin.getStartcommit();
          endcommit = executionMixin.getEndcommit();
-         commit = executionMixin.getCommit();
+         commit = fixedVersionMixin.getCommit();
       }
 
       if (staticSelectionFile != null) {
@@ -141,7 +145,7 @@ public abstract class VersionProcessor implements Callable<Void> {
          LOG.info("Version: " + startcommit + " - " + endcommit);
       }
 
-      if (executionMixin.getCommitOld() != null && startcommit == null) {
+      if (fixedVersionMixin.getCommitOld() != null && startcommit == null) {
          throw new RuntimeException("If versionOld is specified, always specify version!");
       }
 

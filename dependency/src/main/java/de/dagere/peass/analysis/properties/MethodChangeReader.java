@@ -25,11 +25,11 @@ public class MethodChangeReader {
    private final String method, methodOld;
 
    public MethodChangeReader(final File methodSourceFolder, final File sourceFolder, final File oldSourceFolder, final ChangedEntity clazz, 
-         final String version, final ExecutionConfig config)
+         final String commit, final ExecutionConfig config)
          throws FileNotFoundException {
       this.manager = new ChangedMethodManager(methodSourceFolder);
       this.clazz = clazz;
-      this.commit = version;
+      this.commit = commit;
       
       method = FileComparisonUtil.getMethodSource(sourceFolder, clazz, clazz.getMethod(), config);
       methodOld = FileComparisonUtil.getMethodSource(oldSourceFolder, clazz, clazz.getMethod(), config);

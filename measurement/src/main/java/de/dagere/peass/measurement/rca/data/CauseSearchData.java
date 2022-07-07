@@ -112,6 +112,6 @@ public class CauseSearchData {
    @JsonIgnore
    public void addDetailDiff(final CallTreeNode rawDataNode) {
       final MeasuredNode serializeNode = addDiff(rawDataNode);
-      serializeNode.setValues(rawDataNode, measurementConfig.getExecutionConfig().getCommit(), measurementConfig.getExecutionConfig().getCommitOld());
+      serializeNode.setValues(rawDataNode, measurementConfig.getFixedCommitConfig().getCommit(), measurementConfig.getFixedCommitConfig().getCommitOld());
    }
 }

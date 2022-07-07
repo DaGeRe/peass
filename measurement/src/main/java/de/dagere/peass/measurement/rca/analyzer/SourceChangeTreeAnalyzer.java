@@ -34,10 +34,10 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
    private Set<CallTreeNode> calculateIncludedNodes(final ChangedMethodManager manager, final List<CallTreeNode> includableNodes) {
       final Set<CallTreeNode> includeNodes = new HashSet<>();
       for (CallTreeNode node : includableNodes) {
-         File mainSourceFile = manager.getMethodMainFile(config.getExecutionConfig().getCommit(), node.toEntity());
-         File oldSourceFile = manager.getMethodOldFile(config.getExecutionConfig().getCommit(), node.toEntity());
+         File mainSourceFile = manager.getMethodMainFile(config.getFixedCommitConfig().getCommit(), node.toEntity());
+         File oldSourceFile = manager.getMethodOldFile(config.getFixedCommitConfig().getCommit(), node.toEntity());
          if (!mainSourceFile.exists() && !oldSourceFile.exists()) {
-            File diffSourceFile = manager.getMethodDiffFile(config.getExecutionConfig().getCommit(), node.toEntity());
+            File diffSourceFile = manager.getMethodDiffFile(config.getFixedCommitConfig().getCommit(), node.toEntity());
             if (diffSourceFile.exists()) {
                LOG.debug("Node {} has no change", node);
             } else {

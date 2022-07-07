@@ -14,8 +14,8 @@ public class TestCallTreeStatistics {
    
    @BeforeEach
    public void init() {
-      CONFIG.getExecutionConfig().setCommitOld("B");
-      CONFIG.getExecutionConfig().setCommit("A");
+      CONFIG.getFixedCommitConfig().setCommitOld("B");
+      CONFIG.getFixedCommitConfig().setCommit("A");
    }
    
    @Test

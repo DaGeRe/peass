@@ -47,10 +47,10 @@ public class ResultLoader {
       for (final VMResult result : realChunk.getResults()) {
          if (result.getIterations() + result.getWarmup() == config.getAllIterations() &&
                result.getRepetitions() == config.getRepetitions()) {
-            if (result.getCommit().equals(config.getExecutionConfig().getCommitOld())) {
+            if (result.getCommit().equals(config.getFixedCommitConfig().getCommitOld())) {
                before.add(result.getValue());
             }
-            if (result.getCommit().equals(config.getExecutionConfig().getCommit())) {
+            if (result.getCommit().equals(config.getFixedCommitConfig().getCommit())) {
                after.add(result.getValue());
             }
          }

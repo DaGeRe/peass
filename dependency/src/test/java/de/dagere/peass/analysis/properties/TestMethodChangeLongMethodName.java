@@ -19,9 +19,6 @@ public class TestMethodChangeLongMethodName {
    public static final File methodSourceFolder = new File("target" + File.separator + "current_sources");
    public static final String COMMIT = "000001";
    public static final ExecutionConfig TEST_CONFIG = new ExecutionConfig();
-   static {
-      TEST_CONFIG.setCommit(COMMIT);
-   }
 
    public void method(final int a) {
       System.out.println("Contains System.out");

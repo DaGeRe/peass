@@ -27,6 +27,7 @@ import de.dagere.peass.analysis.properties.PropertyReadHelper;
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -189,11 +190,11 @@ public class ReadProperties implements Callable<Void> {
          final List<ChangeProperty> properties = new LinkedList<>();
          changeProperties.getProperties().put(testclazz, properties);
          for (final Change testcaseChange : changes.getValue()) {
-            ExecutionConfig config = new ExecutionConfig();
+            FixedCommitConfig config = new FixedCommitConfig();
             config.setCommit(version);
             config.setCommitOld(predecessor);
             ChangedEntity entity = new ChangedEntity(testclazz, module);
-            final PropertyReadHelper reader = new PropertyReadHelper(config, entity, testcaseChange, projectFolder, viewFolder,
+            final PropertyReadHelper reader = new PropertyReadHelper(new ExecutionConfig(), config, entity, testcaseChange, projectFolder, viewFolder,
                   methodFolder, null);
             final ChangeProperty currentProperty = reader.read();
             // if (currentProperty != null) {

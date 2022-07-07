@@ -103,8 +103,8 @@ public class TestContinuousMeasurementExecutor {
 
    private MeasurementConfig createMeasurementConfig() {
       MeasurementConfig measurementConfig = new MeasurementConfig(5);
-      measurementConfig.getExecutionConfig().setCommit("000001");
-      measurementConfig.getExecutionConfig().setCommitOld("000000");
+      measurementConfig.getFixedCommitConfig().setCommit("000001");
+      measurementConfig.getFixedCommitConfig().setCommitOld("000000");
       measurementConfig.setIterations(ITERATIONS);
       measurementConfig.setCallSyncBetweenVMs(false);
       measurementConfig.setWaitTimeBetweenVMs(0);

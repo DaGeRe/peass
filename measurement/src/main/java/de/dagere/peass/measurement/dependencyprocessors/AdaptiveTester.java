@@ -31,7 +31,7 @@ public class AdaptiveTester extends DependencyTester {
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, XmlPullParserException {
       initEvaluation(testcase);
 
-      final File logFolder = folders.getMeasureLogFolder(configuration.getExecutionConfig().getCommit(), testcase);
+      final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);
       
       try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())){
          evaluateWithAdaption(testcase, logFolder, writer);

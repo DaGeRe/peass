@@ -42,9 +42,9 @@ public class BothTreeReader {
       this.folders = folders;
       this.env = env;
       
-      File treeCacheFolder = folders.getTreeCacheFolder(config.getExecutionConfig().getCommit(), causeSearchConfig.getTestCase());
-      potentialCacheFileOld = new File(treeCacheFolder, config.getExecutionConfig().getCommitOld());
-      potentialCacheFile = new File(treeCacheFolder, config.getExecutionConfig().getCommit());
+      File treeCacheFolder = folders.getTreeCacheFolder(config.getFixedCommitConfig().getCommit(), causeSearchConfig.getTestCase());
+      potentialCacheFileOld = new File(treeCacheFolder, config.getFixedCommitConfig().getCommitOld());
+      potentialCacheFile = new File(treeCacheFolder, config.getFixedCommitConfig().getCommit());
    }
    
    public void readCachedTrees() throws JsonParseException, JsonMappingException, IOException {
@@ -80,11 +80,11 @@ public class BothTreeReader {
    }
 
    private void determineTrees() throws InterruptedException, IOException, FileNotFoundException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException {
-      final TreeReader resultsManager = TreeReaderFactory.createTreeReader(folders, config.getExecutionConfig().getCommitOld(), config, causeSearchConfig.isIgnoreEOIs(), env);
-      rootPredecessor = resultsManager.getTree(causeSearchConfig.getTestCase(), config.getExecutionConfig().getCommitOld());
+      final TreeReader resultsManager = TreeReaderFactory.createTreeReader(folders, config.getFixedCommitConfig().getCommitOld(), config, causeSearchConfig.isIgnoreEOIs(), env);
+      rootPredecessor = resultsManager.getTree(causeSearchConfig.getTestCase(), config.getFixedCommitConfig().getCommitOld());
 
-      final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getExecutionConfig().getCommit(), config, causeSearchConfig.isIgnoreEOIs(), env);
-      rootVersion = resultsManagerPrevious.getTree(causeSearchConfig.getTestCase(), config.getExecutionConfig().getCommit());
+      final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getFixedCommitConfig().getCommit(), config, causeSearchConfig.isIgnoreEOIs(), env);
+      rootVersion = resultsManagerPrevious.getTree(causeSearchConfig.getTestCase(), config.getFixedCommitConfig().getCommit());
       LOG.info("Traces equal: {}", TreeUtil.areTracesEqual(rootPredecessor, rootVersion));
    }
 
