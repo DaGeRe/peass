@@ -35,20 +35,20 @@ public class KiekerResultReader {
    final boolean useAggregation;
    private final AllowedKiekerRecord usedRecord;
    private final Set<CallTreeNode> includedNodes;
-   final String version;
+   final String commit;
    final TestCase testcase;
-   final boolean otherVersion;
+   final boolean otherCommit;
 
    boolean considerNodePosition = false;
 
-   public KiekerResultReader(final boolean useAggregation, final AllowedKiekerRecord usedRecord, final Set<CallTreeNode> includedNodes, final String version,
-         final TestCase testcase, final boolean otherVersion) {
+   public KiekerResultReader(final boolean useAggregation, final AllowedKiekerRecord usedRecord, final Set<CallTreeNode> includedNodes, final String commit,
+         final TestCase testcase, final boolean otherCommit) {
       this.useAggregation = useAggregation;
       this.usedRecord = usedRecord;
       this.includedNodes = includedNodes;
-      this.version = version;
+      this.commit = commit;
       this.testcase = testcase;
-      this.otherVersion = otherVersion;
+      this.otherCommit = otherCommit;
    }
 
    public void setConsiderNodePosition(final boolean considerNodePosition) {
@@ -57,7 +57,7 @@ public class KiekerResultReader {
 
    public void readResults(final File versionResultFolder) {
       try {
-         LOG.info("Reading kieker results from {}", versionResultFolder.getAbsolutePath(), version);
+         LOG.info("Reading kieker results from {}", versionResultFolder.getAbsolutePath(), commit);
          FileFilter filter = new OrFileFilter(new RegexFileFilter("[0-9]*"), new RegexFileFilter("measurement-[0-9]*.csv"));
          final File[] kiekerResultFiles = versionResultFolder.listFiles(filter);
          for (final File kiekerResultFolder : kiekerResultFiles) {
@@ -87,7 +87,7 @@ public class KiekerResultReader {
 
    private void readNode(final Map<AggregatedDataNode, AggregatedData> fullDataMap, final CallTreeNode node) {
       boolean nodeFound = false;
-      final CallTreeNode examinedNode = otherVersion ? node.getOtherVersionNode() : node;
+      final CallTreeNode examinedNode = otherCommit ? node.getOtherVersionNode() : node;
       final String nodeCall = KiekerPatternConverter.fixParameters(examinedNode.getKiekerPattern());
       final List<StatisticalSummary> values = new LinkedList<>();
       for (final Entry<AggregatedDataNode, AggregatedData> entry : fullDataMap.entrySet()) {
@@ -100,9 +100,9 @@ public class KiekerResultReader {
       }
 
       if (nodeFound) {
-         LOG.debug("Setting measurement: {} {} {}", version, nodeCall, values.size());
+         LOG.debug("Setting measurement: {} {} {}", commit, nodeCall, values.size());
          // System.out.println(StatisticUtil.getMean(values) + " ");
-         node.addAggregatedMeasurement(version, values);
+         node.addAggregatedMeasurement(commit, values);
       } else {
          LOG.warn("Node {} ({}) did not find measurement values, measured methods: {}", nodeCall, node.getOtherKiekerPattern(), fullDataMap.entrySet().size());
       }
@@ -112,9 +112,9 @@ public class KiekerResultReader {
       final String kiekerCall = KiekerPatternConverter.getKiekerPattern(measuredNode.getCall());
       LOG.trace("Node: {} Kieker: {} Equal: {}", nodeCall, kiekerCall, nodeCall.equals(kiekerCall));
       if (nodeCall.equals(kiekerCall) || isSameNodeWithoutModifier(nodeCall, kiekerCall)) {
-         LOG.trace("EOI: {} vs {}", node.getEoi(version), measuredNode.getEoi());
+         LOG.trace("EOI: {} vs {}", node.getEoi(commit), measuredNode.getEoi());
          if (considerNodePosition) {
-            final int eoi = node.getEoi(version);
+            final int eoi = node.getEoi(commit);
             if (measuredNode.getEoi() == eoi) {
                return true;
             } else {
@@ -130,9 +130,9 @@ public class KiekerResultReader {
 
    public void readNonAggregated(final File kiekerTraceFolder) throws AnalysisConfigurationException {
       if (usedRecord == AllowedKiekerRecord.OPERATIONEXECUTION) {
-         KiekerDurationReader.executeDurationStage(kiekerTraceFolder, includedNodes, version);
+         KiekerDurationReader.executeDurationStage(kiekerTraceFolder, includedNodes, commit);
       } else if (usedRecord == AllowedKiekerRecord.DURATION) {
-         KiekerDurationReader.executeReducedDurationStage(kiekerTraceFolder, includedNodes, version);
+         KiekerDurationReader.executeReducedDurationStage(kiekerTraceFolder, includedNodes, commit);
       }
    }
 
