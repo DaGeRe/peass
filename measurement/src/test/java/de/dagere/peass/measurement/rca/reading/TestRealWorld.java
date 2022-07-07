@@ -21,14 +21,14 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class TestRealWorld {
 
-   private static final String version = "bcf50e2832b63a1ad44c5627862ef62e92ea605a";
-   private static final String predecessor = version+"~1";
-   
+   private static final String commit = "bcf50e2832b63a1ad44c5627862ef62e92ea605a";
+   private static final String predecessor = commit + "~1";
+
    @Test
    public void callMe() throws JsonParseException, JsonMappingException, IOException {
-      final MeasurementConfig config = new MeasurementConfig(5, version, predecessor);
-      CallTreeNode rootNode = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()",  config);
-      CallTreeNode rootNode2 = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()",  config);
+      final MeasurementConfig config = new MeasurementConfig(5, commit, predecessor);
+      CallTreeNode rootNode = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()", config);
+      CallTreeNode rootNode2 = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()", config);
       rootNode.initVersions();
       rootNode2.initVersions();
 
@@ -36,16 +36,16 @@ public class TestRealWorld {
       includedNodes.add(rootNode);
 
       File parentFolder = new File("src/test/resources/rcaDataExample/testMe/");
-      read(parentFolder, version, includedNodes);
+      read(parentFolder, commit, includedNodes);
       read(parentFolder, predecessor, includedNodes);
 
-      rootNode.createStatistics(version);
+      rootNode.createStatistics(commit);
       rootNode.createStatistics(predecessor);
       Assert.assertEquals(-3.05396, rootNode.getTestcaseStatistic().getTvalue(), 0.01);
-      
-      Assert.assertEquals(2.04496, rootNode.getStatistics(version).getMean(), 0.01);
+
+      Assert.assertEquals(2.04496, rootNode.getStatistics(commit).getMean(), 0.01);
       Assert.assertEquals(2.03272, rootNode.getStatistics(predecessor).getMean(), 0.01);
-      
+
       Assert.assertEquals(10, rootNode.getStatistics("bcf50e2832b63a1ad44c5627862ef62e92ea605a").getN());
       Assert.assertEquals(10, rootNode.getStatistics("bcf50e2832b63a1ad44c5627862ef62e92ea605a~1").getN());
    }
