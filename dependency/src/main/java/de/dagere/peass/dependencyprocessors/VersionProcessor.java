@@ -38,7 +38,7 @@ public abstract class VersionProcessor implements Callable<Void> {
    protected ExecutionConfigMixin executionMixin;
    
    @Mixin
-   protected FixedCommitMixin fixedVersionMixin;
+   protected FixedCommitMixin fixedCommitMixin;
 
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
@@ -81,7 +81,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       if (executionMixin != null) {
          startcommit = executionMixin.getStartcommit();
          endcommit = executionMixin.getEndcommit();
-         commit = fixedVersionMixin.getCommit();
+         commit = fixedCommitMixin.getCommit();
       }
    }
 
@@ -120,7 +120,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       if (executionMixin != null) {
          startcommit = executionMixin.getStartcommit();
          endcommit = executionMixin.getEndcommit();
-         commit = fixedVersionMixin.getCommit();
+         commit = fixedCommitMixin.getCommit();
       }
 
       if (staticSelectionFile != null) {
@@ -145,7 +145,7 @@ public abstract class VersionProcessor implements Callable<Void> {
          LOG.info("Version: " + startcommit + " - " + endcommit);
       }
 
-      if (fixedVersionMixin.getCommitOld() != null && startcommit == null) {
+      if (fixedCommitMixin.getCommitOld() != null && startcommit == null) {
          throw new RuntimeException("If versionOld is specified, always specify version!");
       }
 

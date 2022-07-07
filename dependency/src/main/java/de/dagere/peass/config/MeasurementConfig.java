@@ -46,6 +46,7 @@ public class MeasurementConfig implements Serializable {
    public MeasurementConfig(final int vms) {
       executionConfig = new ExecutionConfig(20);
       kiekerConfig = new KiekerConfig();
+      fixedCommitConfig = new FixedCommitConfig();
       this.vms = vms;
    }
 
@@ -70,6 +71,7 @@ public class MeasurementConfig implements Serializable {
       kiekerConfig = kiekerConfigMixin.getKiekerConfig();
       kiekerConfig.setRecord(mixin.getRecord());
       statisticsConfig = statisticMixin.getStasticsConfig();
+      fixedCommitConfig = new FixedCommitConfig();
       this.vms = mixin.getVms();
       setEarlyStop(mixin.isEarlyStop());
       getKiekerConfig().setUseKieker(mixin.isUseKieker());
