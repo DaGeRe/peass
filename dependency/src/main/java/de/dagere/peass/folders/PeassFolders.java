@@ -70,7 +70,6 @@ public class PeassFolders {
       fullResultFolder = new File(peassFolder, "measurementsFull");
       fullResultFolder.mkdir();
       tempFolder = new File(peassFolder, "temp");
-      tempFolder.mkdir();
       cleanFolder = new File(peassFolder, "clean");
       cleanNativeFolder = new File(cleanFolder, "native");
       debugFolder = new File(peassFolder, "debug");
@@ -282,6 +281,9 @@ public class PeassFolders {
    }
 
    public File getTempDir() {
+      if (!tempFolder.exists()) {
+         tempFolder.mkdir();
+      }
       return tempFolder;
    }
 
