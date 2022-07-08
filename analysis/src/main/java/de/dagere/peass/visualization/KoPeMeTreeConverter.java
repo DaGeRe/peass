@@ -25,7 +25,7 @@ import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 /**
- * Read the overall data of the specified testcase (i.e. the values from the KoPeMe outside-measurement, no the Kieker in-method-measurement)
+ * Read the overall data of the specified testcase (i.e. the values from the KoPeMe outside-measurement, not the Kieker in-method-measurement)
  */
 public class KoPeMeTreeConverter {
 

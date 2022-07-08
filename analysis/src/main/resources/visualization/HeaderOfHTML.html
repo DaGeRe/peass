@@ -6,6 +6,20 @@
 
     <style>
 	
+	#histogramm {
+		min-width: 400px;
+	}
+
+	#histogramm,
+	#quelltext {
+		border: 1px solid #E6E6E6;
+	}
+
+	#histogrammLink {
+		display: flex;
+		justify-content: center;
+	}
+
 	.node {
 		cursor: pointer;
 	}
@@ -20,10 +34,33 @@
 	  font: 12px sans-serif;
 	}
 
+	.tree-card {
+		max-height: 500px;
+		min-height: 300px;
+		overflow: auto;
+		width: 100%;
+	}
+
 	.link {
 	  fill: none;
 	  stroke: #ccc;
 	  stroke-width: 2px;
+	}
+
+	.visualization-row {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 20px;
+		margin-bottom: 20px;
+	}
+
+	.visualization-row .footer-card {
+		flex: 45%;
+	}
+	
+	.footer-card {
+		max-width: 45%;
 	}
 	
     </style>

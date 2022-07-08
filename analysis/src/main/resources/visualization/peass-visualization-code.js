@@ -260,7 +260,7 @@ function shownode(node) {
   if (node.kiekerPattern != node.otherKiekerPattern) {
   	histogramm.innerHTML=node.kiekerPattern + " " + node.otherKiekerPattern + inspectLink;
   } else {
-  	histogramm.innerHTML=node.kiekerPattern + node.otherKiekerPattern + inspectLink;
+  	histogramm.innerHTML=node.kiekerPattern + inspectLink;
   }
   plotOverallHistogram("histogramm", node);
 }

@@ -34,7 +34,7 @@ public class MeasuredValues {
       for (int i = 0; i < values.size(); i++) {
          double mean = StatisticUtil.getMean(values.get(i));
          aggregated[i] = mean;
-         LOG.debug("Mean " + i + " " + mean);
+         LOG.trace("Mean " + i + " " + mean);
       }
       return aggregated;
    }

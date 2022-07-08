@@ -70,17 +70,17 @@ public class VisualizeRCAStarter implements Callable<Void> {
 
       List<File> rcaFolderToHandle = new RCAFolderSearcher(data).searchRCAFiles();
       for (File rcaFolder : rcaFolderToHandle) {
-         analyzeFile(resultFolder, rcaFolder);
+         visualizeRCAFile(resultFolder, rcaFolder);
       }
       List<File> peassFolderToHandle = new RCAFolderSearcher(data).searchPeassFiles();
       for (File peassFolder : peassFolderToHandle) {
-         analyzeFile(peassFolder);
+         visualizeRegularMeasurementFile(peassFolder);
       }
 
       return null;
    }
 
-   private void analyzeFile(final File peassFolder) throws  JsonProcessingException, FileNotFoundException, IOException {
+   private void visualizeRegularMeasurementFile(final File peassFolder) throws  JsonProcessingException, FileNotFoundException, IOException {
       VisualizeRegularMeasurement measurementVisualizer = new VisualizeRegularMeasurement(resultFolder);
       measurementVisualizer.analyzeFile(peassFolder);
    }
@@ -97,7 +97,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
       }
    }
 
-   private void analyzeFile(final File versionResultFolder, final File treeFile)
+   private void visualizeRCAFile(final File versionResultFolder, final File treeFile)
          throws JsonParseException, JsonMappingException, IOException, JsonProcessingException, FileNotFoundException {
       final CauseSearchFolders folders = getCauseSearchFolders(treeFile);
 
