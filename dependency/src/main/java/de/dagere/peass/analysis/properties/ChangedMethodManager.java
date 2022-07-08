@@ -12,6 +12,10 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
 public class ChangedMethodManager {
 
+   private static final String DIFF_MODIFIER = "diff";
+   private static final String OLD_MODIFIER = "old";
+   private static final String MAIN_MODIFIER = "main";
+
    private final File methodSourceFolder;
 
    public ChangedMethodManager(File methodSourceFolder) {
@@ -19,15 +23,15 @@ public class ChangedMethodManager {
    }
 
    public File getMethodMainFile(final String commit, final ChangedEntity methodEntity) {
-      return getMethodModifierFile(commit, methodEntity, "main");
+      return getMethodModifierFile(commit, methodEntity, MAIN_MODIFIER);
    }
 
    public File getMethodOldFile(final String commit, final ChangedEntity methodEntity) {
-      return getMethodModifierFile(commit, methodEntity, "old");
+      return getMethodModifierFile(commit, methodEntity, OLD_MODIFIER);
    }
 
    public File getMethodDiffFile(final String commit, final ChangedEntity methodEntity) {
-      return getMethodModifierFile(commit, methodEntity, "diff");
+      return getMethodModifierFile(commit, methodEntity, DIFF_MODIFIER);
    }
 
    private File getMethodModifierFile(final String commit, final ChangedEntity methodEntity, final String modifier) {
@@ -43,9 +47,10 @@ public class ChangedMethodManager {
             .replace(">", ")");
       final String methodString = methodFilename + "_" + methodEntity.getParametersPrintable();
       String filename = methodString + "_" + modifier + ".txt";
+
       if (filename.length() > 255) {
          File mappingFile = new File(clazzFolder, "mapping.txt");
-         File resultFile = readInMappingFile(clazzFolder, methodString, mappingFile);
+         File resultFile = readInMappingFile(clazzFolder, methodString, mappingFile, modifier);
          if (resultFile != null) {
             return resultFile;
          }
@@ -79,7 +84,7 @@ public class ChangedMethodManager {
       }
    }
 
-   private static File readInMappingFile(final File clazzFolder, final String methodString, final File mappingFile) {
+   private static File readInMappingFile(final File clazzFolder, final String methodString, final File mappingFile, String modifier) {
       File resultFile = null;
       if (mappingFile.exists()) {
          try {
@@ -87,7 +92,14 @@ public class ChangedMethodManager {
             for (String line : mappingString.split("\n")) {
                String[] split = line.split(";");
                if (split[0].equals(methodString)) {
-                  resultFile = new File(clazzFolder, split[1]);
+                  String diffFileName = split[1];
+                  if (!DIFF_MODIFIER.equals(modifier)) {
+                     String pureFilename = diffFileName.substring(0, diffFileName.lastIndexOf('_') + 1);
+                     String changedFilename = pureFilename + modifier + ".txt";
+                     resultFile = new File(clazzFolder, changedFilename);
+                  } else {
+                     resultFile = new File(clazzFolder, diffFileName);
+                  }
                   break;
                }
             }

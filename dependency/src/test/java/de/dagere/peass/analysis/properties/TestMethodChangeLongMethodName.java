@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -115,10 +116,14 @@ public class TestMethodChangeLongMethodName {
    }
    
    private void checkTooLongMethod(final File methodSourceFolder, final ChangedEntity longEntity) throws IOException {
-      File expectedInitFile = new ChangedMethodManager(methodSourceFolder).getMethodDiffFile(COMMIT, longEntity);
-      String initContent = FileUtils.readFileToString(expectedInitFile, Charset.defaultCharset());
+      ChangedMethodManager changedMethodManager = new ChangedMethodManager(methodSourceFolder);
+      File expectedMethodDiffFile = changedMethodManager.getMethodDiffFile(COMMIT, longEntity);
+      String initContent = FileUtils.readFileToString(expectedMethodDiffFile, Charset.defaultCharset());
       MatcherAssert.assertThat(initContent, Matchers.not(Matchers.containsString("System.out")));
       MatcherAssert.assertThat(initContent, Matchers.containsString("This is too long for regular serialization"));
+      
+      File expectedMethodMainFile = changedMethodManager.getMethodMainFile(COMMIT, longEntity);
+      Assert.assertEquals("method_0_main.txt", expectedMethodMainFile.getName());
    }
    
    private void checkOtherTooLongMethod(final File methodSourceFolder, final ChangedEntity longEntity) throws IOException {
