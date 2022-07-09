@@ -18,7 +18,7 @@ public class KiekerPatternConverter {
     * @return fixed call
     */
    public static String fixParameters(final String kiekerCall) {
-      LOG.info("Fixing: {}", kiekerCall);
+      LOG.trace("Fixing: {}", kiekerCall);
       final int parametersBegin = kiekerCall.indexOf('(');
       if (parametersBegin != -1) {
          final String namePart = kiekerCall.substring(0, parametersBegin);
