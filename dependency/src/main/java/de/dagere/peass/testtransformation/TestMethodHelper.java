@@ -10,7 +10,9 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.parameters.KiekerConfigMixin;
 
 public class TestMethodHelper {
 
@@ -59,8 +61,8 @@ public class TestMethodHelper {
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
       performanceTestAnnotation.addPair("redirectToNull", "" + config.getExecutionConfig().isRedirectToNull());
       performanceTestAnnotation.addPair("showStart", "" + config.isShowStart());
-      if (config.getExecutionConfig().getKiekerWaitTime() != 10) {
-         performanceTestAnnotation.addPair("kiekerWaitTime", "" + config.getExecutionConfig().getKiekerWaitTime());
+      if (config.getKiekerConfig().getKiekerWaitTime() != KiekerConfig.DEFAULT_KIEKER_WAIT_TIME) {
+         performanceTestAnnotation.addPair("kiekerWaitTime", "" + config.getKiekerConfig().getKiekerWaitTime());
       }
       if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
          performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME\"");

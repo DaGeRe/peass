@@ -48,6 +48,9 @@ public class KiekerConfigMixin {
    @Option(names = { "-skipDefaultConstructor",
          "--skipDefaultConstructor" }, description = "Deactivates creation of the default constructor (required if Lombok is used)")
    protected boolean skipDefaultConstructor = false;
+   
+   @Option(names = { "-kiekerWaitTime", "--kiekerWaitTime" }, description = "Time that KoPeMe should wait until Kieker writing is finshed in seconds (default: 10)")
+   protected int kiekerWaitTime = KiekerConfig.DEFAULT_KIEKER_WAIT_TIME;
 
    public int getWriteInterval() {
       return writeInterval;
@@ -91,6 +94,14 @@ public class KiekerConfigMixin {
 
    public void setSkipDefaultConstructor(final boolean skipDefaultConstructor) {
       this.skipDefaultConstructor = skipDefaultConstructor;
+   }
+
+   public int getKiekerWaitTime() {
+      return kiekerWaitTime;
+   }
+
+   public void setKiekerWaitTime(final int kiekerWaitTime) {
+      this.kiekerWaitTime = kiekerWaitTime;
    }
 
    public KiekerConfig getKiekerConfig() {

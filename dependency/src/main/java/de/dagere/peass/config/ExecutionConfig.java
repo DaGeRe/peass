@@ -30,8 +30,6 @@ public class ExecutionConfig implements Serializable {
    public static final String SRC_TEST = "src/test";
    public static final String SRC_ANDROID_TEST_JAVA = "src/androidTest/java/";
 
-   public static final int DEFAULT_KIEKER_WAIT_TIME = 5;
-
    private static final long serialVersionUID = -6642358125854337047L;
 
    /**
@@ -49,7 +47,6 @@ public class ExecutionConfig implements Serializable {
    protected String startcommit;
    protected String endcommit;
    private String pl;
-   private int kiekerWaitTime = DEFAULT_KIEKER_WAIT_TIME;
 
    private boolean redirectSubprocessOutputToFile = true;
    private boolean useTieredCompilation = false;
@@ -96,7 +93,6 @@ public class ExecutionConfig implements Serializable {
       this.forbiddenMethods = other.getForbiddenMethods();
       this.startcommit = other.getStartcommit();
       this.endcommit = other.getEndcommit();
-      this.kiekerWaitTime = other.kiekerWaitTime;
       this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
       this.removeSnapshots = other.removeSnapshots;
       this.useAlternativeBuildfile = other.useAlternativeBuildfile;
@@ -226,14 +222,6 @@ public class ExecutionConfig implements Serializable {
 
    public void setEndcommit(final String endversion) {
       this.endcommit = endversion;
-   }
-
-   public int getKiekerWaitTime() {
-      return kiekerWaitTime;
-   }
-
-   public void setKiekerWaitTime(final int kiekerWaitTime) {
-      this.kiekerWaitTime = kiekerWaitTime;
    }
 
    @JsonInclude(JsonInclude.Include.NON_NULL)

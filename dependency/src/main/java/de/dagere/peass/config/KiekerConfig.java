@@ -12,6 +12,7 @@ public class KiekerConfig implements Serializable {
    public static final int DEFAULT_WRITE_INTERVAL = 5000;
    public static final int DEFAULT_KIEKER_QUEUE_SIZE = 10000000;
    public static final int DEFAULT_TRACE_SIZE_IN_MB = 100;
+   public final static int DEFAULT_KIEKER_WAIT_TIME = 5;
    
    private static final long serialVersionUID = 3129231099963995908L;
 
@@ -29,6 +30,7 @@ public class KiekerConfig implements Serializable {
    private long traceSizeInMb = DEFAULT_TRACE_SIZE_IN_MB;
    private long kiekerQueueSize = DEFAULT_KIEKER_QUEUE_SIZE;
    private boolean createDefaultConstructor = true;
+   private int kiekerWaitTime = DEFAULT_KIEKER_WAIT_TIME;
    
    // We want a set that preserves insertion order, so we require a LinkedHashSet
    private LinkedHashSet<String> excludeForTracing = new LinkedHashSet<>();
@@ -56,6 +58,7 @@ public class KiekerConfig implements Serializable {
       this.kiekerQueueSize = other.kiekerQueueSize;
       this.excludeForTracing = other.excludeForTracing;
       this.createDefaultConstructor = other.createDefaultConstructor;
+      this.kiekerWaitTime = other.kiekerWaitTime;
    }
    
    public void check() {
@@ -76,6 +79,15 @@ public class KiekerConfig implements Serializable {
 
    public void setUseKieker(final boolean useKieker) {
       this.useKieker = useKieker;
+   }
+   
+
+   public int getKiekerWaitTime() {
+      return kiekerWaitTime;
+   }
+
+   public void setKiekerWaitTime(final int kiekerWaitTime) {
+      this.kiekerWaitTime = kiekerWaitTime;
    }
 
    public boolean isUseSourceInstrumentation() {

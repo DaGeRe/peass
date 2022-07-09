@@ -105,7 +105,7 @@ public class TestRepetitionTransforming {
       FileUtils.copyFile(old2, testFile2);
 
       MeasurementConfig config = new MeasurementConfig(5);
-      config.getExecutionConfig().setKiekerWaitTime(15);
+      config.getKiekerConfig().setKiekerWaitTime(15);
       final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, config);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
