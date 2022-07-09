@@ -6,13 +6,12 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.PeassFolders;
+import de.dagere.peass.vcs.CommitIteratorGit;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
-import de.dagere.peass.vcs.CommitIteratorGit;
 
 /**
  * Identifies the versions that should be analyzed, by: (1) Using the versions from ExecutionConfig, if both are given and != null (resolving HEAD and HEAD~1 to the real versions)

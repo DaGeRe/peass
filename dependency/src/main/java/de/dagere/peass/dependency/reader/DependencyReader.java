@@ -32,8 +32,8 @@ import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.GitCommitWriter;
 import de.dagere.peass.vcs.CommitIterator;
+import de.dagere.peass.vcs.GitCommitWriter;
 
 /**
  * Shared functions for dependency reading, which are both used if dependencies are read fully or if one continues a dependency reading process.

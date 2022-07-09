@@ -19,9 +19,9 @@ import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.CommitIterator;
 import de.dagere.peass.vcs.CommitIteratorGit;
+import de.dagere.peass.vcs.GitUtils;
 
 public class DependencyParallelReader {
    private static final Logger LOG = LogManager.getLogger(DependencyParallelReader.class);

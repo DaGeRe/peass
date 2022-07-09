@@ -2,7 +2,6 @@ package de.dagere.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -18,15 +17,14 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
+import de.dagere.peass.vcs.CommitIteratorGit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
-import de.dagere.peass.vcs.CommitIteratorGit;
 
 public class ContinuousExecutor {
 

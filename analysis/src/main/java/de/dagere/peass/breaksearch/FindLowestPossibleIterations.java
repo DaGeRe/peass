@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.breaksearch.minimalvalues.MinimalVMDeterminer;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataReader;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;

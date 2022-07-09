@@ -25,8 +25,8 @@ import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.CommitIterator;
+import de.dagere.peass.vcs.GitUtils;
 import difflib.DiffUtils;
 import difflib.Patch;
 

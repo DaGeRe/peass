@@ -101,7 +101,7 @@ public class KiekerResultReader {
       }
 
       if (nodeFound) {
-         LOG.debug("Setting measurement: {} {} {}", commit, nodeCall, values.size());
+         LOG.debug("Setting measurement: {} {} Values: {}", commit, nodeCall, values.size());
          // System.out.println(StatisticUtil.getMean(values) + " ");
          node.addAggregatedMeasurement(commit, values);
       } else {
