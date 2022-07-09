@@ -48,10 +48,10 @@ public class TestcaseStatistic {
       check();
    }
 
-   public TestcaseStatistic(final double meanOld, final double meanCurrent, 
-         final double deviationOld, final double deviationCurrent, 
+   public TestcaseStatistic(final double meanOld, final double meanCurrent,
+         final double deviationOld, final double deviationCurrent,
          final long executions, final double tvalue,
-         final boolean isChange, 
+         final boolean isChange,
          final long callsOld, final long calls) {
       super();
       this.meanOld = meanOld;
@@ -63,17 +63,17 @@ public class TestcaseStatistic {
       this.isChange = isChange;
       this.calls = calls;
       this.callsOld = callsOld;
-      
+
       check();
    }
-   
+
    private void check() {
       if (callsOld == 0 && (!Double.isNaN(meanOld) || !Double.isNaN(deviationOld))) {
-         throw new RuntimeException("Old data need to be not defined at all or contain a count of calls, a mean and a deviation!");
+         throw new TestcaseStatisticException("Old data need to be not defined at all or contain a count of calls, a mean and a deviation!");
       }
 
       if (calls == 0 && (!Double.isNaN(meanCurrent) || !Double.isNaN(deviationCurrent))) {
-         throw new RuntimeException("Current data need to be not defined at all or contain a count of calls, a mean and a deviation!");
+         throw new TestcaseStatisticException("Current data need to be not defined at all or contain a count of calls, a mean and a deviation!");
       }
    }
 
@@ -180,6 +180,14 @@ public class TestcaseStatistic {
    @JsonIgnore
    public StatisticalSummary getStatisticsOld() {
       return new StatisticalSummaryValues(meanOld, deviationOld * deviationOld, vms, Double.MAX_VALUE, 0, meanOld * vms);
+   }
+
+   public static final class TestcaseStatisticException extends RuntimeException {
+      private static final long serialVersionUID = 1568505424388144454L;
+
+      public TestcaseStatisticException(String message) {
+         super(message);
+      }
    }
 
 }

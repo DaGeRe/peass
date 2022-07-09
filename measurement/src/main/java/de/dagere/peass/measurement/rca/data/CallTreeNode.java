@@ -23,6 +23,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
 import de.dagere.peass.measurement.statistics.bimodal.CompareData;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic.TestcaseStatisticException;
 
 /**
  * Saves the call tree structure and measurement data of the call tree
@@ -240,6 +241,10 @@ public class CallTreeNode extends BasicNode {
                previousVersionStatistics.getCalls(), currentVersionStatistics.getCalls());
          return testcaseStatistic;
       } catch (NumberIsTooSmallException t) {
+         LOG.debug("Data: " + current.getN() + " " + previous.getN());
+         final String otherCall = getOtherKiekerPattern() != null ? getOtherKiekerPattern() : "Not Existing";
+         throw new RuntimeException("Could not read " + call + " Other Version: " + otherCall, t);
+      } catch (TestcaseStatisticException t) {
          LOG.debug("Data: " + current.getN() + " " + previous.getN());
          final String otherCall = getOtherKiekerPattern() != null ? getOtherKiekerPattern() : "Not Existing";
          throw new RuntimeException("Could not read " + call + " Other Version: " + otherCall, t);
