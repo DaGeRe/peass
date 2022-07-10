@@ -112,71 +112,36 @@ public class CallTreeNode extends BasicNode {
    /**
     * Adds the measurement of *one full VM* to the measurements of the version
     * 
-    * @param version
+    * @param commit
     * @param statistic
     */
-   public void addAggregatedMeasurement(final String version, final List<StatisticalSummary> statistic) {
-      checkDataAddPossible(version);
-      removeWarmup(statistic);
-      data.get(version).addAggregatedMeasurement(statistic);
+   public void addAggregatedMeasurement(final String commit, final List<StatisticalSummary> statistic) {
+      checkDataAddPossible(commit);
+      StatisticUtil.removeWarmup(config.getNodeWarmup(), statistic);
+      data.get(commit).addAggregatedMeasurement(statistic);
    }
 
-   private void removeWarmup(final List<StatisticalSummary> statistic) {
-      if (config.getNodeWarmup() > 0) {
-         int remainingWarmup = config.getNodeWarmup();
-         for (ListIterator<StatisticalSummary> it = statistic.listIterator(); it.hasNext();) {
-            StatisticalSummary chunk = it.next();
-            long countOfExecutions = chunk.getN();
-            if (remainingWarmup >= countOfExecutions) {
-               remainingWarmup -= countOfExecutions;
-               LOG.debug("Reducing warmup by {}, remaining warmup {}", countOfExecutions, remainingWarmup);
-               it.remove();
-            } else if (remainingWarmup > 0) {
-               final long reducedN = countOfExecutions - remainingWarmup;
-               remainingWarmup = 0;
-               final StatisticalSummary replacement = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), reducedN,
-                     chunk.getMax(), chunk.getMin(), chunk.getMean() * reducedN);
-               it.set(replacement);
-            } else {
-               final StatisticalSummary replacement = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), countOfExecutions,
-                     chunk.getMax(), chunk.getMin(), chunk.getMean() * countOfExecutions);
-               it.set(replacement);
-            }
-         }
-         if (remainingWarmup > 0) {
-            LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup " + config.getNodeWarmup());
-         }
-         for (StatisticalSummary summary : statistic) {
-            LOG.trace("After removing: {} {} Sum: {}", summary.getMean(), summary.getN(), summary.getSum());
-            if (summary.getN() == 0) {
-               throw new RuntimeException("Final statistics with 0 entries do not make sense!");
-            }
-         }
-         LOG.trace("Overall mean: {}", StatisticUtil.getMean(statistic));
-      }
-   }
-
-   private void checkDataAddPossible(final String version) {
+   private void checkDataAddPossible(final String commit) {
       if (getOtherKiekerPattern() == null) {
          throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
       }
-      if (getOtherKiekerPattern().equals(CauseSearchData.ADDED) && version.equals(config.getFixedCommitConfig().getCommit())) {
-         LOG.error("Error occured in version {}", version);
+      if (getOtherKiekerPattern().equals(CauseSearchData.ADDED) && commit.equals(config.getFixedCommitConfig().getCommit())) {
+         LOG.error("Error occured in version {}", commit);
          LOG.error("Node: {}", kiekerPattern);
          LOG.error("Other version node: {}", getOtherKiekerPattern());
-         throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
+         throw new RuntimeException("Added methods may not contain data, trying to add data for " + commit);
       }
-      if (call.equals(CauseSearchData.ADDED) && version.equals(config.getFixedCommitConfig().getCommitOld())) {
-         throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
+      if (call.equals(CauseSearchData.ADDED) && commit.equals(config.getFixedCommitConfig().getCommitOld())) {
+         throw new RuntimeException("Added methods may not contain data, trying to add data for " + commit);
       }
    }
 
-   public boolean hasMeasurement(final String version) {
-      return data.get(version).getResults().size() > 0;
+   public boolean hasMeasurement(final String commit) {
+      return data.get(commit).getResults().size() > 0;
    }
 
-   public List<OneVMResult> getResults(final String version) {
-      final CallTreeStatistics statistics = data.get(version);
+   public List<OneVMResult> getResults(final String commit) {
+      final CallTreeStatistics statistics = data.get(commit);
       return statistics != null ? statistics.getResults() : null;
    }
 
@@ -195,23 +160,23 @@ public class CallTreeNode extends BasicNode {
       }
    }
 
-   public CompareData getComparableStatistics(final String versionOld, final String version) {
-      List<OneVMResult> before = data.get(versionOld) != null ? data.get(versionOld).getResults() : null;
-      List<OneVMResult> after = data.get(version) != null ? data.get(version).getResults() : null;
+   public CompareData getComparableStatistics(final String commitOld, final String commit) {
+      List<OneVMResult> before = data.get(commitOld) != null ? data.get(commitOld).getResults() : null;
+      List<OneVMResult> after = data.get(commit) != null ? data.get(commit).getResults() : null;
 
       CompareData cd = CompareData.createCompareDataFromOneVMResults(before, after);
       return cd;
    }
 
-   public SummaryStatistics getStatistics(final String version) {
-      LOG.trace("Getting data: {}", version);
-      final CallTreeStatistics statistics = data.get(version);
+   public SummaryStatistics getStatistics(final String commit) {
+      LOG.trace("Getting data: {}", commit);
+      final CallTreeStatistics statistics = data.get(commit);
       return statistics != null ? statistics.getStatistics() : null;
    }
 
-   public void createStatistics(final String version) {
-      LOG.debug("Creating statistics: {} Call: {}", version, call);
-      final CallTreeStatistics callTreeStatistics = data.get(version);
+   public void createStatistics(final String commit) {
+      LOG.debug("Creating statistics: {} Call: {}", commit, call);
+      final CallTreeStatistics callTreeStatistics = data.get(commit);
       callTreeStatistics.createStatistics(config.getStatisticsConfig());
       LOG.debug("Mean: " + callTreeStatistics.getStatistics().getMean() + " " + callTreeStatistics.getStatistics().getStandardDeviation());
    }

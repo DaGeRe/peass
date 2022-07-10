@@ -2,6 +2,7 @@ package de.dagere.peass.measurement.statistics;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
@@ -278,6 +279,40 @@ public class StatisticUtil {
          }
       default:
          throw new RuntimeException("Test " + statisticsConfig.getStatisticTest() + " currently not implemented");
+      }
+   }
+   
+   public static void removeWarmup(int remainingWarmup, final List<StatisticalSummary> statistic) {
+      if (remainingWarmup > 0) {
+         for (ListIterator<StatisticalSummary> it = statistic.listIterator(); it.hasNext();) {
+            StatisticalSummary chunk = it.next();
+            long countOfExecutions = chunk.getN();
+            if (remainingWarmup >= countOfExecutions) {
+               remainingWarmup -= countOfExecutions;
+               LOG.debug("Reducing warmup by {}, remaining warmup {}", countOfExecutions, remainingWarmup);
+               it.remove();
+            } else if (remainingWarmup > 0) {
+               final long reducedN = countOfExecutions - remainingWarmup;
+               remainingWarmup = 0;
+               final StatisticalSummary replacement = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), reducedN,
+                     chunk.getMax(), chunk.getMin(), chunk.getMean() * reducedN);
+               it.set(replacement);
+            } else {
+               final StatisticalSummary replacement = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), countOfExecutions,
+                     chunk.getMax(), chunk.getMin(), chunk.getMean() * countOfExecutions);
+               it.set(replacement);
+            }
+         }
+         if (remainingWarmup > 0) {
+            LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup " + remainingWarmup);
+         }
+         for (StatisticalSummary summary : statistic) {
+            LOG.trace("After removing: {} {} Sum: {}", summary.getMean(), summary.getN(), summary.getSum());
+            if (summary.getN() == 0) {
+               throw new RuntimeException("Final statistics with 0 entries do not make sense!");
+            }
+         }
+         LOG.trace("Overall mean: {}", StatisticUtil.getMean(statistic));
       }
    }
 }
