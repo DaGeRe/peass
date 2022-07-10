@@ -22,7 +22,7 @@ public class TestSummaryFileSaving {
    
    private static final File testFolder = new File("target/current_peass");
    private static final TestCase testcase = new TestCase("Test#test");
-   private static final File oneResultFile = new File(testFolder, "test.xml");
+   private static final File oneResultFile = new File(testFolder, "test.json");
    
    @BeforeEach
    public void cleanup() {
@@ -38,7 +38,7 @@ public class TestSummaryFileSaving {
       
       TestMethod oneRunData = loadTestcase();
       
-      final File resultFile = new File(testFolder, "result.xml");
+      final File resultFile = new File(testFolder, "result.json");
       
       MultipleVMTestUtil.saveSummaryData(resultFile, oneResultFile, oneRunData.getDatacollectorResults().get(0).getResults().get(0), testcase, "1", 0, TimeDataCollector.class.getName());
       
