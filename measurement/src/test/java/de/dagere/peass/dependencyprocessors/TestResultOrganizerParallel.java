@@ -39,7 +39,7 @@ public class TestResultOrganizerParallel {
 
    @Test
    public void testParallelSaving() throws  IOException {
-      organizer = new ResultOrganizerParallel(folders, TestResultOrganizer.VERSION_NAME, 1, false, false, TestResultOrganizer.searchedTest, 3);
+      organizer = new ResultOrganizerParallel(folders, TestResultOrganizer.COMMIT_NAME, 1, false, false, TestResultOrganizer.searchedTest, 3);
 
       PeassFolders parallelProjectFolders = initFolders();
 
@@ -52,7 +52,7 @@ public class TestResultOrganizerParallel {
 
    @Test
    public void testKoPeMeFileSaving() throws  IOException {
-      organizer = new ResultOrganizerParallel(folders, TestResultOrganizer.VERSION_NAME, 1, false, false, TestResultOrganizer.searchedTest, TestResult.BOUNDARY_SAVE_FILE * 2);
+      organizer = new ResultOrganizerParallel(folders, TestResultOrganizer.COMMIT_NAME, 1, false, false, TestResultOrganizer.searchedTest, TestResult.BOUNDARY_SAVE_FILE * 2);
 
       PeassFolders parallelProjectFolders = initFolders();
 
@@ -67,13 +67,13 @@ public class TestResultOrganizerParallel {
    }
 
    private void testXMLFileIsCorrect()  {
-      File kopemefile = new File(getVersionMeasurementFolder(TestResultOrganizer.VERSION_NAME, PARALLEL_VERSION), TestResultOrganizer.searchedTest.getMethod() + "_0_" + PARALLEL_VERSION + ".xml");
+      File kopemefile = new File(getVersionMeasurementFolder(TestResultOrganizer.COMMIT_NAME, PARALLEL_VERSION), TestResultOrganizer.searchedTest.getMethod() + "_0_" + PARALLEL_VERSION + ".xml");
       final Kopemedata data = JSONDataLoader.loadData(kopemefile);
       final DatacollectorResult collector = data.getFirstMethodResult().getDatacollectorResults().get(0);
       final VMResultChunk chunk = collector.getChunks().get(0);
       final Fulldata fulldata = chunk.getResults().get(0).getFulldata();
       Assert.assertNotNull(fulldata.getFileName());
-      File fulldataFile = new File(getVersionMeasurementFolder(TestResultOrganizer.VERSION_NAME, PARALLEL_VERSION), fulldata.getFileName());
+      File fulldataFile = new File(getVersionMeasurementFolder(TestResultOrganizer.COMMIT_NAME, PARALLEL_VERSION), fulldata.getFileName());
       Assert.assertTrue(fulldataFile.exists());
    }
    

@@ -26,7 +26,7 @@ import de.dagere.peass.measurement.rca.helper.TestConstants;
 
 public class TestResultOrganizer {
 
-   public static final String VERSION_NAME = "2";
+   public static final String COMMIT_NAME = "2";
 
    private static final String KIEKER_TIMESTAMP = "1512123";
 
@@ -49,30 +49,30 @@ public class TestResultOrganizer {
 
    @Test
    public void testNormalSaving() throws  IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false, searchedTest, 3);
+      organizer = new ResultOrganizer(folders, COMMIT_NAME, 1, false, false, searchedTest, 3);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
 
-      Assert.assertTrue(organizer.testSuccess(VERSION_NAME));
+      Assert.assertTrue(organizer.testSuccess(COMMIT_NAME));
       
-      organizer.saveResultFiles(VERSION_NAME, 0);
+      organizer.saveResultFiles(COMMIT_NAME, 0);
 
       testXMLFileExists();
    }
 
    @Test
    public void testKoPeMeFileSaving() throws  IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false, searchedTest, 1);
+      organizer = new ResultOrganizer(folders, COMMIT_NAME, 1, false, false, searchedTest, 1);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, TestResult.BOUNDARY_SAVE_FILE * 2, searchedTest);
 
-      organizer.saveResultFiles(VERSION_NAME, 0);
+      organizer.saveResultFiles(COMMIT_NAME, 0);
 
       testXMLFileIsCorrect();
    }
 
    private void testXMLFileIsCorrect()  {
-      File kopemefile = new File(getVersionMeasurementFolder(), searchedTest.getMethod() + "_0_" + VERSION_NAME + ".json");
+      File kopemefile = new File(getVersionMeasurementFolder(), searchedTest.getMethod() + "_0_" + COMMIT_NAME + ".json");
       Kopemedata data = JSONDataLoader.loadData(kopemefile);
       final DatacollectorResult datacollector = data.getFirstMethodResult().getDatacollectorResults().get(0);
       final Fulldata fulldata = datacollector.getResults().get(0).getFulldata();
@@ -83,7 +83,7 @@ public class TestResultOrganizer {
    
    @Test
    public void testKiekerSavingDeletion() throws  IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
+      organizer = new ResultOrganizer(folders, COMMIT_NAME, 1, true, true, searchedTest, 1);
       organizer.getCompressor().setThresholdForZippingInMB(1);
       organizer.getCompressor().setThresholdForDeletingInMB(2);
 
@@ -91,7 +91,7 @@ public class TestResultOrganizer {
 
       writeKiekerFile(200000);
 
-      organizer.saveResultFiles(VERSION_NAME, 0);
+      organizer.saveResultFiles(COMMIT_NAME, 0);
 
       testXMLFileExists();
 
@@ -104,14 +104,14 @@ public class TestResultOrganizer {
 
    @Test
    public void testKiekerSavingTar() throws  IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
+      organizer = new ResultOrganizer(folders, COMMIT_NAME, 1, true, true, searchedTest, 1);
       organizer.getCompressor().setThresholdForZippingInMB(1);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
 
       writeKiekerFile(100000);
 
-      organizer.saveResultFiles(VERSION_NAME, 0);
+      organizer.saveResultFiles(COMMIT_NAME, 0);
 
       testXMLFileExists();
 
@@ -122,13 +122,13 @@ public class TestResultOrganizer {
 
    @Test
    public void testKiekerSavingNoTar() throws  IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
+      organizer = new ResultOrganizer(folders, COMMIT_NAME, 1, true, true, searchedTest, 1);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
 
       writeKiekerFile(10000);
 
-      organizer.saveResultFiles(VERSION_NAME, 0);
+      organizer.saveResultFiles(COMMIT_NAME, 0);
 
       testXMLFileExists();
 
@@ -141,8 +141,8 @@ public class TestResultOrganizer {
    private File getVersionMeasurementFolder() {
       File versionFolder = new File(folders.getFullMeasurementFolder(), "measurements" + File.separator +
             searchedTest.getClazz() + File.separator +
-            VERSION_NAME + File.separator +
-            VERSION_NAME + File.separator);
+            COMMIT_NAME + File.separator +
+            COMMIT_NAME + File.separator);
       return versionFolder;
    }
 
