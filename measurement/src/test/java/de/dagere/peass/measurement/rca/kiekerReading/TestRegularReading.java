@@ -67,20 +67,56 @@ public class TestRegularReading {
    private Set<CallTreeNode> buildCallTreeNodes() {
       Set<CallTreeNode> callTreeNodes = new HashSet<>();
 
-      for (String kiekerPattern : new String[] { "new de.dagere.peass.C0_0.<init>()",
-            "new de.dagere.peass.C1_0.<init>()",
+      MeasurementConfig config = new MeasurementConfig(1, "1", "0");
+      CallTreeNode root =  new CallTreeNode("de.dagere.peass.MainTest.testMe()", "public void de.dagere.peass.MainTest.testMe()", "public void de.dagere.peass.MainTest.testMe()", config);
+      callTreeNodes.add(root);
+      root.initCommitData();
+      
+      buildFirstLevel(callTreeNodes, root);
+      CallTreeNode c0_method0Node = root.getChildren().get(1);
+      CallTreeNode child3 = buildSecondLevel(callTreeNodes, c0_method0Node);
+      buildLastLevel(callTreeNodes, child3);
+      
+      return callTreeNodes;
+   }
+
+   private void buildLastLevel(Set<CallTreeNode> callTreeNodes, CallTreeNode child3) {
+      for (String kiekerPattern : new String[] {
             "public new de.dagere.peass.AddRandomNumbers.<init>()",
-            "public int de.dagere.peass.AddRandomNumbers.doSomething(int)",
-            "public int de.dagere.peass.C1_0.method0()",
-            "public int de.dagere.peass.C0_0.method0()",
-            "private int de.dagere.peass.C0_0.method0(int)",
-            "public void de.dagere.peass.MainTest.testMe()" }) {
+            "public int de.dagere.peass.AddRandomNumbers.doSomething(int)"
+            }) {
          int startIndex = kiekerPattern.lastIndexOf(" ") != -1 ? kiekerPattern.lastIndexOf(" ") : 0;
          String call = kiekerPattern.substring(startIndex, kiekerPattern.lastIndexOf("("));
-         CallTreeNode addedNode = new CallTreeNode(call, kiekerPattern, kiekerPattern, new MeasurementConfig(1, "1", "0"));
+         CallTreeNode addedNode = child3.appendChild(call, kiekerPattern, kiekerPattern);
          callTreeNodes.add(addedNode);
          addedNode.initCommitData();
       }
-      return callTreeNodes;
+   }
+
+   private CallTreeNode buildSecondLevel(Set<CallTreeNode> callTreeNodes, CallTreeNode c0_method0Node) {
+      CallTreeNode child = c0_method0Node.appendChild("de.dagere.peass.C1_0.<init>()", "new de.dagere.peass.C1_0.<init>()","new de.dagere.peass.C1_0.<init>()");
+      callTreeNodes.add(child);
+      child.initCommitData();
+      
+      CallTreeNode child2 = c0_method0Node.appendChild("de.dagere.peass.C0_0.method0(int)", "private int de.dagere.peass.C0_0.method0(int)","private int de.dagere.peass.C0_0.method0(int)");
+      callTreeNodes.add(child2);
+      child2.initCommitData();
+      
+      CallTreeNode child3 = c0_method0Node.appendChild("de.dagere.peass.C1_0.method0()", "public int de.dagere.peass.C1_0.method0()","public int de.dagere.peass.C1_0.method0()");
+      callTreeNodes.add(child3);
+      child3.initCommitData();
+      return child3;
+   }
+
+   private void buildFirstLevel(Set<CallTreeNode> callTreeNodes, CallTreeNode root) {
+      for (String kiekerPattern : new String[] { "new de.dagere.peass.C0_0.<init>()",
+            "public int de.dagere.peass.C0_0.method0()",
+            }) {
+         int startIndex = kiekerPattern.lastIndexOf(" ") != -1 ? kiekerPattern.lastIndexOf(" ") : 0;
+         String call = kiekerPattern.substring(startIndex, kiekerPattern.lastIndexOf("("));
+         CallTreeNode addedNode = root.appendChild(call, kiekerPattern, kiekerPattern);
+         callTreeNodes.add(addedNode);
+         addedNode.initCommitData();
+      }
    }
 }
