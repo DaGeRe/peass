@@ -47,17 +47,17 @@ public class TestDifferentStatisticTests {
    }
 
    private void buildBimodalMeasurementValues(final CallTreeNode node) {
-      node.initVersions();
+      node.initCommitData();
       for (int vmIndex = 0; vmIndex < 40; vmIndex++) {
-         node.newVM("A");
-         node.newVM("B");
+         node.initVMData("A");
+         node.initVMData("B");
          for (int i = 0; i < 5; i++) {
             node.addMeasurement("A", 15L);
             node.addMeasurement("B", 16L);
          }
          
-         node.newVM("A");
-         node.newVM("B");
+         node.initVMData("A");
+         node.initVMData("B");
          for (int i = 0; i < 5; i++) {
             node.addMeasurement("A", 20L);
             node.addMeasurement("B", 21L);

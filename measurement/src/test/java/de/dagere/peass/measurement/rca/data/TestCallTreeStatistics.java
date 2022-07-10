@@ -23,7 +23,7 @@ public class TestCallTreeStatistics {
       final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", CONFIG);
       node.setOtherKiekerPattern("public void de.mypackage.Test.callMethod()");
 
-      node.initVersions();
+      node.initCommitData();
       for (int vm = 0; vm < CONFIG.getVms(); vm++) {
          addVMMeasurements("A", node);
          addVMMeasurements("B", node);
@@ -44,7 +44,7 @@ public class TestCallTreeStatistics {
       final CallTreeNode node = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED, "public void de.mypackage.Test.callMethod()", CONFIG);
       node.setOtherKiekerPattern("public void de.mypackage.Test.callMethod()");
 
-      node.initVersions();
+      node.initCommitData();
       for (int vm = 0; vm < CONFIG.getVms(); vm++) {
          addVMMeasurements("A", node);
       }
@@ -67,7 +67,7 @@ public class TestCallTreeStatistics {
       final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", CauseSearchData.ADDED, CONFIG);
       node.setOtherKiekerPattern(CauseSearchData.ADDED);
 
-      node.initVersions();
+      node.initCommitData();
       for (int vm = 0; vm < CONFIG.getVms(); vm++) {
          addVMMeasurements("B", node);
       }
@@ -86,7 +86,7 @@ public class TestCallTreeStatistics {
    }
 
    private void addVMMeasurements(final String version, final CallTreeNode node) {
-      node.newVM(version);
+      node.initVMData(version);
       for (int i = 0; i < 15; i++) {
          node.addMeasurement(version, 15L);
       }

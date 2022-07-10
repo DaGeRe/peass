@@ -55,8 +55,8 @@ public class LevelCauseSearcher extends CauseSearcher {
 
    @Override
    protected Set<ChangedEntity> searchCause() {
-      reader.getRootPredecessor().setOtherVersionNode(reader.getRootVersion());
-      reader.getRootVersion().setOtherVersionNode(reader.getRootPredecessor());
+      reader.getRootPredecessor().setOtherCommitNode(reader.getRootVersion());
+      reader.getRootVersion().setOtherCommitNode(reader.getRootPredecessor());
       reader.getRootPredecessor().setOtherKiekerPattern(reader.getRootVersion().getKiekerPattern());
 
       LevelChildDeterminer predecessorDeterminer = new LevelChildDeterminer(Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() }), causeSearchConfig.getLevels() - 1);

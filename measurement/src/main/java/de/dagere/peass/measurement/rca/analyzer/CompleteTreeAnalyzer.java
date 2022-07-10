@@ -13,7 +13,7 @@ public class CompleteTreeAnalyzer implements TreeAnalyzer {
 
    public CompleteTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor) {
       root.setOtherKiekerPattern(rootPredecessor.getKiekerPattern());
-      rootPredecessor.setOtherVersionNode(root);
+      rootPredecessor.setOtherCommitNode(root);
       rootPredecessor.setOtherKiekerPattern(root.getKiekerPattern());
       
       
@@ -27,7 +27,7 @@ public class CompleteTreeAnalyzer implements TreeAnalyzer {
       findTreeStructureDiffering(current, currentPredecessor);
 
       for (CallTreeNode currentChild : current.getChildren()) {
-         CallTreeNode predecessorChild = currentChild.getOtherVersionNode();
+         CallTreeNode predecessorChild = currentChild.getOtherCommitNode();
          mapAllNodes(currentChild, predecessorChild);
 
          allNodesPredecessor.add(predecessorChild);
@@ -37,12 +37,12 @@ public class CompleteTreeAnalyzer implements TreeAnalyzer {
    private void findTreeStructureDiffering(final CallTreeNode current, final CallTreeNode currentPredecessor) {
       current.getChildren().forEach(child -> {
          if (child.getCall().equals(CauseSearchData.ADDED)) {
-            treeStructureDiffering.add(child.getOtherVersionNode());
+            treeStructureDiffering.add(child.getOtherCommitNode());
          }
       });
       currentPredecessor.getChildren().forEach(child -> {
          if (child.getCall().equals(CauseSearchData.ADDED)) {
-            treeStructureDiffering.add(child.getOtherVersionNode());
+            treeStructureDiffering.add(child.getOtherCommitNode());
          }
       });
    }

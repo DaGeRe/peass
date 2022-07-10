@@ -29,8 +29,8 @@ public class TestRealWorld {
       final MeasurementConfig config = new MeasurementConfig(5, commit, predecessor);
       CallTreeNode rootNode = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()", config);
       CallTreeNode rootNode2 = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()", config);
-      rootNode.initVersions();
-      rootNode2.initVersions();
+      rootNode.initCommitData();
+      rootNode2.initCommitData();
 
       Set<CallTreeNode> includedNodes = new HashSet<>();
       includedNodes.add(rootNode);

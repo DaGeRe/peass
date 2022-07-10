@@ -116,10 +116,10 @@ public class AdaptiveExecutorTest {
    
    private void measureNode(final CallTreeNode nodeWithDuration) throws IOException, InterruptedException,  XmlPullParserException {
       final Set<CallTreeNode> included = new HashSet<>();
-      nodeWithDuration.setOtherVersionNode(nodeWithDuration);
+      nodeWithDuration.setOtherCommitNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);
-      included.forEach(node -> node.initVersions());
+      included.forEach(node -> node.initCommitData());
 
       executor.evaluate(TEST);
    }

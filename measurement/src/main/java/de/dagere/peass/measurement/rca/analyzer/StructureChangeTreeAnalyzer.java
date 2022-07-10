@@ -18,8 +18,8 @@ public class StructureChangeTreeAnalyzer implements TreeAnalyzer {
    private final List<CallTreeNode> unequalStructureNodesPredecessor = new LinkedList<>();
 
    public StructureChangeTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor) {
-      root.setOtherVersionNode(rootPredecessor);
-      rootPredecessor.setOtherVersionNode(root);
+      root.setOtherCommitNode(rootPredecessor);
+      rootPredecessor.setOtherCommitNode(root);
       
       rootPredecessor.setOtherKiekerPattern(root.getKiekerPattern());
 
@@ -33,7 +33,7 @@ public class StructureChangeTreeAnalyzer implements TreeAnalyzer {
       TreeUtil.findChildMapping(current, currentPredecessor);
 
       for (CallTreeNode currentChild : current.getChildren()) {
-         CallTreeNode childPredecessor = currentChild.getOtherVersionNode();
+         CallTreeNode childPredecessor = currentChild.getOtherCommitNode();
          if (currentChild.getKiekerPattern().equals(childPredecessor.getKiekerPattern())) {
             equalStructureNodes.add(childPredecessor);
             mapAllNodes(currentChild, childPredecessor);

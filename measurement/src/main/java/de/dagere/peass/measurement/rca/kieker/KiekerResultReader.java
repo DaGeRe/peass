@@ -88,7 +88,7 @@ public class KiekerResultReader {
 
    private void readNode(final Map<AggregatedDataNode, AggregatedData> fullDataMap, final CallTreeNode node) {
       boolean nodeFound = false;
-      final CallTreeNode examinedNode = otherCommit ? node.getOtherVersionNode() : node;
+      final CallTreeNode examinedNode = otherCommit ? node.getOtherCommitNode() : node;
       final List<StatisticalSummary> values = new LinkedList<>();
       for (final Entry<AggregatedDataNode, AggregatedData> entry : fullDataMap.entrySet()) {
          if (isSameNode(examinedNode, entry.getKey())) {

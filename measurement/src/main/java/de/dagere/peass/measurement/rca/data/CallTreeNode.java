@@ -30,9 +30,9 @@ import de.dagere.peass.measurement.statistics.data.TestcaseStatistic.TestcaseSta
  * 
  * If the measurements are added call by call, the API is:
  * 
- * 1) call initVersions with the commits to compare
+ * 1) call initCommitData (the MeasurementConfig should contain the commits to compare)
  * 
- * 2) call newVM with the current version
+ * 2) call initVMData with the current commit
  * 
  * 3) call addMeasurement with all values
  * 
@@ -62,7 +62,7 @@ public class CallTreeNode extends BasicNode {
     * 
     * This should be refactored, so the trees are mapped in the beginning and afterwards only one tree structure is used.
     */
-   private CallTreeNode otherVersionNode;
+   private CallTreeNode otherCommitNode;
 
    /**
     * Creates a root node
@@ -177,18 +177,18 @@ public class CallTreeNode extends BasicNode {
       return statistics != null ? statistics.getResults() : null;
    }
 
-   public void newVM(final String version) {
-      final CallTreeStatistics statistics = data.get(version);
-      LOG.debug("Adding VM: {} {} VMs: {}", call, version, statistics.getResults().size());
+   public void initVMData(final String commit) {
+      final CallTreeStatistics statistics = data.get(commit);
+      LOG.debug("Adding VM: {} {} VMs: {}", call, commit, statistics.getResults().size());
       statistics.newResult();
    }
 
-   private void newVersion(final String version) {
-      LOG.trace("Adding version: {}", version);
-      CallTreeStatistics statistics = data.get(version);
+   private void newCommit(final String commit) {
+      LOG.trace("Adding commit: {}", commit);
+      CallTreeStatistics statistics = data.get(commit);
       if (statistics == null) {
          statistics = new CallTreeStatistics(config.getNodeWarmup());
-         data.put(version, statistics);
+         data.put(commit, statistics);
       }
    }
 
@@ -289,11 +289,12 @@ public class CallTreeNode extends BasicNode {
       return (second == null || second.getN() == 0) && (first != null && first.getN() > 0);
    }
 
-   public void initVersions() {
-      LOG.debug("Init versions: {}", config.getFixedCommitConfig().getCommit(), config.getFixedCommitConfig().getCommitOld());
+   public void initCommitData() {
+      FixedCommitConfig fixedCommitConfig = config.getFixedCommitConfig();
+      LOG.debug("Init commit data: {}", fixedCommitConfig.getCommit(), fixedCommitConfig.getCommitOld());
       resetStatistics();
-      newVersion(config.getFixedCommitConfig().getCommitOld());
-      newVersion(config.getFixedCommitConfig().getCommit());
+      newCommit(fixedCommitConfig.getCommitOld());
+      newCommit(fixedCommitConfig.getCommit());
    }
 
    @JsonIgnore
@@ -310,12 +311,12 @@ public class CallTreeNode extends BasicNode {
    }
 
    @JsonIgnore
-   public CallTreeNode getOtherVersionNode() {
-      return otherVersionNode;
+   public CallTreeNode getOtherCommitNode() {
+      return otherCommitNode;
    }
 
-   public void setOtherVersionNode(final CallTreeNode otherVersionNode) {
-      this.otherVersionNode = otherVersionNode;
+   public void setOtherCommitNode(final CallTreeNode otherVersionNode) {
+      this.otherCommitNode = otherVersionNode;
    }
 
    @JsonIgnore
@@ -336,23 +337,23 @@ public class CallTreeNode extends BasicNode {
    }
 
    @JsonIgnore
-   public int getEoi(String version) {
-      if (isAdded(version)) {
+   public int getEoi(String commit) {
+      if (isAdded(commit)) {
          return -1;
       }
       int eoi;
       if (parent != null) {
          List<CallTreeNode> notAddedSiblingList = parent.getChildren()
                .stream()
-               .filter(predecessor -> !predecessor.isAdded(version))
+               .filter(predecessor -> !predecessor.isAdded(commit))
                .collect(Collectors.toList());
          int predecessorIndex = notAddedSiblingList
                .indexOf(this) - 1;
          if (predecessorIndex >= 0) {
             CallTreeNode predecessor = notAddedSiblingList.get(predecessorIndex);
-            eoi = predecessor.getEoi(version) + predecessor.getAllChildCount(version) + 1;
+            eoi = predecessor.getEoi(commit) + predecessor.getAllChildCount(commit) + 1;
          } else {
-            eoi = parent.getEoi(version) + 1;
+            eoi = parent.getEoi(commit) + 1;
          }
       } else {
          eoi = 0;
@@ -360,24 +361,24 @@ public class CallTreeNode extends BasicNode {
       return eoi;
    }
 
-   private boolean isAdded(String version) {
+   private boolean isAdded(String commit) {
       FixedCommitConfig executionConfig = config.getFixedCommitConfig();
-      if (executionConfig.getCommit().equals(version) && call.equals(CauseSearchData.ADDED)) {
+      if (executionConfig.getCommit().equals(commit) && call.equals(CauseSearchData.ADDED)) {
          return true;
       }
       String otherKiekerPattern = getOtherKiekerPattern();
-      if (executionConfig.getCommit().equals(version) && CauseSearchData.ADDED.equals(otherKiekerPattern)) {
+      if (executionConfig.getCommit().equals(commit) && CauseSearchData.ADDED.equals(otherKiekerPattern)) {
          return true;
       }
       return false;
    }
 
-   private int getAllChildCount(String version) {
+   private int getAllChildCount(String commit) {
       int childs = 0;
       for (CallTreeNode child : children) {
-         boolean currentVersionValidNode = !child.isAdded(version);
+         boolean currentVersionValidNode = !child.isAdded(commit);
          if (currentVersionValidNode) {
-            int usableChildCount = child.getAllChildCount(version);
+            int usableChildCount = child.getAllChildCount(commit);
             childs += usableChildCount + 1;
          }
       }
@@ -398,8 +399,8 @@ public class CallTreeNode extends BasicNode {
       }
    }
 
-   public long getCallCount(final String version) {
-      return data.get(version).getResults().stream().mapToLong(result -> result.getCalls()).sum();
+   public long getCallCount(final String commit) {
+      return data.get(commit).getResults().stream().mapToLong(result -> result.getCalls()).sum();
    }
 
    @Override

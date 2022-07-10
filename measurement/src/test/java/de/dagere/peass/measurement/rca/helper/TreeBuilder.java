@@ -111,7 +111,7 @@ public class TreeBuilder {
 
    protected void initVersions(final CallTreeNode[] nodes) {
       for (final CallTreeNode node : nodes) {
-         node.initVersions();
+         node.initCommitData();
       }
    }
 
@@ -141,7 +141,7 @@ public class TreeBuilder {
 
    private void writeFullLogData(final CallTreeNode node, final String version, final long average) {
       for (int vm = 0; vm < config.getVms(); vm++) {
-         node.newVM(version);
+         node.initVMData(version);
          for (int warmup = 0; warmup < config.getWarmup(); warmup++) {
             node.addMeasurement(version, average * 5);
          }

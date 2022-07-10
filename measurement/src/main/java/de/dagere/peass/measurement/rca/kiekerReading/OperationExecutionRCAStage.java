@@ -70,7 +70,7 @@ public class OperationExecutionRCAStage extends AbstractTraceProcessingStage<Exe
       }
       this.version = version;
 
-      measuredNodes.forEach(node -> node.newVM(version));
+      measuredNodes.forEach(node -> node.initVMData(version));
    }
 
    @Override

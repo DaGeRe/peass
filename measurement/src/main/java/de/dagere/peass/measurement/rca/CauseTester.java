@@ -71,7 +71,7 @@ public class CauseTester extends AdaptiveTester {
    private Set<CallTreeNode> prepareNodes(final List<CallTreeNode> nodes) {
       final Set<CallTreeNode> includedNodes = new HashSet<CallTreeNode>();
       includedNodes.addAll(nodes);
-      nodes.forEach(node -> node.initVersions());
+      nodes.forEach(node -> node.initCommitData());
       return includedNodes;
    }
 

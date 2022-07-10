@@ -66,10 +66,10 @@ public class AdaptiveExecutorMoreParameterIT {
       final String kiekerPattern = "public void defaultpackage.NormalDependency.child1(int[],double,java.lang.String)";
       final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", kiekerPattern, kiekerPattern,
             new MeasurementConfig(5, "000001", "000001~1"));
-      nodeWithDuration.setOtherVersionNode(nodeWithDuration);
+      nodeWithDuration.setOtherCommitNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);
-      included.forEach(node -> node.initVersions());
+      included.forEach(node -> node.initCommitData());
 
       executor.evaluate(TEST);
 

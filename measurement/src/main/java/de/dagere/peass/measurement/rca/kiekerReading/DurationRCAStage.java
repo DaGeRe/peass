@@ -32,7 +32,7 @@ public class DurationRCAStage extends AbstractTraceAnalysisStage<DurationRecord>
       }
       this.version = version;
 
-      measuredNodes.forEach(node -> node.newVM(version));
+      measuredNodes.forEach(node -> node.initVMData(version));
    }
 
    @Override

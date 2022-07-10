@@ -35,12 +35,12 @@ public class TestCauseSearchData {
    private CallTreeNode buildAdditionalNode(final CallTreeNode bStructure) {
       CallTreeNode cStructure = bStructure.appendChild("C", "public void C.c()", null);
       cStructure.setOtherKiekerPattern("public void C.c()");
-      cStructure.initVersions();
+      cStructure.initCommitData();
       for (int i = 0; i < 3; i++) {
-         cStructure.newVM("1");
+         cStructure.initVMData("1");
          cStructure.addMeasurement("1", 15L);
          cStructure.addMeasurement("1", 15L);
-         cStructure.newVM("2");
+         cStructure.initVMData("2");
          cStructure.addMeasurement("2", 15L);
          cStructure.addMeasurement("2", 15L);
       }

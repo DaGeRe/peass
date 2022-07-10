@@ -91,7 +91,7 @@ public class NodePreparator {
             graphNode.getChildren().add(newChild);
             newChild.setEss(-1);
             LOG.trace("Adding: " + purePredecessorChild.getCall() + " Parent: " + graphNode.getKiekerPattern());
-            handleFullTreeNode(newChild, purePredecessorChild, purePredecessorChild.getOtherVersionNode());
+            handleFullTreeNode(newChild, purePredecessorChild, purePredecessorChild.getOtherCommitNode());
          }
 
       }
@@ -103,7 +103,7 @@ public class NodePreparator {
       for (int index = 0; index < graphNode.getChildren().size(); index++) {
          final GraphNode graphChild = graphNode.getChildren().get(index);
          final CallTreeNode purePredecessorChild = nodePredecessor.getChildren().get(index);
-         handleFullTreeNode(graphChild, purePredecessorChild, purePredecessorChild.getOtherVersionNode());
+         handleFullTreeNode(graphChild, purePredecessorChild, purePredecessorChild.getOtherCommitNode());
       }
    }
 

@@ -31,8 +31,8 @@ public class LevelManager {
 
       mainVersionNodeList.add(reader.getRootVersion());
       currentPredecessorNodeList.add(reader.getRootPredecessor());
-      reader.getRootVersion().setOtherVersionNode(reader.getRootPredecessor());
-      reader.getRootPredecessor().setOtherVersionNode(reader.getRootVersion());
+      reader.getRootVersion().setOtherCommitNode(reader.getRootPredecessor());
+      reader.getRootPredecessor().setOtherCommitNode(reader.getRootVersion());
    }
 
    public void goToLastMeasuredLevel(final MeasuredNode root) {
@@ -69,8 +69,8 @@ public class LevelManager {
 
    private void setLastLevel(final List<CallTreeNode> nodeList, final Set<CallTreeNode> nextLevel) {
       for (final CallTreeNode processedNode : nodeList) {
-         System.out.println("Searching mapping: " + processedNode + " " + processedNode.getOtherVersionNode());
-         TreeUtil.findChildMapping(processedNode, processedNode.getOtherVersionNode());
+         System.out.println("Searching mapping: " + processedNode + " " + processedNode.getOtherCommitNode());
+         TreeUtil.findChildMapping(processedNode, processedNode.getOtherCommitNode());
          nextLevel.addAll(processedNode.getChildren());
       }
       nodeList.clear();
@@ -84,8 +84,8 @@ public class LevelManager {
          final CallTreeNode reusePredecessor = getSameParent(predecessorNodeList, persistentChild);
          final CallTreeNode reuseMain = getSameParent(mainVersionNodeList, persistentChild);
          if (reuseMain != null && reusePredecessor != null) {
-            reusePredecessor.setOtherVersionNode(reuseMain);
-            reuseMain.setOtherVersionNode(reusePredecessor);
+            reusePredecessor.setOtherCommitNode(reuseMain);
+            reuseMain.setOtherCommitNode(reusePredecessor);
             mainNextLevel.add(reuseMain);
             predecessorNextLevel.add(reusePredecessor);
             persistentNextLevel.add(persistentChild);

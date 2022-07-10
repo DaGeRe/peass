@@ -63,9 +63,9 @@ public class CallTreeNodeWarmupTest {
             "public void de.mypackage.Test.callMethod()", 
             "public void de.mypackage.Test.callMethod()", 
             config);
-      node.setOtherVersionNode(otherVersionNode);
+      node.setOtherCommitNode(otherVersionNode);
       
-      node.initVersions();
+      node.initCommitData();
       node.addAggregatedMeasurement("1", values);
 
       node.createStatistics("1");

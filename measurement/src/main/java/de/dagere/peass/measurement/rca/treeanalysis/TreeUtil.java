@@ -81,8 +81,8 @@ public class TreeUtil {
       for (final DefaultWeightedEdge edge : resultMatching) {
          final CallTreeNode source = graph.getEdgeSource(edge).getNode();
          final CallTreeNode target = graph.getEdgeTarget(edge).getNode();
-         source.setOtherVersionNode(target);
-         target.setOtherVersionNode(source);
+         source.setOtherCommitNode(target);
+         target.setOtherCommitNode(source);
          source.setOtherKiekerPattern(target.getKiekerPattern());
          target.setOtherKiekerPattern(source.getKiekerPattern());
          
@@ -93,10 +93,10 @@ public class TreeUtil {
 
    private static void addSurplus(final CallTreeNode otherParent, final List<CallTreeNode> partition) {
       for (final CallTreeNode unmatched : partition) {
-         if (unmatched.getOtherVersionNode() == null) {
+         if (unmatched.getOtherCommitNode() == null) {
             final CallTreeNode virtual_node = otherParent.appendChild(CauseSearchData.ADDED, CauseSearchData.ADDED, unmatched.getKiekerPattern());
-            unmatched.setOtherVersionNode(virtual_node);
-            virtual_node.setOtherVersionNode(unmatched);
+            unmatched.setOtherCommitNode(virtual_node);
+            virtual_node.setOtherCommitNode(unmatched);
             unmatched.setOtherKiekerPattern(CauseSearchData.ADDED);
          }
       }
@@ -113,8 +113,8 @@ public class TreeUtil {
          } else {
             firstChild.setOtherKiekerPattern(secondChild.getKiekerPattern());
             secondChild.setOtherKiekerPattern(firstChild.getOtherKiekerPattern());
-            firstChild.setOtherVersionNode(secondChild);
-            secondChild.setOtherVersionNode(firstChild);
+            firstChild.setOtherCommitNode(secondChild);
+            secondChild.setOtherCommitNode(firstChild);
          }
       }
       return true;

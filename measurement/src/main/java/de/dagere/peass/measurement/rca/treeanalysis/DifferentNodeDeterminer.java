@@ -79,7 +79,7 @@ public abstract class DifferentNodeDeterminer {
    private void printComparisonInfos(final CallTreeNode currentPredecessorNode, final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
       LOG.debug("Comparison {} - {}",
             currentPredecessorNode.getKiekerPattern(),
-            currentPredecessorNode.getOtherVersionNode() != null ? currentPredecessorNode.getOtherVersionNode().getKiekerPattern() : null);
+            currentPredecessorNode.getOtherCommitNode() != null ? currentPredecessorNode.getOtherCommitNode().getKiekerPattern() : null);
       LOG.debug("Predecessor: {} {} Current: {} {} ",
             statisticsPredecessor.getMean(), statisticsPredecessor.getStandardDeviation(),
             statisticsVersion.getMean(), statisticsVersion.getStandardDeviation());
@@ -105,7 +105,7 @@ public abstract class DifferentNodeDeterminer {
    
    public List<CallTreeNode> getLevelDifferentCurrent(){
       final List<CallTreeNode> differentPredecessor = new LinkedList<>();
-      levelDifferentPrecessor.forEach(node -> differentPredecessor.add(node.getOtherVersionNode()));
+      levelDifferentPrecessor.forEach(node -> differentPredecessor.add(node.getOtherCommitNode()));
       return differentPredecessor;
    }
 }

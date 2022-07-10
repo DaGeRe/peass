@@ -51,7 +51,7 @@ public class TestAddedReading {
       includedNodes.add(root);
 
       for (final CallTreeNode node : includedNodes) {
-         node.initVersions();
+         node.initCommitData();
          node.setOtherKiekerPattern(node.getKiekerPattern());
       }
       return includedNodes;
