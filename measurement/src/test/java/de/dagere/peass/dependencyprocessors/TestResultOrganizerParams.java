@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-
+import javax.xml.bind.JAXBException;
 
 import org.codehaus.plexus.util.FileUtils;
 import org.hamcrest.MatcherAssert;
@@ -18,6 +18,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.datastorage.JSONDataStorer;
+import de.dagere.kopeme.datastorage.xml.XMLConversionLoader;
+import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -49,8 +52,8 @@ public class TestResultOrganizerParams {
 
    @Test
    public void testReading() throws  IOException {
-      TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmarkClazz#calleeMethod");
-
+      TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmarkClazz#calleeMethod(parameter-1)");
+      
       PeassFolders folders = mockFolders(testcase);
 
       for (int i = 0; i < 3; i++) {
@@ -59,21 +62,21 @@ public class TestResultOrganizerParams {
          organizer.saveResultFiles(VERSION_OLD, i);
       }
       
-      File expectedResultFile1 = new File(TEMP_FULL_DIR, "calleeMethod(parameter-1).xml");
-      File expectedResultFile2 = new File(TEMP_FULL_DIR, "calleeMethod(parameter-2).xml");
+      File expectedResultFile1 = new File(TEMP_FULL_DIR, "calleeMethod(parameter-1).json");
+      File expectedResultFile2 = new File(TEMP_FULL_DIR, "calleeMethod(parameter-2).json");
       
       Assert.assertTrue(expectedResultFile1.exists());
       Assert.assertTrue(expectedResultFile2.exists());
       
       Kopemedata data = JSONDataLoader.loadData(expectedResultFile1);
-      List<VMResult> results = data.getFirstMethodResult().getDatacollectorResults().get(0).getResults();
+      List<VMResult> results = data.getFirstMethodResult().getDatacollectorResults().get(0).getChunks().get(0).getResults();
       MatcherAssert.assertThat(results, IsIterableWithSize.iterableWithSize(2));
       
-      File expectedFulldataFile = new File(TEMP_FULL_DIR, "calleeMethod(parameter-2)_0_d77cb2ff2a446c65f0a63fd0359f9ba4dbfdb9d9.xml");
+      File expectedFulldataFile = new File(TEMP_FULL_DIR, "calleeMethod(parameter-2)_0_d77cb2ff2a446c65f0a63fd0359f9ba4dbfdb9d9.json");
       Kopemedata fulldata = JSONDataLoader.loadData(expectedFulldataFile);
       Assert.assertEquals(1, fulldata.getFirstMethodResult().getDatacollectorResults().get(0).getResults().size());
       
-      File expectedFulldataFile1 = new File(TEMP_FULL_DIR, "calleeMethod(parameter-1)_2_d77cb2ff2a446c65f0a63fd0359f9ba4dbfdb9d9.xml");
+      File expectedFulldataFile1 = new File(TEMP_FULL_DIR, "calleeMethod(parameter-1)_2_d77cb2ff2a446c65f0a63fd0359f9ba4dbfdb9d9.json");
       Kopemedata fulldata1 = JSONDataLoader.loadData(expectedFulldataFile1);
       Assert.assertEquals(1, fulldata1.getFirstMethodResult().getDatacollectorResults().get(0).getResults().size());
    }
@@ -82,12 +85,12 @@ public class TestResultOrganizerParams {
       PeassFolders folders = Mockito.mock(PeassFolders.class);
       Mockito.when(folders.getDetailResultFolder()).thenReturn(TEMP_DETAIL_DIR);
       Mockito.when(folders.getFullMeasurementFolder()).thenReturn(TEMP_FULL_DIR);
-      Mockito.when(folders.getSummaryFile(testcase)).thenAnswer(new Answer<File>() {
+      Mockito.when(folders.getSummaryFile(Mockito.any())).thenAnswer(new Answer<File>() {
 
          @Override
          public File answer(final InvocationOnMock invocation) throws Throwable {
             TestCase test = invocation.getArgument(0);
-            return new File(TEMP_FULL_DIR, test.getMethod() + "(" + test.getParams() + ").xml");
+            return new File(TEMP_FULL_DIR, test.getMethod() + "(" + test.getParams() + ").json");
          }
       });
 
@@ -98,7 +101,7 @@ public class TestResultOrganizerParams {
             TestCase test = invocation.getArgument(0);
             int index = invocation.getArgument(1);
             String version = invocation.getArgument(2);
-            File resultFile = new File(TEMP_FULL_DIR, test.getMethod() + "(" + test.getParams() + ")_" + index + "_" + version + ".xml");
+            File resultFile = new File(TEMP_FULL_DIR, test.getMethod() + "(" + test.getParams() + ")_" + index + "_" + version + ".json");
             return resultFile;
          }
       });
@@ -113,5 +116,15 @@ public class TestResultOrganizerParams {
          }
       });
       return folders;
+   }
+   
+   public static void main(String[] args) throws JAXBException {
+      File folder = new File("src/test/resources/dataConversion/measurements/");
+      for (int i = 0; i < 5; i++) {
+         File file = new File(folder, "measurements" + i + "/calleeMethod.xml");
+         Kopemedata kopemedata = XMLConversionLoader.loadData(file);
+         JSONDataStorer.storeData(new File(folder, "measurements" + i + "/calleeMethod.json"), kopemedata);
+         
+      }
    }
 }

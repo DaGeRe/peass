@@ -99,7 +99,10 @@ public class ResultOrganizer {
             final File folder = getTempResultsFolder(commit);
             if (folder != null) {
                final String methodname = testcase.getMethodWithParams();
-               final File oneResultFile = new File(folder, methodname + ".json");
+               File oneResultFile = new File(folder, methodname + ".json");
+               if (!oneResultFile.exists()) {
+                  oneResultFile = new File(folder, testcase.getMethod() + ".json");
+               }
                if (!oneResultFile.exists()) {
                   LOG.debug("File {} does not exist.", oneResultFile.getAbsolutePath());
                   success = false;

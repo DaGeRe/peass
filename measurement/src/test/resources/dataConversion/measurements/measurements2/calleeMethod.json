@@ -1,0 +1,111 @@
+{
+  "clazz" : "de.dagere.peass.ExampleBenchmarkClazz",
+  "methods" : [ {
+    "method" : "calleeMethod",
+    "datacollectorResults" : [ {
+      "name" : "de.dagere.kopeme.datacollection.TimeDataCollectorNoGC",
+      "chunks" : [ ],
+      "results" : [ {
+        "value" : 1058794.3,
+        "deviation" : 1078.0078385614827,
+        "warmup" : 0,
+        "iterations" : 10,
+        "repetitions" : 5,
+        "commit" : null,
+        "vmRunConfiguration" : { },
+        "parameters" : {
+          "parameter" : "1"
+        },
+        "cpu" : null,
+        "memory" : null,
+        "date" : 0,
+        "failure" : true,
+        "error" : true,
+        "fulldata" : {
+          "fileName" : null,
+          "values" : [ {
+            "startTime" : 0,
+            "value" : 1059081
+          }, {
+            "startTime" : 0,
+            "value" : 1058275
+          }, {
+            "startTime" : 0,
+            "value" : 1059162
+          }, {
+            "startTime" : 0,
+            "value" : 1059161
+          }, {
+            "startTime" : 0,
+            "value" : 1061515
+          }, {
+            "startTime" : 0,
+            "value" : 1058224
+          }, {
+            "startTime" : 0,
+            "value" : 1058358
+          }, {
+            "startTime" : 0,
+            "value" : 1057736
+          }, {
+            "startTime" : 0,
+            "value" : 1057961
+          }, {
+            "startTime" : 0,
+            "value" : 1058470
+          } ]
+        }
+      }, {
+        "value" : 2061695.8,
+        "deviation" : 1858.1469144164987,
+        "warmup" : 0,
+        "iterations" : 10,
+        "repetitions" : 5,
+        "commit" : null,
+        "vmRunConfiguration" : { },
+        "parameters" : {
+          "parameter" : "2"
+        },
+        "cpu" : null,
+        "memory" : null,
+        "date" : 0,
+        "failure" : true,
+        "error" : true,
+        "fulldata" : {
+          "fileName" : null,
+          "values" : [ {
+            "startTime" : 0,
+            "value" : 2064893
+          }, {
+            "startTime" : 0,
+            "value" : 2060021
+          }, {
+            "startTime" : 0,
+            "value" : 2059792
+          }, {
+            "startTime" : 0,
+            "value" : 2061271
+          }, {
+            "startTime" : 0,
+            "value" : 2059170
+          }, {
+            "startTime" : 0,
+            "value" : 2062436
+          }, {
+            "startTime" : 0,
+            "value" : 2064286
+          }, {
+            "startTime" : 0,
+            "value" : 2062147
+          }, {
+            "startTime" : 0,
+            "value" : 2061083
+          }, {
+            "startTime" : 0,
+            "value" : 2061859
+          } ]
+        }
+      } ]
+    } ]
+  } ]
+}
