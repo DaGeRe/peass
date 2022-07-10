@@ -16,8 +16,6 @@ public class TestOperationExecutionReading {
 
    private ChangedTreeBuilder builder;
 
-   
-
    @Test
    public void testAdding() {
       builder = new ChangedTreeBuilder();
@@ -38,8 +36,10 @@ public class TestOperationExecutionReading {
       Assert.assertEquals("Node " + root.getCall() + " did not have correct mean", 2, root.getStatistics(ChangedTreeBuilder.COMMIT0).getMean(), 0.01);
 
       builder.getA1().createStatistics(ChangedTreeBuilder.COMMIT1);
-      Assert.assertEquals("Node " + builder.getA1().getOtherCommitNode().getCall() + " did not have correct call count", 1, builder.getA1().getStatistics(ChangedTreeBuilder.COMMIT1).getN());
-      Assert.assertEquals("Node " + builder.getA1().getOtherCommitNode().getCall() + " did not have correct mean", 10, builder.getA1().getStatistics(ChangedTreeBuilder.COMMIT1).getMean(), 0.01);
+      Assert.assertEquals("Node " + builder.getA1().getOtherCommitNode().getCall() + " did not have correct call count", 1,
+            builder.getA1().getStatistics(ChangedTreeBuilder.COMMIT1).getN());
+      Assert.assertEquals("Node " + builder.getA1().getOtherCommitNode().getCall() + " did not have correct mean", 10,
+            builder.getA1().getStatistics(ChangedTreeBuilder.COMMIT1).getMean(), 0.01);
    }
 
    private Set<CallTreeNode> createIncludedNodes(CallTreeNode root2) {

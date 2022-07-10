@@ -3,13 +3,11 @@ package de.dagere.peass.measurement.rca.data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
-import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -319,7 +317,8 @@ public class CallTreeNode extends BasicNode {
                .indexOf(this) - 1;
          if (predecessorIndex >= 0) {
             CallTreeNode predecessor = notAddedSiblingList.get(predecessorIndex);
-            eoi = predecessor.getEoi(commit) + predecessor.getAllChildCount(commit) + 1;
+            int predecessorEOI = predecessor.getEoi(commit);
+            eoi = predecessorEOI + predecessor.getAllChildCount(commit) + 1;
          } else {
             eoi = parent.getEoi(commit) + 1;
          }

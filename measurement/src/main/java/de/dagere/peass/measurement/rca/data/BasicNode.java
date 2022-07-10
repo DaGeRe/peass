@@ -7,8 +7,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
 /**
- * Base class for node implementations: - CallTreeNode contains the measured data during measurement - MeasuredNode contains the measured data during serialization - GraphNode
- * contains the measured data transformed for visualization
+ * Base class for node implementations:
+ * <ul>
+ * <li>{@link CallTreeNode} contains the measured data during measurement</li>
+ * <li>{@link MeasuredNode} contains the measured data during serialization</li>
+ * <li>{@link GraphNode} contains the measured data transformed for visualization</li>
+ * </ul>
  * 
  * @author reichelt
  *

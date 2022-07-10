@@ -14,40 +14,40 @@ import teetime.framework.Execution;
 
 public class KiekerDurationReader {
 
-   public static void executeDurationStage(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String version) {
+   public static void executeDurationStage(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String commit) {
       KiekerReaderConfigurationDuration configuration = new KiekerReaderConfigurationDuration();
-      configuration.readDurations(kiekerTraceFolder, measuredNodes, version);
-      
+      configuration.readDurations(kiekerTraceFolder, measuredNodes, commit);
+
       Execution execution = new Execution(configuration);
       execution.executeBlocking();
    }
-   
-   public static void executeReducedDurationStage(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String version) {
+
+   public static void executeReducedDurationStage(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String commit) {
       KiekerReaderConfigurationDuration configuration = new KiekerReaderConfigurationDuration();
-      configuration.readReducedDurations(kiekerTraceFolder, measuredNodes, version);
-      
+      configuration.readReducedDurations(kiekerTraceFolder, measuredNodes, commit);
+
       Execution execution = new Execution(configuration);
       execution.executeBlocking();
    }
-   
+
    public static List<MeasuredValue> executeReducedDurationStage(final File kiekerTraceFolder) {
       KiekerReaderConfigurationDuration configuration = new KiekerReaderConfigurationDuration();
       DurationMeasurementStage stage = configuration.readReducedDurationsToList(kiekerTraceFolder);
-      
+
       Execution execution = new Execution(configuration);
       execution.executeBlocking();
-      
+
       return stage.getValues();
    }
-   
-   public static TreeStage executeTreeStage(final File kiekerTraceFolder, final TestCase test, 
-         final boolean ignoreEOIs, final MeasurementConfig config, final ModuleClassMapping mapping) {
+
+   public static TreeStage executeTreeStage(final File kiekerTraceFolder, final TestCase test, final boolean ignoreEOIs, final MeasurementConfig config,
+         final ModuleClassMapping mapping) {
       KiekerReaderConfigurationDuration configuration = new KiekerReaderConfigurationDuration();
-      TreeStage stage = configuration.readTree(kiekerTraceFolder,  test, ignoreEOIs,  config, mapping);
-      
+      TreeStage stage = configuration.readTree(kiekerTraceFolder, test, ignoreEOIs, config, mapping);
+
       Execution execution = new Execution(configuration);
       execution.executeBlocking();
-      
+
       return stage;
    }
 
