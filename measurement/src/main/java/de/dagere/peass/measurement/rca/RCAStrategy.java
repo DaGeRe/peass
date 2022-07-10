@@ -1,5 +1,23 @@
 package de.dagere.peass.measurement.rca;
 
+import de.dagere.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
+import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
+
+/**
+ * Contains all supported node selection strategies for root cause analysis 
+ *
+ */
 public enum RCAStrategy {
-   LEVELWISE, COMPLETE, UNTIL_STRUCTURE_CHANGE, UNTIL_SOURCE_CHANGE
+   /**
+    * Measures each level individually, implemented by {@link LevelCauseSearcher}
+    */
+   LEVELWISE, 
+   /**
+    * Measures all nodes at once, node selection implemented by {@link CompleteTreeAnalyzer}
+    */
+   COMPLETE, UNTIL_STRUCTURE_CHANGE, 
+   /**
+    * Searches for root causes by analyzing all nodes on the path to a changed source code, implemented by {@link SourceChangeTreeAnalyzer}
+    */
+   UNTIL_SOURCE_CHANGE
 }

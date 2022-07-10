@@ -21,6 +21,10 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
 
+/**
+ * Searches for root causes of performance change by levelwise measurement (like described in Heger et al.: Automated root cause isolation of performance regressions during software development)
+ *
+ */
 public class LevelCauseSearcher extends CauseSearcher {
 
    private static final Logger LOG = LogManager.getLogger(LevelCauseSearcher.class);

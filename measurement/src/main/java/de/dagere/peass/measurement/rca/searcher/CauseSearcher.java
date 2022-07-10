@@ -15,6 +15,7 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CausePersistenceManager;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.CauseTester;
+import de.dagere.peass.measurement.rca.RCAMeasurementAdder;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
@@ -72,7 +73,7 @@ public abstract class CauseSearcher {
       measurer.measureVersion(includableNodes);
       allSearcher.calculateDiffering();
 
-      RCAMeasurementReader measurementReader = new RCAMeasurementReader(persistenceManager, includableNodes);
+      RCAMeasurementAdder measurementReader = new RCAMeasurementAdder(persistenceManager, includableNodes);
       measurementReader.addAllMeasurements(reader.getRootPredecessor());
       
       differingNodes.addAll(allSearcher.getLevelDifferentPredecessor());

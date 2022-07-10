@@ -10,6 +10,10 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
 
+/**
+ * Persists RCA data to the file system 
+ *
+ */
 public class CausePersistenceManager {
 
    protected final CauseSearchData data;

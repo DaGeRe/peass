@@ -1,25 +1,24 @@
-package de.dagere.peass.measurement.rca.searcher;
+package de.dagere.peass.measurement.rca;
 
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.measurement.rca.CausePersistenceManager;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
 /**
- * If a fixed node list is analyzed (i.e. for COMPLETE and UNTIL_SOURCE_CHANGE), the results are read after all measurement is finished. This is done by the MeasurementReader.
+ * If a fixed node list is analyzed (i.e. for {@link RCAStrategy#COMPLETE} and {@link RCAStrategy#UNTIL_SOURCE_CHANGE}), the results are transferred to the {@link CausePersistenceManager}. This is done by the RCAMeasurementAdder.
  *
  */
-public class RCAMeasurementReader {
+public class RCAMeasurementAdder {
 
-   private static final Logger LOG = LogManager.getLogger(RCAMeasurementReader.class);
+   private static final Logger LOG = LogManager.getLogger(RCAMeasurementAdder.class);
 
    private final CausePersistenceManager persistenceManager;
    private final List<CallTreeNode> includableNodes;
 
-   public RCAMeasurementReader(CausePersistenceManager persistenceManager, List<CallTreeNode> includableNodes) {
+   public RCAMeasurementAdder(CausePersistenceManager persistenceManager, List<CallTreeNode> includableNodes) {
       this.persistenceManager = persistenceManager;
       this.includableNodes = includableNodes;
    }
