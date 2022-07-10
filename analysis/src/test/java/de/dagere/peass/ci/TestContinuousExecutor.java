@@ -28,7 +28,6 @@ import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.ProjectBuilderHelper;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;

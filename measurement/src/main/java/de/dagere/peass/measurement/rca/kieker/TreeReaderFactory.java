@@ -21,7 +21,7 @@ public class TreeReaderFactory {
     * @throws IOException
     */
    public static TreeReader createTreeReader(final PeassFolders parentFolders, final String predecessor, final MeasurementConfig config, final boolean ignoreEOIs,
-         final EnvironmentVariables env) throws InterruptedException, IOException {
+         final EnvironmentVariables env)  {
       PeassFolders treeReadingFolders = parentFolders.getTempFolder("tree_" + predecessor);
       GitUtils.goToTag(predecessor, treeReadingFolders.getProjectFolder());
       TreeReader reader = new TreeReader(treeReadingFolders, config, env);

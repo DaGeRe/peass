@@ -29,7 +29,6 @@ import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
 import de.dagere.peass.measurement.statistics.data.TestData;
 import de.dagere.peass.testtransformation.TestTransformer;
 
-
 /**
  * Runs a PeASS with only running the tests where a changed class is present.
  * 
@@ -62,7 +61,7 @@ public class DependencyTester implements KiekerResultHandler {
     * @param testcase Testcase to test
     * @throws XmlPullParserException
     */
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException,  XmlPullParserException {
+   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, XmlPullParserException {
       initEvaluation(testcase);
 
       final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);
@@ -78,7 +77,7 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    private void evaluateSimple(final TestCase testcase, final File logFolder, final ProgressWriter writer)
-         throws IOException, InterruptedException,  XmlPullParserException {
+         throws IOException, InterruptedException, XmlPullParserException {
       currentChunkStart = System.currentTimeMillis();
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
          long comparisonStart = System.currentTimeMillis();
@@ -98,14 +97,18 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   protected void betweenVMCooldown() throws InterruptedException {
+   protected void betweenVMCooldown() {
       if (configuration.isCallSyncBetweenVMs()) {
          ProcessBuilderHelper.syncToHdd();
       }
-      Thread.sleep(configuration.getWaitTimeBetweenVMs());
+      try {
+         Thread.sleep(configuration.getWaitTimeBetweenVMs());
+      } catch (InterruptedException e) {
+         throw new RuntimeException(e);
+      }
    }
 
-   boolean updateExecutions(final TestCase testcase, final int vmid)  {
+   boolean updateExecutions(final TestCase testcase, final int vmid) {
       boolean shouldBreak = false;
       final VMResult versionOldResult = getLastResult(configuration.getFixedCommitConfig().getCommitOld(), testcase, vmid);
       final VMResult versionNewResult = getLastResult(configuration.getFixedCommitConfig().getCommit(), testcase, vmid);
@@ -158,7 +161,7 @@ public class DependencyTester implements KiekerResultHandler {
       return shouldBreak;
    }
 
-   public VMResult getLastResult(final String version, final TestCase testcase, final int vmid)  {
+   public VMResult getLastResult(final String version, final TestCase testcase, final int vmid) {
       final File resultFile = getCurrentOrganizer().getResultFile(testcase, vmid, version);
       if (resultFile.exists()) {
          final Kopemedata data = JSONDataLoader.loadData(resultFile);
@@ -186,8 +189,7 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   public void runOneComparison(final File logFolder, final TestCase testcase, final int vmid)
-         throws IOException, InterruptedException, XmlPullParserException {
+   public void runOneComparison(final File logFolder, final TestCase testcase, final int vmid) throws IOException {
       String[] versions = getVersions();
 
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
@@ -207,7 +209,7 @@ public class DependencyTester implements KiekerResultHandler {
       return versions;
    }
 
-   private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException, IOException {
+   private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws IOException {
       final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getFixedCommitConfig().getCommit(), currentChunkStart,
             configuration.getKiekerConfig().isUseKieker(),
             configuration.isSaveAll(), testcase,
@@ -221,20 +223,25 @@ public class DependencyTester implements KiekerResultHandler {
       runParallel(runnables);
    }
 
-   public void runParallel(final ParallelExecutionRunnable[] runnables) throws InterruptedException {
+   public void runParallel(final ParallelExecutionRunnable[] runnables) {
       Thread[] threads = new Thread[2];
       for (int i = 0; i < 2; i++) {
          threads[i] = new Thread(runnables[i]);
          threads[i].start();
       }
-      for (int i = 0; i < 2; i++) {
-         threads[i].join();
+      try {
+         for (int i = 0; i < 2; i++) {
+            threads[i].join();
+         }
+      } catch (InterruptedException e) {
+         throw new RuntimeException(e);
       }
    }
 
    private void runSequential(final File logFolder, final TestCase testcase, final int vmid, final String versions[])
-         throws IOException, InterruptedException, XmlPullParserException {
-      currentOrganizer = new ResultOrganizer(folders, configuration.getFixedCommitConfig().getCommit(), currentChunkStart, configuration.getKiekerConfig().isUseKieker(), configuration.isSaveAll(),
+         throws IOException {
+      currentOrganizer = new ResultOrganizer(folders, configuration.getFixedCommitConfig().getCommit(), currentChunkStart, configuration.getKiekerConfig().isUseKieker(),
+            configuration.isSaveAll(),
             testcase, configuration.getAllIterations());
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);

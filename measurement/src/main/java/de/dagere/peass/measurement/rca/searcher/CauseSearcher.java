@@ -1,6 +1,5 @@
 package de.dagere.peass.measurement.rca.searcher;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -8,14 +7,9 @@ import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CausePersistenceManager;
@@ -25,7 +19,6 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
-import kieker.analysis.exception.AnalysisConfigurationException;
 
 public abstract class CauseSearcher {
 
@@ -56,8 +49,7 @@ public abstract class CauseSearcher {
 
    }
 
-   public Set<ChangedEntity> search()
-         throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException {
+   public Set<ChangedEntity> search() {
       reader.readTrees();
 
       LOG.info("Tree size: {}", reader.getRootPredecessor().getTreeSize());
@@ -65,8 +57,7 @@ public abstract class CauseSearcher {
       return searchCause();
    }
 
-   protected abstract Set<ChangedEntity> searchCause()
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException;
+   protected abstract Set<ChangedEntity> searchCause();
 
    protected Set<ChangedEntity> convertToChangedEntitites() {
       final Set<ChangedEntity> changed = new TreeSet<>();
@@ -76,31 +67,20 @@ public abstract class CauseSearcher {
       return changed;
    }
 
-   protected void measureDefinedTree(final List<CallTreeNode> includableNodes) throws IOException, XmlPullParserException, InterruptedException,
-         ViewNotFoundException, AnalysisConfigurationException,  JsonGenerationException, JsonMappingException {
+   protected void measureDefinedTree(final List<CallTreeNode> includableNodes) {
       final AllDifferingDeterminer allSearcher = new AllDifferingDeterminer(includableNodes, causeSearchConfig, measurementConfig);
       measurer.measureVersion(includableNodes);
       allSearcher.calculateDiffering();
 
-      persistenceManager.addMeasurement(reader.getRootPredecessor());
-      addMeasurements(includableNodes, reader.getRootPredecessor());
-
+      RCAMeasurementReader measurementReader = new RCAMeasurementReader(persistenceManager, includableNodes);
+      measurementReader.addAllMeasurements(reader.getRootPredecessor());
+      
       differingNodes.addAll(allSearcher.getLevelDifferentPredecessor());
 
       writeTreeState();
    }
 
-   private void addMeasurements(final List<CallTreeNode> includableNodes, final CallTreeNode parent) {
-      for (CallTreeNode child : parent.getChildren()) {
-         if (includableNodes.contains(child)) {
-            LOG.debug("Analyzing: {}", child);
-            persistenceManager.addMeasurement(child);
-            addMeasurements(includableNodes, child);
-         }
-      }
-   }
-
-   protected void writeTreeState() throws IOException, JsonGenerationException, JsonMappingException {
+   protected void writeTreeState() {
       persistenceManager.writeTreeState();
    }
 

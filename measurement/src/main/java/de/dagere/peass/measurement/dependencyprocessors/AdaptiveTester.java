@@ -38,8 +38,7 @@ public class AdaptiveTester extends DependencyTester {
       }
    }
 
-   protected void evaluateWithAdaption(final TestCase testcase, final File logFolder, final ProgressWriter writer)
-         throws IOException, InterruptedException, XmlPullParserException {
+   protected void evaluateWithAdaption(final TestCase testcase, final File logFolder, final ProgressWriter writer) throws IOException {
       currentChunkStart = System.currentTimeMillis();
       for (finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
          long comparisonStart = System.currentTimeMillis();

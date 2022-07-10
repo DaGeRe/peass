@@ -294,7 +294,7 @@ public class PeassFolders {
       return debugFolder;
    }
 
-   public PeassFolders getTempFolder(final String name) throws IOException, InterruptedException {
+   public PeassFolders getTempFolder(final String name) {
       final File nowFolder = new File(getTempProjectFolder(), name);
       PeassFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder, logFolders);
       return folders;

@@ -19,7 +19,7 @@ public class ParallelExecutionRunnable implements Runnable {
    private final PeassFolders temporaryFolders;
 
    public ParallelExecutionRunnable(final ResultOrganizerParallel organizer, final String version, final TestCase testcase, final int vmid, final File logFolder,
-         final DependencyTester tester) throws IOException, InterruptedException {
+         final DependencyTester tester) throws IOException {
       this.organizer = organizer;
       this.version = version;
       this.testcase = testcase;
@@ -36,7 +36,7 @@ public class ParallelExecutionRunnable implements Runnable {
       runner.runOnce(testcase, version, vmid, logFolder);
    }
 
-   private PeassFolders cloneProjectFolder() throws IOException, InterruptedException {
+   private PeassFolders cloneProjectFolder() throws IOException {
       PeassFolders temporaryFolders = tester.getFolders().getTempFolder("parallel_" + version);
       organizer.addVersionFolders(version, temporaryFolders);
       return temporaryFolders;

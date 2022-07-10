@@ -16,17 +16,23 @@ public class TemporaryProjectFolderUtil {
 
    private static final Logger LOG = LogManager.getLogger(TemporaryProjectFolderUtil.class);
 
-   public static PeassFolders cloneForcefully(final PeassFolders originalFolders, final File dest, final VMExecutionLogFolders logFolders) throws IOException, InterruptedException {
-      if (dest.exists()) {
-         LOG.warn("Deleting existing folder {}", dest);
-         FileUtils.deleteDirectory(dest);
-         File peassFolder = new File(dest.getParentFile(), dest.getName() + PeassFolders.PEASS_POSTFIX);
-         if (peassFolder.exists()) {
-            FileUtils.deleteDirectory(peassFolder);
+   public static PeassFolders cloneForcefully(final PeassFolders originalFolders, final File dest, final VMExecutionLogFolders logFolders) {
+      try {
+         if (dest.exists()) {
+            LOG.warn("Deleting existing folder {}", dest);
+
+            FileUtils.deleteDirectory(dest);
+
+            File peassFolder = new File(dest.getParentFile(), dest.getName() + PeassFolders.PEASS_POSTFIX);
+            if (peassFolder.exists()) {
+               FileUtils.deleteDirectory(peassFolder);
+            }
          }
+         GitUtils.clone(originalFolders, dest);
+         final PeassFolders folders = new TempPeassFolders(dest, originalFolders.getProjectName(), logFolders);
+         return folders;
+      } catch (IOException | InterruptedException e) {
+         throw new RuntimeException(e);
       }
-      GitUtils.clone(originalFolders, dest);
-      final PeassFolders folders = new TempPeassFolders(dest, originalFolders.getProjectName(), logFolders);
-      return folders;
    }
 }

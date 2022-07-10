@@ -3,9 +3,6 @@ package de.dagere.peass.measurement.rca;
 import java.io.File;
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.CauseSearchFolders;
@@ -42,9 +39,13 @@ public class CausePersistenceManager {
       treeDataFileDetails.getParentFile().mkdirs();
    }
 
-   public void writeTreeState() throws IOException, JsonGenerationException, JsonMappingException {
-      Constants.OBJECTMAPPER.writeValue(treeDataFile, data);
-      Constants.OBJECTMAPPER.writeValue(treeDataFileDetails, dataDetails);
+   public void writeTreeState() {
+      try {
+         Constants.OBJECTMAPPER.writeValue(treeDataFile, data);
+         Constants.OBJECTMAPPER.writeValue(treeDataFileDetails, dataDetails);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    public void addMeasurement(final CallTreeNode predecessorNode) {

@@ -1,7 +1,6 @@
 package de.dagere.peass.measurement.rca;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -11,12 +10,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.CauseSearchFolders;
@@ -27,7 +24,6 @@ import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerResultReader;
 import de.dagere.peass.testtransformation.TestTransformer;
-import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
  * Measures method calls adaptively instrumented by Kieker
@@ -46,15 +42,15 @@ public class CauseTester extends AdaptiveTester {
    private final CauseSearchFolders folders;
    private int levelId = 0;
 
-   public CauseTester(final CauseSearchFolders project, final MeasurementConfig measurementConfig, final CauseSearcherConfig causeConfig, final EnvironmentVariables env, CommitComparatorInstance comparator) {
+   public CauseTester(final CauseSearchFolders project, final MeasurementConfig measurementConfig, final CauseSearcherConfig causeConfig, final EnvironmentVariables env,
+         CommitComparatorInstance comparator) {
       super(project, measurementConfig, env, comparator);
       this.testcase = causeConfig.getTestCase();
       this.causeConfig = causeConfig;
       this.folders = project;
    }
 
-   public void measureVersion(final List<CallTreeNode> nodes)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   public void measureVersion(final List<CallTreeNode> nodes) {
       includedNodes = prepareNodes(nodes);
       evaluate(causeConfig.getTestCase());
       if (!getCurrentOrganizer().isSuccess()) {
@@ -80,7 +76,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, XmlPullParserException {
+   public void evaluate(final TestCase testcase) {
       LOG.debug("Adaptive execution: " + includedNodes);
 
       initEvaluation(testcase);
@@ -89,6 +85,8 @@ public class CauseTester extends AdaptiveTester {
 
       try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())) {
          evaluateWithAdaption(testcase, logFolder, writer);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
       }
    }
 
@@ -106,19 +104,15 @@ public class CauseTester extends AdaptiveTester {
 
    @Override
    public boolean checkIsDecidable(final TestCase testcase, final int vmid) {
-      try {
-         getDurationsVersion(configuration.getFixedCommitConfig().getCommit());
-         getDurationsVersion(configuration.getFixedCommitConfig().getCommitOld());
-         boolean allDecidable = super.checkIsDecidable(testcase, vmid);
-         LOG.debug("Super decidable: {}", allDecidable);
-         for (final CallTreeNode includedNode : includedNodes) {
-            allDecidable &= checkLevelDecidable(vmid, allDecidable, includedNode);
-         }
-         LOG.debug("Level decideable: {}", allDecidable);
-         return allDecidable;
-      } catch (ViewNotFoundException | AnalysisConfigurationException e) {
-         throw new RuntimeException(e);
+      getDurationsVersion(configuration.getFixedCommitConfig().getCommit());
+      getDurationsVersion(configuration.getFixedCommitConfig().getCommitOld());
+      boolean allDecidable = super.checkIsDecidable(testcase, vmid);
+      LOG.debug("Super decidable: {}", allDecidable);
+      for (final CallTreeNode includedNode : includedNodes) {
+         allDecidable &= checkLevelDecidable(vmid, allDecidable, includedNode);
       }
+      LOG.debug("Level decideable: {}", allDecidable);
+      return allDecidable;
    }
 
    private boolean checkLevelDecidable(final int vmid, final boolean allDecidable, final CallTreeNode includedNode) {
@@ -154,28 +148,31 @@ public class CauseTester extends AdaptiveTester {
       includedNodes = children;
    }
 
-   public void getDurations(final int levelId)
-         throws FileNotFoundException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
+   public void getDurations(final int levelId) {
       getDurationsVersion(configuration.getFixedCommitConfig().getCommit());
       getDurationsVersion(configuration.getFixedCommitConfig().getCommitOld());
    }
 
-   public void cleanup(final int levelId) throws IOException {
+   public void cleanup(final int levelId) {
       organizeMeasurements(levelId, configuration.getFixedCommitConfig().getCommit(), configuration.getFixedCommitConfig().getCommit());
       organizeMeasurements(levelId, configuration.getFixedCommitConfig().getCommit(), configuration.getFixedCommitConfig().getCommitOld());
    }
 
-   private void organizeMeasurements(final int levelId, final String mainVersion, final String version) throws IOException {
+   private void organizeMeasurements(final int levelId, final String mainVersion, final String version) {
       final File testcaseFolder = folders.getFullResultFolder(testcase, mainVersion, version);
       final File versionFolder = new File(folders.getArchiveResultFolder(mainVersion, testcase), version);
       if (!versionFolder.exists()) {
          versionFolder.mkdir();
       }
       final File adaptiveRunFolder = new File(versionFolder, "" + levelId);
-      FileUtils.moveDirectory(testcaseFolder, adaptiveRunFolder);
+      try {
+         FileUtils.moveDirectory(testcaseFolder, adaptiveRunFolder);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
-   private void getDurationsVersion(final String commit) throws ViewNotFoundException, AnalysisConfigurationException {
+   private void getDurationsVersion(final String commit) {
       includedNodes.forEach(node -> node.createStatistics(commit));
    }
 

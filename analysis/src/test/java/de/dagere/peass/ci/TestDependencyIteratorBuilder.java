@@ -7,13 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.CommitIteratorGit;
+import de.dagere.peass.vcs.GitUtils;
 
 public class TestDependencyIteratorBuilder {
 

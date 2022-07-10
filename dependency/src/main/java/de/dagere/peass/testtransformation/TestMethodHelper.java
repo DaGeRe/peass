@@ -12,7 +12,6 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.config.parameters.KiekerConfigMixin;
 
 public class TestMethodHelper {
 

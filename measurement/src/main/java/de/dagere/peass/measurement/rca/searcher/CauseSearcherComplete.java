@@ -6,12 +6,10 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CausePersistenceManager;
@@ -24,7 +22,6 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
 import de.dagere.peass.vcs.GitUtils;
-import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
  * Searches differing nodes in a complete call tree (instead of level-wise analysis)
@@ -78,8 +75,7 @@ public class CauseSearcherComplete extends CauseSearcher {
    }
 
    @Override
-   protected Set<ChangedEntity> searchCause()
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   protected Set<ChangedEntity> searchCause() {
       final TreeAnalyzer analyzer = creator.getAnalyzer(reader, causeSearchConfig);
       final List<CallTreeNode> predecessorNodeList = analyzer.getMeasurementNodesPredecessor();
       final List<CallTreeNode> includableNodes = getIncludableNodes(predecessorNodeList);
@@ -93,8 +89,7 @@ public class CauseSearcherComplete extends CauseSearcher {
       return convertToChangedEntitites();
    }
 
-   private List<CallTreeNode> getIncludableNodes(final List<CallTreeNode> predecessorNodeList)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   private List<CallTreeNode> getIncludableNodes(final List<CallTreeNode> predecessorNodeList) {
       final List<CallTreeNode> includableNodes;
       if (causeSearchConfig.useCalibrationRun()) {
          includableNodes = getAnalysableNodes(predecessorNodeList);
@@ -106,8 +101,7 @@ public class CauseSearcherComplete extends CauseSearcher {
       return includableNodes;
    }
 
-   private List<CallTreeNode> getAnalysableNodes(final List<CallTreeNode> predecessorNodeList)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   private List<CallTreeNode> getAnalysableNodes(final List<CallTreeNode> predecessorNodeList) {
       final MeasurementConfig config = new MeasurementConfig(1, measurementConfig.getFixedCommitConfig().getCommit(), measurementConfig.getFixedCommitConfig().getCommitOld());
       config.setIterations(measurementConfig.getIterations());
       config.setRepetitions(measurementConfig.getRepetitions());

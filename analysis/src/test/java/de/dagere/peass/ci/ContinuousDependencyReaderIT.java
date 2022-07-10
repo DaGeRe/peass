@@ -29,8 +29,8 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.CommitIteratorGit;
+import de.dagere.peass.vcs.GitUtils;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ContinuousDependencyReaderIT {

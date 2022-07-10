@@ -108,7 +108,7 @@ public class KiekerResultManager {
     * @throws XmlPullParserException
     * @throws InterruptedException
     */
-   public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String version, final File logFolder) throws IOException, XmlPullParserException, InterruptedException {
+   public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String version, final File logFolder) {
       final File logVersionFolder = new File(logFolder, version);
       if (!logVersionFolder.exists()) {
          logVersionFolder.mkdir();

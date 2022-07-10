@@ -1,25 +1,18 @@
 package de.dagere.peass.measurement.rca.kieker;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
 import de.dagere.peass.utils.Constants;
-import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class BothTreeReader {
 
@@ -32,7 +25,7 @@ public class BothTreeReader {
    private final MeasurementConfig config;
    private final CauseSearchFolders folders;
    private final EnvironmentVariables env;
-   
+
    final File potentialCacheFileOld;
    final File potentialCacheFile;
 
@@ -41,19 +34,23 @@ public class BothTreeReader {
       this.config = config;
       this.folders = folders;
       this.env = env;
-      
+
       File treeCacheFolder = folders.getTreeCacheFolder(config.getFixedCommitConfig().getCommit(), causeSearchConfig.getTestCase());
       potentialCacheFileOld = new File(treeCacheFolder, config.getFixedCommitConfig().getCommitOld());
       potentialCacheFile = new File(treeCacheFolder, config.getFixedCommitConfig().getCommit());
    }
-   
-   public void readCachedTrees() throws JsonParseException, JsonMappingException, IOException {
+
+   public void readCachedTrees() {
       if (!potentialCacheFile.exists() || !potentialCacheFileOld.exists()) {
          throw new RuntimeException("Cache not existing! " + potentialCacheFile.getAbsolutePath());
       }
-      rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
-      rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
-      
+      try {
+         rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
+         rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+
       rootPredecessor.setConfig(config);
       setConfig(rootPredecessor);
       rootVersion.setConfig(config);
@@ -66,24 +63,29 @@ public class BothTreeReader {
          setConfig(child);
       }
    }
-   
-   public void readTrees() throws InterruptedException, IOException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException {
+
+   public void readTrees() {
       if (potentialCacheFile.exists() && potentialCacheFileOld.exists()) {
          LOG.info("Using cache!");
          readCachedTrees();
       } else {
          determineTrees();
          LOG.info("Writing to cache");
-         Constants.OBJECTMAPPER.writeValue(potentialCacheFileOld, rootPredecessor);
-         Constants.OBJECTMAPPER.writeValue(potentialCacheFile, rootVersion);
+         try {
+            Constants.OBJECTMAPPER.writeValue(potentialCacheFileOld, rootPredecessor);
+            Constants.OBJECTMAPPER.writeValue(potentialCacheFile, rootVersion);
+         } catch (IOException e) {
+            throw new RuntimeException(e);
+         }
       }
    }
 
-   private void determineTrees() throws InterruptedException, IOException, FileNotFoundException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException {
+   private void determineTrees() {
       final TreeReader resultsManager = TreeReaderFactory.createTreeReader(folders, config.getFixedCommitConfig().getCommitOld(), config, causeSearchConfig.isIgnoreEOIs(), env);
       rootPredecessor = resultsManager.getTree(causeSearchConfig.getTestCase(), config.getFixedCommitConfig().getCommitOld());
 
-      final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getFixedCommitConfig().getCommit(), config, causeSearchConfig.isIgnoreEOIs(), env);
+      final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getFixedCommitConfig().getCommit(), config, causeSearchConfig.isIgnoreEOIs(),
+            env);
       rootVersion = resultsManagerPrevious.getTree(causeSearchConfig.getTestCase(), config.getFixedCommitConfig().getCommit());
       LOG.info("Traces equal: {}", TreeUtil.areTracesEqual(rootPredecessor, rootVersion));
    }
