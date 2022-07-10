@@ -9,5 +9,5 @@ public interface KiekerResultHandler{
     * 
     * @param folder
     */
-   void handleKiekerResults(final String version, final File folder);
+   void handleKiekerResults(final String commit, final File folder);
 }

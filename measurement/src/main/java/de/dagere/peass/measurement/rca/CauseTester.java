@@ -158,13 +158,13 @@ public class CauseTester extends AdaptiveTester {
       organizeMeasurements(levelId, configuration.getFixedCommitConfig().getCommit(), configuration.getFixedCommitConfig().getCommitOld());
    }
 
-   private void organizeMeasurements(final int levelId, final String mainVersion, final String version) {
-      final File testcaseFolder = folders.getFullResultFolder(testcase, mainVersion, version);
-      final File versionFolder = new File(folders.getArchiveResultFolder(mainVersion, testcase), version);
-      if (!versionFolder.exists()) {
-         versionFolder.mkdir();
+   private void organizeMeasurements(final int levelId, final String mainCommit, final String commit) {
+      final File testcaseFolder = folders.getFullResultFolder(testcase, mainCommit, commit);
+      final File commitFolder = new File(folders.getArchiveResultFolder(mainCommit, testcase), commit);
+      if (!commitFolder.exists()) {
+         commitFolder.mkdir();
       }
-      final File adaptiveRunFolder = new File(versionFolder, "" + levelId);
+      final File adaptiveRunFolder = new File(commitFolder, "" + levelId);
       try {
          FileUtils.moveDirectory(testcaseFolder, adaptiveRunFolder);
       } catch (IOException e) {

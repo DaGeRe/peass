@@ -61,10 +61,10 @@ public class MultipleVMTestUtil {
     * 
     * @param summaryResultFile
     * @param oneRunData
-    * @param version
+    * @param commit
     * @
     */
-   public static void saveSummaryData(final File summaryResultFile, final File oneResultFile, final VMResult oneResult, final TestCase testcase, final String version,
+   public static void saveSummaryData(final File summaryResultFile, final File oneResultFile, final VMResult oneResult, final TestCase testcase, final String commit,
          final long currentChunkStart, final String datacollectorName) {
       LOG.info("Writing to merged result file: {}", summaryResultFile);
       final Kopemedata summaryData = initKopemeData(summaryResultFile, testcase);
@@ -72,7 +72,7 @@ public class MultipleVMTestUtil {
       
       if (oneResult.getFulldata().getFileName() != null) {
          SummaryStatistics st = getExternalFileStatistics(oneResultFile, datacollectorName, oneResult);
-         saveData(summaryResultFile, version, summaryData, summaryChunk, oneResult, st);
+         saveData(summaryResultFile, commit, summaryData, summaryChunk, oneResult, st);
       } else {
          final VMResult cleaned;
          if (oneResult.getWarmup() != 0) {
@@ -83,16 +83,16 @@ public class MultipleVMTestUtil {
          final Fulldata realData = cleaned.getFulldata();
          if (realData != null && realData.getValues() != null && realData.getValues().size() > 0) {
             final SummaryStatistics st = createStatistics(realData);
-            saveData(summaryResultFile, version, summaryData, summaryChunk, oneResult, st);
+            saveData(summaryResultFile, commit, summaryData, summaryChunk, oneResult, st);
          } else {
             LOG.error("Fulldata of " + oneResultFile + " empty!");
          }
       }
    }
 
-   private static void saveData(final File summaryResultFile, final String version, final Kopemedata summaryData, final VMResultChunk summaryChunk, final VMResult oneResult,
+   private static void saveData(final File summaryResultFile, final String commit, final Kopemedata summaryData, final VMResultChunk summaryChunk, final VMResult oneResult,
          final SummaryStatistics st) {
-      final VMResult result = createResultFromStatistic(version, st, oneResult.getRepetitions());
+      final VMResult result = createResultFromStatistic(commit, st, oneResult.getRepetitions());
       result.setDate(oneResult.getDate());
       result.setWarmup(oneResult.getWarmup());
       result.setParameters(oneResult.getParameters());
@@ -190,12 +190,12 @@ public class MultipleVMTestUtil {
       return minIterations;
    }
 
-   private static VMResult createResultFromStatistic(final String version, final SummaryStatistics st, final long repetitions) {
+   private static VMResult createResultFromStatistic(final String commit, final SummaryStatistics st, final long repetitions) {
       final VMResult result = new VMResult();
       result.setValue(st.getMean());
       result.setMin(st.getMin());
       result.setMax(st.getMax());
-      result.setCommit(version);
+      result.setCommit(commit);
       result.setDeviation(st.getStandardDeviation());
       result.setIterations(st.getN());
       result.setRepetitions(repetitions);

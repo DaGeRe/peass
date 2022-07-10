@@ -42,14 +42,14 @@ public class OnceRunner {
       }
    }
 
-   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder) {
+   public void runOnce(final TestCase testcase, final String commit, final int vmid, final File logFolder) {
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
       } else {
-         GitUtils.goToTag(version, folders.getProjectFolder());
+         GitUtils.goToTag(commit, folders.getProjectFolder());
       }
 
-      final File vmidFolder = initVMFolder(version, vmid, logFolder);
+      final File vmidFolder = initVMFolder(commit, vmid, logFolder);
 
       if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
          testExecutor.loadClasses();
@@ -64,10 +64,10 @@ public class OnceRunner {
       }
 
       LOG.debug("Handling Kieker results");
-      resultHandler.handleKiekerResults(version, currentOrganizer.getTempResultsFolder(version));
+      resultHandler.handleKiekerResults(commit, currentOrganizer.getTempResultsFolder(commit));
 
       LOG.info("Organizing result paths");
-      currentOrganizer.saveResultFiles(version, vmid);
+      currentOrganizer.saveResultFiles(commit, vmid);
 
       cleanup();
    }

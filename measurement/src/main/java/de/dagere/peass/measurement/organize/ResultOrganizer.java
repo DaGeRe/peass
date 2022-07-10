@@ -31,7 +31,7 @@ public class ResultOrganizer {
 
    protected final PeassFolders folders;
    // mainVersion equals current version
-   private final String mainVersion;
+   private final String mainCommit;
    private final long currentChunkStart;
    private final boolean isUseKieker;
 
@@ -45,7 +45,7 @@ public class ResultOrganizer {
          final TestCase test,
          final int expectedIterations) {
       this.folders = folders;
-      this.mainVersion = currentVersion;
+      this.mainCommit = currentVersion;
       this.currentChunkStart = currentChunkStart;
       this.isUseKieker = isUseKieker;
       this.saveAll = saveAll;
@@ -60,8 +60,8 @@ public class ResultOrganizer {
     * 
     * @return true of the measurement was correct
     */
-   public boolean testSuccess(final String version) {
-      final File folder = getTempResultsFolder(version);
+   public boolean testSuccess(final String commit) {
+      final File folder = getTempResultsFolder(commit);
       if (folder != null) {
          final String methodname = testcase.getMethodWithParams();
          final File oneResultFile = new File(folder, methodname + ".json");
@@ -92,11 +92,11 @@ public class ResultOrganizer {
       return success;
    }
 
-   public void saveResultFiles(final String version, final int vmid) {
+   public void saveResultFiles(final String commit, final int vmid) {
       // Saving and merging result files should not be executed in parallel, therefore, this needs to be synchronized over the class (not the instance)
       synchronized (ResultOrganizer.class) {
          try {
-            final File folder = getTempResultsFolder(version);
+            final File folder = getTempResultsFolder(commit);
             if (folder != null) {
                final String methodname = testcase.getMethodWithParams();
                final File oneResultFile = new File(folder, methodname + ".json");
@@ -108,10 +108,10 @@ public class ResultOrganizer {
                   final Kopemedata oneResultData = JSONDataLoader.loadData(oneResultFile);
                   final List<TestMethod> testcaseList = oneResultData.getMethods();
                   if (testcaseList.size() > 0) {
-                     saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
+                     saveResults(commit, vmid, oneResultFile, oneResultData, testcaseList);
 
                      if (isUseKieker) {
-                        File destFolder = folders.getFullResultFolder(testcase, mainVersion, version);
+                        File destFolder = folders.getFullResultFolder(testcase, mainCommit, commit);
                         saveKiekerFiles(folder, destFolder);
                      }
                   } else {
@@ -129,7 +129,7 @@ public class ResultOrganizer {
       }
    }
 
-   public File getTempResultsFolder(final String version) {
+   public File getTempResultsFolder(final String commit) {
       LOG.info("Searching method: {}", testcase);
       final Collection<File> folderCandidates = folders.findTempClazzFolder(testcase);
       if (folderCandidates.size() != 1) {
@@ -141,18 +141,17 @@ public class ResultOrganizer {
       }
    }
 
-   private void saveResults(final String version, final int vmid, final File oneResultFile, final Kopemedata oneResultData, final List<TestMethod> testcaseList)
+   private void saveResults(final String commit, final int vmid, final File oneResultFile, final Kopemedata oneResultData, final List<TestMethod> testcaseList)
          throws IOException {
-      final TestMethod oneRundata = testcaseList.get(0);
       DatacollectorResult timeDataCollector = oneResultData.getFirstTimeDataCollector();
 
-      saveSummaryFile(version, timeDataCollector, oneResultFile);
+      saveSummaryFile(commit, timeDataCollector, oneResultFile);
 
       for (VMResult result : timeDataCollector.getResults()) {
          String paramString = ParamNameHelper.paramsToString(result.getParameters());
          TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
 
-         final File destFile = folders.getResultFile(concreteTestcase, vmid, version, mainVersion);
+         final File destFile = folders.getResultFile(concreteTestcase, vmid, commit, mainCommit);
          destFile.getParentFile().mkdirs();
          LOG.info("Saving in: {}", destFile);
          if (!destFile.exists()) {
@@ -182,13 +181,13 @@ public class ResultOrganizer {
       fulldata.setFileName(destFileName);
    }
 
-   public void saveSummaryFile(final String version, final DatacollectorResult timeDataCollector, final File oneResultFile) {
+   public void saveSummaryFile(final String commit, final DatacollectorResult timeDataCollector, final File oneResultFile) {
       for (VMResult result : timeDataCollector.getResults()) {
          String paramString = ParamNameHelper.paramsToString(result.getParameters());
          TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
 
          final File summaryResultFile = folders.getSummaryFile(concreteTestcase);
-         MultipleVMTestUtil.saveSummaryData(summaryResultFile, oneResultFile, result, concreteTestcase, version, currentChunkStart, timeDataCollector.getName());
+         MultipleVMTestUtil.saveSummaryData(summaryResultFile, oneResultFile, result, concreteTestcase, commit, currentChunkStart, timeDataCollector.getName());
       }
    }
 
@@ -210,7 +209,7 @@ public class ResultOrganizer {
    }
 
    public File getResultFile(final TestCase testcase, final int vmid, final String version) {
-      return folders.getResultFile(testcase, vmid, version, mainVersion);
+      return folders.getResultFile(testcase, vmid, version, mainCommit);
    }
 
    public boolean isSaveAll() {

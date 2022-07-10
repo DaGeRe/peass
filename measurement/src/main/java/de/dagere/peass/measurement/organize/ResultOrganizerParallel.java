@@ -24,16 +24,16 @@ public class ResultOrganizerParallel extends ResultOrganizer {
       LOG.info("Instance: " + System.identityHashCode(this));
    }
 
-   public void addVersionFolders(final String version, final PeassFolders versionTempFolder) {
-      LOG.debug("Adding version: {}", version);
-      sourceFolders.put(version, versionTempFolder);
+   public void addVersionFolders(final String commit, final PeassFolders versionTempFolder) {
+      LOG.debug("Adding version: {}", commit);
+      sourceFolders.put(commit, versionTempFolder);
       LOG.info("Instance: " + System.identityHashCode(this) + " Keys: " + sourceFolders.keySet());
    }
    
    @Override
-   public File getTempResultsFolder(final String version) {
-      PeassFolders currentFolders = sourceFolders.get(version);
-      LOG.info("Searching method: {} Version: {} Existing versions: {}", testcase, version, sourceFolders.keySet());
+   public File getTempResultsFolder(final String commit) {
+      PeassFolders currentFolders = sourceFolders.get(commit);
+      LOG.info("Searching method: {} Version: {} Existing versions: {}", testcase, commit, sourceFolders.keySet());
       LOG.info("Instance: " + System.identityHashCode(this));
       final Collection<File> folderCandidates = currentFolders.findTempClazzFolder(testcase);
       if (folderCandidates.size() != 1) {
