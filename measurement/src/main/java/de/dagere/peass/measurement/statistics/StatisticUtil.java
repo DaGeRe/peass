@@ -26,7 +26,7 @@ public class StatisticUtil {
 
    public static double getMean(final List<StatisticalSummary> statistics) {
       final StatisticalSummaryValues vals = AggregateSummaryStatistics.aggregate(statistics);
-      return vals.getMean();
+      return vals != null ? vals.getMean() : Double.NaN;
    }
 
    private static Relation bimodalTTest(final CompareData data, final double type1error) {

@@ -54,6 +54,18 @@ public class CallTreeNodeWarmupTest {
       final CallTreeNode node = initNode(values, config);
       Assert.assertEquals(25.0, node.getStatistics("1").getMean(), 0.01);
    }
+   
+   @Test
+   public void testTooLessValues() {
+      List<StatisticalSummary> values = new LinkedList<>();
+      values.add(new StatisticalSummaryValues(100, 10, 4, 100, 100, 75 * 100));
+
+      MeasurementConfig config = new MeasurementConfig(5, "1", "1");
+      config.setWarmup(5);
+
+      final CallTreeNode node = initNode(values, config);
+      Assert.assertEquals(0.0, node.getStatistics("1").getN(), 0.01);
+   }
 
    private CallTreeNode initNode(final List<StatisticalSummary> values, final MeasurementConfig config) {
       final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod",
