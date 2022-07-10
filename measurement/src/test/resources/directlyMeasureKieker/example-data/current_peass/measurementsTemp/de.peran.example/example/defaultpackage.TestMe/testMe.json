@@ -1,0 +1,7 @@
+{
+  "clazz" : "defaultpackage.TestMe",
+  "methods" : [ {
+    "method" : "testMe",
+    "datacollectorResults" : [ ]
+  } ]
+}
