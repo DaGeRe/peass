@@ -100,8 +100,8 @@ public class TestResultOrganizerParams {
          public File answer(final InvocationOnMock invocation) throws Throwable {
             TestCase test = invocation.getArgument(0);
             int index = invocation.getArgument(1);
-            String version = invocation.getArgument(2);
-            File resultFile = new File(TEMP_FULL_DIR, test.getMethod() + "(" + test.getParams() + ")_" + index + "_" + version + ".json");
+            String commit = invocation.getArgument(2);
+            File resultFile = new File(TEMP_FULL_DIR, test.getMethod() + "(" + test.getParams() + ")_" + index + "_" + commit + ".json");
             return resultFile;
          }
       });
