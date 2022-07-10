@@ -41,8 +41,11 @@ public class BothTreeReader {
    }
 
    public void readCachedTrees() {
-      if (!potentialCacheFile.exists() || !potentialCacheFileOld.exists()) {
+      if (!potentialCacheFile.exists()) {
          throw new RuntimeException("Cache not existing! " + potentialCacheFile.getAbsolutePath());
+      }
+      if (!potentialCacheFileOld.exists()) {
+         throw new RuntimeException("Cache not existing! " + potentialCacheFileOld.getAbsolutePath());
       }
       try {
          rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
