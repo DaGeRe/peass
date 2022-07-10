@@ -67,7 +67,7 @@ public class TestResultOrganizerParallel {
    }
 
    private void testXMLFileIsCorrect()  {
-      File kopemefile = new File(getVersionMeasurementFolder(TestResultOrganizer.COMMIT_NAME, PARALLEL_VERSION), TestResultOrganizer.searchedTest.getMethod() + "_0_" + PARALLEL_VERSION + ".xml");
+      File kopemefile = new File(getVersionMeasurementFolder(TestResultOrganizer.COMMIT_NAME, PARALLEL_VERSION), TestResultOrganizer.searchedTest.getMethod() + "_0_" + PARALLEL_VERSION + ".json");
       final Kopemedata data = JSONDataLoader.loadData(kopemefile);
       final DatacollectorResult collector = data.getFirstMethodResult().getDatacollectorResults().get(0);
       final VMResultChunk chunk = collector.getChunks().get(0);
