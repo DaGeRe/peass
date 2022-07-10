@@ -72,7 +72,7 @@ public class TestResultOrganizer {
    }
 
    private void testXMLFileIsCorrect()  {
-      File kopemefile = new File(getVersionMeasurementFolder(), searchedTest.getMethod() + "_0_" + VERSION_NAME + ".xml");
+      File kopemefile = new File(getVersionMeasurementFolder(), searchedTest.getMethod() + "_0_" + VERSION_NAME + ".json");
       Kopemedata data = JSONDataLoader.loadData(kopemefile);
       final DatacollectorResult datacollector = data.getFirstMethodResult().getDatacollectorResults().get(0);
       final Fulldata fulldata = datacollector.getResults().get(0).getFulldata();
