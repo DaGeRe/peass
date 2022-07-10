@@ -28,8 +28,17 @@ import de.dagere.peass.measurement.statistics.data.TestcaseStatistic.TestcaseSta
 /**
  * Saves the call tree structure and measurement data of the call tree
  * 
- * If the measurements are added call by call, the API is: 1) call setVersions with the versions to compare 2) call newVM with the current version 3) call addMeasurement with all
- * values 4) repeat 2) and 3) until all measurements are read 5) call createStatistics with both versions
+ * If the measurements are added call by call, the API is:
+ * 
+ * 1) call initVersions with the commits to compare
+ * 
+ * 2) call newVM with the current version
+ * 
+ * 3) call addMeasurement with all values
+ * 
+ * 4) repeat 2) and 3) until all measurements are read
+ * 
+ * 5) call createStatistics with both versions
  * 
  * @author reichelt
  *

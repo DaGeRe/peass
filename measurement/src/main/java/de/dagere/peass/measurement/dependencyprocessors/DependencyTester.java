@@ -11,6 +11,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
+import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
@@ -71,9 +72,10 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    protected void initEvaluation(final TestCase testcase) {
-      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getFixedCommitConfig().getCommitOld(),
-            configuration.getFixedCommitConfig().getCommit());
-      new FolderDeterminer(folders).testResultFolders(configuration.getFixedCommitConfig().getCommit(), configuration.getFixedCommitConfig().getCommitOld(), testcase);
+      FixedCommitConfig fixedCommitConfig = configuration.getFixedCommitConfig();
+      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in commits {} and {}", fixedCommitConfig.getCommitOld(),
+            fixedCommitConfig.getCommit());
+      new FolderDeterminer(folders).testResultFolders(fixedCommitConfig.getCommit(), fixedCommitConfig.getCommitOld(), testcase);
    }
 
    private void evaluateSimple(final TestCase testcase, final File logFolder, final ProgressWriter writer)

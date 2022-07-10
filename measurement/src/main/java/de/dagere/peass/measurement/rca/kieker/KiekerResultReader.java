@@ -56,11 +56,11 @@ public class KiekerResultReader {
       this.considerNodePosition = considerNodePosition;
    }
 
-   public void readResults(final File versionResultFolder) {
+   public void readResults(final File commitResultFolder) {
       try {
-         LOG.info("Reading kieker results from {}", versionResultFolder.getAbsolutePath(), commit);
+         LOG.info("Reading kieker results from {}", commitResultFolder.getAbsolutePath(), commit);
          FileFilter filter = new OrFileFilter(new RegexFileFilter("[0-9]*"), new RegexFileFilter("measurement-[0-9]*.csv"));
-         final File[] kiekerResultFiles = versionResultFolder.listFiles(filter);
+         final File[] kiekerResultFiles = commitResultFolder.listFiles(filter);
          for (final File kiekerResultFolder : kiekerResultFiles) {
             final File kiekerTraceFile = KiekerFolderUtil.getKiekerTraceFolder(kiekerResultFolder, testcase);
             LOG.debug("Reading file: {}", kiekerTraceFile.getAbsolutePath());
@@ -89,10 +89,9 @@ public class KiekerResultReader {
    private void readNode(final Map<AggregatedDataNode, AggregatedData> fullDataMap, final CallTreeNode node) {
       boolean nodeFound = false;
       final CallTreeNode examinedNode = otherCommit ? node.getOtherVersionNode() : node;
-      final String nodeCall = KiekerPatternConverter.fixParameters(examinedNode.getKiekerPattern());
       final List<StatisticalSummary> values = new LinkedList<>();
       for (final Entry<AggregatedDataNode, AggregatedData> entry : fullDataMap.entrySet()) {
-         if (isSameNode(examinedNode, nodeCall, entry.getKey())) {
+         if (isSameNode(examinedNode, entry.getKey())) {
             for (final StatisticalSummary dataSlice : entry.getValue().getStatistic().values()) {
                values.add(dataSlice);
             }
@@ -101,18 +100,19 @@ public class KiekerResultReader {
       }
 
       if (nodeFound) {
-         LOG.debug("Setting measurement: {} {} Values: {}", commit, nodeCall, values.size());
+         LOG.debug("Setting measurement: {} {} Values: {}", commit, node.getKiekerPattern(), values.size());
          // System.out.println(StatisticUtil.getMean(values) + " ");
          node.addAggregatedMeasurement(commit, values);
       } else {
-         LOG.warn("Node {} ({}) did not find measurement values, measured methods: {}", nodeCall, node.getOtherKiekerPattern(), fullDataMap.entrySet().size());
+         LOG.warn("Node {} ({}) did not find measurement values, measured methods: {}", node.getKiekerPattern(), node.getOtherKiekerPattern(), fullDataMap.entrySet().size());
       }
    }
 
-   private boolean isSameNode(final CallTreeNode node, final String nodeCall, final AggregatedDataNode measuredNode) {
+   private boolean isSameNode(final CallTreeNode node, final AggregatedDataNode measuredNode) {
+      final String nodeCall = KiekerPatternConverter.fixParameters(node.getKiekerPattern());
       final String kiekerCall = KiekerPatternConverter.getKiekerPattern(measuredNode.getCall());
       LOG.trace("Node: {} Kieker: {} Equal: {}", nodeCall, kiekerCall, nodeCall.equals(kiekerCall));
-      if (nodeCall.equals(kiekerCall) || isSameNodeWithoutModifier(nodeCall, kiekerCall)) {
+      if (nodeCall.equals(kiekerCall) || (node.getParent() == null && isSameNodeWithoutModifier(nodeCall, kiekerCall))) {
          LOG.trace("EOI: {} vs {}", node.getEoi(commit), measuredNode.getEoi());
          if (considerNodePosition) {
             final int eoi = node.getEoi(commit);

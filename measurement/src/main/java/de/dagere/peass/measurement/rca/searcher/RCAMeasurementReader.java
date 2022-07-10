@@ -13,12 +13,12 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
  *
  */
 public class RCAMeasurementReader {
-   
+
    private static final Logger LOG = LogManager.getLogger(RCAMeasurementReader.class);
 
    private final CausePersistenceManager persistenceManager;
    private final List<CallTreeNode> includableNodes;
-   
+
    public RCAMeasurementReader(CausePersistenceManager persistenceManager, List<CallTreeNode> includableNodes) {
       this.persistenceManager = persistenceManager;
       this.includableNodes = includableNodes;
@@ -28,7 +28,7 @@ public class RCAMeasurementReader {
       persistenceManager.addMeasurement(root);
       addMeasurements(root);
    }
-   
+
    public void addMeasurements(final CallTreeNode parent) {
       for (CallTreeNode child : parent.getChildren()) {
          if (includableNodes.contains(child)) {

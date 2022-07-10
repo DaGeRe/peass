@@ -69,11 +69,13 @@ public class TestcaseStatistic {
 
    private void check() {
       if (callsOld == 0 && (!Double.isNaN(meanOld) || !Double.isNaN(deviationOld))) {
-         throw new TestcaseStatisticException("Old data need to be not defined at all or contain a count of calls, a mean and a deviation!");
+         throw new TestcaseStatisticException("Old data need to be not defined at all or contain a count of calls, a mean and a deviation, "
+               + "but was " + callsOld + " calls, " + meanOld + " mean and " + deviationOld + " deviation!");
       }
 
       if (calls == 0 && (!Double.isNaN(meanCurrent) || !Double.isNaN(deviationCurrent))) {
-         throw new TestcaseStatisticException("Current data need to be not defined at all or contain a count of calls, a mean and a deviation!");
+         throw new TestcaseStatisticException("Current data need to be not defined at all or contain a count of calls, a mean and a deviation, "
+               + "but was " + calls + " calls, " + meanCurrent + " mean and " + deviationCurrent + " deviation!");
       }
    }
 
