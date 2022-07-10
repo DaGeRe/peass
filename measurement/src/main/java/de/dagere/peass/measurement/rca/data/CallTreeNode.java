@@ -127,7 +127,7 @@ public class CallTreeNode extends BasicNode {
          for (ListIterator<StatisticalSummary> it = statistic.listIterator(); it.hasNext();) {
             StatisticalSummary chunk = it.next();
             long countOfExecutions = chunk.getN();
-            if (remainingWarmup > countOfExecutions) {
+            if (remainingWarmup >= countOfExecutions) {
                remainingWarmup -= countOfExecutions;
                LOG.debug("Reducing warmup by {}, remaining warmup {}", countOfExecutions, remainingWarmup);
                it.remove();
@@ -148,6 +148,9 @@ public class CallTreeNode extends BasicNode {
          }
          for (StatisticalSummary summary : statistic) {
             LOG.trace("After removing: {} {} Sum: {}", summary.getMean(), summary.getN(), summary.getSum());
+            if (summary.getN() == 0) {
+               throw new RuntimeException("Final statistics with 0 entries do not make sense!");
+            }
          }
          LOG.trace("Overall mean: {}", StatisticUtil.getMean(statistic));
       }
