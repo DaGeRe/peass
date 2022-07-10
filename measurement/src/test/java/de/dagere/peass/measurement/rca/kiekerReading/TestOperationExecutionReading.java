@@ -17,10 +17,24 @@ public class TestOperationExecutionReading {
    private ChangedTreeBuilder builder;
 
    @Test
+   public void testEois() {
+      builder = new ChangedTreeBuilder();
+      
+      System.out.println(builder.getRoot().getChildren());
+      
+      int eoi = builder.getB1().getEoi(ChangedTreeBuilder.COMMIT0);
+      Assert.assertEquals(4, eoi);
+      
+      int eoiCommit1 = builder.getB1().getEoi(ChangedTreeBuilder.COMMIT1);
+      Assert.assertEquals(6, eoiCommit1);
+   }
+
+  
+   @Test
    public void testAdding() {
       builder = new ChangedTreeBuilder();
       CallTreeNode root = builder.getRoot();
-
+      
       Set<CallTreeNode> includedNodes = createIncludedNodes(root);
 
       KiekerDurationReader.executeDurationStage(new File(EXAMPLE_DATA_FOLDER, "version0"), includedNodes, ChangedTreeBuilder.COMMIT0);
@@ -33,13 +47,11 @@ public class TestOperationExecutionReading {
             Assert.assertEquals("Node " + node.getCall() + " did not have correct call count", 1, nodeStatistic.getN());
          }
       }
-      Assert.assertEquals("Node " + root.getCall() + " did not have correct mean", 2, root.getStatistics(ChangedTreeBuilder.COMMIT0).getMean(), 0.01);
+      Assert.assertEquals("Node " + root.getCall() + " did not have correct mean", 2000, root.getStatistics(ChangedTreeBuilder.COMMIT0).getMean(), 0.01);
 
       builder.getA1().createStatistics(ChangedTreeBuilder.COMMIT1);
-      Assert.assertEquals("Node " + builder.getA1().getOtherCommitNode().getCall() + " did not have correct call count", 1,
-            builder.getA1().getStatistics(ChangedTreeBuilder.COMMIT1).getN());
-      Assert.assertEquals("Node " + builder.getA1().getOtherCommitNode().getCall() + " did not have correct mean", 10,
-            builder.getA1().getStatistics(ChangedTreeBuilder.COMMIT1).getMean(), 0.01);
+      Assert.assertEquals("Node " + builder.getA1().getOtherCommitNode().getCall() + " did not have correct call count", 1, builder.getA1().getStatistics(ChangedTreeBuilder.COMMIT1).getN());
+      Assert.assertEquals("Node " + builder.getA1().getOtherCommitNode().getCall() + " did not have correct mean", 10000, builder.getA1().getStatistics(ChangedTreeBuilder.COMMIT1).getMean(), 0.01);
    }
 
    private Set<CallTreeNode> createIncludedNodes(CallTreeNode root2) {

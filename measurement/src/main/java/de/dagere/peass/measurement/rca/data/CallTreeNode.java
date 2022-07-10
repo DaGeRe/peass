@@ -330,7 +330,7 @@ public class CallTreeNode extends BasicNode {
 
    private boolean isAdded(String commit) {
       FixedCommitConfig executionConfig = config.getFixedCommitConfig();
-      if (executionConfig.getCommit().equals(commit) && call.equals(CauseSearchData.ADDED)) {
+      if (executionConfig.getCommitOld().equals(commit) && call.equals(CauseSearchData.ADDED)) {
          return true;
       }
       String otherKiekerPattern = getOtherKiekerPattern();
