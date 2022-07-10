@@ -6,8 +6,8 @@ import de.dagere.peass.measurement.rca.data.CauseSearchData;
 
 public class ChangedTreeBuilder {
 
-   public static final String VERSION0 = "000000";
-   public static final String VERSION1 = "000001";
+   public static final String COMMIT0 = "000000";
+   public static final String COMMIT1 = "000001";
 
    private CallTreeNode root;
    private CallTreeNode A1;
@@ -18,8 +18,8 @@ public class ChangedTreeBuilder {
    public ChangedTreeBuilder() {
       MeasurementConfig config = new MeasurementConfig(2);
       config.setWarmup(0);
-      config.getFixedCommitConfig().setCommit(VERSION1);
-      config.getFixedCommitConfig().setCommitOld(VERSION0);
+      config.getFixedCommitConfig().setCommit(COMMIT1);
+      config.getFixedCommitConfig().setCommitOld(COMMIT0);
       root = new CallTreeNode("de.dagere.peass.Test#test", "public void de.dagere.peass.Test.test()", "public void de.dagere.peass.Test.test()",
             config);
       CallTreeNode otherRoot = new CallTreeNode("de.dagere.peass.Test#test", "public void de.dagere.peass.Test.test()", "public void de.dagere.peass.Test.test()",
