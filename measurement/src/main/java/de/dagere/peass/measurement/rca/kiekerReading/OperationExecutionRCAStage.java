@@ -52,15 +52,15 @@ public class OperationExecutionRCAStage extends AbstractTraceProcessingStage<Exe
    private static final Logger LOG = LogManager.getLogger(OperationExecutionRCAStage.class);
 
    private final Map<EOIESSIndex, CallTreeNode> measuredNodes = new HashMap<>();
-   private final String version;
+   private final String commit;
 
-   public OperationExecutionRCAStage(final SystemModelRepository systemModelRepository, final Set<CallTreeNode> measuredNodes, final String version) {
+   public OperationExecutionRCAStage(final SystemModelRepository systemModelRepository, final Set<CallTreeNode> measuredNodes, final String commit) {
       super(systemModelRepository);
       for (CallTreeNode node : measuredNodes) {
-         int eoi = node.getEoi(version);
+         int eoi = node.getEoi(commit);
          int ess = node.getEss();
          String currentPattern;
-         if (node.getConfig().getFixedCommitConfig().getCommitOld().equals(version)) {
+         if (node.getConfig().getFixedCommitConfig().getCommitOld().equals(commit)) {
             currentPattern = node.getKiekerPattern();
          } else {
             currentPattern = node.getOtherKiekerPattern();
@@ -68,9 +68,9 @@ public class OperationExecutionRCAStage extends AbstractTraceProcessingStage<Exe
          EOIESSIndex index = new EOIESSIndex(ess, eoi, currentPattern);
          this.measuredNodes.put(index, node);
       }
-      this.version = version;
+      this.commit = commit;
 
-      measuredNodes.forEach(node -> node.initVMData(version));
+      measuredNodes.forEach(node -> node.initVMData(commit));
    }
 
    @Override
@@ -86,7 +86,7 @@ public class OperationExecutionRCAStage extends AbstractTraceProcessingStage<Exe
       if (node != null) {
          // Get duration in mikroseconds - Kieker produces nanoseconds
          final long duration = (execution.getTout() - execution.getTin());
-         node.addMeasurement(version, duration);
+         node.addMeasurement(commit, duration);
       } else {
          LOG.error("Did not find {} Eoi: {} ESS: {} ", kiekerPattern, execution.getEoi(), execution.getEss());
       }
