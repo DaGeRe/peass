@@ -24,9 +24,9 @@ public class ResultOrganizerParallel extends ResultOrganizer {
       LOG.info("Instance: " + System.identityHashCode(this));
    }
 
-   public void addVersionFolders(final String commit, final PeassFolders versionTempFolder) {
-      LOG.debug("Adding version: {}", commit);
-      sourceFolders.put(commit, versionTempFolder);
+   public void addCommitFolders(final String commit, final PeassFolders commitTempFolder) {
+      LOG.debug("Adding commit: {}", commit);
+      sourceFolders.put(commit, commitTempFolder);
       LOG.info("Instance: " + System.identityHashCode(this) + " Keys: " + sourceFolders.keySet());
    }
    

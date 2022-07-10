@@ -22,7 +22,7 @@ import de.dagere.peass.measurement.rca.helper.TestConstants;
 
 public class TestResultOrganizerParallel {
 
-   private final static String PARALLEL_VERSION = "1";
+   private final static String PARALLEL_COMMIT = "1";
    
    private PeassFolders folders;
    private ResultOrganizerParallel organizer;
@@ -45,7 +45,7 @@ public class TestResultOrganizerParallel {
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, TestResultOrganizer.searchedTest);
 
-      organizer.addVersionFolders(PARALLEL_VERSION, parallelProjectFolders);
+      organizer.addCommitFolders(PARALLEL_COMMIT, parallelProjectFolders);
 
       Assert.assertTrue(organizer.testSuccess("1"));
    }
@@ -58,35 +58,35 @@ public class TestResultOrganizerParallel {
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, TestResult.BOUNDARY_SAVE_FILE * 2, TestResultOrganizer.searchedTest);
 
-      organizer.addVersionFolders(PARALLEL_VERSION, parallelProjectFolders);
+      organizer.addCommitFolders(PARALLEL_COMMIT, parallelProjectFolders);
 
       Assert.assertTrue(organizer.testSuccess("1"));
       
-      organizer.saveResultFiles(PARALLEL_VERSION, 0);
-      testXMLFileIsCorrect();
+      organizer.saveResultFiles(PARALLEL_COMMIT, 0);
+      testJSONFileIsCorrect();
    }
 
-   private void testXMLFileIsCorrect()  {
-      File kopemefile = new File(getVersionMeasurementFolder(TestResultOrganizer.COMMIT_NAME, PARALLEL_VERSION), TestResultOrganizer.searchedTest.getMethod() + "_0_" + PARALLEL_VERSION + ".json");
+   private void testJSONFileIsCorrect()  {
+      File commitMeasurementFolder = getCommitMeasurementFolder(TestResultOrganizer.COMMIT_NAME, PARALLEL_COMMIT);
+      File kopemefile = new File(commitMeasurementFolder, TestResultOrganizer.searchedTest.getMethod() + "_0_" + PARALLEL_COMMIT + ".json");
       final Kopemedata data = JSONDataLoader.loadData(kopemefile);
       final DatacollectorResult collector = data.getFirstMethodResult().getDatacollectorResults().get(0);
-      final VMResultChunk chunk = collector.getChunks().get(0);
-      final Fulldata fulldata = chunk.getResults().get(0).getFulldata();
+      final Fulldata fulldata = collector.getResults().get(0).getFulldata();
       Assert.assertNotNull(fulldata.getFileName());
-      File fulldataFile = new File(getVersionMeasurementFolder(TestResultOrganizer.COMMIT_NAME, PARALLEL_VERSION), fulldata.getFileName());
+      File fulldataFile = new File(commitMeasurementFolder, fulldata.getFileName());
       Assert.assertTrue(fulldataFile.exists());
    }
    
-   private File getVersionMeasurementFolder(final String mainVersion, final String subVersion) {
-      File versionFolder = new File(folders.getFullMeasurementFolder(), "measurements" + File.separator +
+   private File getCommitMeasurementFolder(final String mainCommit, final String currentCommit) {
+      File commitFolder = new File(folders.getFullMeasurementFolder(), "measurements" + File.separator +
             TestResultOrganizer.searchedTest.getClazz() + File.separator +
-            mainVersion + File.separator +
-            subVersion + File.separator);
-      return versionFolder;
+            mainCommit + File.separator +
+            currentCommit + File.separator);
+      return commitFolder;
    }
    
    private PeassFolders initFolders() {
-      File parallelProjectFolder = new File(folders.getTempProjectFolder(), PARALLEL_VERSION);
+      File parallelProjectFolder = new File(folders.getTempProjectFolder(), PARALLEL_COMMIT);
       PeassFolders parallelProjectFolders = new PeassFolders(parallelProjectFolder);
       methodFolder = new File(parallelProjectFolders.getTempMeasurementFolder(), TestResultOrganizer.searchedTest.getClazz());
       methodFolder.mkdir();

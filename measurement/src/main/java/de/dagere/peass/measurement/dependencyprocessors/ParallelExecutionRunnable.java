@@ -38,7 +38,7 @@ public class ParallelExecutionRunnable implements Runnable {
 
    private PeassFolders cloneProjectFolder() throws IOException {
       PeassFolders temporaryFolders = tester.getFolders().getTempFolder("parallel_" + version);
-      organizer.addVersionFolders(version, temporaryFolders);
+      organizer.addCommitFolders(version, temporaryFolders);
       return temporaryFolders;
    }
 }
