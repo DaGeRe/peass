@@ -48,20 +48,17 @@ public class TraceViewGenerator {
       this.testSelectionConfig = testSelectionConfig;
    }
 
-   public boolean generateViews(final ResultsFolders resultsFolders, final TestSet examinedTests)
-         throws IOException, XmlPullParserException, ParseException, ViewNotFoundException, InterruptedException {
+   public void generateViews(final ResultsFolders resultsFolders, final TestSet examinedTests)
+         throws IOException, ParseException {
       LOG.debug("Generating views for {}", version);
-      boolean allWorked = true;
       GitUtils.reset(folders.getProjectFolder());
       ProjectModules modules = dependencyManager.getExecutor().getModules();
       ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
       List<File> classpathFolders = getClasspathFolders(modules);
       for (TestCase testcase : examinedTests.getTests()) {
          final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, traceFileMapping, version, classpathFolders, mapping, kiekerConfig, testSelectionConfig);
-         final boolean workedLocal = oneViewGenerator.generateTrace(version);
-         allWorked &= workedLocal;
+         oneViewGenerator.generateTrace(version);
       }
-      return allWorked;
    }
 
    private List<File> getClasspathFolders(final ProjectModules modules) {

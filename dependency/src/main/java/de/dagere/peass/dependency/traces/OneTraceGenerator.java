@@ -47,30 +47,28 @@ public class OneTraceGenerator {
       this.commit = commit;
       this.classpathFolders = classpathFolders;
       this.moduleClassMapping = mapping;
-      
+
       this.kiekerConfig = kiekerConfig;
       this.testSelectionConfig = testSelectionConfig;
    }
 
-   public boolean generateTrace(final String commitCurrent)
+   public void generateTrace(final String commitCurrent)
          throws com.github.javaparser.ParseException, IOException {
-      boolean success = false;
       try {
          final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
          final File[] kiekerResultFolders = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
          LOG.debug("Searching for: {}", kiekerResultFolders[0]);
          if (kiekerResultFolders[0].exists() && kiekerResultFolders[0].isDirectory()) {
-            success = generateTraceFiles(commitCurrent, kiekerResultFolders);
+            generateTraceFiles(commitCurrent, kiekerResultFolders);
          } else {
             LOG.error("Error: {} does not produce {}", commitCurrent, kiekerResultFolders[0].getAbsolutePath());
          }
       } catch (final RuntimeException e) {
          e.printStackTrace();
       }
-      return success;
    }
 
-   private boolean generateTraceFiles(final String commitCurrent, final File[] kiekerResultFolders)
+   private void generateTraceFiles(final String commitCurrent, final File[] kiekerResultFolders)
          throws FileNotFoundException, IOException, com.github.javaparser.ParseException {
       boolean success = false;
       TraceWithMethods trace = null;
@@ -108,7 +106,6 @@ public class OneTraceGenerator {
       if (success) {
          writeTrace(commitCurrent, overallSizeInMb, traceMethodReader, trace);
       }
-      return success;
    }
 
    private void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace) throws IOException {
