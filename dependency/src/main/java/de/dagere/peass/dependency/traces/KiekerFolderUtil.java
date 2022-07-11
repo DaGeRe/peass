@@ -16,8 +16,8 @@ public class KiekerFolderUtil {
    private static final Logger LOG = LogManager.getLogger(KiekerFolderUtil.class);
 
    public static File[] getClazzMethodFolder(final TestCase testcase, final File resultsFolder) {
-      final File projectResultFolder = new File(resultsFolder, testcase.getClazz());
-      final File[] kiekerTimestampFolders = projectResultFolder.listFiles(new FileFilter() {
+      final File testclazzResultFolder = new File(resultsFolder, testcase.getClazz());
+      final File[] kiekerTimestampFolders = testclazzResultFolder.listFiles(new FileFilter() {
          @Override
          public boolean accept(final File pathname) {
             return pathname.getName().matches("[0-9]*");
@@ -26,7 +26,7 @@ public class KiekerFolderUtil {
       if (kiekerTimestampFolders == null) {
          new ErrorLogWriter(testcase, resultsFolder).tryToWriteLastLog();
          LOG.debug("Probably project not running - Result folder: " + Arrays.toString(kiekerTimestampFolders) + " ("
-               + (kiekerTimestampFolders != null ? kiekerTimestampFolders.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should exist!");
+               + (kiekerTimestampFolders != null ? kiekerTimestampFolders.length : "null") + ") in " + testclazzResultFolder.getAbsolutePath() + " should exist!");
          return null;
       }
 

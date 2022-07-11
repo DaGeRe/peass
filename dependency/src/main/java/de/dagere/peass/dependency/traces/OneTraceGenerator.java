@@ -8,8 +8,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
@@ -18,6 +18,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
+import de.dagere.peass.utils.Constants;
 
 public class OneTraceGenerator {
 
@@ -52,18 +53,25 @@ public class OneTraceGenerator {
       this.testSelectionConfig = testSelectionConfig;
    }
 
-   public void generateTrace(final String commitCurrent)
-         throws com.github.javaparser.ParseException, IOException {
+   public void generateTrace(final String commitCurrent) {
       try {
          final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
          final File[] kiekerResultFolders = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
-         LOG.debug("Searching for: {}", kiekerResultFolders[0]);
-         if (kiekerResultFolders[0].exists() && kiekerResultFolders[0].isDirectory()) {
-            generateTraceFiles(commitCurrent, kiekerResultFolders);
+
+         final File testclazzResultFolder = new File(moduleResultsFolder, testcase.getClazz());
+         File methodJSON = new File(testclazzResultFolder, testcase.getMethodWithParams() + ".json");
+         Kopemedata data = Constants.OBJECTMAPPER.readValue(methodJSON, Kopemedata.class);
+         if (data.getFirstResult().isError()) {
+            LOG.error("Testcase {} contained an error; not creating trace", testcase);
          } else {
-            LOG.error("Error: {} does not produce {}", commitCurrent, kiekerResultFolders[0].getAbsolutePath());
+            LOG.debug("Searching for: {}", kiekerResultFolders[0]);
+            if (kiekerResultFolders[0].exists() && kiekerResultFolders[0].isDirectory()) {
+               generateTraceFiles(commitCurrent, kiekerResultFolders);
+            } else {
+               LOG.error("Error: {} does not produce {}", commitCurrent, kiekerResultFolders[0].getAbsolutePath());
+            }
          }
-      } catch (final RuntimeException e) {
+      } catch (final IOException e) {
          e.printStackTrace();
       }
    }

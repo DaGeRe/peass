@@ -1,0 +1,11 @@
+$0=kieker.common.record.misc.KiekerMetadataRecord
+$1=1.15.1
+$2=KIEKER-KoPeMe
+$3=reichelt-desktop
+$4=NANOSECONDS
+$5=kieker.common.record.controlflow.OperationExecutionRecord
+$6=public new de.dagere.peass.Callee.<init>()
+$7=<no-session-id>
+$8=private void de.dagere.peass.Callee.innerMethod()
+$9=protected void de.dagere.peass.Callee.method1()
+$10=public void de.dagere.peass.ExampleTest.test()
