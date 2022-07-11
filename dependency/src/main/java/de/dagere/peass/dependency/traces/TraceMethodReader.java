@@ -131,7 +131,7 @@ public class TraceMethodReader {
       return ContentTraceExpander.expandContentTrace(seq.getUncompressedTrace(), seq.getRules());
    }
 
-   public TraceWithMethods getTraceWithMethods() throws ParseException, IOException {
+   public TraceWithMethods getTraceWithMethods() {
       return trace;
    }
 

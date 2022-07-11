@@ -69,7 +69,7 @@ public class OneTraceGenerator {
    }
 
    private void generateTraceFiles(final String commitCurrent, final File[] kiekerResultFolders)
-         throws FileNotFoundException, IOException, com.github.javaparser.ParseException {
+         throws FileNotFoundException, IOException {
       boolean success = false;
       TraceWithMethods trace = null;
       TraceMethodReader traceMethodReader = null;
