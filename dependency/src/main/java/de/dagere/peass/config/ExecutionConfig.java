@@ -211,8 +211,8 @@ public class ExecutionConfig implements Serializable {
       return startcommit;
    }
 
-   public void setStartcommit(final String startversion) {
-      this.startcommit = startversion;
+   public void setStartcommit(final String startCommit) {
+      this.startcommit = startCommit;
    }
 
    @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -220,8 +220,8 @@ public class ExecutionConfig implements Serializable {
       return endcommit;
    }
 
-   public void setEndcommit(final String endversion) {
-      this.endcommit = endversion;
+   public void setEndcommit(final String endCommit) {
+      this.endcommit = endCommit;
    }
 
    @JsonInclude(JsonInclude.Include.NON_NULL)
