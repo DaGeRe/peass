@@ -31,20 +31,20 @@ public class OneTraceGenerator {
    private final PeassFolders folders;
    private final TestCase testcase;
    private final TraceFileMapping traceFileMapping;
-   private final String version;
+   private final String commit;
    private final ResultsFolders resultsFolders;
    private final List<File> classpathFolders;
    private final ModuleClassMapping moduleClassMapping;
    private final KiekerConfig kiekerConfig;
    private final TestSelectionConfig testSelectionConfig;
 
-   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeassFolders folders, final TestCase testcase, final TraceFileMapping traceFileMapping, final String version,
+   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeassFolders folders, final TestCase testcase, final TraceFileMapping traceFileMapping, final String commit,
          final List<File> classpathFolders, final ModuleClassMapping mapping, final KiekerConfig kiekerConfig, TestSelectionConfig testSelectionConfig) {
       this.resultsFolders = resultsFolders;
       this.folders = folders;
       this.testcase = testcase;
       this.traceFileMapping = traceFileMapping;
-      this.version = version;
+      this.commit = commit;
       this.classpathFolders = classpathFolders;
       this.moduleClassMapping = mapping;
       
@@ -52,17 +52,17 @@ public class OneTraceGenerator {
       this.testSelectionConfig = testSelectionConfig;
    }
 
-   public boolean generateTrace(final String versionCurrent)
-         throws com.github.javaparser.ParseException, IOException, XmlPullParserException {
+   public boolean generateTrace(final String commitCurrent)
+         throws com.github.javaparser.ParseException, IOException {
       boolean success = false;
       try {
          final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
          final File[] kiekerResultFolders = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
          LOG.debug("Searching for: {}", kiekerResultFolders[0]);
          if (kiekerResultFolders[0].exists() && kiekerResultFolders[0].isDirectory()) {
-            success = generateTraceFiles(versionCurrent, kiekerResultFolders);
+            success = generateTraceFiles(commitCurrent, kiekerResultFolders);
          } else {
-            LOG.error("Error: {} does not produce {}", versionCurrent, kiekerResultFolders[0].getAbsolutePath());
+            LOG.error("Error: {} does not produce {}", commitCurrent, kiekerResultFolders[0].getAbsolutePath());
          }
       } catch (final RuntimeException e) {
          e.printStackTrace();
@@ -70,8 +70,8 @@ public class OneTraceGenerator {
       return success;
    }
 
-   private boolean generateTraceFiles(final String versionCurrent, final File[] kiekerResultFolders)
-         throws FileNotFoundException, IOException, XmlPullParserException, com.github.javaparser.ParseException {
+   private boolean generateTraceFiles(final String commitCurrent, final File[] kiekerResultFolders)
+         throws FileNotFoundException, IOException, com.github.javaparser.ParseException {
       boolean success = false;
       TraceWithMethods trace = null;
       TraceMethodReader traceMethodReader = null;
@@ -106,13 +106,13 @@ public class OneTraceGenerator {
          }
       }
       if (success) {
-         writeTrace(versionCurrent, overallSizeInMb, traceMethodReader, trace);
+         writeTrace(commitCurrent, overallSizeInMb, traceMethodReader, trace);
       }
       return success;
    }
 
    private void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace) throws IOException {
-      TraceWriter traceWriter = new TraceWriter(version, testcase, resultsFolders, traceFileMapping, testSelectionConfig);
+      TraceWriter traceWriter = new TraceWriter(commit, testcase, resultsFolders, traceFileMapping, testSelectionConfig);
       traceWriter.writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace);
    }
 }
