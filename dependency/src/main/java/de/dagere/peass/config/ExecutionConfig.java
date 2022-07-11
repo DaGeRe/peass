@@ -64,6 +64,7 @@ public class ExecutionConfig implements Serializable {
 
    private String testTransformer = DEFAULT_TEST_TRANSFORMER;
    private String testExecutor = DEFAULT_TEST_EXECUTOR;
+   private String gitCryptKey = System.getenv("GIT_CRYPT_KEY");
 
    private String properties;
 
@@ -100,6 +101,7 @@ public class ExecutionConfig implements Serializable {
       this.excludeLog4jToSlf4j = other.excludeLog4jToSlf4j;
       this.testTransformer = other.getTestTransformer();
       this.testExecutor = other.getTestExecutor();
+      this.gitCryptKey = other.getGitCryptKey();
       this.useTieredCompilation = other.isUseTieredCompilation();
       this.pl = other.getPl();
 
@@ -329,6 +331,14 @@ public class ExecutionConfig implements Serializable {
 
    public void setTestExecutor(final String testExecutor) {
       this.testExecutor = testExecutor;
+   }
+
+   public String getGitCryptKey() {
+      return gitCryptKey;
+   }
+
+   public void setGitCryptKey(final String gitCryptKey) {
+      this.gitCryptKey = gitCryptKey;
    }
 
    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = ClazzFoldersFilter.class)

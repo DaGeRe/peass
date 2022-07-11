@@ -55,6 +55,9 @@ public class ExecutionConfigMixin {
    @Option(names = { "-testTransformer", "--testTransformer" }, description = "Set test transformer (should be specified by plugin; not usable with pure Peass)")
    public String testTransformer;
 
+   @Option(names = { "-gitCryptKey", "--gitCryptKey" }, description = "If repository uses git-crypt, you should provide location of git-crypt-keyfile)")
+   protected String gitCryptKey;
+
    @Option(names = { "-useTieredCompilation", "--useTieredCompilation" }, description = "Activate -XX:-TieredCompilation for all measured processes")
    protected boolean useTieredCompilation = false;
 
@@ -215,6 +218,14 @@ public class ExecutionConfigMixin {
       this.testTransformer = testTransformer;
    }
 
+   public String getGitCryptKey() {
+      return gitCryptKey;
+   }
+
+   public void setGitCryptKey(final String gitCryptKey) {
+      this.gitCryptKey = gitCryptKey;
+   }
+
    public boolean isUseTieredCompilation() {
       return useTieredCompilation;
    }
@@ -335,6 +346,7 @@ public class ExecutionConfigMixin {
          config.setTestTransformer(getWorkloadType().getTestTransformer());
          config.setTestExecutor(getWorkloadType().getTestExecutor());
       }
+      config.setGitCryptKey(getGitCryptKey());
       config.setUseTieredCompilation(useTieredCompilation);
       config.setRemoveSnapshots(removeSnapshots);
       config.setUseAlternativeBuildfile(useAlternativeBuildfile);
