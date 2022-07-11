@@ -2,8 +2,6 @@ package de.dagere.peass.measurement.analysis;
 
 import java.io.File;
 
-
-
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;

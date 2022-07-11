@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-
-
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.MatcherAssert;

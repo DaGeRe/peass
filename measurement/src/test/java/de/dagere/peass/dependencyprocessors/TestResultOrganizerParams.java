@@ -20,7 +20,6 @@ import org.mockito.stubbing.Answer;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.datastorage.xml.XMLConversionLoader;
-import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;

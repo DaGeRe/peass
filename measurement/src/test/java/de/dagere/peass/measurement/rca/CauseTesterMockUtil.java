@@ -3,8 +3,6 @@ package de.dagere.peass.measurement.rca;
 import java.io.IOException;
 import java.util.List;
 
-
-
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;

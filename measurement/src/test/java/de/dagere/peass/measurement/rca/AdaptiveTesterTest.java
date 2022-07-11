@@ -3,8 +3,6 @@ package de.dagere.peass.measurement.rca;
 import java.io.File;
 import java.io.IOException;
 
-
-
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;

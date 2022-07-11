@@ -3,8 +3,6 @@ package de.dagere.peass.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 
-
-
 import de.dagere.kopeme.datacollection.DataCollector;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;

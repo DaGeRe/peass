@@ -2,8 +2,6 @@ package de.dagere.peass.measurement;
 
 import java.io.File;
 
-
-
 import org.aspectj.util.FileUtil;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;

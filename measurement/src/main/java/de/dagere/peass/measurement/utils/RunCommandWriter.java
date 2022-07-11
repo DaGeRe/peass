@@ -29,7 +29,6 @@ public class RunCommandWriter {
    }
 
    public RunCommandWriter(final PrintStream goal, final String experimentId, final String name, final String url) {
-      this.config = config;
       this.goal = goal;
       this.experimentId = experimentId;
       this.name = name;

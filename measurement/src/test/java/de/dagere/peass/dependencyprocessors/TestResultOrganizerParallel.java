@@ -3,8 +3,6 @@ package de.dagere.peass.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 
-
-
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +12,6 @@ import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.Kopemedata;
-import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;

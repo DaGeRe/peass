@@ -2,8 +2,6 @@ package de.dagere.peass.measurement;
 
 import java.io.File;
 
-
-
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
