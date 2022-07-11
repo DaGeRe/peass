@@ -112,7 +112,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
    private void writeTrace(final String newestVersion, final TestCase testcase, final List<TraceElement> shortTrace) throws IOException {
       ResultsFolders results = new ResultsFolders(new File("results"), projectFolder.getName());
 
-      String shortVersion = TraceWriter.getShortVersion(newestVersion);
+      String shortVersion = TraceWriter.getShortCommit(newestVersion);
       File methodDir = results.getViewMethodDir(newestVersion, testcase);
 
       final File methodExpandedTrace = new File(methodDir, shortVersion + OneTraceGenerator.METHOD_EXPANDED);

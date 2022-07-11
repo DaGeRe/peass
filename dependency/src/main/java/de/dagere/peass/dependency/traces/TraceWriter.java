@@ -43,15 +43,15 @@ public class TraceWriter {
       this.testSelectionConfig = testSelectionConfig;
    }
 
-   public void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace)
+   public void writeTrace(final String commitCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace)
          throws IOException {
       final File methodDir = resultsFolders.getViewMethodDir(version, testcase);
-      String shortVersion = getShortVersion(versionCurrent);
-      final File methodTrace = writeTraces(sizeInMB, traceMethodReader, trace, methodDir, shortVersion);
+      String shortCommit = getShortCommit(commitCurrent);
+      final File methodTrace = writeTraces(sizeInMB, traceMethodReader, trace, methodDir, shortCommit);
       LOG.debug("Datei {} existiert: {}", methodTrace.getAbsolutePath(), methodTrace.exists());
    }
 
-   public static String getShortVersion(final String versionCurrent) {
+   public static String getShortCommit(final String versionCurrent) {
       String shortVersion = versionCurrent.substring(0, 6);
       if (versionCurrent.endsWith("~1")) {
          shortVersion = shortVersion + "~1";

@@ -55,7 +55,7 @@ public class OldTraceReader {
    }
    
    private void addPotentialTracefile(final TestCase testcase, final String initialVersion) {
-      String shortVersion = TraceWriter.getShortVersion(initialVersion);
+      String shortVersion = TraceWriter.getShortCommit(initialVersion);
       
       for (String ending : new String[] {"", TraceFileManager.TXT_ENDING, TraceFileManager.ZIP_ENDING}) {
          File potentialTraceFile = new File(resultsFolders.getViewMethodDir(initialVersion, testcase), shortVersion + ending);
