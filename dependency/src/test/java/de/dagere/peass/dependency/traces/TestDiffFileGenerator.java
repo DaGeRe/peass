@@ -15,7 +15,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.traces.diff.DiffFileGenerator;
 import de.dagere.peass.dependency.traces.diff.TraceFileUtil;
 
@@ -40,7 +40,7 @@ public class TestDiffFileGenerator {
       TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.TXT_ENDING, true);
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
-      VersionStaticSelection staticSelection = new VersionStaticSelection();
+      CommitStaticSelection staticSelection = new CommitStaticSelection();
       staticSelection.getChangedClazzes().put(new ChangedEntity("de.SomeClass"), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
@@ -65,7 +65,7 @@ public class TestDiffFileGenerator {
       TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.ZIP_ENDING, true);
       
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
-      VersionStaticSelection staticSelection = new VersionStaticSelection();
+      CommitStaticSelection staticSelection = new CommitStaticSelection();
       staticSelection.getChangedClazzes().put(new ChangedEntity("de.SomeClass"), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
@@ -90,7 +90,7 @@ public class TestDiffFileGenerator {
       TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.ZIP_ENDING, false);
       
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
-      VersionStaticSelection staticSelection = new VersionStaticSelection();
+      CommitStaticSelection staticSelection = new CommitStaticSelection();
       staticSelection.getChangedClazzes().put(new ChangedEntity("de.SomeClass"), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());

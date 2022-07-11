@@ -17,9 +17,9 @@ public class TestStaticTestSelection {
       
       dependencies.setInitialcommit(new InitialCommit());
       dependencies.getInitialcommit().setCommit("0");
-      dependencies.getVersions().put("1", new VersionStaticSelection());
-      dependencies.getVersions().put("2", new VersionStaticSelection());
-      dependencies.getVersions().put("3", new VersionStaticSelection());
+      dependencies.getVersions().put("1", new CommitStaticSelection());
+      dependencies.getVersions().put("2", new CommitStaticSelection());
+      dependencies.getVersions().put("3", new CommitStaticSelection());
       
       String[] versionNames = dependencies.getCommitNames();
       
@@ -50,13 +50,13 @@ public class TestStaticTestSelection {
       
       dependencies.setInitialcommit(new InitialCommit());
       dependencies.getInitialcommit().setCommit("0");
-      VersionStaticSelection running1 = new VersionStaticSelection();
+      CommitStaticSelection running1 = new CommitStaticSelection();
       running1.setRunning(true);
       dependencies.getVersions().put("1", running1);
-      VersionStaticSelection nonRunning2 = new VersionStaticSelection();
+      CommitStaticSelection nonRunning2 = new CommitStaticSelection();
       nonRunning2.setRunning(false);
       dependencies.getVersions().put("2", nonRunning2);
-      VersionStaticSelection running3 = new VersionStaticSelection();
+      CommitStaticSelection running3 = new CommitStaticSelection();
       running3.setRunning(true);
       dependencies.getVersions().put("3", running3);
       
@@ -100,7 +100,7 @@ public class TestStaticTestSelection {
       StaticTestSelection selection = new StaticTestSelection();
       selection.getInitialcommit().setCommit("asdasd");
       selection.getInitialcommit().addDependency(new TestCase("Test#A#methodA2"), new ChangedEntity("Test#A#methodA2"));
-      selection.getVersions().put("bsdbsd", new VersionStaticSelection());
+      selection.getVersions().put("bsdbsd", new CommitStaticSelection());
       selection.getVersions().get("bsdbsd").setRunning(false);
       
       String serialized = Constants.OBJECTMAPPER.writeValueAsString(selection);

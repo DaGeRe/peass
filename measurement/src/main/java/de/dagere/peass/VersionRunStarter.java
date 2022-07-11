@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionProcessor;
 import de.dagere.peass.utils.StreamGobbler;
 import de.dagere.peass.vcs.GitUtils;
@@ -28,7 +28,7 @@ public class VersionRunStarter extends VersionProcessor {
    }
 
    @Override
-   protected void processVersion(final String version, final VersionStaticSelection versioninfo) {
+   protected void processVersion(final String version, final CommitStaticSelection versioninfo) {
       GitUtils.goToTag(version, folders.getProjectFolder());
       try {
          final Process p = Runtime.getRuntime().exec("mvn clean package -DskipTests=true", null, folders.getProjectFolder());

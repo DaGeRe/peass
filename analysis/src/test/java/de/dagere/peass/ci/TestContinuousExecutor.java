@@ -23,7 +23,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -103,7 +103,7 @@ public class TestContinuousExecutor {
             File staticTestSelectionFile = new File(fullPeassFolder, "staticTestSelection_current.json");
             StaticTestSelection staticSelection = new StaticTestSelection();
             staticSelection.getInitialcommit().setCommit("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f");
-            staticSelection.getVersions().put(NEWER_VERSION, new VersionStaticSelection());
+            staticSelection.getVersions().put(NEWER_VERSION, new CommitStaticSelection());
             Constants.OBJECTMAPPER.writeValue(staticTestSelectionFile, staticSelection);
             return mockedResult;
          }

@@ -21,7 +21,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.utils.Constants;
@@ -45,7 +45,7 @@ public class TraceChangeHandler {
       this.version = version;
    }
 
-   public void handleTraceAnalysisChanges(final VersionStaticSelection newVersionInfo)
+   public void handleTraceAnalysisChanges(final CommitStaticSelection newVersionInfo)
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException {
       LOG.debug("Updating dependencies.. {}", version);
 
@@ -57,7 +57,7 @@ public class TraceChangeHandler {
       }
    }
 
-   private TestSet getTestsToRun(final VersionStaticSelection newVersionStaticSelection, ModuleClassMapping mapping) throws IOException, JsonGenerationException, JsonMappingException {
+   private TestSet getTestsToRun(final CommitStaticSelection newVersionStaticSelection, ModuleClassMapping mapping) throws IOException, JsonGenerationException, JsonMappingException {
       final TestSet testsToRun = newVersionStaticSelection.getTests() ; // contains only the tests that need to be run -> could be changeTestMap.values() und dann
                                                                                       // umwandeln
       addAddedTests(newVersionStaticSelection, testsToRun);
@@ -72,7 +72,7 @@ public class TraceChangeHandler {
       return testsToRun;
    }
 
-   public void addAddedTests(final VersionStaticSelection newVersionInfo, final TestSet testsToRun) {
+   public void addAddedTests(final CommitStaticSelection newVersionInfo, final TestSet testsToRun) {
       for (final ChangedEntity testName : newVersionInfo.getChangedClazzes().keySet()) {
          ChangedEntity simplyClazz = testName.getSourceContainingClazz();
          TestCase potentialTest = new TestCase(simplyClazz.getClazz(), null, testName.getModule());
@@ -82,7 +82,7 @@ public class TraceChangeHandler {
       }
    }
 
-   private void analyzeTests(final VersionStaticSelection newVersionInfo, final TestSet testsToRun, ModuleClassMapping mapping)
+   private void analyzeTests(final CommitStaticSelection newVersionInfo, final TestSet testsToRun, ModuleClassMapping mapping)
          throws IOException, XmlPullParserException, InterruptedException, JsonGenerationException, JsonMappingException {
       
       dependencyManager.runTraceTests(testsToRun, version);
@@ -90,7 +90,7 @@ public class TraceChangeHandler {
       handleDependencyChanges(newVersionInfo, testsToRun, mapping);
    }
 
-   private void handleDependencyChanges(final VersionStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)
+   private void handleDependencyChanges(final CommitStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)
          throws IOException, XmlPullParserException, JsonGenerationException, JsonMappingException {
       final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, version, mapping);
       final Map<ChangedEntity, Set<TestCase>> addedTestcases = testExistenceChanges.getAddedTests();

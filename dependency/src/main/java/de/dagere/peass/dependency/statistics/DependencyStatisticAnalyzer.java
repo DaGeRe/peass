@@ -21,7 +21,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -79,7 +79,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
    public static DependencyStatistics getChangeStatistics(final File dependenciesFile, final ExecutionData changedTests)
          throws JsonParseException, JsonMappingException, IOException {
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependenciesFile, StaticTestSelection.class);
-      final Map<String, VersionStaticSelection> versions = dependencies.getVersions();
+      final Map<String, CommitStaticSelection> versions = dependencies.getVersions();
 
       final int startTestCound = dependencies.getInitialcommit().getInitialDependencies().size();
       final List<TestCase> currentContainedTests = new LinkedList<>();
@@ -96,7 +96,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
       statistics.size = versions.size();
       // final int changedTraceTests = 0;
       // final int pruningRunTests = 0;
-      for (final Entry<String, VersionStaticSelection> version : versions.entrySet()) {
+      for (final Entry<String, CommitStaticSelection> version : versions.entrySet()) {
          final Set<TestCase> currentIterationTests = new HashSet<>();
          for (final Map.Entry<ChangedEntity, TestSet> dependency : version.getValue().getChangedClazzes().entrySet()) {
             for (final Entry<TestCase, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {

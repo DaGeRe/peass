@@ -16,7 +16,7 @@ import de.dagere.peass.config.parameters.FixedCommitMixin;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
@@ -92,7 +92,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       if (threads != 1) {
          throw new RuntimeException("Parallel processing is not possible or implemented; do not set threads!");
       } else {
-         for (final Map.Entry<String, VersionStaticSelection> version : staticTestSelection.getVersions().entrySet()) {
+         for (final Map.Entry<String, CommitStaticSelection> version : staticTestSelection.getVersions().entrySet()) {
             LOG.debug("Processing {}", version.getKey());
             processVersion(version.getKey(), version.getValue());
          }
@@ -104,7 +104,7 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    }
 
-   protected abstract void processVersion(String key, VersionStaticSelection version);
+   protected abstract void processVersion(String key, CommitStaticSelection version);
 
    protected void postEvaluate() {
 

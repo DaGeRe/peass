@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileManager;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
@@ -30,7 +30,7 @@ public class DiffFileGenerator {
       }
    }
 
-   public void generateAllDiffs(final String version, final VersionStaticSelection newVersionInfo, final TraceFileMapping mapping,
+   public void generateAllDiffs(final String version, final CommitStaticSelection newVersionInfo, final TraceFileMapping mapping,
          final ExecutionData executionResult) throws IOException {
       for (TestCase testcase : newVersionInfo.getTests().getTests()) {
          boolean tracesChanged = tracesChanged(testcase, mapping);

@@ -13,7 +13,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -29,7 +29,7 @@ public class TestContinuousDependencyReader {
       
       StaticTestSelection value = new StaticTestSelection();
       value.setInitialcommit(new InitialCommit());
-      value.getVersions().put("A", new VersionStaticSelection());
+      value.getVersions().put("A", new CommitStaticSelection());
       Constants.OBJECTMAPPER.writeValue(resultsFolders.getStaticTestSelectionFile(), value);
       
       ContinuousDependencyReader reader = new ContinuousDependencyReader(new TestSelectionConfig(1, false), new ExecutionConfig(), new KiekerConfig(),

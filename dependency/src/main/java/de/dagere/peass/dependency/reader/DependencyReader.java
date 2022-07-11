@@ -20,7 +20,7 @@ import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionExecutor;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
@@ -213,7 +213,7 @@ public class DependencyReader {
    }
 
    private void addEmptyVersionData(final String version, final DependencyReadingInput input) {
-      VersionStaticSelection emptyVersion = new VersionStaticSelection();
+      CommitStaticSelection emptyVersion = new CommitStaticSelection();
       emptyVersion.setJdk(dependencyManager.getExecutor().getJDKVersion());
       emptyVersion.setRunning(true);
       emptyVersion.setPredecessor(input.getPredecessor());
@@ -227,7 +227,7 @@ public class DependencyReader {
 
    private int analyseChanges(final String version, final DependencyReadingInput input)
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
-      final VersionStaticSelection newVersionInfo = staticChangeHandler.handleStaticAnalysisChanges(version, input, dependencyManager.getModuleClassMapping());
+      final CommitStaticSelection newVersionInfo = staticChangeHandler.handleStaticAnalysisChanges(version, input, dependencyManager.getModuleClassMapping());
 
       if (!testSelectionConfig.isDoNotUpdateDependencies()) {
          TraceChangeHandler traceChangeHandler = new TraceChangeHandler(dependencyManager, folders, executionConfig, version);
@@ -256,7 +256,7 @@ public class DependencyReader {
       return changedClazzCount;
    }
 
-   private int calculateChangedClassCount(final VersionStaticSelection newVersionInfo) {
+   private int calculateChangedClassCount(final CommitStaticSelection newVersionInfo) {
       final int changedClazzCount = newVersionInfo.getChangedClazzes().values().stream().mapToInt(value -> {
          return value.getTestcases().values().stream().mapToInt(list -> list.size()).sum();
       }).sum();
@@ -270,7 +270,7 @@ public class DependencyReader {
          coverageBasedSelection.setAndroid(true);
       }
       LOG.error("Version not running");
-      final VersionStaticSelection newVersionInfo = new VersionStaticSelection();
+      final CommitStaticSelection newVersionInfo = new CommitStaticSelection();
       newVersionInfo.setRunning(false);
       dependencyResult.getVersions().put(version, newVersionInfo);
    }

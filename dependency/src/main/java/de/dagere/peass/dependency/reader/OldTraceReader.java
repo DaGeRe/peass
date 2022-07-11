@@ -10,7 +10,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.traces.TraceFileManager;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependency.traces.TraceWriter;
@@ -38,7 +38,7 @@ public class OldTraceReader {
    }
 
    private void addRegularVersions() {
-      for (Entry<String, VersionStaticSelection> version : dependencyResult.getVersions().entrySet()) {
+      for (Entry<String, CommitStaticSelection> version : dependencyResult.getVersions().entrySet()) {
          TestSet tests = version.getValue().getTests();
          for (TestCase testcase : tests.getTests()) {
             addPotentialTracefile(testcase, version.getKey());

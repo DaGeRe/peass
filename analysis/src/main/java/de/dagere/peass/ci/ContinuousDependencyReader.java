@@ -27,7 +27,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
@@ -73,7 +73,7 @@ public class ContinuousDependencyReader {
       RTSResult result;
       final Set<TestCase> tests;
       if (dependencies.getVersions().size() > 0) {
-         VersionStaticSelection versionInfo = dependencies.getVersions().get(version);
+         CommitStaticSelection versionInfo = dependencies.getVersions().get(version);
          LOG.debug("Versioninfo for version {}, running was: {}", version, versionInfo != null ? versionInfo.isRunning() : "null");
          if (dependencyConfig.isGenerateTraces()) {
             tests = selectResults(version);

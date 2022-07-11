@@ -11,7 +11,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
@@ -96,7 +96,7 @@ public class SearchCauseStarter extends MeasureStarter {
 
    private TestCase determineTest() {
       TestCase test = new TestCase(testName);
-      final VersionStaticSelection versionInfo = staticTestSelection.getVersions().get(commit);
+      final CommitStaticSelection versionInfo = staticTestSelection.getVersions().get(commit);
       // boolean found = versionInfo.getTests().getTests().contains(test);
       boolean found = false;
       for (TestCase selectedTest : versionInfo.getTests().getTests()) {

@@ -14,7 +14,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.vcs.CommitIterator;
@@ -40,7 +40,7 @@ public class TestInitialVersionReader {
       dependencyResult.getInitialcommit().setCommit(VERSION1);
       dependencyResult.getInitialcommit().addDependency(TESTCASE, new ChangedEntity("de.dagere.peass.MyCallee#method"));
 
-      VersionStaticSelection staticSelection = new VersionStaticSelection();
+      CommitStaticSelection staticSelection = new CommitStaticSelection();
       staticSelection.getChangedClazzes().put(new ChangedEntity("de.dagere.peass.MyCallee#method"), new TestSet(TESTCASE));
       dependencyResult.getVersions().put(VERSION2, staticSelection);
 

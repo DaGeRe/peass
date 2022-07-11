@@ -16,7 +16,7 @@ import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.PairProcessor;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -162,7 +162,7 @@ public class MeasureStarter extends PairProcessor {
    }
 
    @Override
-   protected void processVersion(final String version, final VersionStaticSelection versioninfo) {
+   protected void processVersion(final String version, final CommitStaticSelection versioninfo) {
       LOG.debug("Configuration: VMs: {} Warmup: {} Iterations: {} Repetitions: {}", measurementConfigMixin.getVms(),
             measurementConfigMixin.getWarmup(), measurementConfigMixin.getIterations(), measurementConfigMixin.getRepetitions());
       try {
