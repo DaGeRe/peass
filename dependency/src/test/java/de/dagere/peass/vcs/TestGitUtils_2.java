@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
@@ -14,6 +16,7 @@ import net.lingala.zip4j.exception.ZipException;
 public class TestGitUtils_2 {
 
    @Test
+   @DisabledOnOs(OS.WINDOWS)
    public void testCheckIsUnlockedWithGitCrypt() throws ZipException {
 
       final String current = DependencyTestConstants.CURRENT.getAbsolutePath();
