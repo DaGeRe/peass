@@ -22,13 +22,18 @@ public class TestOneTraceGenerator {
 
    private static final File measurementsTempFolder_OOM = new File("src/test/resources/testOneTraceGenerator/demo-oom_peass/measurementsTemp/");
    private static final File measurementsTempFolder_Fine = new File("src/test/resources/testOneTraceGenerator/demo-fine_peass/measurementsTemp/");
-   
+
    private static final File expectedResultFolder = new File("target/views_test-results/");
    private static final File expectedResultFile = new File(expectedResultFolder, "view_d4d964daa4a77bac09422174509c31a19d082ed4/de.dagere.peass.ExampleTest/test/d4d964.txt");
 
    @BeforeEach
    public void clean() throws IOException {
-      FileUtils.cleanDirectory(expectedResultFolder);
+      if (expectedResultFolder.exists()) {
+         FileUtils.cleanDirectory(expectedResultFolder);
+      } else {
+         expectedResultFile.mkdirs();
+      }
+
    }
 
    @Test
@@ -42,7 +47,6 @@ public class TestOneTraceGenerator {
       analyzeFolder(measurementsTempFolder_Fine);
       Assert.assertTrue(expectedResultFile.exists());
    }
-   
 
    private void analyzeFolder(File moduleExampleResultsFolder) {
       try (MockedStatic<KiekerFolderUtil> kfu = Mockito.mockStatic(KiekerFolderUtil.class, Mockito.CALLS_REAL_METHODS)) {
