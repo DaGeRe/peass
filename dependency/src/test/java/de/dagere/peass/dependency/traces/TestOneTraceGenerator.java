@@ -31,7 +31,7 @@ public class TestOneTraceGenerator {
       if (expectedResultFolder.exists()) {
          FileUtils.cleanDirectory(expectedResultFolder);
       } else {
-         expectedResultFile.mkdirs();
+         expectedResultFolder.mkdirs();
       }
 
    }
