@@ -511,4 +511,37 @@ public final class GitUtils {
       }
       return 0;
    }
+
+   protected static void unlockWithGitCrypt(final File projectFolder, final String gitCryptKey) {
+      final ProcessBuilder processBuilder = new ProcessBuilder("git-crypt", "unlock", gitCryptKey);
+      try {
+         if (processBuilder.directory(projectFolder).start().waitFor() != 0) {
+            LOG.error("GitCryptUnlock-Process did not exit with 0!");
+         }
+      } catch (InterruptedException | IOException e) {
+         e.printStackTrace();
+      }
+
+      if (!checkIsUnlockedWithGitCrypt(projectFolder)) {
+         LOG.error("Folder is still locked, something went wrong!");
+         // TODO stop execution?
+      }
+   }
+
+   protected static boolean checkIsUnlockedWithGitCrypt(final File projectFolder) {
+      final ProcessBuilder processBuilder = new ProcessBuilder("git", "config", "--local", "--get", "filter.git-crypt.smudge");
+      processBuilder.directory(projectFolder);
+
+      try {
+         if (StreamGobbler.getFullProcess(processBuilder.start(), false).equals("\"git-crypt\" smudge\n")) {
+            return true;
+         }
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+      /*
+       * Either it is locked, or git-crypt is not used in repo at all
+       */
+      return false;
+   }
 }
