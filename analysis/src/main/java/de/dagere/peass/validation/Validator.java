@@ -105,7 +105,7 @@ public class Validator {
             if (changedTests.getVersions().get(commit.getKey()) != null) {
                selected++;
                if (changes != null) {
-                  if (changes.getVersionChanges().containsKey(commit.getKey())) {
+                  if (changes.getCommitChanges().containsKey(commit.getKey())) {
                      measured++;
                      if (commit.getKey().contains("59ffcad15d220c2bc1f70f01d58bc31dec04b423")) {
                         System.out.println("Test");
@@ -157,7 +157,7 @@ public class Validator {
 
    private boolean hasMeasuredImprovemend(final String version) {
       boolean correct = false;
-      Changes testcaseValues = changes.getVersionChanges().get(version);
+      Changes testcaseValues = changes.getCommitChanges().get(version);
       // for (Changes testcaseValues : changes.getVersionChanges().values()) {
       for (List<Change> methodChanges : testcaseValues.getTestcaseChanges().values()) {
          for (Change methodChange : methodChanges) {

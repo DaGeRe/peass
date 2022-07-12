@@ -42,7 +42,7 @@ public class TestAnalyseFullData {
       afd.analyseFolder(REGULAR_DATA_FOLDER);
       
       ProjectChanges changes = afd.getProjectChanges();
-      Set<String> changedTests = changes.getVersion("946e4318267b56838aa35da0a2a4e5c0528bfe04").getTestcaseChanges().keySet();
+      Set<String> changedTests = changes.getCommitChanges("946e4318267b56838aa35da0a2a4e5c0528bfe04").getTestcaseChanges().keySet();
      
       MatcherAssert.assertThat(changedTests, Matchers.contains("app§com.example.android_example.ExampleUnitTest"));
    }
@@ -59,7 +59,7 @@ public class TestAnalyseFullData {
       afd.analyseFolder(new File(PARAM_DATA_FOLDER, "measurements"));
       
       ProjectChanges changes = afd.getProjectChanges();
-      Set<String> changedTests = changes.getVersion("a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b").getTestcaseChanges().keySet();
+      Set<String> changedTests = changes.getCommitChanges("a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b").getTestcaseChanges().keySet();
      
       try {
          System.out.println(Constants.OBJECTMAPPER.writeValueAsString(statistics));

@@ -36,21 +36,21 @@ public class ProjectStatistics {
       this.statistics = statistics;
    }
 
-   public void addMeasurement(final String version, final TestCase test, final DescriptiveStatistics statisticsOld, final DescriptiveStatistics statisticsCurrent, final int calls) {
+   public void addMeasurement(final String commit, final TestCase test, final DescriptiveStatistics statisticsOld, final DescriptiveStatistics statisticsCurrent, final int calls) {
       final TestcaseStatistic statistic = new TestcaseStatistic(statisticsOld, statisticsCurrent, calls, calls);
-      addMeasurement(version, test, statistic);
+      addMeasurement(commit, test, statistic);
    }
 
-   public void addMeasurement(final String version, final TestCase test, final TestcaseStatistic statistic) {
-      Map<TestCase, TestcaseStatistic> versionMap = statistics.get(version);
-      if (versionMap == null) {
-         versionMap = new TreeMap<>();
-         statistics.put(version, versionMap);
+   public void addMeasurement(final String commit, final TestCase test, final TestcaseStatistic statistic) {
+      Map<TestCase, TestcaseStatistic> commitMap = statistics.get(commit);
+      if (commitMap == null) {
+         commitMap = new TreeMap<>();
+         statistics.put(commit, commitMap);
       }
-      if (versionMap.containsKey(test)) {
-         LOG.error("Test " + test + " already executed in " + version + " - two measurements!");
+      if (commitMap.containsKey(test)) {
+         LOG.error("Test " + test + " already executed in " + commit + " - two measurements!");
       }
-      versionMap.put(test, statistic);
+      commitMap.put(test, statistic);
 
    }
 }

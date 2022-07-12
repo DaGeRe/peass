@@ -136,7 +136,7 @@ public class ExperimentSelector implements Callable<Integer> {
 
    private Change findMeasuredChange(final ProjectChanges changes, final String version, final String testcase, final ChangeProperty change) {
       Change statChange = null;
-      final Changes versionChanges = changes.getVersionChanges().get(version);
+      final Changes versionChanges = changes.getCommitChanges().get(version);
       if (versionChanges != null) {
          final List<Change> testcaseChanges = versionChanges.getTestcaseChanges().get(testcase);
          if (testcaseChanges != null) {

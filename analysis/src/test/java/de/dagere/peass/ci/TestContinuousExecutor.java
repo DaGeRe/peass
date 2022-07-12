@@ -70,7 +70,7 @@ public class TestContinuousExecutor {
       File changeFile = new File(fullPeassFolder, "changes.json");
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
 
-      String changedTestClass = changes.getVersion(NEWER_VERSION).getTestcaseChanges().keySet().iterator().next();
+      String changedTestClass = changes.getCommitChanges(NEWER_VERSION).getTestcaseChanges().keySet().iterator().next();
       TestCase tc = new TestCase(changedTestClass);
       Assert.assertEquals("de.test.CalleeTest", tc.getClazz());
    }

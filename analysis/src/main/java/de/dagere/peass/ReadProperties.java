@@ -151,7 +151,7 @@ public class ReadProperties implements Callable<Void> {
          final ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changefile, ProjectChanges.class);
 
          int versionCount = 0, testcaseCount = 0;
-         for (final Entry<String, Changes> versionChanges : changes.getVersionChanges().entrySet()) {
+         for (final Entry<String, Changes> versionChanges : changes.getCommitChanges().entrySet()) {
             final String version = versionChanges.getKey();
             final TestSet tests = changedTests.getVersions().get(version);
             //
@@ -213,7 +213,7 @@ public class ReadProperties implements Callable<Void> {
       final VersionChangeProperties versionProperties = new VersionChangeProperties();
       try {
          final VersionChangeProperties allProperties = Constants.OBJECTMAPPER.readValue(versionFile, VersionChangeProperties.class);
-         for (final Entry<String, Changes> versionChanges : knowledge.getVersionChanges().entrySet()) {
+         for (final Entry<String, Changes> versionChanges : knowledge.getCommitChanges().entrySet()) {
             final String version = versionChanges.getKey();
             final ChangeProperties allProps = allProperties.getVersions().get(version);
             if (allProps != null) {

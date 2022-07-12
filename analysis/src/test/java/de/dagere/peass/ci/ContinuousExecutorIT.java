@@ -58,7 +58,7 @@ public class ContinuousExecutorIT {
       File changeFile = new File(fullPeassFolder, "changes.json");
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
       
-      String changedTestClass = changes.getVersion("ff2ab99a0d24c90abe610fb318a17db6da473208").getTestcaseChanges().keySet().iterator().next();
+      String changedTestClass = changes.getCommitChanges("ff2ab99a0d24c90abe610fb318a17db6da473208").getTestcaseChanges().keySet().iterator().next();
       TestCase tc = new TestCase(changedTestClass);
       Assert.assertEquals("com.example.android_example.ExampleUnitTest", tc.getClazz());
    }

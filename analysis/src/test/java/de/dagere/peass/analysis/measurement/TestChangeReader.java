@@ -30,7 +30,7 @@ public class TestChangeReader {
 
       System.out.println(Constants.OBJECTMAPPER.writeValueAsString(changes));
 
-      List<Change> methodChanges = changes.getVersionChanges().get("946e4318267b56838aa35da0a2a4e5c0528bfe04").getTestcaseChanges()
+      List<Change> methodChanges = changes.getCommitChanges().get("946e4318267b56838aa35da0a2a4e5c0528bfe04").getTestcaseChanges()
             .get("com.example.android_example.ExampleUnitTest");
       Assert.assertEquals(1, methodChanges.size());
       Assert.assertEquals("test_TestMe", methodChanges.get(0).getMethod());
@@ -60,15 +60,15 @@ public class TestChangeReader {
       reader.readFile(measurementsFolder);
 
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(resultsFolders.getChangeFile(), ProjectChanges.class);
-      Assert.assertNull(changes.getVersionChanges().get("fdf011a5f9a15826771b19cdd6795b247b0bc3e4"));
-      Assert.assertEquals(changes.getVersionChanges().get("4ed6e923cb2033272fcb993978d69e325990a5aa").getTestcaseChanges().get("org.apache.commons.fileupload.ServletFileUploadTest").size(), 4);
+      Assert.assertNull(changes.getCommitChanges().get("fdf011a5f9a15826771b19cdd6795b247b0bc3e4"));
+      Assert.assertEquals(changes.getCommitChanges().get("4ed6e923cb2033272fcb993978d69e325990a5aa").getTestcaseChanges().get("org.apache.commons.fileupload.ServletFileUploadTest").size(), 4);
       
       ProjectStatistics statistics = Constants.OBJECTMAPPER.readValue(resultsFolders.getStatisticsFile(), ProjectStatistics.class);
       Assert.assertEquals(statistics.getStatistics().get("4ed6e923cb2033272fcb993978d69e325990a5aa").size(), 8);
    }
 
    public static List<Change> checkParameterizedResult(ProjectChanges changes) {
-      List<Change> methodChanges = changes.getVersionChanges().get("a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b").getTestcaseChanges().get("de.dagere.peass.ExampleTest");
+      List<Change> methodChanges = changes.getCommitChanges().get("a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b").getTestcaseChanges().get("de.dagere.peass.ExampleTest");
       Assert.assertEquals(1, methodChanges.size());
       Assert.assertEquals("test", methodChanges.get(0).getMethod());
       Assert.assertEquals("JUNIT_PARAMETERIZED-1", methodChanges.get(0).getParams());

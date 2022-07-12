@@ -35,7 +35,7 @@ public class ProjectChanges implements Serializable {
    private int changeCount;
    private int testcaseCount;
    private StatisticsConfig statisticsConfig;
-   private Map<String, Changes> versionChanges = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
+   private Map<String, Changes> commitChanges = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
 
    public ProjectChanges() {
    }
@@ -76,29 +76,29 @@ public class ProjectChanges implements Serializable {
       this.testcaseCount = testcases;
    }
 
-   public Map<String, Changes> getVersionChanges() {
-      return versionChanges;
+   public Map<String, Changes> getCommitChanges() {
+      return commitChanges;
    }
 
-   public void setVersionChanges(final Map<String, Changes> versionChanges) {
-      this.versionChanges = versionChanges;
+   public void setCommitChanges(final Map<String, Changes> commitChanges) {
+      this.commitChanges = commitChanges;
    }
 
-   public void addChange(final TestCase testCase, final String versionTag,
+   public void addChange(final TestCase testCase, final String commit,
          final Relation confidenceResult,
          final Relation tTestResult, final double oldTime,
          final double diffPercent, final double tvalue,
          final long vms) {
-      final Changes changeList = getVersion(versionTag);
-      final String viewName = "view_" + versionTag + "/diffs/" + testCase.getShortClazz() + "#" + testCase.getMethod() + ".txt";
+      final Changes changeList = getCommitChanges(commit);
+      final String viewName = "view_" + commit + "/diffs/" + testCase.getShortClazz() + "#" + testCase.getMethod() + ".txt";
       LOG.trace("Adding change: " + testCase);
       changeList.addChange(testCase, viewName, oldTime, diffPercent, tvalue, vms);
 
       changeCount++;
    }
 
-   public void addChange(final TestCase test, final String versionTag, final Change change) {
-      final Changes changeList = getVersion(versionTag);
+   public void addChange(final TestCase test, final String commit, final Change change) {
+      final Changes changeList = getCommitChanges(commit);
       final String clazz = test.getTestclazzWithModuleName();
       changeList.addChange(clazz, change);
       changeCount++;
@@ -106,17 +106,17 @@ public class ProjectChanges implements Serializable {
    }
 
    @JsonIgnore
-   public Changes getVersion(final String key) {
-      Changes result = versionChanges.get(key);
+   public Changes getCommitChanges(final String key) {
+      Changes result = commitChanges.get(key);
       if (result == null) {
          result = new Changes();
-         versionChanges.put(key, result);
+         commitChanges.put(key, result);
       }
       return result;
    }
 
    public void executeProcessor(final ChangeProcessor c) {
-      for (final Map.Entry<String, Changes> version : versionChanges.entrySet()) {
+      for (final Map.Entry<String, Changes> version : commitChanges.entrySet()) {
          for (final Entry<String, List<Change>> testcase : version.getValue().getTestcaseChanges().entrySet()) {
             for (final Change change : testcase.getValue()) {
                c.process(version.getKey(), testcase.getKey(), change);
