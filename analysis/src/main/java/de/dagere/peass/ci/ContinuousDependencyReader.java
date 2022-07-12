@@ -72,8 +72,8 @@ public class ContinuousDependencyReader {
 
       RTSResult result;
       final Set<TestCase> tests;
-      if (dependencies.getVersions().size() > 0) {
-         CommitStaticSelection versionInfo = dependencies.getVersions().get(version);
+      if (dependencies.getCommits().size() > 0) {
+         CommitStaticSelection versionInfo = dependencies.getCommits().get(version);
          LOG.debug("Versioninfo for version {}, running was: {}", version, versionInfo != null ? versionInfo.isRunning() : "null");
          if (dependencyConfig.isGenerateTraces()) {
             tests = selectResults(version);
@@ -124,7 +124,7 @@ public class ContinuousDependencyReader {
     */
    private Set<TestCase> fetchTestset(final String version, final ExecutionData executionData) {
       final Set<TestCase> tests;
-      TestSet versionTestSet = executionData.getVersions().get(version);
+      TestSet versionTestSet = executionData.getCommits().get(version);
       tests = versionTestSet != null ? versionTestSet.getTests() : new HashSet<TestCase>();
       return tests;
    }

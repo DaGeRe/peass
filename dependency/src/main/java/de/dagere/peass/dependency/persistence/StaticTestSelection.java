@@ -20,7 +20,7 @@ public class StaticTestSelection extends SelectedTests {
    private InitialCommit initialversion = null;
    
    
-   private Map<String, CommitStaticSelection> versions = new LinkedHashMap<>();
+   private Map<String, CommitStaticSelection> commits = new LinkedHashMap<>();
 
    public StaticTestSelection() {
 
@@ -29,15 +29,15 @@ public class StaticTestSelection extends SelectedTests {
    public StaticTestSelection(final ExecutionData executiondata) {
       setUrl(executiondata.getUrl());
       // ExecutionData contain an empty first analyzed version; therefore, the initialversion of the dependencies is this first version
-      String first = executiondata.getVersions().keySet().iterator().next();
+      String first = executiondata.getCommits().keySet().iterator().next();
       initialcommit.setCommit(first);
-      for (Map.Entry<String, TestSet> version : executiondata.getVersions().entrySet()) {
+      for (Map.Entry<String, TestSet> version : executiondata.getCommits().entrySet()) {
          if (!version.getKey().equals(first)) {
             CommitStaticSelection versionDependencies = new CommitStaticSelection();
             versionDependencies.setPredecessor(version.getValue().getPredecessor());
             versionDependencies.getChangedClazzes().put(new ChangedEntity("unknown", ""), version.getValue());
-            String versionHash = version.getKey();
-            versions.put(versionHash, versionDependencies);
+            String commitHash = version.getKey();
+            commits.put(commitHash, versionDependencies);
             for (TestCase test : version.getValue().getTests()) {
                initialcommit.addDependency(test, new ChangedEntity(test.getClazz(), ""));
             }
@@ -77,17 +77,17 @@ public class StaticTestSelection extends SelectedTests {
       this.initialcommit = initialversion;
    }
 
-   public Map<String, CommitStaticSelection> getVersions() {
-      return versions;
+   public Map<String, CommitStaticSelection> getCommits() {
+      return commits;
    }
 
-   public void setVersions(final Map<String, CommitStaticSelection> versions) {
-      this.versions = versions;
+   public void setCommits(final Map<String, CommitStaticSelection> versions) {
+      this.commits = versions;
    }
 
    @JsonIgnore
    public String[] getCommitNames() {
-      final String[] commitNames = versions.keySet().toArray(new String[0]);
+      final String[] commitNames = commits.keySet().toArray(new String[0]);
       String[] withStartcommit = new String[commitNames.length + 1];
       withStartcommit[0] = initialcommit.getCommit();
       System.arraycopy(commitNames, 0, withStartcommit, 1, commitNames.length);
@@ -108,7 +108,7 @@ public class StaticTestSelection extends SelectedTests {
 
    @JsonIgnore
    public String[] getRunningCommitNames() {
-      String[] commitNames = versions.entrySet().stream()
+      String[] commitNames = commits.entrySet().stream()
             .filter((entry) -> entry.getValue().isRunning())
             .map(entry -> entry.getKey())
             .toArray(String[]::new);
@@ -135,9 +135,9 @@ public class StaticTestSelection extends SelectedTests {
    @JsonIgnore
    public ExecutionData toExecutionData() {
       ExecutionData executionData = new ExecutionData();
-      for (Entry<String, CommitStaticSelection> entry : versions.entrySet()) {
+      for (Entry<String, CommitStaticSelection> entry : commits.entrySet()) {
          TestSet tests = entry.getValue().getTests();
-         executionData.getVersions().put(entry.getKey(), tests);
+         executionData.getCommits().put(entry.getKey(), tests);
       }
       return executionData;
    }

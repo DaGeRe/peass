@@ -135,7 +135,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
          int startVersionIndex = Arrays.asList(versionNames).indexOf(startversion);
          String versionAfterStartVersion = versionNames[startVersionIndex - 1];
          previousVersion = versionAfterStartVersion;
-         truncateVersions(startversion, dependencies.getVersions(), comparator);
+         truncateVersions(startversion, dependencies.getCommits(), comparator);
       } else {
          String[] versionNames = dependencies.getCommitNames();
          String newestVersion = versionNames[versionNames.length - 1];

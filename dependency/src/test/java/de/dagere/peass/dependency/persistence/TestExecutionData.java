@@ -19,9 +19,9 @@ public class TestExecutionData {
 
       dependencies.setUrl("https://test");
       dependencies.getInitialcommit().setCommit("000001");
-      dependencies.getVersions().put("000002", new CommitStaticSelection());
-      dependencies.getVersions().put("000004", new CommitStaticSelection());
-      dependencies.getVersions().put("000005", new CommitStaticSelection());
+      dependencies.getCommits().put("000002", new CommitStaticSelection());
+      dependencies.getCommits().put("000004", new CommitStaticSelection());
+      dependencies.getCommits().put("000005", new CommitStaticSelection());
       return dependencies;
    }
    
@@ -34,6 +34,6 @@ public class TestExecutionData {
       StaticTestSelection doubleConverted = new StaticTestSelection(data);
       
       Assert.assertEquals("000001", doubleConverted.getInitialcommit().getCommit());
-      Assert.assertEquals(dependencies.getVersions().size(), doubleConverted.getVersions().size());
+      Assert.assertEquals(dependencies.getCommits().size(), doubleConverted.getCommits().size());
    }
 }

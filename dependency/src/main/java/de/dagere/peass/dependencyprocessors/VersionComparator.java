@@ -39,7 +39,7 @@ public class VersionComparator implements Comparator<String> {
    public static void setDependencies(final StaticTestSelection dependencies2) {
       versions = new LinkedList<>();
       versions.add(dependencies2.getInitialcommit().getCommit());
-      dependencies2.getVersions().keySet().stream().forEach(version -> versions.add(version));
+      dependencies2.getCommits().keySet().stream().forEach(version -> versions.add(version));
    }
 
    public static void setVersions(final List<String> commits) {

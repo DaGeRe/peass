@@ -42,7 +42,7 @@ public class DependencyDetectorParametersIT {
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
       System.out.println(reader.getDependencies());
-      System.out.println(reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1));
+      System.out.println(reader.getDependencies().getCommits().get(DependencyTestConstants.VERSION_1));
 
       DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#innerMethod(java.lang.Integer)", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }

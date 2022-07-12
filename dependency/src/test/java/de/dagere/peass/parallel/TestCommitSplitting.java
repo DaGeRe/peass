@@ -66,7 +66,7 @@ public class TestCommitSplitting {
       public void readVersion() throws IOException, FileNotFoundException {
          System.out.println(nonRunning + " " + iterator.getTag() + " " + nonRunning.contains(iterator.getTag()));
          if (!nonRunning.contains(iterator.getTag())) {
-            dependencyResult.getVersions().put(iterator.getTag(), null);
+            dependencyResult.getCommits().put(iterator.getTag(), null);
             System.out.println("Reading: " + iterator.getTag());
          }
       }
@@ -90,8 +90,8 @@ public class TestCommitSplitting {
 
             StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies, comparator);
 
-            System.out.println(merged.getVersions().keySet() + " " + merged.getVersions().size());
-            Assert.assertEquals("Error in " + DummyReader.nonRunning, 7, merged.getVersions().size());
+            System.out.println(merged.getCommits().keySet() + " " + merged.getCommits().size());
+            Assert.assertEquals("Error in " + DummyReader.nonRunning, 7, merged.getCommits().size());
          }
       }
    }
@@ -99,7 +99,7 @@ public class TestCommitSplitting {
    @Test
    public void testEmptyMerging() {
       StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(new LinkedList<>(), new CommitComparatorInstance(new LinkedList<>()));
-      Assert.assertEquals(0, merged.getVersions().size());
+      Assert.assertEquals(0, merged.getCommits().size());
    }
 
    @Test
@@ -117,8 +117,8 @@ public class TestCommitSplitting {
 
       StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies, comparator);
 
-      System.out.println(merged.getVersions().keySet());
-      Assert.assertEquals(7, merged.getVersions().size());
+      System.out.println(merged.getCommits().keySet());
+      Assert.assertEquals(7, merged.getCommits().size());
    }
 
    @Test
@@ -132,8 +132,8 @@ public class TestCommitSplitting {
 
       StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies, comparator);
 
-      System.out.println(merged.getVersions().keySet());
-      Assert.assertEquals(7, merged.getVersions().size());
+      System.out.println(merged.getCommits().keySet());
+      Assert.assertEquals(7, merged.getCommits().size());
    }
 
    private void readUntilMax(final List<String> commits, final List<StaticTestSelection> dependencies, final int i, final int min, final int max) throws IOException {

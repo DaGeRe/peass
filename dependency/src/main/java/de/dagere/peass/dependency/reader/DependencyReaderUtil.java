@@ -175,14 +175,14 @@ public class DependencyReaderUtil {
          newer = deps1;
          merged = deps2;
       }
-      LOG.debug("Merging: {}", merged.getVersions().size());
+      LOG.debug("Merging: {}", merged.getCommits().size());
 
       final List<String> removableVersion = new LinkedList<>();
       String mergeVersion = null;
-      final Iterator<String> iterator = newer.getVersions().keySet().iterator();
+      final Iterator<String> iterator = newer.getCommits().keySet().iterator();
       if (iterator.hasNext()) {
          final String firstOtherVersion = iterator.next();
-         for (final String version : merged.getVersions().keySet()) {
+         for (final String version : merged.getCommits().keySet()) {
             if (merged == null && version.equals(firstOtherVersion) || comparator.isBefore(firstOtherVersion, version)) {
                mergeVersion = version;
             }
@@ -201,15 +201,15 @@ public class DependencyReaderUtil {
       LOG.debug("Removable: " + removableVersion.size());
       for (final String version : removableVersion) {
          LOG.debug("Removing: {}", version);
-         merged.getVersions().remove(version);
+         merged.getCommits().remove(version);
       }
       int add = 0;
-      for (final Map.Entry<String, CommitStaticSelection> newerVersion : newer.getVersions().entrySet()) {
+      for (final Map.Entry<String, CommitStaticSelection> newerVersion : newer.getCommits().entrySet()) {
          LOG.debug("Add: {}", newerVersion.getKey());
          add++;
-         merged.getVersions().put(newerVersion.getKey(), newerVersion.getValue());
+         merged.getCommits().put(newerVersion.getKey(), newerVersion.getValue());
       }
-      LOG.debug("Added: {} Size: {}", add, merged.getVersions().size());
+      LOG.debug("Added: {} Size: {}", add, merged.getCommits().size());
       return merged;
    }
 }

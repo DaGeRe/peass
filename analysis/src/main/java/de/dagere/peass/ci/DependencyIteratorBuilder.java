@@ -44,8 +44,8 @@ public class DependencyIteratorBuilder {
          versionOld = dependencies.getNewestRunningCommit();
       } else {
          if (dependencies != null && 
-               dependencies.getVersions().get(newestAnalyzedVersionName) != null && 
-               !dependencies.getVersions().get(newestAnalyzedVersionName).isRunning()) {
+               dependencies.getCommits().get(newestAnalyzedVersionName) != null && 
+               !dependencies.getCommits().get(newestAnalyzedVersionName).isRunning()) {
             versionOld = newestAnalyzedVersionName;
             iterator = null;
          } else {

@@ -92,7 +92,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       if (threads != 1) {
          throw new RuntimeException("Parallel processing is not possible or implemented; do not set threads!");
       } else {
-         for (final Map.Entry<String, CommitStaticSelection> version : staticTestSelection.getVersions().entrySet()) {
+         for (final Map.Entry<String, CommitStaticSelection> version : staticTestSelection.getCommits().entrySet()) {
             LOG.debug("Processing {}", version.getKey());
             processVersion(version.getKey(), version.getValue());
          }

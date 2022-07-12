@@ -68,7 +68,7 @@ public class TestDependencyIteratorBuilder {
          config.setCommit("HEAD");
 
          StaticTestSelection dependencies = buildVersionDependencies(SIMPLE_PREDECESSOR);
-         dependencies.getVersions().get(SIMPLE_PREDECESSOR).setRunning(false);
+         dependencies.getCommits().get(SIMPLE_PREDECESSOR).setRunning(false);
          
          DependencyIteratorBuilder builder = new DependencyIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER));
          CommitIteratorGit iterator = builder.getIterator();
@@ -137,7 +137,7 @@ public class TestDependencyIteratorBuilder {
       for (String versionName : versionNames) {
          CommitStaticSelection version = new CommitStaticSelection();
          version.setRunning(true);
-         dependencies.getVersions().put(versionName, version);
+         dependencies.getCommits().put(versionName, version);
       }
       
       return dependencies;

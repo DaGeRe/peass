@@ -102,7 +102,7 @@ public class Validator {
             before++;
             change.setType("BEFORE");
          } else {
-            if (changedTests.getVersions().get(commit.getKey()) != null) {
+            if (changedTests.getCommits().get(commit.getKey()) != null) {
                selected++;
                if (changes != null) {
                   if (changes.getCommitChanges().containsKey(commit.getKey())) {

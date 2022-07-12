@@ -67,7 +67,7 @@ public class MeasureStarter extends PairProcessor {
 
       versions.add(staticTestSelection.getInitialcommit().getCommit());
 
-      staticTestSelection.getVersions().keySet().forEach(version -> versions.add(version));
+      staticTestSelection.getCommits().keySet().forEach(version -> versions.add(version));
 
       startindex = getStartVersionIndex();
       endindex = getEndVersion();
@@ -103,9 +103,9 @@ public class MeasureStarter extends PairProcessor {
       if (executionData != null) {
          if (startcommit != null && currentStartindex == -1) {
             String potentialStart = "";
-            if (executionData.getVersions().containsKey(startcommit)) {
-               for (final String executionVersion : executionData.getVersions().keySet()) {
-                  for (final String dependencyVersion : staticTestSelection.getVersions().keySet()) {
+            if (executionData.getCommits().containsKey(startcommit)) {
+               for (final String executionVersion : executionData.getCommits().keySet()) {
+                  for (final String dependencyVersion : staticTestSelection.getCommits().keySet()) {
                      if (dependencyVersion.equals(executionVersion)) {
                         potentialStart = dependencyVersion;
                         break;
@@ -137,10 +137,10 @@ public class MeasureStarter extends PairProcessor {
       if (executionData != null) {
          if (endcommit != null && currentEndindex == -1) {
             String potentialStart = "";
-            if (executionData.getVersions().containsKey(endcommit)) {
-               for (final String executionVersion : executionData.getVersions().keySet()) {
+            if (executionData.getCommits().containsKey(endcommit)) {
+               for (final String executionVersion : executionData.getCommits().keySet()) {
                   boolean next = false;
-                  for (final String dependencyVersion : staticTestSelection.getVersions().keySet()) {
+                  for (final String dependencyVersion : staticTestSelection.getCommits().keySet()) {
                      if (next) {
                         potentialStart = dependencyVersion;
                         break;
@@ -205,7 +205,7 @@ public class MeasureStarter extends PairProcessor {
 
    public boolean checkExecutionData(final String version, final TestCase testcase, boolean executeThisTest) {
       if (executionData != null) {
-         final TestSet calls = executionData.getVersions().get(version);
+         final TestSet calls = executionData.getCommits().get(version);
          boolean hasChanges = false;
          if (calls != null) {
             for (final Map.Entry<TestCase, Set<String>> clazzCalls : calls.entrySet()) {

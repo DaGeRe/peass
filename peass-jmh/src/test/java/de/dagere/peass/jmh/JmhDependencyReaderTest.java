@@ -97,7 +97,7 @@ public class JmhDependencyReaderTest {
    private void checkChangedVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
       TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
-      MatcherAssert.assertThat(data.getVersions().get("000002").getTests(), Matchers.contains(changedBenchmark));
+      MatcherAssert.assertThat(data.getCommits().get("000002").getTests(), Matchers.contains(changedBenchmark));
    }
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {

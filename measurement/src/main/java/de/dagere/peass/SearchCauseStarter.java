@@ -62,13 +62,13 @@ public class SearchCauseStarter extends MeasureStarter {
       initVersionProcessor();
 
       if (commit == null) {
-         commit = executionData.getVersions().keySet().iterator().next();
+         commit = executionData.getCommits().keySet().iterator().next();
          LOG.info("Commit was not defined, using " + commit);
       }
 
       TestCase test = determineTest();
 
-      final String predecessor = staticTestSelection.getVersions().get(commit).getPredecessor();
+      final String predecessor = staticTestSelection.getCommits().get(commit).getPredecessor();
 
       LOG.debug("Timeout in minutes: {}", executionMixin.getTimeout());
       final MeasurementConfig measurementConfiguration = getConfiguration(predecessor);
@@ -96,7 +96,7 @@ public class SearchCauseStarter extends MeasureStarter {
 
    private TestCase determineTest() {
       TestCase test = new TestCase(testName);
-      final CommitStaticSelection versionInfo = staticTestSelection.getVersions().get(commit);
+      final CommitStaticSelection versionInfo = staticTestSelection.getCommits().get(commit);
       // boolean found = versionInfo.getTests().getTests().contains(test);
       boolean found = false;
       for (TestCase selectedTest : versionInfo.getTests().getTests()) {

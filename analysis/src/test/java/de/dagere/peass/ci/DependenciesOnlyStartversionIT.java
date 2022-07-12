@@ -50,7 +50,7 @@ public class DependenciesOnlyStartversionIT {
             ContinuousDependencyReaderIT.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 
-      Assert.assertEquals(0, dependencies.getVersions().size());
+      Assert.assertEquals(0, dependencies.getCommits().size());
    }
 
    @Order(1)
@@ -75,15 +75,15 @@ public class DependenciesOnlyStartversionIT {
 
    private void checkVersion(final StaticTestSelection dependencies, final String newestVersion, final int versions) {
       Assert.assertTrue(ContinuousDependencyReaderIT.resultsFolders.getStaticTestSelectionFile().exists());
-      MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
+      MatcherAssert.assertThat(dependencies.getCommits(), Matchers.aMapWithSize(versions));
 
-      MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());
+      MatcherAssert.assertThat(dependencies.getCommits().get(newestVersion), Matchers.notNullValue());
       final TestSet testSet = getTestset(dependencies, newestVersion);
       Assert.assertEquals(new TestCase("defaultpackage.TestMe#testMe"), testSet.getTests().toArray()[0]);
    }
 
    private TestSet getTestset(final StaticTestSelection dependencies, final String newestVersion) {
-      final TestSet testSet = dependencies.getVersions().get(newestVersion)
+      final TestSet testSet = dependencies.getCommits().get(newestVersion)
             .getChangedClazzes()
             .get(new ChangedEntity("defaultpackage.NormalDependency", "", ""));
       return testSet;

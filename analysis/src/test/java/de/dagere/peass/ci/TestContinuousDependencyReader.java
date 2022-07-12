@@ -29,7 +29,7 @@ public class TestContinuousDependencyReader {
       
       StaticTestSelection value = new StaticTestSelection();
       value.setInitialcommit(new InitialCommit());
-      value.getVersions().put("A", new CommitStaticSelection());
+      value.getCommits().put("A", new CommitStaticSelection());
       Constants.OBJECTMAPPER.writeValue(resultsFolders.getStaticTestSelectionFile(), value);
       
       ContinuousDependencyReader reader = new ContinuousDependencyReader(new TestSelectionConfig(1, false), new ExecutionConfig(), new KiekerConfig(),

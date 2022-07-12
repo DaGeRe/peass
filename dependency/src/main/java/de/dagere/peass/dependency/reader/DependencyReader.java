@@ -217,7 +217,7 @@ public class DependencyReader {
       emptyVersion.setJdk(dependencyManager.getExecutor().getJDKVersion());
       emptyVersion.setRunning(true);
       emptyVersion.setPredecessor(input.getPredecessor());
-      dependencyResult.getVersions().put(version, emptyVersion);
+      dependencyResult.getCommits().put(version, emptyVersion);
       if (testSelectionConfig.isGenerateTraces()) {
          executionResult.addEmptyCommit(version, null);
          coverageBasedSelection.addEmptyCommit(version, null);
@@ -243,14 +243,14 @@ public class DependencyReader {
             diffGenerator.generateAllDiffs(version, newVersionInfo, traceFileMapping, executionResult);
 
             if (testSelectionConfig.isGenerateCoverageSelection()) {
-               TestSet dynamicallySelected = executionResult.getVersions().get(version);
+               TestSet dynamicallySelected = executionResult.getCommits().get(version);
                coverageExecutor.generateCoverageBasedSelection(version, newVersionInfo, dynamicallySelected);
             }
          }
       } else {
          LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");
       }
-      dependencyResult.getVersions().put(version, newVersionInfo);
+      dependencyResult.getCommits().put(version, newVersionInfo);
 
       final int changedClazzCount = calculateChangedClassCount(newVersionInfo);
       return changedClazzCount;
@@ -272,7 +272,7 @@ public class DependencyReader {
       LOG.error("Version not running");
       final CommitStaticSelection newVersionInfo = new CommitStaticSelection();
       newVersionInfo.setRunning(false);
-      dependencyResult.getVersions().put(version, newVersionInfo);
+      dependencyResult.getCommits().put(version, newVersionInfo);
    }
 
    public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
@@ -299,8 +299,8 @@ public class DependencyReader {
       TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), traceFileMapping, kiekerConfig, testSelectionConfig);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
 
-      executionResult.getVersions().put(iterator.getTag(), new TestSet());
-      coverageBasedSelection.getVersions().put(iterator.getTag(), new TestSet());
+      executionResult.getCommits().put(iterator.getTag(), new TestSet());
+      coverageBasedSelection.getCommits().put(iterator.getTag(), new TestSet());
    }
 
    public void readCompletedCommits(final StaticTestSelection initialdependencies, CommitComparatorInstance comparator) {
@@ -308,7 +308,7 @@ public class DependencyReader {
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       
-      dependencyResult.setVersions(initialdependencies.getVersions());
+      dependencyResult.setCommits(initialdependencies.getCommits());
       dependencyResult.setInitialcommit(initialdependencies.getInitialcommit());
 
       InitialCommitReader initialVersionReader = new InitialCommitReader(initialdependencies, dependencyManager, iterator);
@@ -335,12 +335,12 @@ public class DependencyReader {
 
    public void setCoverageExecutions(final ExecutionData coverageExecutions) {
       coverageBasedSelection.setUrl(coverageExecutions.getUrl());
-      coverageBasedSelection.setVersions(coverageExecutions.getVersions());
+      coverageBasedSelection.setCommits(coverageExecutions.getCommits());
    }
 
    public void setExecutionData(final ExecutionData executions) {
       executionResult.setUrl(executions.getUrl());
-      executionResult.setVersions(executions.getVersions());
+      executionResult.setCommits(executions.getCommits());
 
       new OldTraceReader(traceFileMapping, dependencyResult, resultsFolders).addTraces();
    }

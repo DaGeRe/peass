@@ -70,9 +70,9 @@ public class DependencyDetectorIT {
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
       StaticTestSelection dependencies = reader.getDependencies();
-      System.out.println(dependencies.getVersions());
+      System.out.println(dependencies.getCommits());
 
-      Assert.assertTrue(dependencies.getVersions().get(dependencies.getNewestCommit()).isRunning());
+      Assert.assertTrue(dependencies.getCommits().get(dependencies.getNewestCommit()).isRunning());
 
       // DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }
@@ -105,7 +105,7 @@ public class DependencyDetectorIT {
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
-      System.out.println(reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1));
+      System.out.println(reader.getDependencies().getCommits().get(DependencyTestConstants.VERSION_1));
 
       DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.TestMe#testMe", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }
@@ -152,7 +152,7 @@ public class DependencyDetectorIT {
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(dependencies, "defaultpackage.NormalDependency", DependencyTestConstants.VERSION_1);
 
       System.out.println(testMe);
-      final ChangedEntity change = dependencies.getVersions().get(DependencyTestConstants.VERSION_1).getChangedClazzes().keySet().iterator().next();
+      final ChangedEntity change = dependencies.getCommits().get(DependencyTestConstants.VERSION_1).getChangedClazzes().keySet().iterator().next();
       Assert.assertEquals("defaultpackage.NormalDependency", change.toString());
       Assert.assertEquals("defaultpackage.TestMe#testMe", testMe.getTests().iterator().next().getExecutable());
    }
@@ -182,7 +182,7 @@ public class DependencyDetectorIT {
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
-      Assert.assertEquals(1, reader.getDependencies().getVersions().get("000001").getChangedClazzes().size());
+      Assert.assertEquals(1, reader.getDependencies().getCommits().get("000001").getChangedClazzes().size());
 
       fakeIterator.goToNextCommit();
       reader.analyseVersion(changeManager);
@@ -216,7 +216,7 @@ public class DependencyDetectorIT {
    }
 
    public static void checkClassRemoved(final DependencyReader reader) {
-      final Map<ChangedEntity, TestSet> changedClazzes = reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1).getChangedClazzes();
+      final Map<ChangedEntity, TestSet> changedClazzes = reader.getDependencies().getCommits().get(DependencyTestConstants.VERSION_1).getChangedClazzes();
       System.out.println("Ergebnis: " + changedClazzes);
       final ChangedEntity key = new ChangedEntity("defaultpackage.TestMe", "");
       System.out.println("Hash: " + key.hashCode());

@@ -38,8 +38,8 @@ public class DependencyDetectorTestUtil {
    private static final Logger LOG = LogManager.getLogger(DependencyDetectorTestUtil.class);
 
    public static TestSet findDependency(final StaticTestSelection dependencies, final String changedClass, final String version) {
-      final CommitStaticSelection versionDependencies = dependencies.getVersions().get(version);
-      System.out.println(dependencies.getVersions().keySet());
+      final CommitStaticSelection versionDependencies = dependencies.getCommits().get(version);
+      System.out.println(dependencies.getCommits().keySet());
       Assert.assertNotNull("Searching for " + changedClass + " in " + version, versionDependencies);
 
       TestSet testcase = null;

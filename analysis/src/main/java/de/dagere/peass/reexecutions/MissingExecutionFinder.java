@@ -80,7 +80,7 @@ public class MissingExecutionFinder {
                for (final VMResultChunk c : testcase.getDatacollectorResults().get(0).getChunks()) {
                   final String version = findVersion(c);
                   LOG.debug("Removing {}", version);
-                  final TestSet versionsTests = tests.getVersions().get(version);
+                  final TestSet versionsTests = tests.getCommits().get(version);
                   if (versionsTests != null) {
                      removeTestFromTestSet(data.getClazz(), testmethod, versionsTests);
                   }
@@ -95,7 +95,7 @@ public class MissingExecutionFinder {
       reader.readFile(folder);
       for (Entry<String, TestcaseData> entry : reader.getAllData().getData().entrySet()) {
          String version = entry.getKey();
-         TestSet versionsTests = tests.getVersions().get(version);
+         TestSet versionsTests = tests.getCommits().get(version);
          LOG.debug("Removing from: {}", version);
          for (TestCase test : entry.getValue().getTestcaseData().keySet()) {
             removeTestFromTestSet(test.getClazz(), test.getMethod(), versionsTests);

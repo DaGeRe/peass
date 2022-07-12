@@ -92,12 +92,12 @@ public class GetValidationExecutionFile {
       for (GitCommit commit : commits) {
          boolean contains = Arrays.stream(CHANGE_INDICATORS).anyMatch(commit.getMessage()::contains);
          if (contains && !excluded.contains(commit.getTag())) {
-            TestSet versionsTests = changedTests.getVersions().get(commit.getTag());
+            TestSet versionsTests = changedTests.getCommits().get(commit.getTag());
             if (versionsTests != null) {
-               selected.getVersions().put(commit.getTag(), versionsTests);
+               selected.getCommits().put(commit.getTag(), versionsTests);
                projectCommits.put(commit.getTag(), commit.getMessage().trim());
             } else {
-               selected.getVersions().put(commit.getTag(), new TestSet());
+               selected.getCommits().put(commit.getTag(), new TestSet());
                projectCommits.put(commit.getTag(), commit.getMessage().trim());
             }
          }

@@ -101,7 +101,7 @@ public class CreateScriptStarter implements Callable<Void> {
    public static void generateExecuteCommands(final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
          throws IOException {
       int i = 0;
-      for (Map.Entry<String, TestSet> entry : changedTests.getVersions().entrySet()) {
+      for (Map.Entry<String, TestSet> entry : changedTests.getCommits().entrySet()) {
          for (final Map.Entry<TestCase, Set<String>> testcase : entry.getValue().getTestcases().entrySet()) {
             for (final String method : testcase.getValue()) {
                final String testcaseName = testcase.getKey().getClazz() + "#" + method;
@@ -120,10 +120,10 @@ public class CreateScriptStarter implements Callable<Void> {
          final String endversion = versions[versionIndex];
          // System.out.println("-startversion " + startversion + " -endversion " + endversion);
          if (changedTests == null) {
-            final Set<TestCase> tests = dependencies.getVersions().get(endversion).getTests().getTests();
+            final Set<TestCase> tests = dependencies.getCommits().get(endversion).getTests().getTests();
             writer.createFullVersionCommand(versionIndex, endversion, tests);
-         } else if (changedTests != null && changedTests.getVersions().containsKey(endversion)) {
-            for (final Map.Entry<TestCase, Set<String>> testcase : changedTests.getVersions().get(endversion).getTestcases().entrySet()) {
+         } else if (changedTests != null && changedTests.getCommits().containsKey(endversion)) {
+            for (final Map.Entry<TestCase, Set<String>> testcase : changedTests.getCommits().get(endversion).getTestcases().entrySet()) {
                for (final String method : testcase.getValue()) {
                   final String testcaseName = testcase.getKey().getClazz() + "#" + method;
                   writer.createSingleMethodCommand(versionIndex, endversion, testcaseName);

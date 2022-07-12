@@ -63,7 +63,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
       StaticTestSelection staticTestSelection = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
       String newestVersion = staticTestSelection.getNewestCommit();
 
-      CommitStaticSelection version = staticTestSelection.getVersions().get(newestVersion);
+      CommitStaticSelection version = staticTestSelection.getCommits().get(newestVersion);
       TestSet tests = version.getTests();
 
       ExecutionConfig executionConfig = executionMixin.getExecutionConfig();

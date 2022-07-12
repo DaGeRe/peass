@@ -63,7 +63,7 @@ public class DependencyDetectorNoUpdateIT {
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
-      System.out.println(reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1));
+      System.out.println(reader.getDependencies().getCommits().get(DependencyTestConstants.VERSION_1));
 
       DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.TestMe#testMe", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }

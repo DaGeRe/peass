@@ -62,7 +62,7 @@ public class FindChangeExecutions {
 
    public static void writeExecutions(final File projectChangeFile, final ExecutionData executions, final RunCommandWriter writer)
          throws IOException, JsonParseException, JsonMappingException {
-      final List<String> versions = new LinkedList<String>(executions.getVersions().keySet());
+      final List<String> versions = new LinkedList<String>(executions.getCommits().keySet());
       final ProjectChanges changes = Constants.OBJECTMAPPER.readValue(projectChangeFile, ProjectChanges.class);
       changes.executeProcessor((version, testclazz, change) -> {
          final int versionIndex = versions.indexOf(version);

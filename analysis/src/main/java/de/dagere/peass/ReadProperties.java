@@ -153,7 +153,7 @@ public class ReadProperties implements Callable<Void> {
          int versionCount = 0, testcaseCount = 0;
          for (final Entry<String, Changes> versionChanges : changes.getCommitChanges().entrySet()) {
             final String version = versionChanges.getKey();
-            final TestSet tests = changedTests.getVersions().get(version);
+            final TestSet tests = changedTests.getCommits().get(version);
             //
             final String predecessor = tests != null ? tests.getPredecessor() : version + "~1";
             
@@ -182,7 +182,7 @@ public class ReadProperties implements Callable<Void> {
       for (final Entry<String, List<Change>> changes : versionChanges.getValue().getTestcaseChanges().entrySet()) {
          final String testclazz = changes.getKey();
          String module = null;
-         for (TestCase test : data.getVersions().get(versionChanges.getKey()).getTests()) {
+         for (TestCase test : data.getCommits().get(versionChanges.getKey()).getTests()) {
             if (test.getClazz().equals(testclazz)) {
                module = test.getModule();
             }

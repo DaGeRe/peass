@@ -180,12 +180,12 @@ public class PropertyReadHelper {
    }
 
    private File searchOldTraceFile(final ChangeProperty property, File traceFileOld) {
-      List<String> versions = new ArrayList<>(changedTests.getVersions().keySet());
+      List<String> versions = new ArrayList<>(changedTests.getCommits().keySet());
       int index = versions.indexOf(versionOld);
       if (index == -1) {
          index = versions.indexOf(version) - 1;
       }
-      LOG.debug("Trying old versions starting with {} Versions: {}", index, changedTests.getVersions().keySet());
+      LOG.debug("Trying old versions starting with {} Versions: {}", index, changedTests.getCommits().keySet());
       while (!traceFileOld.exists() && index >= 0) {
          String tryVersion = versions.get(index);
          File versionFolder = new File(viewFolder, "view_" + tryVersion);

@@ -50,7 +50,7 @@ public class TestExecutionMerging {
    }
    
    private void checkMergedResult(final ExecutionData merged) {
-      List<String> keys = new ArrayList<>(merged.getVersions().keySet());
+      List<String> keys = new ArrayList<>(merged.getCommits().keySet());
       Assert.assertEquals("v01", keys.get(0));
       Assert.assertEquals("v02", keys.get(1));
       Assert.assertEquals("asd12", keys.get(3));

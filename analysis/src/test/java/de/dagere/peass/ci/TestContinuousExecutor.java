@@ -103,7 +103,7 @@ public class TestContinuousExecutor {
             File staticTestSelectionFile = new File(fullPeassFolder, "staticTestSelection_current.json");
             StaticTestSelection staticSelection = new StaticTestSelection();
             staticSelection.getInitialcommit().setCommit("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f");
-            staticSelection.getVersions().put(NEWER_VERSION, new CommitStaticSelection());
+            staticSelection.getCommits().put(NEWER_VERSION, new CommitStaticSelection());
             Constants.OBJECTMAPPER.writeValue(staticTestSelectionFile, staticSelection);
             return mockedResult;
          }

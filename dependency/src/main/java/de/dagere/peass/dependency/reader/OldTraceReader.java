@@ -38,7 +38,7 @@ public class OldTraceReader {
    }
 
    private void addRegularVersions() {
-      for (Entry<String, CommitStaticSelection> version : dependencyResult.getVersions().entrySet()) {
+      for (Entry<String, CommitStaticSelection> version : dependencyResult.getCommits().entrySet()) {
          TestSet tests = version.getValue().getTests();
          for (TestCase testcase : tests.getTests()) {
             addPotentialTracefile(testcase, version.getKey());

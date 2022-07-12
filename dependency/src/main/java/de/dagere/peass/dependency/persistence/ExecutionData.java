@@ -24,40 +24,40 @@ import de.dagere.peass.dependencyprocessors.VersionComparator;
  */
 public class ExecutionData extends SelectedTests {
 
-   private Map<String, TestSet> versions = new LinkedHashMap<>();
+   private Map<String, TestSet> commits = new LinkedHashMap<>();
 
    public ExecutionData() {
    }
    
    public ExecutionData(final StaticTestSelection dependencies) {
       setUrl(dependencies.getUrl());
-      versions.put(dependencies.getInitialcommit().getCommit(), new TestSet());
-      for (Map.Entry<String, CommitStaticSelection> version : dependencies.getVersions().entrySet()) {
-         TestSet tests = version.getValue().getTests();
-         versions.put(version.getKey(), tests);
+      commits.put(dependencies.getInitialcommit().getCommit(), new TestSet());
+      for (Map.Entry<String, CommitStaticSelection> commit : dependencies.getCommits().entrySet()) {
+         TestSet tests = commit.getValue().getTests();
+         commits.put(commit.getKey(), tests);
       }
    }
    
-   public void setVersions(final Map<String, TestSet> versions) {
-      this.versions = versions;
+   public void setCommits(final Map<String, TestSet> commits) {
+      this.commits = commits;
    }
 
-   public Map<String, TestSet> getVersions() {
-      return versions;
+   public Map<String, TestSet> getCommits() {
+      return commits;
    }
    
    @JsonIgnore
-   public void addEmptyCommit(final String version, final String predecessor) {
+   public void addEmptyCommit(final String commit, final String predecessor) {
       TestSet tests = new TestSet();
       tests.setPredecessor(predecessor);
-      versions.put(version, tests);
+      commits.put(commit, tests);
    }
 
    @JsonIgnore
    public void addCall(final String commit, final TestSet tests) {
-      final TestSet executes = versions.get(commit);
+      final TestSet executes = commits.get(commit);
       if (executes == null) {
-         versions.put(commit, tests);
+         commits.put(commit, tests);
       } else {
          executes.addTestSet(tests);
       }
@@ -65,17 +65,17 @@ public class ExecutionData extends SelectedTests {
 
    @JsonIgnore
    public void addCall(final String commit, final TestCase testcase) {
-      TestSet executes = versions.get(commit);
+      TestSet executes = commits.get(commit);
       if (executes == null) {
          executes = new TestSet();
-         versions.put(commit, executes);
+         commits.put(commit, executes);
       }
       executes.addTest(testcase);
    }
 
    @JsonIgnore
    public boolean commitContainsTest(final String commit, final TestCase currentIterationTest) {
-      final TestSet clazzExecutions = versions.get(commit);
+      final TestSet clazzExecutions = commits.get(commit);
       if (clazzExecutions != null) {
          for (final Map.Entry<TestCase, Set<String>> clazz : clazzExecutions.entrySet()) {
             final TestCase testclazz = clazz.getKey();
@@ -91,16 +91,16 @@ public class ExecutionData extends SelectedTests {
    @JsonIgnore
    public void sort() {
       final Map<String, TestSet> unsorted = new LinkedHashMap<>();
-      synchronized (versions) {
-         unsorted.putAll(versions);
-         versions.clear();
+      synchronized (commits) {
+         unsorted.putAll(commits);
+         commits.clear();
 
          final List<String> commitNames = new LinkedList<>();
          commitNames.addAll(unsorted.keySet());
          Collections.sort(commitNames, new VersionComparator());
 
          for (final String version : commitNames) {
-            versions.put(version, unsorted.get(version));
+            commits.put(version, unsorted.get(version));
          }
       }
    }
@@ -108,7 +108,7 @@ public class ExecutionData extends SelectedTests {
    @JsonIgnore
    public int getAllExecutions() {
          int count2 = 0;
-         for (final Entry<String, TestSet> entry : getVersions().entrySet()) {
+         for (final Entry<String, TestSet> entry : getCommits().entrySet()) {
             count2 += entry.getValue().getTests().size();
          }
          return count2;
@@ -117,7 +117,7 @@ public class ExecutionData extends SelectedTests {
    @JsonIgnore
    @Override
    public String[] getCommitNames() {
-      return versions.keySet().toArray(new String[0]);
+      return commits.keySet().toArray(new String[0]);
    }
 
 }

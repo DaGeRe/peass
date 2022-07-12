@@ -70,7 +70,7 @@ public class DependencyDetectorIncludesTest {
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
       
-      TestSet tests = reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1).getTests();
+      TestSet tests = reader.getDependencies().getCommits().get(DependencyTestConstants.VERSION_1).getTests();
       System.out.println(tests);
       Assert.assertEquals("Added class should not be selected since it is not included", 1, tests.entrySet().size());
    }
@@ -83,7 +83,7 @@ public class DependencyDetectorIncludesTest {
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
       
-      TestSet tests = reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1).getTests();
+      TestSet tests = reader.getDependencies().getCommits().get(DependencyTestConstants.VERSION_1).getTests();
       System.out.println(tests);
       Assert.assertEquals("Added class should not be selected since it is not included", 1, tests.entrySet().size());
    }

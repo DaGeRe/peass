@@ -20,15 +20,15 @@ public class TestMerging {
       deps1.setInitialcommit(new InitialCommit());
       deps1.getInitialcommit().setCommit("0");
       for (String commit : comparator.getCommits().subList(1, 6)) {
-         deps1.getVersions().put(commit, null);
+         deps1.getCommits().put(commit, null);
       }
       deps2.setInitialcommit(new InitialCommit());
       deps2.getInitialcommit().setCommit("5");
       for (String commit : comparator.getCommits().subList(5, 10)) {
-         deps2.getVersions().put(commit, null);
+         deps2.getCommits().put(commit, null);
       }
       StaticTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2, comparator);
-      Assert.assertEquals(9, merged.getVersions().size());
+      Assert.assertEquals(9, merged.getCommits().size());
    }
 
    @Test
@@ -39,15 +39,15 @@ public class TestMerging {
       deps1.setInitialcommit(new InitialCommit());
       deps1.getInitialcommit().setCommit("0");
       for (String commit : comparator.getCommits().subList(1, 8)) {
-         deps1.getVersions().put(commit, null);
+         deps1.getCommits().put(commit, null);
       }
       deps2.setInitialcommit(new InitialCommit());
       deps2.getInitialcommit().setCommit("7");
       for (String commit : comparator.getCommits().subList(8, 10)) {
-         deps2.getVersions().put(commit, null);
+         deps2.getCommits().put(commit, null);
       }
       StaticTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2, comparator);
-      Assert.assertEquals(9, merged.getVersions().size());
+      Assert.assertEquals(9, merged.getCommits().size());
    }
 
    @Test
@@ -65,15 +65,15 @@ public class TestMerging {
       StaticTestSelection deps1 = new StaticTestSelection(), deps2 = new StaticTestSelection();
       deps1.setInitialcommit(new InitialCommit());
       deps1.getInitialcommit().setCommit("A");
-      deps1.getVersions().put("C", null);
-      deps1.getVersions().put("B", null);
-      deps1.getVersions().put("G", null);
+      deps1.getCommits().put("C", null);
+      deps1.getCommits().put("B", null);
+      deps1.getCommits().put("G", null);
       deps2.setInitialcommit(new InitialCommit());
       deps2.getInitialcommit().setCommit("G");
-      deps2.getVersions().put("E", null);
-      deps2.getVersions().put("F", null);
+      deps2.getCommits().put("E", null);
+      deps2.getCommits().put("F", null);
       StaticTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2, comparator);
-      System.out.println(merged.getVersions().keySet());
-      Assert.assertEquals(5, merged.getVersions().size());
+      System.out.println(merged.getCommits().keySet());
+      Assert.assertEquals(5, merged.getCommits().size());
    }
 }

@@ -47,8 +47,8 @@ public class GetProjectSizes {
          int executionTests = 0;
          if (executionFile.exists()) {
             final ExecutionData executionData = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
-            executionTests = executionData.getVersions().size();
-            for (final TestSet test : executionData.getVersions().values()) {
+            executionTests = executionData.getCommits().size();
+            for (final TestSet test : executionData.getCommits().values()) {
                tests += test.getTests().size();
             }
          }

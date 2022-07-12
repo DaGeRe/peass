@@ -74,10 +74,10 @@ public class CreateOverviewStatistics {
          final File executionFile = new File(dependencyFolder, ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");
          if (executionFile.exists()) {
             final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
-            System.out.print(changedTests.getVersions().size() + " & ");
-            stats[1].addValue(changedTests.getVersions().size());
+            System.out.print(changedTests.getCommits().size() + " & ");
+            stats[1].addValue(changedTests.getCommits().size());
             int tests = 0;
-            for (final TestSet testSet : changedTests.getVersions().values()) {
+            for (final TestSet testSet : changedTests.getCommits().values()) {
                tests += testSet.getTests().size();
             }
             System.out.print(tests + " & ");

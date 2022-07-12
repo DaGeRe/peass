@@ -49,7 +49,7 @@ public class DependencyDetectorParameterizedIT {
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
       System.out.println(reader.getDependencies().getInitialcommit().getInitialDependencies());
-      CommitStaticSelection firstVersion = reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1);
+      CommitStaticSelection firstVersion = reader.getDependencies().getCommits().get(DependencyTestConstants.VERSION_1);
       System.out.println(firstVersion.getChangedClazzes());
 
       Assert.assertEquals(3, reader.getDependencies().getInitialcommit().getInitialDependencies().size());

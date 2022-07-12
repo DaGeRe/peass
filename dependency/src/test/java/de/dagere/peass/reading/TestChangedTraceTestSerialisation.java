@@ -35,7 +35,7 @@ public class TestChangedTraceTestSerialisation {
       System.out.println(serialized);
       
       final ExecutionData deserialized = Constants.OBJECTMAPPER.readValue(serialized, ExecutionData.class);
-      final TestSet testSetDeserialized = deserialized.getVersions().get("v1");
+      final TestSet testSetDeserialized = deserialized.getCommits().get("v1");
       Assert.assertNotNull(testSetDeserialized);
       
       final TestCase testcaseDeserialized = testSetDeserialized.getTests().iterator().next();
@@ -59,8 +59,8 @@ public class TestChangedTraceTestSerialisation {
       final ExecutionData deserialize = mapper.readValue(json, ExecutionData.class);
       
       Assert.assertNotNull(deserialize);
-      Map<TestCase, Set<String>> regularV1 = tests.getVersions().get("v1").getTestcases();
-      Map<TestCase, Set<String>> deserializedV1 = deserialize.getVersions().get("v1").getTestcases();
+      Map<TestCase, Set<String>> regularV1 = tests.getCommits().get("v1").getTestcases();
+      Map<TestCase, Set<String>> deserializedV1 = deserialize.getCommits().get("v1").getTestcases();
       Assert.assertEquals(regularV1, deserializedV1);
    }
 }

@@ -69,8 +69,8 @@ public class ContinuousDependencyReaderIT {
       checkVersion(dependencies, lastTag, 1);
 
       ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
-      Assert.assertEquals(2, executions.getVersions().size());
-      System.out.println(executions.getVersions().keySet());
+      Assert.assertEquals(2, executions.getCommits().size());
+      System.out.println(executions.getCommits().keySet());
    }
 
    @Order(2)
@@ -96,7 +96,7 @@ public class ContinuousDependencyReaderIT {
       checkVersion(dependencies, lastTag, 2);
 
       ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
-      Assert.assertEquals(3, executions.getVersions().size());
+      Assert.assertEquals(3, executions.getCommits().size());
    }
 
    @Order(3)
@@ -123,15 +123,15 @@ public class ContinuousDependencyReaderIT {
 
    public static void checkVersion(final StaticTestSelection dependencies, final String newestVersion, final int versions) {
       Assert.assertTrue(resultsFolders.getStaticTestSelectionFile().exists());
-      MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
+      MatcherAssert.assertThat(dependencies.getCommits(), Matchers.aMapWithSize(versions));
 
-      MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());
+      MatcherAssert.assertThat(dependencies.getCommits().get(newestVersion), Matchers.notNullValue());
       final TestSet testSet = getTestset(dependencies, newestVersion);
       Assert.assertEquals(new TestCase("defaultpackage.TestMe#testMe"), testSet.getTests().toArray()[0]);
    }
 
    private static TestSet getTestset(final StaticTestSelection dependencies, final String newestVersion) {
-      final TestSet testSet = dependencies.getVersions().get(newestVersion)
+      final TestSet testSet = dependencies.getCommits().get(newestVersion)
             .getChangedClazzes()
             .get(new ChangedEntity("defaultpackage.NormalDependency", "", ""));
       return testSet;

@@ -52,7 +52,7 @@ public class PartialDependenciesMerger {
             LOG.debug("Reading: {}", partFiles[i]);
             final StaticTestSelection currentDependencies = Constants.OBJECTMAPPER.readValue(partFiles[i], StaticTestSelection.class);
             deps.add(currentDependencies);
-            LOG.debug("Size: {}", deps.get(deps.size() - 1).getVersions().size());
+            LOG.debug("Size: {}", deps.get(deps.size() - 1).getCommits().size());
          } catch (final IOException e) {
             e.printStackTrace();
          }
@@ -94,7 +94,7 @@ public class PartialDependenciesMerger {
          if (merged.getUrl() == null && data.getUrl() != null) {
             merged.setUrl(data.getUrl());
          }
-         merged.getVersions().putAll(data.getVersions());
+         merged.getCommits().putAll(data.getCommits());
       }
       return merged;
    }

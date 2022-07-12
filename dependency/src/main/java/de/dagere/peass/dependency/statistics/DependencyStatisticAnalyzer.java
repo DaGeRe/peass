@@ -79,7 +79,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
    public static DependencyStatistics getChangeStatistics(final File dependenciesFile, final ExecutionData changedTests)
          throws JsonParseException, JsonMappingException, IOException {
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependenciesFile, StaticTestSelection.class);
-      final Map<String, CommitStaticSelection> versions = dependencies.getVersions();
+      final Map<String, CommitStaticSelection> versions = dependencies.getCommits();
 
       final int startTestCound = dependencies.getInitialcommit().getInitialDependencies().size();
       final List<TestCase> currentContainedTests = new LinkedList<>();

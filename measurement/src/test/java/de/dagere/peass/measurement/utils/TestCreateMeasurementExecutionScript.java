@@ -38,10 +38,10 @@ public class TestCreateMeasurementExecutionScript {
    private ExecutionData buildExecutionDataWithTests() {
       StaticTestSelection dependencies = TestExecutionData.buildExampleDependencies();
 
-      CommitStaticSelection version2 = dependencies.getVersions().get("000002");
+      CommitStaticSelection version2 = dependencies.getCommits().get("000002");
       version2.getChangedClazzes().put(new ChangedEntity("Test1#testMe"), new TestSet(new TestCase("Test1#testMe")));
       
-      CommitStaticSelection version5 = dependencies.getVersions().get("000005");
+      CommitStaticSelection version5 = dependencies.getCommits().get("000005");
       version5.getChangedClazzes().put(new ChangedEntity("Test5#testMe"), new TestSet(new TestCase("Test5#testMe")));
 
       ExecutionData executiondata = new ExecutionData(dependencies);

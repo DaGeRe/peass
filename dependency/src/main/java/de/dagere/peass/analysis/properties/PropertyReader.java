@@ -44,7 +44,7 @@ public class PropertyReader {
          final VersionChangeProperties versionProperties = new VersionChangeProperties();
          final File methodFolder = new File(resultsFolders.getPropertiesFolder(), "methods");
          methodFolder.mkdirs();
-         for (final Map.Entry<String, TestSet> version : changedTests.getVersions().entrySet()) {
+         for (final Map.Entry<String, TestSet> version : changedTests.getCommits().entrySet()) {
             readVersion(versionProperties, methodFolder, version);
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getPropertiesFile(), versionProperties);
          }

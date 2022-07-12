@@ -82,12 +82,12 @@ public class GetChangesStarter implements Callable<Void> {
 
       if (staticSelectionFile != null) {
          StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
-         reader.setTests(dependencies.toExecutionData().getVersions());
+         reader.setTests(dependencies.toExecutionData().getCommits());
 
       }
       if (executionFile != null) {
          ExecutionData executions = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
-         reader.setTests(executions.getVersions());
+         reader.setTests(executions.getCommits());
       }
 
       for (final File dataFile : data) {
