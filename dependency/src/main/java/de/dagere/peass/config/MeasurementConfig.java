@@ -94,7 +94,7 @@ public class MeasurementConfig implements Serializable {
       this.earlyStop = earlyStop;
    }
 
-   public MeasurementConfig(final int timeout, final int vms, final boolean earlyStop, final String version, final String versionOld) {
+   public MeasurementConfig(final long timeout, final int vms, final boolean earlyStop, final String version, final String versionOld) {
       executionConfig = new ExecutionConfig();
       executionConfig.setTimeout(timeout);
       fixedCommitConfig = new FixedCommitConfig();

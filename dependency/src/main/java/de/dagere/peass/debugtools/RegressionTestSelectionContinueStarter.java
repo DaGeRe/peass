@@ -97,7 +97,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
 
       String previousVersion = getPreviousVersion(executionConfigMixin.getStartcommit(), projectFolder, dependencies, comparator);
 
-      final int timeout = executionConfigMixin.getTimeout();
+      final long timeout = executionConfigMixin.getTimeout();
 
       LOG.debug("Lese {}", projectFolder.getAbsolutePath());
       final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
@@ -145,7 +145,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
    }
 
    DependencyReader createReader(final TestSelectionConfigMixin config, final ResultsFolders resultsFolders, final StaticTestSelection dependencies, final String previousVersion,
-         final int timeout, final VersionControlSystem vcs) {
+         final long timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
          final CommitIterator iterator = createIterator(config, previousVersion);
