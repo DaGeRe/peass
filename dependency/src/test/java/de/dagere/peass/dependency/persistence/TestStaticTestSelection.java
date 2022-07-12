@@ -85,7 +85,7 @@ public class TestStaticTestSelection {
          + "      }\n"
          + "    }\n"
          + "  },\n"
-         + "  \"versions\" : {\n"
+         + "  \"commits\" : {\n"
          + "    \"bsdbsd\" : {\n"
          + "      \"running\" : false,\n"
          + "      \"jdk\" : 8,\n"
