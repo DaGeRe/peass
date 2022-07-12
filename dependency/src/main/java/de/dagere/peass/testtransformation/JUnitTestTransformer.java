@@ -118,7 +118,7 @@ public class JUnitTestTransformer implements TestTransformer {
       // For regression test selection, verbose debug output is helpful, and since it
       // is only executed once, the performance loss is ok.
       config.getExecutionConfig().setRedirectToNull(false);
-      config.setShowStart(true);
+      config.getExecutionConfig().setShowStart(true);
       if (config.isDirectlyMeasureKieker()) {
          datacollectorlist = DataCollectorList.NONE;
       } else {

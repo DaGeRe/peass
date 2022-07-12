@@ -48,10 +48,6 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: PARALLEL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.PARALLEL;
 
-   @Option(names = { "-showStart",
-         "--showStart" }, description = "Activates showing of start of each iteration (for debug purposes primarily)")
-   protected boolean showStart = false;
-
    @Option(names = { "-directlyMeasureKieker",
          "--directlyMeasureKieker" }, description = "Activates measurement via Kieker instead KoPeMe (only useful it repetitions = 1 and a test runner contains huge warmup)")
    protected boolean directlyMeasureKieker = false;
@@ -114,14 +110,6 @@ public class MeasurementConfigurationMixin {
 
    public void setUseKieker(final boolean useKieker) {
       this.useKieker = useKieker;
-   }
-
-   public boolean isShowStart() {
-      return showStart;
-   }
-
-   public void setShowStart(final boolean showStart) {
-      this.showStart = showStart;
    }
 
    public void setUseGC(final boolean useGC) {

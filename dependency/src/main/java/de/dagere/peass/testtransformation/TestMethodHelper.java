@@ -59,7 +59,7 @@ public class TestMethodHelper {
       performanceTestAnnotation.addPair("timeout", "" + config.getExecutionConfig().getTimeout());
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
       performanceTestAnnotation.addPair("redirectToNull", "" + config.getExecutionConfig().isRedirectToNull());
-      performanceTestAnnotation.addPair("showStart", "" + config.isShowStart());
+      performanceTestAnnotation.addPair("showStart", "" + config.getExecutionConfig().isShowStart());
       if (config.getKiekerConfig().getKiekerWaitTime() != KiekerConfig.DEFAULT_KIEKER_WAIT_TIME) {
          performanceTestAnnotation.addPair("kiekerWaitTime", "" + config.getKiekerConfig().getKiekerWaitTime());
       }

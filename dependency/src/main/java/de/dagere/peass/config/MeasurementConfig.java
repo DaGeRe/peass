@@ -80,7 +80,6 @@ public class MeasurementConfig implements Serializable {
       setRepetitions(mixin.getRepetitions());
       setUseGC(mixin.isUseGC());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
-      setShowStart(mixin.isShowStart());
       this.directlyMeasureKieker = mixin.isDirectlyMeasureKieker();
 
       saveAll = !mixin.isSaveNothing();
@@ -278,14 +277,6 @@ public class MeasurementConfig implements Serializable {
       final int aggregationfactor = this.getKiekerConfig().isUseAggregation() ? this.getRepetitions() : 1;
       final int warmup = this.getWarmup() * this.getRepetitions() / aggregationfactor;
       return warmup;
-   }
-
-   public boolean isShowStart() {
-      return executionConfig.isShowStart();
-   }
-
-   public void setShowStart(final boolean showStart) {
-      executionConfig.setShowStart(showStart);
    }
 
    @JsonInclude(JsonInclude.Include.NON_DEFAULT)

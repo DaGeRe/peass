@@ -59,8 +59,8 @@ public class RunCommandWriter {
             + "-measurementStrategy " + config.getMeasurementStrategy() + " "
             + (config.getExecutionConfig().isExcludeLog4jToSlf4j() ? "-excludeLog4jToSlf4j " : "")
             + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")
-            + (config.getExecutionConfig().isShowStart() ? "-showStart" : "")
-            + (!config.getExecutionConfig().isRedirectToNull() ? "-dontRedirectToNull" : "")
+            + (config.getExecutionConfig().isShowStart() ? "-showStart " : "")
+            + (!config.getExecutionConfig().isRedirectToNull() ? "-dontRedirectToNull " : "")
             + "-commit " + commit + " "
             + "-executionfile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + "-folder " + DEFAULT_PROJECT_FOLDER_LOCATION + name + "/ "

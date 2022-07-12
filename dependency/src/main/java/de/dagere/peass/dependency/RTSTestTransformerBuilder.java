@@ -19,7 +19,7 @@ public class RTSTestTransformerBuilder {
       fakeConfig.getKiekerConfig().setUseAggregation(false);
       fakeConfig.getExecutionConfig().setRedirectToNull(false);
       fakeConfig.getKiekerConfig().setRecord(AllowedKiekerRecord.OPERATIONEXECUTION);
-      fakeConfig.setShowStart(true);
+      fakeConfig.getExecutionConfig().setShowStart(true);
 
       TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, executionConfig, fakeConfig);
       return testTransformer;
