@@ -110,7 +110,7 @@ public class AnalyseFullData extends DataAnalyser {
             teststatistic.getConfidenceResult(), tRelation, mean,
             diffPercent, teststatistic.getTValue(),
             teststatistic.getCurrentStatistic().getN());
-      projectChanges.setVersionCount(versions.size());
+      projectChanges.setCommitCount(versions.size());
       projectChanges.setTestcaseCount(testcases);
 
       LOG.info("Version: {} vs {} Klasse: {}#{}", version, entry.getValue().getPreviousCommit(), measurementEntry.getTestClass(),

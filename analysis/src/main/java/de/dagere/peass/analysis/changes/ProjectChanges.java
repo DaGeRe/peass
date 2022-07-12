@@ -31,7 +31,7 @@ public class ProjectChanges implements Serializable {
    private static final Logger LOG = LogManager.getLogger(ProjectChanges.class);
 
    // Metadata for analysis
-   private int versionCount;
+   private int commitCount;
    private int changeCount;
    private int testcaseCount;
    private StatisticsConfig statisticsConfig;
@@ -52,12 +52,12 @@ public class ProjectChanges implements Serializable {
       this.statisticsConfig = statisticsConfig;
    }
 
-   public int getVersionCount() {
-      return versionCount;
+   public int getCommitCount() {
+      return commitCount;
    }
 
-   public void setVersionCount(final int versions) {
-      this.versionCount = versions;
+   public void setCommitCount(final int commits) {
+      this.commitCount = commits;
    }
 
    public int getChangeCount() {

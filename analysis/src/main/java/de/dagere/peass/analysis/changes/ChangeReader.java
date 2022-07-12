@@ -111,7 +111,7 @@ public class ChangeReader {
       readFile(measurementFolder, changes, info);
 
       changes.setTestcaseCount(measurements);
-      changes.setVersionCount(info.getStatistics().size());
+      changes.setCommitCount(info.getStatistics().size());
       writeResults(measurementFolder, changes, info);
       System.out.println("Measurements: " + folderMeasurements + " Tests: " + testcases + " (last read: " + measurementFolder + ")");
       return changes;
