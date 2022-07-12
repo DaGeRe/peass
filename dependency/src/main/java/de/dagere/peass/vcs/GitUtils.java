@@ -115,6 +115,11 @@ public final class GitUtils {
       final ProcessBuilder builder = new ProcessBuilder("git", "clone", "file://" + clonedProject, goalFolder);
       builder.directory(projectFolderDest.getParentFile());
       StreamGobbler.showFullProcess(builder.start());
+
+      if (gitCryptKey != null) {
+         unlockWithGitCrypt(projectFolderDest, gitCryptKey);
+      }
+
    }
 
    /**
@@ -513,6 +518,7 @@ public final class GitUtils {
    }
 
    protected static void unlockWithGitCrypt(final File projectFolder, final String gitCryptKey) {
+      LOG.debug("GIT_CRYPT_KEY is set, unlocking repo.");
       final ProcessBuilder processBuilder = new ProcessBuilder("git-crypt", "unlock", gitCryptKey);
       try {
          if (processBuilder.directory(projectFolder).start().waitFor() != 0) {
