@@ -47,7 +47,10 @@ public class CreateScriptStarter implements Callable<Void> {
    protected Boolean useSlurm = false;
    
    @Mixin
-   MeasurementConfigurationMixin measurementConfig;
+   MeasurementConfigurationMixin measurementConfigMixin;
+   
+   @Mixin
+   ExecutionConfigMixin executionConfigMixin;
 
    private StaticTestSelection dependencies;
    private ExecutionData executionData;
@@ -71,7 +74,7 @@ public class CreateScriptStarter implements Callable<Void> {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
       }
 
-      MeasurementConfig config = new MeasurementConfig(measurementConfig, new ExecutionConfigMixin(), new StatisticsConfigMixin(), new KiekerConfigMixin());
+      MeasurementConfig config = new MeasurementConfig(measurementConfigMixin, executionConfigMixin, new StatisticsConfigMixin(), new KiekerConfigMixin());
       
       PrintStream destination = System.out;
       RunCommandWriter writer;
