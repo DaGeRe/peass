@@ -11,7 +11,7 @@ public class ExecutionConfigMixin {
    public final static String TEST_FOLDERS_DEFAULT = ExecutionConfig.SRC_TEST_JAVA + ":" + ExecutionConfig.SRC_TEST + ":" + ExecutionConfig.SRC_ANDROID_TEST_JAVA;
 
    @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
-   protected int timeout = 5;
+   protected long timeout = 5;
 
    @Option(names = { "-includes",
          "--includes" }, split = ";", description = "Testcases for inclusion (default: empty, includes all tests). Example: \"my.package.Clazz#myMethod;my.otherpackage.ClazzB#*\"")
@@ -95,11 +95,11 @@ public class ExecutionConfigMixin {
    @Option(names = { "-properties", "--properties" }, description = "Sets the properties that should be passed to the test (e.g. \"-Dmy.var=5\")")
    public String properties;
 
-   public int getTimeout() {
+   public long getTimeout() {
       return timeout;
    }
 
-   public void setTimeout(final int timeout) {
+   public void setTimeout(final long timeout) {
       this.timeout = timeout;
    }
 

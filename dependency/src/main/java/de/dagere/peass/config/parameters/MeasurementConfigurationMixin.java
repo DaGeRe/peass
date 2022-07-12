@@ -9,7 +9,7 @@ public class MeasurementConfigurationMixin {
    public static final int DEFAULT_ITERATIONS = 5;
    public static final int DEFAULT_WARMUP = 5;
    public static final int DEFAULT_REPETITIONS = 1000000;
-   public static final int DEFAULT_TIMEOUT = 5;
+   public static final long DEFAULT_TIMEOUT = 5L;
 
    @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
    int vms = DEFAULT_VMS;
@@ -25,7 +25,7 @@ public class MeasurementConfigurationMixin {
 
    @Option(names = { "-processTimeout",
          "--processTimeout" }, description = "Timeout that the overall measurement process has - if one VM measurement takes so long that this timeout will be hit, the overall process is stopped (only recommended for calibration runs)")
-   protected int processTimeout = DEFAULT_TIMEOUT;
+   protected long processTimeout = DEFAULT_TIMEOUT;
 
    @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
    int duration = 0;
