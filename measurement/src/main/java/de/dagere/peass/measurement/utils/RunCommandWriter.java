@@ -9,6 +9,8 @@ import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.folders.ResultsFolders;
 
 public class RunCommandWriter {
+   public static final String DEFAULT_PROJECT_FOLDER_LOCATION = "../projects/";
+   
    protected final PrintStream goal;
    protected final String experimentId;
    // final Dependencies dependencies;
@@ -59,7 +61,7 @@ public class RunCommandWriter {
             + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")
             + "-commit " + commit + " "
             + "-executionfile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
-            + "-folder ../projekte/" + name + "/ "
+            + "-folder " + DEFAULT_PROJECT_FOLDER_LOCATION + name + "/ "
             + " &> measurement_" + commit.substring(0, 6) + "_" + testcaseName
             + ".txt");
    }
