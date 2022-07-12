@@ -100,13 +100,13 @@ public final class GitUtils {
       return comparator;
    }
 
-   public static void clone(final PeassFolders folders, final File projectFolderTemp) throws InterruptedException, IOException {
+   public static void clone(final PeassFolders folders, final File projectFolderTemp, final String gitCryptKey) throws InterruptedException, IOException {
       // TODO Branches klonen
       final File projectFolder = folders.getProjectFolder();
-      clone(projectFolderTemp, projectFolder);
+      clone(projectFolderTemp, projectFolder, gitCryptKey);
    }
 
-   private static void clone(final File projectFolderDest, final File projectFolderSource) throws InterruptedException, IOException {
+   private static void clone(final File projectFolderDest, final File projectFolderSource, final String gitCryptKey) throws InterruptedException, IOException {
       final String clonedProject = projectFolderSource.getAbsolutePath();
       final String goalFolder = projectFolderDest.getName();
       if (projectFolderDest.exists()) {

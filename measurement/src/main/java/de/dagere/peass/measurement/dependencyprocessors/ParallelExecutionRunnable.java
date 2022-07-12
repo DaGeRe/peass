@@ -19,14 +19,14 @@ public class ParallelExecutionRunnable implements Runnable {
    private final PeassFolders temporaryFolders;
 
    public ParallelExecutionRunnable(final ResultOrganizerParallel organizer, final String version, final TestCase testcase, final int vmid, final File logFolder,
-         final DependencyTester tester) throws IOException {
+         final DependencyTester tester, final String gitCryptKey) throws IOException {
       this.organizer = organizer;
       this.version = version;
       this.testcase = testcase;
       this.vmid = vmid;
       this.logFolder = logFolder;
       this.tester = tester;
-      temporaryFolders = cloneProjectFolder();
+      temporaryFolders = cloneProjectFolder(gitCryptKey);
    }
 
    @Override
@@ -36,8 +36,8 @@ public class ParallelExecutionRunnable implements Runnable {
       runner.runOnce(testcase, version, vmid, logFolder);
    }
 
-   private PeassFolders cloneProjectFolder() throws IOException {
-      PeassFolders temporaryFolders = tester.getFolders().getTempFolder("parallel_" + version);
+   private PeassFolders cloneProjectFolder(final String gitCryptKey) throws IOException {
+      PeassFolders temporaryFolders = tester.getFolders().getTempFolder("parallel_" + version, gitCryptKey);
       organizer.addCommitFolders(version, temporaryFolders);
       return temporaryFolders;
    }

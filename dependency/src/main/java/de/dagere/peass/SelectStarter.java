@@ -98,7 +98,7 @@ public class SelectStarter implements Callable<Void>{
       
       if (!config.isDoNotGenerateProperties()) {
          ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
-         PeassFolders propertyFolder = folders.getTempFolder("propertyReadFolder");
+         PeassFolders propertyFolder = folders.getTempFolder("propertyReadFolder", executionConfigMixin.getGitCryptKey());
          final PropertyReader propertyReader = new PropertyReader(resultsFolders, propertyFolder.getProjectFolder(), executionData, executionConfig);
          propertyReader.readAllTestsProperties();
          FileUtils.forceDelete(propertyFolder.getProjectFolder());

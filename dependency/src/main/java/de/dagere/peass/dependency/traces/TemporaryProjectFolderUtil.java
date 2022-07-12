@@ -16,7 +16,7 @@ public class TemporaryProjectFolderUtil {
 
    private static final Logger LOG = LogManager.getLogger(TemporaryProjectFolderUtil.class);
 
-   public static PeassFolders cloneForcefully(final PeassFolders originalFolders, final File dest, final VMExecutionLogFolders logFolders) {
+   public static PeassFolders cloneForcefully(final PeassFolders originalFolders, final File dest, final VMExecutionLogFolders logFolders, final String gitCryptKey) {
       try {
          if (dest.exists()) {
             LOG.warn("Deleting existing folder {}", dest);
@@ -28,7 +28,7 @@ public class TemporaryProjectFolderUtil {
                FileUtils.deleteDirectory(peassFolder);
             }
          }
-         GitUtils.clone(originalFolders, dest);
+         GitUtils.clone(originalFolders, dest, gitCryptKey);
          final PeassFolders folders = new TempPeassFolders(dest, originalFolders.getProjectName(), logFolders);
          return folders;
       } catch (IOException | InterruptedException e) {

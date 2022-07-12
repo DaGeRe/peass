@@ -48,10 +48,9 @@ public class RCALevelContinueStarter implements Callable<Void> {
       if (resultFile != null && resultFileFull != null) {
          final CauseSearchData data = Constants.OBJECTMAPPER.readValue(resultFile, CauseSearchData.class);
          final CauseSearchData dataFull = Constants.OBJECTMAPPER.readValue(resultFileFull, CauseSearchData.class);
-         
-         final CauseSearchFolders alternateFolders = createAlternateFolders(folders);
 
          MeasurementConfig measurementConfig = data.getMeasurementConfig();
+         final CauseSearchFolders alternateFolders = createAlternateFolders(folders, measurementConfig.getExecutionConfig().getGitCryptKey());
          final BothTreeReader reader = new BothTreeReader(data.getCauseConfig(), measurementConfig, folders, new EnvironmentVariables(measurementConfig.getExecutionConfig().getProperties()));
          reader.readCachedTrees();
          
@@ -75,9 +74,9 @@ public class RCALevelContinueStarter implements Callable<Void> {
       return null;
    }
 
-   private CauseSearchFolders createAlternateFolders(final CauseSearchFolders folders) throws InterruptedException, IOException {
+   private CauseSearchFolders createAlternateFolders(final CauseSearchFolders folders, final String gitCryptKey) throws InterruptedException, IOException {
       final File nowFolder = new File(folders.getTempProjectFolder(), "continue");
-      GitUtils.clone(folders, nowFolder);
+      GitUtils.clone(folders, nowFolder, gitCryptKey);
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(nowFolder);
       return alternateFolders;
    }

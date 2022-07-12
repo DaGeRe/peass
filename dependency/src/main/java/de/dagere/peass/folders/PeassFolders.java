@@ -2,7 +2,6 @@ package de.dagere.peass.folders;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -294,9 +293,9 @@ public class PeassFolders {
       return debugFolder;
    }
 
-   public PeassFolders getTempFolder(final String name) {
+   public PeassFolders getTempFolder(final String name, final String gitCryptKey) {
       final File nowFolder = new File(getTempProjectFolder(), name);
-      PeassFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder, logFolders);
+      PeassFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder, logFolders, gitCryptKey);
       return folders;
    }
 
