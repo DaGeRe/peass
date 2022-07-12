@@ -85,6 +85,10 @@ public class ExecutionConfigMixin {
          "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
    protected boolean dontRedirectToNull = false;
 
+   @Option(names = { "-showStart",
+         "--showStart" }, description = "Activates showing start and end of a KoPeMe method execution (default false, and always activated for regression test selection)")
+   protected boolean showStart = false;
+
    @Option(names = { "-onlyMeasureWorkload", "--onlyMeasureWorkload" }, description = "Only measure workload (no @Before/@After)")
    protected boolean onlyMeasureWorkload = false;
 
@@ -350,6 +354,7 @@ public class ExecutionConfigMixin {
       config.setExcludeLog4jSlf4jImpl(excludeLog4jSlf4jImpl);
       config.setExcludeLog4jToSlf4j(excludeLog4jToSlf4j);
       config.setRedirectToNull(!dontRedirectToNull);
+      config.setShowStart(showStart);
       config.setOnlyMeasureWorkload(onlyMeasureWorkload);
 
       if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
