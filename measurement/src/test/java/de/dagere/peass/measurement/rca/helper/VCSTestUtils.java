@@ -58,7 +58,7 @@ public class VCSTestUtils {
    }
 
    public static void mockClone(final MockedStatic<GitUtils> mockedGitUtils, final File projectFolderTemp, final File clonedDir) throws InterruptedException, IOException {
-      mockedGitUtils.when(() -> GitUtils.clone(Mockito.any(PeassFolders.class), Mockito.any(File.class), null))
+      mockedGitUtils.when(() -> GitUtils.clone(Mockito.any(PeassFolders.class), Mockito.any(File.class), Mockito.any(String.class)))
             .thenAnswer(new Answer<Void>() {
 
                @Override
