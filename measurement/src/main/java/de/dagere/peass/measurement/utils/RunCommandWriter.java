@@ -58,7 +58,7 @@ public class RunCommandWriter {
             + (config.getExecutionConfig().isExcludeLog4jToSlf4j() ? "-excludeLog4jToSlf4j " : "")
             + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")
             + "-commit " + commit + " "
-            + "-executionfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
+            + "-executionfile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + "-folder ../projekte/" + name + "/ "
             + " &> measurement_" + commit.substring(0, 6) + "_" + testcaseName
             + ".txt");
