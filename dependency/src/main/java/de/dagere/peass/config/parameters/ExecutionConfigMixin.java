@@ -11,7 +11,7 @@ public class ExecutionConfigMixin {
    public final static String TEST_FOLDERS_DEFAULT = ExecutionConfig.SRC_TEST_JAVA + ":" + ExecutionConfig.SRC_TEST + ":" + ExecutionConfig.SRC_ANDROID_TEST_JAVA;
 
    @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
-   protected long timeout = 5;
+   protected long timeout = 5L;
 
    @Option(names = { "-includes",
          "--includes" }, split = ";", description = "Testcases for inclusion (default: empty, includes all tests). Example: \"my.package.Clazz#myMethod;my.otherpackage.ClazzB#*\"")
