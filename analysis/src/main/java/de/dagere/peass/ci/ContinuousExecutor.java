@@ -33,8 +33,8 @@ public class ContinuousExecutor {
    private final MeasurementConfig measurementConfig;
    private final TestSelectionConfig dependencyConfig;
 
-   private final String version;
-   private final String versionOld;
+   private final String commit;
+   private final String commitOld;
    private final CommitIteratorGit iterator;
    private final CommitComparatorInstance comparator;
 
@@ -69,11 +69,11 @@ public class ContinuousExecutor {
 
       DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getFixedCommitConfig(), dependencies, folders);
       iterator = iteratorBuiler.getIterator();
-      version = iteratorBuiler.getVersion();
-      versionOld = iteratorBuiler.getVersionOld();
-      measurementConfig.getFixedCommitConfig().setCommit(version);
-      measurementConfig.getFixedCommitConfig().setCommitOld(versionOld);
-      LOG.debug("Version: {} VersionOld: {}", version, versionOld);
+      commit = iteratorBuiler.getCommit();
+      commitOld = iteratorBuiler.getCommitOld();
+      measurementConfig.getFixedCommitConfig().setCommit(commit);
+      measurementConfig.getFixedCommitConfig().setCommitOld(commitOld);
+      LOG.debug("Commit: {} Predecessor Commit: {}", commit, commitOld);
 
       List<String> commits = GitUtils.getCommits(projectFolderLocal, false, true);
       comparator = new CommitComparatorInstance(commits);
@@ -118,18 +118,18 @@ public class ContinuousExecutor {
    protected RTSResult executeRegressionTestSelection(final String url) {
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), measurementConfig.getKiekerConfig(),
             folders, resultsFolders, env);
-      final RTSResult tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
-      tests.setVersionOld(versionOld);
+      final RTSResult tests = dependencyReader.getTests(iterator, url, commit, measurementConfig);
+      tests.setVersionOld(commitOld);
 
-      SourceReader sourceReader = new SourceReader(measurementConfig.getExecutionConfig(), version, versionOld, resultsFolders, folders);
+      SourceReader sourceReader = new SourceReader(measurementConfig.getExecutionConfig(), commit, commitOld, resultsFolders, folders);
       sourceReader.readMethodSources(tests.getTests());
 
       return tests;
    }
 
    protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, XmlPullParserException {
-      final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(version, versionOld);
-      File logFile = resultsFolders.getMeasurementLogFile(version, versionOld);
+      final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(commit, commitOld);
+      File logFile = resultsFolders.getMeasurementLogFile(commit, commitOld);
       final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(folders, measurementConfig, env, comparator);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion, logFile);
       return measurementFolder;
@@ -143,7 +143,7 @@ public class ContinuousExecutor {
    }
 
    public String getLatestVersion() {
-      return version;
+      return commit;
    }
 
    public PeassFolders getFolders() {
@@ -151,8 +151,8 @@ public class ContinuousExecutor {
    }
 
    public String getVersionOld() {
-      LOG.debug("Version old: {}", versionOld);
-      return versionOld;
+      LOG.debug("Version old: {}", commitOld);
+      return commitOld;
    }
 
    public File getProjectFolder() {

@@ -48,16 +48,16 @@ public class KoPeMeTreeConverter {
       this(folders.getDetailResultFolder(), version, testcase);
    }
 
-   public KoPeMeTreeConverter(final File detailResultFolder, final String version, final TestCase testcase) {
-      File versionFolder = new File(detailResultFolder, testcase.getClazz() + File.separator + version);
-      if (versionFolder.exists()) {
+   public KoPeMeTreeConverter(final File detailResultFolder, final String commit, final TestCase testcase) {
+      File commitFolder = new File(detailResultFolder, testcase.getClazz() + File.separator + commit);
+      if (commitFolder.exists()) {
          node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
          node.setVmValues(new MeasuredValues());
          node.setVmValuesPredecessor(new MeasuredValues());
-         for (File measuredVersionFolder : versionFolder.listFiles()) {
+         for (File measuredVersionFolder : commitFolder.listFiles()) {
             for (File kopemeFile : measuredVersionFolder.listFiles((FileFilter) new OrFileFilter(new WildcardFileFilter(testcase.getMethod() + "*.json"),
                   new WildcardFileFilter(testcase.getMethod() + "*.xml")))) {
-               readFile(version, testcase, measuredVersionFolder.getName(), kopemeFile);
+               readFile(commit, testcase, measuredVersionFolder.getName(), kopemeFile);
             }
          }
          final TestcaseStatistic overallStatistic = new TestcaseStatistic(statisticsOld, statisticsCurrent, callsOld, calls);

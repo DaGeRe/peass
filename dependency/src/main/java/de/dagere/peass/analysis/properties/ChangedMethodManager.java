@@ -48,7 +48,7 @@ public class ChangedMethodManager {
       final String methodString = methodFilename + "_" + methodEntity.getParametersPrintable();
       String filename = methodString + "_" + modifier + ".txt";
 
-      if (filename.length() > 255) {
+      if (filename.length() > 128) {
          File mappingFile = new File(clazzFolder, "mapping.txt");
          File resultFile = readInMappingFile(clazzFolder, methodString, mappingFile, modifier);
          if (resultFile != null) {

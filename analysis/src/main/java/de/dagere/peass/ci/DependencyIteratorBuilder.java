@@ -24,70 +24,61 @@ public class DependencyIteratorBuilder {
 
    private static final Logger LOG = LogManager.getLogger(DependencyIteratorBuilder.class);
 
-   private final String version, versionOld;
+   private final String commit, commitOld;
    private final CommitIteratorGit iterator;
 
    public DependencyIteratorBuilder(final FixedCommitConfig executionConfig, final StaticTestSelection dependencies, final PeassFolders folders) {
-      version = GitUtils.getName(executionConfig.getCommit() != null ? executionConfig.getCommit() : "HEAD", folders.getProjectFolder());
+      commit = GitUtils.getName(executionConfig.getCommit() != null ? executionConfig.getCommit() : "HEAD", folders.getProjectFolder());
 
-      String newestAnalyzedVersionName = dependencies != null ? dependencies.getNewestCommit() : null;
+      String newestAnalyzedCommitName = dependencies != null ? dependencies.getNewestCommit() : null;
 
-      String oldVersionCommit = getOldVersionCommit(executionConfig, newestAnalyzedVersionName, folders);
+      String oldCommit = getOldCommit(executionConfig, newestAnalyzedCommitName, folders, dependencies);
 
-      if (version.equals(newestAnalyzedVersionName)) {
-         LOG.info("Version {} is equal to newest version, not executing RTS", version);
+      if (commit.equals(newestAnalyzedCommitName)) {
+         LOG.info("Commit {} is equal to newest commit, not executing RTS", commit);
          iterator = null;
-         versionOld = getPrePredecessor(dependencies);
-      } else if (oldVersionCommit.equals(version)) {
-         LOG.error("Version {} is equal to predecessing version {}, some error occured - not executing RTS", version, oldVersionCommit);
+         commitOld = dependencies.getCommits().get(newestAnalyzedCommitName).getPredecessor();
+      } else if (oldCommit.equals(commit)) {
+         LOG.error("Commit {} is equal to predecessing commit {}, some error occured - not executing RTS", commit, oldCommit);
          iterator = null;
-         versionOld = dependencies.getNewestRunningCommit();
+         commitOld = dependencies.getNewestRunningCommit();
       } else {
-         if (dependencies != null && 
-               dependencies.getCommits().get(newestAnalyzedVersionName) != null && 
-               !dependencies.getCommits().get(newestAnalyzedVersionName).isRunning()) {
-            versionOld = newestAnalyzedVersionName;
+         if (dependencies != null &&
+               dependencies.getCommits().get(newestAnalyzedCommitName) != null &&
+               !dependencies.getCommits().get(newestAnalyzedCommitName).isRunning()) {
+            commitOld = newestAnalyzedCommitName;
             iterator = null;
          } else {
-            GitCommit currentCommit = new GitCommit(version, "", "", "");
+            GitCommit currentCommit = new GitCommit(commit, "", "", "");
             List<String> commits = new LinkedList<>();
-            commits.add(oldVersionCommit);
-            commits.add(version);
-            LOG.info("Analyzing {} - {}", oldVersionCommit, currentCommit);
-            iterator = new CommitIteratorGit(folders.getProjectFolder(), commits, oldVersionCommit);
-            versionOld = oldVersionCommit;
+            commits.add(oldCommit);
+            commits.add(commit);
+            LOG.info("Analyzing {} - {}", oldCommit, currentCommit);
+            iterator = new CommitIteratorGit(folders.getProjectFolder(), commits, oldCommit);
+            commitOld = oldCommit;
          }
       }
    }
 
-   private String getPrePredecessor(final StaticTestSelection dependencies) {
-      String[] versionNames = dependencies.getCommitNames();
-      if (versionNames.length > 1) {
-         String prePredecessor = versionNames[versionNames.length - 2];
-         return prePredecessor;
-      } else {
-         return null;
-      }
-   }
-
-   private static String getOldVersionCommit(final FixedCommitConfig executionConfig, final String newestRunningVersionName, final PeassFolders folders) {
-      String oldVersion;
+   private static String getOldCommit(final FixedCommitConfig executionConfig, final String newestRunningCommitName, final PeassFolders folders,
+         StaticTestSelection staticSelection) {
+      String oldCommit;
       if (executionConfig.getCommitOld() != null) {
-         oldVersion = executionConfig.getCommitOld();
-      } else if (newestRunningVersionName != null) {
-         oldVersion = newestRunningVersionName;
+         oldCommit = executionConfig.getCommitOld();
+      } else if (newestRunningCommitName != null) {
+         oldCommit = newestRunningCommitName;
       } else {
-         oldVersion = GitUtils.getName("HEAD~1", folders.getProjectFolder());
+         oldCommit = GitUtils.getName("HEAD~1", folders.getProjectFolder());
       }
-      return oldVersion;
+      return oldCommit;
    }
 
-   public String getVersion() {
-      return version;
+   public String getCommit() {
+      return commit;
    }
 
-   public String getVersionOld() {
-      return versionOld;
+   public String getCommitOld() {
+      return commitOld;
    }
 
    public CommitIteratorGit getIterator() {
