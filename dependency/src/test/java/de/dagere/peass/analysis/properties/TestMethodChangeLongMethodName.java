@@ -123,7 +123,7 @@ public class TestMethodChangeLongMethodName {
       MatcherAssert.assertThat(initContent, Matchers.containsString("This is too long for regular serialization"));
       
       File expectedMethodMainFile = changedMethodManager.getMethodMainFile(COMMIT, longEntity);
-      Assert.assertEquals("method_0_main.txt", expectedMethodMainFile.getName());
+      Assert.assertEquals("method_1_main.txt", expectedMethodMainFile.getName());
    }
    
    private void checkOtherTooLongMethod(final File methodSourceFolder, final ChangedEntity longEntity) throws IOException {

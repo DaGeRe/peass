@@ -62,14 +62,14 @@ public class HTMLWriter {
    private File getOutputHTML(final CauseSearchData data) {
       final File output;
       TestCase testcaseObject = data.getCauseConfig().getTestCase();
-      final String testcaseName = testcaseObject.getTestclazzWithModuleName() + ChangedEntity.METHOD_SEPARATOR + testcaseObject.getMethodWithParams();
+      String relativePath = testcaseObject.getTestclazzWithModuleName() + File.separator + testcaseObject.getMethodWithParams() + ".html";
       if (destFolder.getName().equals(data.getMeasurementConfig().getFixedCommitConfig().getCommit())) {
-         output = new File(destFolder, testcaseName.replace('#', '_') + ".html");
+         output = new File(destFolder, relativePath);
          copyResources(destFolder);
       } else {
          File versionFolder = new File(destFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
          copyResources(versionFolder);
-         output = new File(versionFolder, testcaseName.replace('#', '_') + ".html");
+         output = new File(versionFolder, relativePath);
       }
       output.getParentFile().mkdirs();
       return output;
