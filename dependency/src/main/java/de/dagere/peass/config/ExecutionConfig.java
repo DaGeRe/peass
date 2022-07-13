@@ -64,7 +64,7 @@ public class ExecutionConfig implements Serializable {
 
    private String testTransformer = DEFAULT_TEST_TRANSFORMER;
    private String testExecutor = DEFAULT_TEST_EXECUTOR;
-   private String gitCryptKey = System.getenv("GIT_CRYPT_KEY");
+   private String gitCryptKey;
 
    private String properties;
 
