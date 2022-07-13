@@ -517,7 +517,7 @@ public final class GitUtils {
       return 0;
    }
 
-   protected static void unlockWithGitCrypt(final File projectFolder, final String gitCryptKey) {
+   public static void unlockWithGitCrypt(final File projectFolder, final String gitCryptKey) {
       LOG.debug("GIT_CRYPT_KEY is set, unlocking repo.");
       final ProcessBuilder processBuilder = new ProcessBuilder("git-crypt", "unlock", gitCryptKey);
       try {
