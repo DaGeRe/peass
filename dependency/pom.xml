@@ -95,7 +95,7 @@
     <dependency>
       <groupId>de.dagere.kieker</groupId>
       <artifactId>kieker-source-instrumentation-library</artifactId>
-      <version>1.15.13</version>
+      <version>1.15.14-SNAPSHOT</version>
     </dependency>
 
     <dependency>
