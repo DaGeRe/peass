@@ -3,7 +3,6 @@ package de.dagere.peass.dependency.execution.gradle;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +20,7 @@ public class TestGradleBuildfileVisitor {
    public void testWithPlugins() throws IOException {
       File withApplyPlugins = new File(GRADLE_FOLDER, "with-apply.gradle");
       File buildfile = GradleTestUtil.initProject(withApplyPlugins);
-      
-//      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
+
       GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), new EnvironmentVariables());
       Assert.assertTrue(executor.isUseJava());
    }
@@ -57,8 +55,7 @@ public class TestGradleBuildfileVisitor {
    @Test
    public void testExcludeJUnit4() throws IOException {
       File withApplyPlugins = new File(GRADLE_FOLDER, "build_exclude_JUnit4.gradle");
-      File buildfile = new File("target/build.gradle");
-      FileUtils.copyFile(withApplyPlugins, buildfile);
+      File buildfile = GradleTestUtil.initProject(withApplyPlugins);
       
       GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
       Assert.assertEquals(9, visitor.getExcludeLines().get(0).intValue());
@@ -67,8 +64,7 @@ public class TestGradleBuildfileVisitor {
    @Test
    public void testExcludeJUnit5() throws IOException {
       File withApplyPlugins = new File(GRADLE_FOLDER, "build_exclude_JUnit5.gradle");
-      File buildfile = new File("target/build.gradle");
-      FileUtils.copyFile(withApplyPlugins, buildfile);
+      File buildfile = GradleTestUtil.initProject(withApplyPlugins);
       
       GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
       Assert.assertEquals(9, visitor.getExcludeLines().get(0).intValue());
