@@ -90,7 +90,7 @@ public class DependencyParallelReader {
       for (int outfileIndex = 0; outfileIndex < outFolders.length; outfileIndex++) {
          final int readableIndex = outfileIndex + 1;
          outFolders[outfileIndex] = new ResultsFolders(new File(tempResultFolder, "temp_" + project + "_" + readableIndex), project);
-         PeassFolders foldersTemp = folders.getTempFolder("" + readableIndex);
+         PeassFolders foldersTemp = folders.getTempFolder("" + readableIndex, executionConfig.getGitCryptKey());
          final ResultsFolders currentOutFile = outFolders[outfileIndex];
          startPartProcess(currentOutFile, service, outfileIndex, foldersTemp);
       }

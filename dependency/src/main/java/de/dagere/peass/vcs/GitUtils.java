@@ -100,13 +100,13 @@ public final class GitUtils {
       return comparator;
    }
 
-   public static void clone(final PeassFolders folders, final File projectFolderTemp) throws InterruptedException, IOException {
+   public static void clone(final PeassFolders folders, final File projectFolderTemp, final String gitCryptKey) throws InterruptedException, IOException {
       // TODO Branches klonen
       final File projectFolder = folders.getProjectFolder();
-      clone(projectFolderTemp, projectFolder);
+      clone(projectFolderTemp, projectFolder, gitCryptKey);
    }
 
-   private static void clone(final File projectFolderDest, final File projectFolderSource) throws InterruptedException, IOException {
+   private static void clone(final File projectFolderDest, final File projectFolderSource, final String gitCryptKey) throws InterruptedException, IOException {
       final String clonedProject = projectFolderSource.getAbsolutePath();
       final String goalFolder = projectFolderDest.getName();
       if (projectFolderDest.exists()) {
@@ -115,6 +115,11 @@ public final class GitUtils {
       final ProcessBuilder builder = new ProcessBuilder("git", "clone", "file://" + clonedProject, goalFolder);
       builder.directory(projectFolderDest.getParentFile());
       StreamGobbler.showFullProcess(builder.start());
+
+      if (gitCryptKey != null) {
+         unlockWithGitCrypt(projectFolderDest, gitCryptKey);
+      }
+
    }
 
    /**
@@ -510,5 +515,39 @@ public final class GitUtils {
          e.printStackTrace();
       }
       return 0;
+   }
+
+   protected static void unlockWithGitCrypt(final File projectFolder, final String gitCryptKey) {
+      LOG.debug("GIT_CRYPT_KEY is set, unlocking repo.");
+      final ProcessBuilder processBuilder = new ProcessBuilder("git-crypt", "unlock", gitCryptKey);
+      try {
+         if (processBuilder.directory(projectFolder).start().waitFor() != 0) {
+            LOG.error("GitCryptUnlock-Process did not exit with 0!");
+         }
+      } catch (InterruptedException | IOException e) {
+         e.printStackTrace();
+      }
+
+      if (!checkIsUnlockedWithGitCrypt(projectFolder)) {
+         LOG.error("Folder is still locked, something went wrong!");
+         // TODO stop execution?
+      }
+   }
+
+   protected static boolean checkIsUnlockedWithGitCrypt(final File projectFolder) {
+      final ProcessBuilder processBuilder = new ProcessBuilder("git", "config", "--local", "--get", "filter.git-crypt.smudge");
+      processBuilder.directory(projectFolder);
+
+      try {
+         if (StreamGobbler.getFullProcess(processBuilder.start(), false).equals("\"git-crypt\" smudge\n")) {
+            return true;
+         }
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+      /*
+       * Either it is locked, or git-crypt is not used in repo at all
+       */
+      return false;
    }
 }

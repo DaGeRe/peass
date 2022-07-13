@@ -220,7 +220,7 @@ public class DependencyTester implements KiekerResultHandler {
       final ParallelExecutionRunnable[] runnables = new ParallelExecutionRunnable[2];
       for (int i = 0; i < 2; i++) {
          final String version = versions[i];
-         runnables[i] = new ParallelExecutionRunnable(organizer, version, testcase, vmid, logFolder, this);
+         runnables[i] = new ParallelExecutionRunnable(organizer, version, testcase, vmid, logFolder, this, configuration.getExecutionConfig().getGitCryptKey());
       }
       runParallel(runnables);
    }

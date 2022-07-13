@@ -25,6 +25,12 @@ jobs:
         fi
       shell: bash
     - uses: actions/checkout@v2
+    - name: Install git-crypt
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+           sudo apt-get install git-crypt
+        fi
+      shell: bash
     - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v1
       with:
