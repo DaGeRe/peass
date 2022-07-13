@@ -67,20 +67,20 @@ public class ContinuousDependencyReader {
       this.env = env;
    }
 
-   public RTSResult getTests(final CommitIterator iterator, final String url, final String version, final MeasurementConfig measurementConfig) {
+   public RTSResult getTests(final CommitIterator iterator, final String url, final String commit, final MeasurementConfig measurementConfig) {
       final StaticTestSelection dependencies = getDependencies(iterator, url);
 
       RTSResult result;
       final Set<TestCase> tests;
       if (dependencies.getCommits().size() > 0) {
-         CommitStaticSelection versionInfo = dependencies.getCommits().get(version);
-         LOG.debug("Versioninfo for version {}, running was: {}", version, versionInfo != null ? versionInfo.isRunning() : "null");
+         CommitStaticSelection commitStaticSelection = dependencies.getCommits().get(commit);
+         LOG.debug("Commit static selection for commit {}, running was: {}", commit, commitStaticSelection != null ? commitStaticSelection.isRunning() : "null");
          if (dependencyConfig.isGenerateTraces()) {
-            tests = selectResults(version);
-            result = new RTSResult(tests, versionInfo.isRunning());
+            tests = selectResults(commit);
+            result = new RTSResult(tests, commitStaticSelection.isRunning());
          } else {
-            tests = versionInfo.getTests().getTests();
-            result = new RTSResult(tests, versionInfo.isRunning());
+            tests = commitStaticSelection.getTests().getTests();
+            result = new RTSResult(tests, commitStaticSelection.isRunning());
          }
 
          // final Set<TestCase> tests = selectIncludedTests(dependencies);
