@@ -14,7 +14,7 @@ import de.dagere.peass.dependency.persistence.StaticTestSelection;
  * @author reichelt
  *
  */
-public abstract class PairProcessor extends VersionProcessor{
+public abstract class PairProcessor extends CommitProcessor{
 
 	protected final Map<TestCase, String> lastTestcaseCalls = new HashMap<>();
 	

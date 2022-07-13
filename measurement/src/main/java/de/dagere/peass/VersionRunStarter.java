@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
-import de.dagere.peass.dependencyprocessors.VersionProcessor;
+import de.dagere.peass.dependencyprocessors.CommitProcessor;
 import de.dagere.peass.utils.StreamGobbler;
 import de.dagere.peass.vcs.GitUtils;
 import picocli.CommandLine;
@@ -21,7 +21,7 @@ import picocli.CommandLine.Command;
  */
 @Command(description = "Starts running every version just for downloading the dependencies. After all dependencies have been downloaded, most operations can be run locally (as long as the version" + 
       " control system can operate locally).", name = "downloadDependencies")
-public class VersionRunStarter extends VersionProcessor {
+public class VersionRunStarter extends CommitProcessor {
 
    public VersionRunStarter() throws  JsonParseException, JsonMappingException, IOException {
       super();

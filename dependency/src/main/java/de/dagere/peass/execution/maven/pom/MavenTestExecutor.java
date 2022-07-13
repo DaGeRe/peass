@@ -63,7 +63,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       super(folders, testTransformer, env);
    }
 
-   protected Process buildMavenProcess(final File logFile, TestCase test, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
+   protected Process buildMavenProcess(final File logFile, TestCase test, final String... commandLineAddition) throws IOException, InterruptedException {
       final String testGoal = getTestGoal();
       String mvnCall = env.fetchMavenCall();
       final String[] originals = new String[] { mvnCall,
@@ -140,7 +140,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       try {
          final Process process = buildMavenProcess(logFile, test, "-Dtest=" + testname);
          execute(testname, timeout, process);
-      } catch (final InterruptedException | IOException | XmlPullParserException e) {
+      } catch (final InterruptedException | IOException e) {
          e.printStackTrace();
       }
    }

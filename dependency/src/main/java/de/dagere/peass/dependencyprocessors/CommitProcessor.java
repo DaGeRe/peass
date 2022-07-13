@@ -30,9 +30,9 @@ import picocli.CommandLine.Option;
  * @author reichelt
  *
  */
-public abstract class VersionProcessor implements Callable<Void> {
+public abstract class CommitProcessor implements Callable<Void> {
 
-   private static final Logger LOG = LogManager.getLogger(VersionProcessor.class);
+   private static final Logger LOG = LogManager.getLogger(CommitProcessor.class);
 
    @Mixin
    protected ExecutionConfigMixin executionMixin;
@@ -61,7 +61,7 @@ public abstract class VersionProcessor implements Callable<Void> {
    @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile (may be trace based selection or coverage selection file)")
    protected File executionfile;
 
-   public VersionProcessor(final File projectFolder, final StaticTestSelection dependencies) {
+   public CommitProcessor(final File projectFolder, final StaticTestSelection dependencies) {
       this.folders = new PeassFolders(projectFolder);
       this.staticTestSelection = dependencies;
       startcommit = null;
@@ -77,7 +77,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       this.endcommit = endversion;
    }
 
-   public VersionProcessor() {
+   public CommitProcessor() {
       if (executionMixin != null) {
          startcommit = executionMixin.getStartcommit();
          endcommit = executionMixin.getEndcommit();
