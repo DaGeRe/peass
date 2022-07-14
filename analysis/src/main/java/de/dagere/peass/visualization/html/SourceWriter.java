@@ -20,20 +20,20 @@ import de.dagere.peass.visualization.GraphNode;
 
 public class SourceWriter {
    
-   private static final Logger LOG = LogManager.getLogger(ContinuousDependencyReader.class);
+   private static final Logger LOG = LogManager.getLogger(SourceWriter.class);
    
    private final GraphNode root;
    private final BufferedWriter fileWriter;
    private final ChangedMethodManager manager;
    private final Map<String, String> nameSourceCurrent = new HashMap<>();
    private final Map<String, String> nameSourceOld = new HashMap<>();
-   private final String version;
+   private final String commit;
 
-   public SourceWriter(final GraphNode root, final BufferedWriter fileWriter, final File methodSourceFolder, final String version) {
+   public SourceWriter(final GraphNode root, final BufferedWriter fileWriter, final File methodSourceFolder, final String commit) {
       this.root = root;
       this.fileWriter = fileWriter;
       this.manager = new ChangedMethodManager(methodSourceFolder);
-      this.version = version;
+      this.commit = commit;
    }
 
    public void writeSources() throws IOException {
@@ -75,8 +75,8 @@ public class SourceWriter {
 
       final String key = KiekerPatternConverter.getKey(currentPattern);
 
-      final File currentSourceFile = manager.getMethodMainFile(version, methodEntity);
-      final File oldSourceFile = manager.getMethodOldFile(version, methodEntity);
+      final File currentSourceFile = manager.getMethodMainFile(commit, methodEntity);
+      final File oldSourceFile = manager.getMethodOldFile(commit, methodEntity);
       if (currentSourceFile.exists() && oldSourceFile.exists()) {
          node.setHasSourceChange(true);
          final String sourceCurrent = FileUtils.readFileToString(currentSourceFile, Charset.defaultCharset());
@@ -84,7 +84,7 @@ public class SourceWriter {
          final String sourceOld = FileUtils.readFileToString(oldSourceFile, Charset.defaultCharset());
          nameSourceOld.put(key, sourceOld);
       } else {
-         final File diffSourceFile = manager.getMethodDiffFile(version, methodEntity);
+         final File diffSourceFile = manager.getMethodDiffFile(commit, methodEntity);
          if (diffSourceFile.exists()) {
             final String source = FileUtils.readFileToString(diffSourceFile, Charset.defaultCharset());
             nameSourceCurrent.put(key, source);
