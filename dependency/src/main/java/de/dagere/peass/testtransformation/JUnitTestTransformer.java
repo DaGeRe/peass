@@ -462,7 +462,7 @@ public class JUnitTestTransformer implements TestTransformer {
             addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
             addMethod(clazz, "useKieker", "return " + config.getKiekerConfig().isUseKieker() + ";",
                   PrimitiveType.booleanType());
-            addMethod(clazz, "getMaximalTime", "return " + config.getExecutionConfig().getTimeout() + ";",
+            addMethod(clazz, "getMaximalTime", "return " + config.getExecutionConfig().getTimeout() + "l;",
                   PrimitiveType.longType());
             addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
             addMethod(clazz, "redirectToNull", "return " + config.getExecutionConfig().isRedirectToNull() + ";",
