@@ -56,7 +56,7 @@ public class TestMethodHelper {
       performanceTestAnnotation.addPair("executeBeforeClassInMeasurement", "" + config.getExecutionConfig().isExecuteBeforeClassInMeasurement());
       performanceTestAnnotation.addPair("logFullData", "" + true);
       performanceTestAnnotation.addPair("useKieker", "" + config.getKiekerConfig().isUseKieker());
-      performanceTestAnnotation.addPair("timeout", "" + config.getExecutionConfig().getTimeout());
+      performanceTestAnnotation.addPair("timeout", "" + config.getExecutionConfig().getTimeout() + "l");
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
       performanceTestAnnotation.addPair("redirectToNull", "" + config.getExecutionConfig().isRedirectToNull());
       performanceTestAnnotation.addPair("showStart", "" + config.getExecutionConfig().isShowStart());
