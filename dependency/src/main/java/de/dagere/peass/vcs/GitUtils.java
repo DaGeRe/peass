@@ -518,7 +518,7 @@ public final class GitUtils {
    }
 
    public static void unlockWithGitCrypt(final File projectFolder, final String gitCryptKey) {
-      LOG.debug("GIT_CRYPT_KEY is set, unlocking repo.");
+      LOG.debug("GIT_CRYPT_KEY is set, unlocking: {}", projectFolder);
       final ProcessBuilder processBuilder = new ProcessBuilder("git-crypt", "unlock", gitCryptKey);
       try {
          if (processBuilder.directory(projectFolder).start().waitFor() != 0) {
@@ -530,7 +530,7 @@ public final class GitUtils {
 
       if (!checkIsUnlockedWithGitCrypt(projectFolder)) {
          LOG.error("Folder is still locked, something went wrong!");
-         // TODO stop execution?
+         throw new RuntimeException("Folder is still locked, something went wrong!");
       }
    }
 
