@@ -53,7 +53,7 @@ public class Changes implements Serializable {
    }
 
    public Change getChange(final TestCase test) {
-      List<Change> changes = testcaseChanges.get(test.getClazz());
+      List<Change> changes = testcaseChanges.get(test.getClassWithModule());
       if (changes != null) {
          for (Change candidate : changes) {
             String candidateMethod = candidate.getMethod();
