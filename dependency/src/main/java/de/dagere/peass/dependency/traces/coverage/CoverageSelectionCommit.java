@@ -5,7 +5,7 @@ import java.util.Map;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
-public class CoverageSelectionVersion {
+public class CoverageSelectionCommit {
    public Map<TestCase, TraceCallSummary> testcases = new LinkedHashMap<>();
 
    public Map<TestCase, TraceCallSummary> getTestcases() {

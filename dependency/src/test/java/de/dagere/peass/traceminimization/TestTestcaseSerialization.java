@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
-import de.dagere.peass.dependency.traces.coverage.CoverageSelectionVersion;
+import de.dagere.peass.dependency.traces.coverage.CoverageSelectionCommit;
 import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
 import de.dagere.peass.utils.Constants;
 
@@ -18,7 +18,7 @@ public class TestTestcaseSerialization {
    @Test
    public void testSerialization() throws JsonProcessingException {
       CoverageSelectionInfo info = new CoverageSelectionInfo();
-      CoverageSelectionVersion version = new CoverageSelectionVersion();
+      CoverageSelectionCommit version = new CoverageSelectionCommit();
       TestCase test = new TestCase("ClazzA", "methodA2", "moduleA", "int,String");
       TraceCallSummary traceCallSummary = new TraceCallSummary();
       traceCallSummary.addCall("app" + ChangedEntity.MODULE_SEPARATOR + "ClazzB" + ChangedEntity.METHOD_SEPARATOR + "methodB(double)");
@@ -41,7 +41,7 @@ public class TestTestcaseSerialization {
    @Test
    public void testNoParamSerialization() throws JsonProcessingException {
       CoverageSelectionInfo info = new CoverageSelectionInfo();
-      CoverageSelectionVersion version = new CoverageSelectionVersion();
+      CoverageSelectionCommit version = new CoverageSelectionCommit();
       TestCase test = new TestCase("ClazzA", "methodA2", "moduleA");
       TraceCallSummary traceCallSummary = new TraceCallSummary();
       traceCallSummary.addCall("app" + ChangedEntity.MODULE_SEPARATOR + "ClazzB" + ChangedEntity.METHOD_SEPARATOR + "methodB");

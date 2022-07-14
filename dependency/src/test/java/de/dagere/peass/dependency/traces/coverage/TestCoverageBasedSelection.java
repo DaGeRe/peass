@@ -44,7 +44,7 @@ public class TestCoverageBasedSelection {
       Set<ChangedEntity> changes = new HashSet<>();
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazzB", "", "method0"));
-      CoverageSelectionVersion selection = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
+      CoverageSelectionCommit selection = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
       Set<TestCase> selected = selection.getTestcases().keySet();
       
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
@@ -83,7 +83,7 @@ public class TestCoverageBasedSelection {
       List<TraceCallSummary> traces = getTraceSummaryList();
       Set<ChangedEntity> changes = new HashSet<>();
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", null));
-      CoverageSelectionVersion selection = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
+      CoverageSelectionCommit selection = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
       Set<TestCase> selected = selection.getTestcases().keySet();
       
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));

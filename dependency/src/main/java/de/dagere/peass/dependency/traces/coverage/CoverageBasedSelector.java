@@ -16,12 +16,12 @@ public class CoverageBasedSelector {
 
    private static final Logger LOG = LogManager.getLogger(CoverageBasedSelector.class);
 
-   public static CoverageSelectionVersion selectBasedOnCoverage(final List<TraceCallSummary> summaries, final Set<ChangedEntity> changes) {
+   public static CoverageSelectionCommit selectBasedOnCoverage(final List<TraceCallSummary> summaries, final Set<ChangedEntity> changes) {
       List<TraceCallSummary> copiedSummaries = new LinkedList<>(summaries);
       Set<ChangedEntity> copiedChanges = new HashSet<>(changes);
       boolean changed = true;
 
-      CoverageSelectionVersion resultingInfo = new CoverageSelectionVersion();
+      CoverageSelectionCommit resultingInfo = new CoverageSelectionCommit();
 
       LOG.debug("Searching CBS");
       while (copiedSummaries.size() > 0 && copiedChanges.size() > 0 && changed) {
@@ -61,7 +61,7 @@ public class CoverageBasedSelector {
       }
    }
 
-   private static void addNotSelectedSummaryInfos(final List<TraceCallSummary> copiedSummaries, final CoverageSelectionVersion resultingInfo) {
+   private static void addNotSelectedSummaryInfos(final List<TraceCallSummary> copiedSummaries, final CoverageSelectionCommit resultingInfo) {
       for (TraceCallSummary leftSummary : copiedSummaries) {
          LOG.debug("Adding unselected left summary: {}", leftSummary.getTestcase(), leftSummary.getOverallScore());
          leftSummary.setSelected(false);

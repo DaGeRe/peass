@@ -46,7 +46,7 @@ public class CoverageSelectionExecutor {
          LOG.info("Parameters: {}", change.getParametersPrintable());
       }
 
-      CoverageSelectionVersion selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
+      CoverageSelectionCommit selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
       for (TraceCallSummary traceCallSummary : selected.getTestcases().values()) {
          if (traceCallSummary.isSelected()) {
             coverageBasedSelection.addCall(version, traceCallSummary.getTestcase());
