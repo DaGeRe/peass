@@ -51,7 +51,7 @@ public class MeasurementConfig implements Serializable {
    }
 
    public MeasurementConfig(final int vms, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig) {
-      this.executionConfig = executionConfig;
+      this.executionConfig = new ExecutionConfig(executionConfig);
       this.vms = vms;
       this.kiekerConfig = new KiekerConfig(kiekerConfig);
    }
