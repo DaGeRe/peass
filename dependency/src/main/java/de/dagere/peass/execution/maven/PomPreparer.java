@@ -43,54 +43,25 @@ public class PomPreparer {
    public void preparePom() {
       try {
          lastTmpFile = Files.createTempDirectory(folders.getKiekerTempFolder().toPath(), "kiekerTemp").toFile();
+         OnePomPreparer preparer = new OnePomPreparer(testTransformer);
          for (final File module : modules.getModules()) {
-            editOneBuildfile(true, new File(module, "pom.xml"));
+            lastEncoding = preparer.editOneBuildfile(true, new File(module, "pom.xml"), lastTmpFile);
             final File potentialModuleFile = new File(module, "src/main/java/module-info.java");
             LOG.debug("Checking {}", potentialModuleFile.getAbsolutePath());
             if (potentialModuleFile.exists()) {
                ModuleInfoEditor.addKiekerRequires(potentialModuleFile);
             }
          }
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-   }
-
-   private void editOneBuildfile(final boolean update, final File pomFile) {
-      try {
-         final Model model;
-         try (FileInputStream fileInputStream = new FileInputStream(pomFile)) {
-            final MavenXpp3Reader reader = new MavenXpp3Reader();
-            model = reader.read(fileInputStream);
-         }
-
-         if (model.getBuild() == null) {
-            model.setBuild(new Build());
-         }
-         final String argline = new ArgLineBuilder(testTransformer, pomFile.getParentFile()).buildArglineMaven(lastTmpFile);
-
-         MavenPomUtil.extendSurefire(argline, model, update);
-
-         // TODO Move back to extend dependencies, if stable Kieker version supports <init>
-         if (model.getDependencies() == null) {
-            model.setDependencies(new LinkedList<Dependency>());
-         }
-         MavenPomUtil.extendDependencies(model, testTransformer.getJUnitVersions(), testTransformer.getConfig().getExecutionConfig().isExcludeLog4jSlf4jImpl());
-
-         try (FileWriter fileWriter = new FileWriter(pomFile)) {
-            final MavenXpp3Writer writer = new MavenXpp3Writer();
-            writer.write(fileWriter, model);
-         }
-
-         lastEncoding = MavenPomUtil.getEncoding(model);
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
       }
    }
+
    
-   public File getLastTmpFile() {
-      return lastTmpFile;
-   }
+   
+//   public File getLastTmpFile() {
+//      return lastTmpFile;
+//   }
 
    public Charset getLastEncoding() {
       return lastEncoding;
