@@ -45,6 +45,7 @@ public class MavenPomUtil {
    public static final String COMPILER_PLUGIN_VERSION = "3.10.1";
 
    public static final String JUPITER_VERSION = "5.8.2";
+   public static final String LOG4J_VERSION = "2.18.0";
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
 
@@ -96,7 +97,10 @@ public class MavenPomUtil {
             dependency.setVersion("4.13.2");
          }
          if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
-            dependency.setVersion("5.8.2");
+            dependency.setVersion(JUPITER_VERSION);
+         }
+         if (dependency.getArtifactId().equals("log4j-api") && dependency.getGroupId().equals(LOG4J_GROUPID)) {
+            dependency.setVersion(LOG4J_VERSION);
          }
       }
    }

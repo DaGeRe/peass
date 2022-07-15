@@ -24,8 +24,16 @@ public class TestMavenPomUtil {
    private static final File EXAMINED_POM = new File(TestConstants.CURRENT_FOLDER, "pom.xml");
    
    @Test
-   public void testSimpleLog4jUpdate() {
+   public void testSimpleLog4jUpdate() throws IOException, XmlPullParserException {
+      File pom = new File(TestConstants.TEST_RESOURCES + "/mavenPomUtil/pom-simple-log4j.xml");
+      FileUtils.copyFile(pom, EXAMINED_POM);
       
+      executePomPreparing();
+      
+      final Model model = getModel();
+      
+      Assert.assertEquals("4.13.2", model.getDependencies().get(1).getVersion());
+      Assert.assertEquals("2.18.0", model.getDependencies().get(2).getVersion());
    }
    
    @Test
