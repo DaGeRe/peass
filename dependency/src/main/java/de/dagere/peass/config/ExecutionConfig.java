@@ -333,6 +333,7 @@ public class ExecutionConfig implements Serializable {
       this.testExecutor = testExecutor;
    }
 
+   @JsonInclude(JsonInclude.Include.NON_NULL)
    public String getGitCryptKey() {
       return gitCryptKey;
    }
