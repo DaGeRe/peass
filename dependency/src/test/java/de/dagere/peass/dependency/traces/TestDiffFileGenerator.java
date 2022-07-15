@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.traces.diff.DiffFileGenerator;
 import de.dagere.peass.dependency.traces.diff.TraceFileUtil;
 

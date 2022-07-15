@@ -56,8 +56,6 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
 import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
-import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;

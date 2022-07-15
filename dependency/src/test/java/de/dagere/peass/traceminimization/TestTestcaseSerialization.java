@@ -8,8 +8,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionCommit;
+import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
 import de.dagere.peass.utils.Constants;
 

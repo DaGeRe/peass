@@ -24,7 +24,6 @@ import de.dagere.peass.dependency.RTSTestTransformerBuilder;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.kieker.KiekerEnvironmentPreparer;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 public class TestKiekerEnvironmentPreparer {

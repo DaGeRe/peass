@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.properties.ChangedMethodManager;
-import de.dagere.peass.ci.ContinuousDependencyReader;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
