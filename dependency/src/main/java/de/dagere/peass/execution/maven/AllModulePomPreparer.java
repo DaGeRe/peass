@@ -1,32 +1,22 @@
 package de.dagere.peass.execution.maven;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.LinkedList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.moduleinfo.ModuleInfoEditor;
-import de.dagere.peass.execution.kieker.ArgLineBuilder;
-import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 
-public class PomPreparer {
+public class AllModulePomPreparer {
    
-   private static final Logger LOG = LogManager.getLogger(PomPreparer.class);
+   private static final Logger LOG = LogManager.getLogger(AllModulePomPreparer.class);
    
    private final TestTransformer testTransformer;
    private final ProjectModules modules;
@@ -34,7 +24,7 @@ public class PomPreparer {
    private File lastTmpFile;
    private Charset lastEncoding;
    
-   public PomPreparer(final TestTransformer testTransformer, final ProjectModules modules, final PeassFolders folders) {
+   public AllModulePomPreparer(final TestTransformer testTransformer, final ProjectModules modules, final PeassFolders folders) {
       this.testTransformer = testTransformer;
       this.modules = modules;
       this.folders = folders;
@@ -56,12 +46,6 @@ public class PomPreparer {
          e.printStackTrace();
       }
    }
-
-   
-   
-//   public File getLastTmpFile() {
-//      return lastTmpFile;
-//   }
 
    public Charset getLastEncoding() {
       return lastEncoding;

@@ -31,7 +31,7 @@ import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.MavenCleaner;
 import de.dagere.peass.execution.maven.MavenRunningTester;
 import de.dagere.peass.execution.maven.MavenUpdater;
-import de.dagere.peass.execution.maven.PomPreparer;
+import de.dagere.peass.execution.maven.AllModulePomPreparer;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.utils.CommandConcatenator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -96,7 +96,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       prepareKiekerSource(); 
       transformTests();
 
-      PomPreparer pomPreparer = new PomPreparer(testTransformer, getModules(), folders);
+      AllModulePomPreparer pomPreparer = new AllModulePomPreparer(testTransformer, getModules(), folders);
       pomPreparer.preparePom();
       lastEncoding = pomPreparer.getLastEncoding();
    }

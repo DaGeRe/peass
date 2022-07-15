@@ -35,15 +35,25 @@ public class TestMavenPomUtil {
       
       executePomPreparing();
       
+      final Model model = getModel();
+      
+      Assert.assertEquals("4.13.2", model.getDependencies().get(1).getVersion());
+   }
+   
+   @Test
+   public void testDependencyManagementLog4jUpdate() {
+      
+   }
+
+   private Model getModel() throws IOException, XmlPullParserException, FileNotFoundException {
       final Model model;
       try (FileInputStream fileInputStream = new FileInputStream(EXAMINED_POM)) {
          final MavenXpp3Reader reader = new MavenXpp3Reader();
          model = reader.read(fileInputStream);
       }
-      
-      Assert.assertEquals("4.13.2", model.getDependencies().get(1).getVersion());
+      return model;
    }
-
+   
    private void executePomPreparing() throws FileNotFoundException, IOException, XmlPullParserException {
       TestTransformer mock = Mockito.mock(TestTransformer.class);
       Mockito.when(mock.getConfig()).thenReturn(new MeasurementConfig(2));
@@ -55,8 +65,4 @@ public class TestMavenPomUtil {
       preparer.editOneBuildfile(true, EXAMINED_POM, new File("/dev/null"));
    }
    
-   @Test
-   public void testDependencyManagementLog4jUpdate() {
-      
-   }
 }
