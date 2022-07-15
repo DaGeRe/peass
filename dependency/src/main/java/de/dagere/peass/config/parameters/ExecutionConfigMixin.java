@@ -340,8 +340,10 @@ public class ExecutionConfigMixin {
       if (transformerSet && executorSet) {
          config.setTestTransformer(getTestTransformer());
          config.setTestExecutor(getTestExecutor());
-      } else if (transformerSet != executorSet) {
-         throw new RuntimeException("If the test transformer is set by CLI parameters, the test executor needs also be set!");
+      } else if (transformerSet && !executorSet) {
+         throw new RuntimeException("If --testTransformer is set by CLI parameters, --testExecutor needs also be set!");
+      } else if (!transformerSet && executorSet) {
+         throw new RuntimeException("If --testExecutor is set by CLI parameters, --testTransformer needs also be set!");
       } else {
          config.setTestTransformer(getWorkloadType().getTestTransformer());
          config.setTestExecutor(getWorkloadType().getTestExecutor());
