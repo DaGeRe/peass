@@ -19,7 +19,7 @@ import de.dagere.peass.execution.maven.OnePomPreparer;
 import de.dagere.peass.testtransformation.JUnitVersions;
 import de.dagere.peass.testtransformation.TestTransformer;
 
-public class TestMavenPomUtil {
+public class TestOnePomPreparer {
    
    private static final File EXAMINED_POM = new File(TestConstants.CURRENT_FOLDER, "pom.xml");
    
@@ -49,8 +49,15 @@ public class TestMavenPomUtil {
    }
    
    @Test
-   public void testDependencyManagementLog4jUpdate() {
+   public void testDependencyManagementLog4jUpdate() throws IOException, XmlPullParserException {
+      File pom = new File(TestConstants.TEST_RESOURCES + "/mavenPomUtil/pom-dependencyManagement-log4j.xml");
+      FileUtils.copyFile(pom, EXAMINED_POM);
       
+      executePomPreparing();
+      
+      final Model model = getModel();
+      
+      Assert.assertEquals("2.18.0", model.getDependencyManagement().getDependencies().get(0).getVersion());
    }
 
    private Model getModel() throws IOException, XmlPullParserException, FileNotFoundException {

@@ -93,15 +93,24 @@ public class MavenPomUtil {
 
    private static void updateJUnit(final Model model) {
       for (final Dependency dependency : model.getDependencies()) {
-         if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
-            dependency.setVersion("4.13.2");
+         updateDependency(dependency);
+      }
+      if (model.getDependencyManagement() != null) {
+         for (final Dependency dependency : model.getDependencyManagement().getDependencies()) {
+            updateDependency(dependency);
          }
-         if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
-            dependency.setVersion(JUPITER_VERSION);
-         }
-         if (dependency.getArtifactId().equals("log4j-api") && dependency.getGroupId().equals(LOG4J_GROUPID)) {
-            dependency.setVersion(LOG4J_VERSION);
-         }
+      }
+   }
+
+   private static void updateDependency(final Dependency dependency) {
+      if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
+         dependency.setVersion("4.13.2");
+      }
+      if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
+         dependency.setVersion(JUPITER_VERSION);
+      }
+      if (dependency.getArtifactId().equals("log4j-api") && dependency.getGroupId().equals(LOG4J_GROUPID)) {
+         dependency.setVersion(LOG4J_VERSION);
       }
    }
 
