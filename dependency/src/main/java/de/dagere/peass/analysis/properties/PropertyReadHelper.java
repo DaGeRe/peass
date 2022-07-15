@@ -23,6 +23,7 @@ import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.ExecutorCreator;
+import de.dagere.peass.dependency.RTSTestTransformerBuilder;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.EntityUtil;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
@@ -110,7 +111,7 @@ public class PropertyReadHelper {
       this.changedTests = changedTests;
 
       folders = new PeassFolders(projectFolder);
-      testTransformer = ExecutorCreator.createTestTransformer(folders, config, new KiekerConfig(true));
+      testTransformer = RTSTestTransformerBuilder.createTestTransformer(folders, config, new KiekerConfig(true));
       testExecutor = ExecutorCreator.createExecutor(folders, testTransformer, new EnvironmentVariables());
    }
 

@@ -103,29 +103,6 @@ public class JUnitTestTransformer implements TestTransformer {
       }
    }
 
-   /**
-    * Creates a test transformer for usage in RTS - only used for unit testing, since the generic constructor with File and MeasurementConfig should be used everywhere
-    * 
-    * @param projectFolder
-    * @param timeout
-    */
-   public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig,
-         final KiekerConfig kiekerConfig) {
-      this.projectFolder = projectFolder;
-      config = new MeasurementConfig(1, executionConfig, kiekerConfig);
-      config.setIterations(1);
-      config.setWarmup(0);
-      // For regression test selection, verbose debug output is helpful, and since it
-      // is only executed once, the performance loss is ok.
-      config.getExecutionConfig().setRedirectToNull(false);
-      config.getExecutionConfig().setShowStart(true);
-      if (config.isDirectlyMeasureKieker()) {
-         datacollectorlist = DataCollectorList.NONE;
-      } else {
-         datacollectorlist = config.isUseGC() ? DataCollectorList.ONLYTIME : DataCollectorList.ONLYTIME_NOGC;
-      }
-   }
-
    public Map<File, CompilationUnit> getLoadedFiles() {
       return loadedFiles;
    }

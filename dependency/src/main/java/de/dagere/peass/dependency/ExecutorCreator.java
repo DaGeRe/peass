@@ -88,23 +88,5 @@ public class ExecutorCreator {
          e.printStackTrace();
          throw new RuntimeException(e);
       }
-
-   }
-
-   public static TestTransformer createTestTransformer(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig) {
-      try {
-         Class<?> testTransformerClass = Class.forName(executionConfig.getTestTransformer());
-         if (!Arrays.asList(testTransformerClass.getInterfaces()).contains(TestTransformer.class)) {
-            throw new RuntimeException("TestTransformer needs to be implemented by " + executionConfig.getTestTransformer());
-         }
-         Constructor<?> constructor = testTransformerClass.getConstructor(File.class, ExecutionConfig.class, KiekerConfig.class);
-         TestTransformer transformer = (TestTransformer) constructor.newInstance(folders.getProjectFolder(), executionConfig, kiekerConfig);
-         return transformer;
-      } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
-            | InvocationTargetException e) {
-         LOG.debug("Initialization was not possible; this should be thrown uncatched");
-         e.printStackTrace();
-         throw new RuntimeException(e);
-      }
    }
 }

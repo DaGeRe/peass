@@ -20,10 +20,12 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.dependency.RTSTestTransformerBuilder;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.kieker.KiekerEnvironmentPreparer;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 
 public class TestKiekerEnvironmentPreparer {
 
@@ -42,8 +44,10 @@ public class TestKiekerEnvironmentPreparer {
       modules.add(DependencyTestConstants.CURRENT);
       KiekerConfig kiekerConfig = new KiekerConfig(true);
       kiekerConfig.setUseSourceInstrumentation(false);
-      KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPatterns, new LinkedList<>(), new PeassFolders(DependencyTestConstants.CURRENT),
-            new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10), kiekerConfig), modules);
+      PeassFolders folders = new PeassFolders(DependencyTestConstants.CURRENT);
+      TestTransformer testTransformer = RTSTestTransformerBuilder.createTestTransformer(folders, new ExecutionConfig(10), kiekerConfig); 
+      KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPatterns, new LinkedList<>(), folders,
+            testTransformer, modules);
       
       kiekerEnvironmentPreparer.prepareKieker();
       
@@ -67,8 +71,10 @@ public class TestKiekerEnvironmentPreparer {
       
       KiekerConfig kiekerConfig = new KiekerConfig(true);
       kiekerConfig.setUseSourceInstrumentation(false);
-      KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(null, Arrays.asList("defaultpackage.NormalDependency"), new PeassFolders(DependencyTestConstants.CURRENT),
-            new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10), kiekerConfig), modules);
+      PeassFolders folders = new PeassFolders(DependencyTestConstants.CURRENT);
+      TestTransformer testTransformer = RTSTestTransformerBuilder.createTestTransformer(folders, new ExecutionConfig(10), kiekerConfig); 
+      KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(null, Arrays.asList("defaultpackage.NormalDependency"), folders,
+            testTransformer, modules);
       
       kiekerEnvironmentPreparer.prepareKieker();
       
