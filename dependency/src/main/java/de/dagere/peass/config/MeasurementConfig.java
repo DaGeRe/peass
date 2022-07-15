@@ -208,6 +208,9 @@ public class MeasurementConfig implements Serializable {
 
    public void setIterations(final int iterations) {
       this.iterations = iterations;
+      if (iterations < 1) {
+         throw new RuntimeException("Iterations smaller than 1 are not allowed!");
+      }
    }
 
    public int getRepetitions() {
