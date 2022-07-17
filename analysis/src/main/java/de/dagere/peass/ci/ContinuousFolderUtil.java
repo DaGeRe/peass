@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.StreamGobbler;
 import de.dagere.peass.vcs.VersionControlSystem;
 
@@ -15,7 +16,7 @@ public enum ContinuousFolderUtil {
    private static final Logger LOG = LogManager.getLogger(ContinuousFolderUtil.class);
 
    public static File getLocalFolder(final File projectFolder) {
-      return new File(projectFolder, ".." + File.separator + projectFolder.getName() + "_fullPeass");
+      return new File(projectFolder, ".." + File.separator + projectFolder.getName() + PeassFolders.PEASS_FULL_POSTFIX);
    }
 
    public static String getSubFolderPath(final File projectFolder) throws IOException {

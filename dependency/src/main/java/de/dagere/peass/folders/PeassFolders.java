@@ -26,6 +26,7 @@ public class PeassFolders {
    public static final String MEASUREMENTS = "measurements";
 
    public static final String PEASS_POSTFIX = "_peass";
+   public static final String PEASS_FULL_POSTFIX = "_fullPeass";
 
    protected final File projectFolder;
    // private final File resultFolder;
