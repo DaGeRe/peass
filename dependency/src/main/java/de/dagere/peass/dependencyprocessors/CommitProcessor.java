@@ -58,7 +58,10 @@ public abstract class CommitProcessor implements Callable<Void> {
    @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the staticSelectionFile")
    protected File staticSelectionFile;
 
-   @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile (may be trace based selection or coverage selection file)")
+   /**
+    * The file defining the selected tests, i.e. a traceTestSelection or coverageSelection file. Peass CLI options should be camel case, therefore the not camel case variant is deprecated and will be removed.
+    */
+   @Option(names = { "-executionfile", "--executionfile", "-executionFile", "--executionFile" }, description = "Path to the executionfile (may be trace based selection or coverage selection file)")
    protected File executionfile;
 
    public CommitProcessor(final File projectFolder, final StaticTestSelection dependencies) {
