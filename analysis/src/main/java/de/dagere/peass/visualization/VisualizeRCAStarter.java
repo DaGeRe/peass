@@ -69,6 +69,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
       }
 
       List<File> rcaFolderToHandle = new RCAFolderSearcher(data).searchRCAFiles();
+      LOG.info("Handling: " + rcaFolderToHandle);
       for (File rcaFolder : rcaFolderToHandle) {
          visualizeRCAFile(resultFolder, rcaFolder);
       }
@@ -80,7 +81,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
       return null;
    }
 
-   private void visualizeRegularMeasurementFile(final File peassFolder) throws  JsonProcessingException, FileNotFoundException, IOException {
+   private void visualizeRegularMeasurementFile(final File peassFolder) throws JsonProcessingException, FileNotFoundException, IOException {
       VisualizeRegularMeasurement measurementVisualizer = new VisualizeRegularMeasurement(resultFolder);
       measurementVisualizer.analyzeFile(peassFolder);
    }
@@ -116,6 +117,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
 
    private CauseSearchFolders getCauseSearchFolders(final File treeFile) {
       final File projectFolder = treeFile.getAbsoluteFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+      System.out.println(projectFolder + " " + treeFile);
 
       final CauseSearchFolders folders;
       if (projectFolder.getName().contentEquals("rca")) {
@@ -127,9 +129,16 @@ public class VisualizeRCAStarter implements Callable<Void> {
    }
 
    private File getPropertyFolder(final String projectName) {
-      final File propertyFolder = this.propertyFolder != null ? this.propertyFolder
-            : new File(new RepoFolders().getPropertiesFolder(), "properties" + File.separator + projectName);
-      return propertyFolder;
+      final File generatedPropertyFolder;
+      if (propertyFolder != null) {
+         if (!propertyFolder.exists()) {
+            throw new RuntimeException("Property folder " + propertyFolder + " was defined, but did not exist!");
+         }
+         generatedPropertyFolder = propertyFolder;
+      } else {
+         generatedPropertyFolder = new File(new RepoFolders().getPropertiesFolder(), "properties" + File.separator + projectName);
+      }
+      return generatedPropertyFolder;
    }
 
    public File[] getData() {

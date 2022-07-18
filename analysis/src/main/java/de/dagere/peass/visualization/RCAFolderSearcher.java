@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.folders.PeassFolders;
+import groovy.transform.Sortable;
 
 public class RCAFolderSearcher {
 
@@ -60,6 +61,8 @@ public class RCAFolderSearcher {
                   rcaFilesToHandle.addAll(handleSimpleFolder(source));
                }
             }
+         } else if (!source.exists()) {
+            throw new RuntimeException("Source " + source + " did not exist");
          } else {
             rcaFilesToHandle.add(source);
          }
