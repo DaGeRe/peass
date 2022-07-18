@@ -43,10 +43,9 @@ update(root);
 
 d3.select(self.frameElement).style("height", "500px");
 
-function getTexture(node){
-  if (node.hasSourceChange)
-  { 
-    switch (node.state){
+function getTexture(node) {
+  if (node.hasSourceChange) { 
+    switch (node.state) {
 	  case 'FASTER': return faster_changed.url();
 	  case 'SLOWER': return slower_changed.url();
 	  case 'UNKNOWN': return unknown_changed.url();
@@ -216,7 +215,7 @@ function diffUsingJS(text1, text2, outputDiv) {
 		baseTextLines: base,
 		newTextLines: newtxt,
 		opcodes: opcodes,
-		baseTextName: "Old Commit",
+		baseTextName: "Predecessor Commit",
 		newTextName: "Current Commit",
 		viewType: 0,
 		bothContainLineNumbers: false
