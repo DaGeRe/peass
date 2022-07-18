@@ -31,8 +31,8 @@ public class JavascriptDataWriter {
    public void writeJS(final CauseSearchData data, final File output, final String jsName, final GraphNode converted) throws IOException, JsonProcessingException {
       File outputJS = new File(output.getParentFile(), jsName);
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputJS))) {
-         fileWriter.write("if (document.getElementById('testcaseDiv') != null) { \n   document.getElementById('testcaseDiv').innerHTML=\"Version: <a href='"
-               + "javascript:fallbackCopyTextToClipboard(\\\"-version " + data.getMeasurementConfig().getFixedCommitConfig().getCommit() +
+         fileWriter.write("if (document.getElementById('testcaseDiv') != null) { \n   document.getElementById('testcaseDiv').innerHTML=\"Commit: <a href='"
+               + "javascript:fallbackCopyTextToClipboard(\\\"-commit " + data.getMeasurementConfig().getFixedCommitConfig().getCommit() +
                " -test " + data.getTestcase() + "\\\")'>"
                + data.getMeasurementConfig().getFixedCommitConfig().getCommit() + "</a><br>");
          fileWriter.write("Test Case: " + data.getTestcase() + "<br>\";\n");
@@ -61,7 +61,8 @@ public class JavascriptDataWriter {
             + "<a role='button' href='dashboard?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>"
             + "</p>\";\n");
       fileWriter.write("   } else {\n");
-      fileWriter.write("   document.getElementById('testcaseDiv').innerHTML+=\"<a href='" + data.getTestcase().replace("#", "_")
+      System.out.println(data.getTestcase());
+      fileWriter.write("   document.getElementById('testcaseDiv').innerHTML+=\"<a href='" + data.getTestcase().substring(data.getTestcase().indexOf('#') + 1)
             + "_dashboard.html?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>\";\n");
       fileWriter.write("   }\n");
    }
@@ -70,7 +71,7 @@ public class JavascriptDataWriter {
       final int nodeHeight = getHeight(root);
       final int nodeDepthWidth = getDepth(root);
 
-//      final int width = 500 * (nodeDepthWidth + 1);
+      // final int width = 500 * (nodeDepthWidth + 1);
       final int height = 35 * (nodeHeight + 1);
       final int left = CHARACTER_SIZE * root.getName().length();
       fileWriter.write("// ************** Generate the tree diagram   *****************\n" +
