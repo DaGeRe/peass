@@ -534,6 +534,10 @@ public final class GitUtils {
       }
    }
 
+   /*
+    * This will probably not work, if you have a git-Repo inside a git-repo!
+    * e.g. if you run peass-ci-plugin with mvn hpi:run, where your jenkins-workspace is "surrounded" by the peass-ci-plugin-repo
+    */
    protected static boolean checkIsUnlockedWithGitCrypt(final File projectFolder) {
       final ProcessBuilder processBuilder = new ProcessBuilder("git", "config", "--local", "--get", "filter.git-crypt.smudge");
       processBuilder.directory(projectFolder);
