@@ -2,7 +2,6 @@ package de.dagere.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,16 +53,9 @@ public enum ContinuousFolderUtil {
       }
 
       if (gitCryptKey != null) {
-         GitUtils.unlockWithGitCrypt(getProjectSubfolder(localFolder), gitCryptKey);
+         GitUtils.unlockWithGitCrypt(new File(localFolder, originalVcsFolder.getName()), gitCryptKey);
       }
 
-   }
-
-   private static File getProjectSubfolder(final File localFolder) {
-      final String projectName_fullPeass = Paths.get(localFolder.getAbsolutePath()).getFileName().toString();
-      final String projectName = projectName_fullPeass.substring(0, projectName_fullPeass.length() - new String("_fullPeass").length());
-      final File projectFolder = new File(localFolder, projectName);
-      return projectFolder;
    }
 
    private static void assureProcessFinished(Process process) throws InterruptedException {
