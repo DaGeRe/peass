@@ -26,12 +26,20 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
       List<CallTreeNode> includableNodes = structureChangeTreeAnalyzer.getMeasurementNodesPredecessor();
       this.config = config;
       
-      Set<CallTreeNode> includeNodes = calculateIncludedNodes(manager, includableNodes);
+      Set<CallTreeNode> includeNodes = calculateIncludedNodesSourceChange(manager, includableNodes);
+      calculateIncludeNodesStructureChange(structureChangeTreeAnalyzer, includeNodes);
       includedNodes.addAll(includeNodes);
-      includedNodes.addAll(structureChangeTreeAnalyzer.getUnequalStructureNodesPredecessor());
    }
 
-   private Set<CallTreeNode> calculateIncludedNodes(final ChangedMethodManager manager, final List<CallTreeNode> includableNodes) {
+   private void calculateIncludeNodesStructureChange(StructureChangeTreeAnalyzer structureChangeTreeAnalyzer, Set<CallTreeNode> includeNodes) {
+      List<CallTreeNode> unequalStructureNodesPredecessor = structureChangeTreeAnalyzer.getUnequalStructureNodesPredecessor();
+      for (CallTreeNode unequalStructureNode : unequalStructureNodesPredecessor) {
+         LOG.info("Node {} has structure change, so itself and all parents are included", unequalStructureNode);
+         addParents(unequalStructureNode, includeNodes);
+      }
+   }
+
+   private Set<CallTreeNode> calculateIncludedNodesSourceChange(final ChangedMethodManager manager, final List<CallTreeNode> includableNodes) {
       final Set<CallTreeNode> includeNodes = new HashSet<>();
       for (CallTreeNode node : includableNodes) {
          File mainSourceFile = manager.getMethodMainFile(config.getFixedCommitConfig().getCommit(), node.toEntity());
