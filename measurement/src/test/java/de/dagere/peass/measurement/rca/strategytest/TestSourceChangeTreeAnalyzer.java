@@ -63,7 +63,7 @@ public class TestSourceChangeTreeAnalyzer {
 
       SourceChangeTreeAnalyzer analyzer = new SourceChangeTreeAnalyzer(firstRoot, secondRoot, mockedChangeManager, config);
 
-      Assert.assertEquals(1, analyzer.getMeasurementNodesPredecessor().size());
+      Assert.assertEquals(2, analyzer.getMeasurementNodesPredecessor().size());
 
    }
 
