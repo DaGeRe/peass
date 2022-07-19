@@ -2,10 +2,14 @@ package de.dagere.peass.analysis.changes;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
@@ -27,6 +31,16 @@ public class Changes implements Serializable {
 
    public void setTestcaseChanges(final Map<String, List<Change>> testcaseChanges) {
       this.testcaseChanges = testcaseChanges;
+   }
+   
+   @JsonIgnore
+   public Map<TestCase, List<Change>> getTestcaseObjectChanges(){
+      Map<TestCase, List<Change>> resultChanges = new LinkedHashMap<>();
+      for (Entry<String, List<Change>> testcaseEntry : testcaseChanges.entrySet()) {
+         TestCase test = new TestCase(testcaseEntry.getKey());
+         resultChanges.put(test, testcaseEntry.getValue());
+      }
+      return resultChanges;
    }
 
    /**
