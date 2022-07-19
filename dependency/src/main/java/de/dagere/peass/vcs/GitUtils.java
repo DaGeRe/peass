@@ -517,8 +517,8 @@ public final class GitUtils {
       return 0;
    }
 
-   protected static void unlockWithGitCrypt(final File projectFolder, final String gitCryptKey) {
-      LOG.debug("GIT_CRYPT_KEY is set, unlocking repo.");
+   public static void unlockWithGitCrypt(final File projectFolder, final String gitCryptKey) {
+      LOG.debug("GIT_CRYPT_KEY is set, unlocking: {}", projectFolder);
       final ProcessBuilder processBuilder = new ProcessBuilder("git-crypt", "unlock", gitCryptKey);
       try {
          if (processBuilder.directory(projectFolder).start().waitFor() != 0) {
@@ -530,10 +530,14 @@ public final class GitUtils {
 
       if (!checkIsUnlockedWithGitCrypt(projectFolder)) {
          LOG.error("Folder is still locked, something went wrong!");
-         // TODO stop execution?
+         throw new RuntimeException("Folder is still locked, something went wrong!");
       }
    }
 
+   /*
+    * This will probably not work, if you have a git-Repo inside a git-repo!
+    * e.g. if you run peass-ci-plugin with mvn hpi:run, where your jenkins-workspace is "surrounded" by the peass-ci-plugin-repo
+    */
    protected static boolean checkIsUnlockedWithGitCrypt(final File projectFolder) {
       final ProcessBuilder processBuilder = new ProcessBuilder("git", "config", "--local", "--get", "filter.git-crypt.smudge");
       processBuilder.directory(projectFolder);

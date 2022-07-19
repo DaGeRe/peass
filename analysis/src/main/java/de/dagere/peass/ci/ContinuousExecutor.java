@@ -81,7 +81,7 @@ public class ContinuousExecutor {
 
    private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
-         ContinuousFolderUtil.cloneProject(projectFolder, localFolder);
+         ContinuousFolderUtil.cloneProject(projectFolder, localFolder, measurementConfig.getExecutionConfig().getGitCryptKey());
          if (!projectFolderLocal.exists()) {
             throw new RuntimeException("Was not able to clone project to " + projectFolderLocal.getAbsolutePath() + " (folder not existing)");
          }
