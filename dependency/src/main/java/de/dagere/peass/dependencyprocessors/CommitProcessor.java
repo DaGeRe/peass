@@ -136,7 +136,7 @@ public abstract class CommitProcessor implements Callable<Void> {
          staticTestSelection = new StaticTestSelection(executionData);
       }
       if (executionData == null && staticTestSelection == null) {
-         throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
+         throw new RuntimeException("Static test selection file and executionfile not readable - one needs to be defined!");
       }
 
       if (!projectFolder.exists()) {

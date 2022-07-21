@@ -26,7 +26,7 @@ import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 /**
- * Creates a script for running a set of tests based on a dependencyfile (and optionally an executionfile) in order to start test executions.
+ * Creates a script for running a set of tests based on a staticSelectionFile (and optionally an executionfile) in order to start test executions.
  * 
  * @author reichelt
  *
@@ -37,8 +37,8 @@ public class CreateScriptStarter implements Callable<Void> {
    @Option(names = { "-experimentId", "--experimentId" }, description = "Id of the experiment")
    protected String experimentId = "default";
    
-   @Option(names = { "-dependencyfile", "--dependencyfile", "-dependencyFile", "--dependencyFile"  }, description = "Path to the dependencyfile")
-   protected File dependencyFile;
+   @Option(names = { "-staticSelectionFile", "--staticSelectionFile"  }, description = "Path to the static test selection file")
+   protected File staticSelectionFile;
 
    @Option(names = { "-executionfile", "--executionfile", "-executionFile", "--executionFile" }, description = "Path to the executionfile")
    protected File executionfile;
@@ -52,7 +52,7 @@ public class CreateScriptStarter implements Callable<Void> {
    @Mixin
    ExecutionConfigMixin executionConfigMixin;
 
-   private StaticTestSelection dependencies;
+   private StaticTestSelection staticTestSelection;
    private ExecutionData executionData;
    
    public static void main(final String[] args) throws  JsonParseException, JsonMappingException, IOException {
@@ -63,14 +63,14 @@ public class CreateScriptStarter implements Callable<Void> {
    
    @Override
    public Void call() throws Exception {
-      if (dependencyFile != null) {
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
+      if (staticSelectionFile != null) {
+         staticTestSelection = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
       }
       if (executionfile != null) {
          executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
-         dependencies = new StaticTestSelection(executionData);
+         staticTestSelection = new StaticTestSelection(executionData);
       }
-      if (executionData == null && dependencies == null) {
+      if (executionData == null && staticTestSelection == null) {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
       }
 
@@ -80,12 +80,12 @@ public class CreateScriptStarter implements Callable<Void> {
       RunCommandWriter writer;
       if (useSlurm) {
          destination.println("timestamp=$(date +%s)");
-         writer = new RunCommandWriterSlurm(config, System.out, experimentId, dependencies);
+         writer = new RunCommandWriterSlurm(config, System.out, experimentId, staticTestSelection);
       } else {
-         writer = new RunCommandWriter(config, destination, experimentId, dependencies);
+         writer = new RunCommandWriter(config, destination, experimentId, staticTestSelection);
       }
 
-      generateExecuteCommands(dependencies, executionData, experimentId, writer);
+      generateExecuteCommands(staticTestSelection, executionData, experimentId, writer);
       
       return null;
    }

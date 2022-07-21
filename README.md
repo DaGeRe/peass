@@ -41,11 +41,11 @@ This executes two steps: The static test selection and the trace analysis. These
 
 ## Static Test Selection
 
-Static test selection determines whether a tests performance may have changed because a source that is called, a dependency, is changed. With a call to `de.peass.DependencyReadingStarter -folder $PROJECTFOLDER` the reading of dependencies is started for a checked-out-project. Therefore, all tests are converted to KoPeMe-tests with enabled Kieker (`useKieker=true`), because Kieker allows to generate traces and KoPeMe allows to save the relation between test-call and Kieker-Trace-Folder. Afterwards, they are executed for every commit. By parsing the sources and the version-control-system-diffs, it is determined where changes have taken place. The generated dependencies are saved afterwards into results/ as JSON-file, the $DEPENDENCYFILE (which is named deps_$PROJECT.json).
+Static test selection determines whether a tests performance may have changed because a source that is called, a dependency, is changed. With a call to `de.peass.DependencyReadingStarter -folder $PROJECTFOLDER` the reading of dependencies is started for a checked-out-project. Therefore, all tests are converted to KoPeMe-tests with enabled Kieker (`useKieker=true`), because Kieker allows to generate traces and KoPeMe allows to save the relation between test-call and Kieker-Trace-Folder. Afterwards, they are executed for every commit. By parsing the sources and the version-control-system-diffs, it is determined where changes have taken place. The generated dependencies are saved afterwards into results/ as JSON-file, the $STATICSELECTIONFILE (which is named staticTestSelection_$PROJECT.json).
 
 ## Trace Analysis
 
-Since the static selected changes may contain dependencies that do not change performance, e.g. non-called added methods to called classes, it is possible to determine whether tests have changed based on their traces, i.e. the called methods, their order and their source. Therefore, call `de.peass.ViewPrintStarter -dependencyfile $DEPENDENCYFILE -folder $PROJECTFOLDER`. As a result, in results/ a JSON-file, the executionfile (which is named execute_$PROJECT.json), containing the tests where the source has changed is created.
+Since the static selected changes may contain dependencies that do not change performance, e.g. non-called added methods to called classes, it is possible to determine whether tests have changed based on their traces, i.e. the called methods, their order and their source. Therefore, call `de.peass.ViewPrintStarter -staticSelectionFile $STATICSELECTIONFILE -folder $PROJECTFOLDER`. As a result, in results/ a JSON-file, the executionfile (which is named execute_$PROJECT.json), containing the tests where the source has changed is created.
 
 ## Evaluation
 
@@ -53,15 +53,15 @@ The selection rate of PRONTO can be evaluated against the selection rate of EKST
 
 # Measurement
 
-After creation of the dependencyfile and/or the executionfile, tests can be executed. Testing can be manually started by 
+After creation of the static selection file and/or the executionfile, tests can be executed. Testing can be manually started by 
 
-`./peass measure -folder ..  -executionfile .. (-dependencyfile .. -repetitions .. -vms .. -warmup .. -iterations .. -test ..)`
+`./peass measure -folder ..  -executionFile .. (-staticSelectionFile .. -repetitions .. -vms .. -warmup .. -iterations .. -test ..)`
 
-where `folder`and `executionfile` or `dependencyfile` need to be set. All other parameters are optional.. This starts, for every commit each test which is contained in the executionfile for this commit (if it is the given test or there is no test given). The dependencyfile can be left out, then the executed tests are determined by the executionfile. Repetitions defines, how many times each test should be executed between two measurements, warmup defines the count of warmup executions and iterations defines how many measurement iterations (measurement start, repetition count execution, measurement stop) should be executed.
+where `folder`and `executionFile` or `staticSelectionFile` need to be set. All other parameters are optional.. This starts, for every commit each test which is contained in the executionfile for this commit (if it is the given test or there is no test given). The `-staticSelectionFile` can be left out, then the executed tests are determined by the executionfile. Repetitions defines, how many times each test should be executed between two measurements, warmup defines the count of warmup executions and iterations defines how many measurement iterations (measurement start, repetition count execution, measurement stop) should be executed.
 
 Since execution of tests normally takes much time, it is reasonable to start the tests on different computers. As an example, test may be distributed via slurm. Therefore, run
 
-`./peass createScript de.peass.utils.CreateScriptStarter -dependencyfile .. -executionfile .. -useSlu -useSlurm > ../misc/scripts/slurm/runall.sh`
+`./peass createScript de.peass.utils.CreateScriptStarter -staticSelectionFile .. -executionfile .. -useSlurm -useSlurm > ../misc/scripts/slurm/runall.sh`
 `chmod +x ../misc/scripts/slurm/runall.sh`
 
 in order to produce a list of calls, which is executable. Every call produces a slurm job executing one test. Afterwards switch to `../misc/scripts/slurm/` and run `./runall`. It starts `executeTests.sh` on every cluster. If the count of warmup iterations, measurement iterations, repetitions or vms should be changed, edit `executeTests.sh`. 
@@ -72,13 +72,13 @@ Analysis enables determination of performance changes based on measurement value
 
 ## Determination of changes
 
-In order to get all changes, execute `./peass getchanges -dependencyfile $DEPENDENCYFILE -out $OUTFOLDER -data $DATAFOLDER`; where $DATAFOLDER should be the folder containing your cleaned data (normall `$PROJECTNAME_peass/clean`). Afterwards, two files are created:
+In order to get all changes, execute `./peass getchanges -staticSelectionFile $STATICSELECTIONFILE -out $OUTFOLDER -data $DATAFOLDER`; where $DATAFOLDER should be the folder containing your cleaned data (normall `$PROJECTNAME_peass/clean`). Afterwards, two files are created:
 - The changefile in `$OUTFOLDER`, containing all commits and test cases where measurement values changed based on agnostic t-test
 - The statisticsfils in `$OUTFOLDER/statistics`, containing all commits and test cases, including the measurements with no changes
 
 ## Individual Cleanup
 
-The resultfolder of your project is `$PROJECTNAME_peass`. In general, a clean/ folder is created in the resultfolder of your project. It contains measurementfiles only containing the statistical information about the second half of each VM start; the first half is seen as warmup. If you want to clean your data differently, e.g. remove different size of warmup, you can use the de.peass.TestCleaner. This is done by calling `./peass clean -dependencyfile $DEPENDENCYFILE -data $DATAFOLDER`, where `$DATAFOLDER` should contain all measurements.
+The resultfolder of your project is `$PROJECTNAME_peass`. In general, a clean/ folder is created in the resultfolder of your project. It contains measurementfiles only containing the statistical information about the second half of each VM start; the first half is seen as warmup. If you want to clean your data differently, e.g. remove different size of warmup, you can use the de.peass.TestCleaner. This is done by calling `./peass clean -staticSelectionFile $STATICSELECTIONFILE -data $DATAFOLDER`, where `$DATAFOLDER` should contain all measurements.
 
 # General Options
 
