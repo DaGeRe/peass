@@ -47,6 +47,9 @@ public class CleanStarter implements Callable<Void> {
          if (folder.getName().endsWith(PeassFolders.PEASS_POSTFIX)) {
             folder = new File(folder, "measurementsFull");
          }
+         if (!folder.exists()) {
+            throw new RuntimeException("Folder " + folder + " did not exist");
+         }
          LOG.info("Searching in " + folder);
          final File cleanFolder = new File(folder.getParentFile(), "clean");
          cleanFolder.mkdirs();
