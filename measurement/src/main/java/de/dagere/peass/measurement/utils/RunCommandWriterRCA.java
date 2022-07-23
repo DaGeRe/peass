@@ -36,7 +36,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
             + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")
             + "-commit " + commit + " "
             + "-folder " + DEFAULT_PROJECT_FOLDER_LOCATION + name + "/ "
-            + "-executionfile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
+            + "-executionFile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + " &> rca_" + commit.substring(0, 6) + "_" + testcaseName + ".txt");
    }
 

@@ -63,7 +63,7 @@ public class RunCommandWriter {
             + (!config.getExecutionConfig().isRedirectToNull() ? "-dontRedirectToNull " : "")
             + (config.isDirectlyMeasureKieker() ? "-directlyMeasureKieker " : "")
             + "-commit " + commit + " "
-            + "-executionfile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
+            + "-executionFile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + "-folder " + DEFAULT_PROJECT_FOLDER_LOCATION + name + "/ "
             + " &> measurement_" + commit.substring(0, 6) + "_" + testcaseName
             + ".txt");
