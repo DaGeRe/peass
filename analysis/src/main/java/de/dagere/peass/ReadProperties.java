@@ -59,14 +59,14 @@ public class ReadProperties implements Callable<Void> {
    @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the static selection file")
    protected File staticSelectionFile;
 
-   @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
+   @Option(names = { "-executionFile", "--executionFile" }, description = "Path to the executionfile")
    protected File executionFile;
 
-   @Option(names = { "-changefile", "--changefile" }, description = "Path to the changefile")
-   protected File changefile;
+   @Option(names = { "-changeFile", "--changeFile" }, description = "Path to the changefile")
+   protected File changeFile;
    
-   @Option(names = { "-viewfolder", "--viewfolder" }, description = "Path to the viewfolder")
-   protected File viewfolder;
+   @Option(names = { "-viewFolder", "--viewFolder" }, description = "Path to the viewfolder")
+   protected File viewFolder;
 
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
@@ -108,8 +108,8 @@ public class ReadProperties implements Callable<Void> {
       } else {
 
          final File changefile;
-         if (this.changefile != null) {
-            changefile = this.changefile;
+         if (this.changeFile != null) {
+            changefile = this.changeFile;
          } else {
             changefile = folders.getChangeFile(projectName);
          }
@@ -128,14 +128,14 @@ public class ReadProperties implements Callable<Void> {
             System.exit(1);
          }
 
-         if (!viewfolder.exists()) {
-            LOG.error("ViewFolder {} needs to exist.", viewfolder);
+         if (!viewFolder.exists()) {
+            LOG.error("ViewFolder {} needs to exist.", viewFolder);
             System.exit(1);
          }
 
          StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
          
-         readChangeProperties(changefile, projectFolder, viewfolder, new ExecutionData(dependencies));
+         readChangeProperties(changefile, projectFolder, viewFolder, new ExecutionData(dependencies));
       }
       return null;
    }
