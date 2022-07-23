@@ -1,4 +1,4 @@
-package de.dagere.peass.analysis.changes.processors;
+package de.dagere.peass.analysis.changes;
 
 import de.dagere.peass.analysis.changes.Change;
 

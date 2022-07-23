@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 
 /**
  * Saves all changes for one version. For each testcase it is saved which change has happened with method, difference in percent etc.
@@ -97,5 +98,18 @@ public class Changes implements Serializable {
             return o1.getDiff().compareTo(o2.getDiff());
          }
       });
+   }
+
+   @JsonIgnore
+   public TestSet getTests() {
+      TestSet result = new TestSet();
+      for (Entry<String, List<Change>> testclazz : testcaseChanges.entrySet()) {
+         String clazzname = testclazz.getKey();
+         for (Change method : testclazz.getValue()) {
+            String methodName = method.getMethod();
+            result.addTest(new TestCase(clazzname, methodName));
+         }
+      }
+      return result;
    }
 }

@@ -4,12 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.analysis.changes.Changes;
+import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
@@ -36,31 +41,34 @@ public class CreateScriptStarter implements Callable<Void> {
 
    @Option(names = { "-experimentId", "--experimentId" }, description = "Id of the experiment")
    protected String experimentId = "default";
-   
-   @Option(names = { "-staticSelectionFile", "--staticSelectionFile"  }, description = "Path to the static test selection file")
+
+   @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the static test selection file")
    protected File staticSelectionFile;
 
    @Option(names = { "-executionfile", "--executionfile", "-executionFile", "--executionFile" }, description = "Path to the executionfile")
    protected File executionfile;
-   
+
+   @Option(names = { "-changeFile", "--changeFile" }, description = "Path to the changefile")
+   protected File[] changeFile;
+
    @Option(names = { "-useSlurm", "--useSlurm" }, description = "Use slurm (if not specified, a bash script is created)")
    protected Boolean useSlurm = false;
-   
+
    @Mixin
    MeasurementConfigurationMixin measurementConfigMixin;
-   
+
    @Mixin
    ExecutionConfigMixin executionConfigMixin;
 
    private StaticTestSelection staticTestSelection;
    private ExecutionData executionData;
-   
-   public static void main(final String[] args) throws  JsonParseException, JsonMappingException, IOException {
+
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final CreateScriptStarter command = new CreateScriptStarter();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
    }
-   
+
    @Override
    public Void call() throws Exception {
       if (staticSelectionFile != null) {
@@ -75,22 +83,49 @@ public class CreateScriptStarter implements Callable<Void> {
       }
 
       MeasurementConfig config = new MeasurementConfig(measurementConfigMixin, executionConfigMixin, new StatisticsConfigMixin(), new KiekerConfigMixin());
-      
+
       PrintStream destination = System.out;
       RunCommandWriter writer;
-      if (useSlurm) {
-         destination.println("timestamp=$(date +%s)");
-         writer = new RunCommandWriterSlurm(config, System.out, experimentId, staticTestSelection);
+      
+
+      if (changeFile == null) {
+         if (useSlurm) {
+            destination.println("timestamp=$(date +%s)");
+            writer = new RunCommandWriterSlurm(config, System.out, experimentId, staticTestSelection);
+         } else {
+            writer = new RunCommandWriter(config, destination, experimentId, staticTestSelection);
+         }
+         
+         generateExecuteCommands(staticTestSelection, executionData, experimentId, writer);
       } else {
-         writer = new RunCommandWriter(config, destination, experimentId, staticTestSelection);
+         ExecutionData mergedExecutions = mergeChangeExecutions();
+         
+         writer = new RunCommandWriterRCA(config, destination, experimentId, mergedExecutions);
+         generateExecuteCommands(staticTestSelection, mergedExecutions, experimentId, writer);
       }
 
-      generateExecuteCommands(staticTestSelection, executionData, experimentId, writer);
-      
       return null;
    }
 
-   public static void generateExecuteCommands(final StaticTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final PrintStream goal) throws IOException {
+   private ExecutionData mergeChangeExecutions() throws IOException, StreamReadException, DatabindException {
+      ExecutionData mergedExecutions = new ExecutionData();
+      mergedExecutions.setUrl(executionData.getUrl());
+      for (Entry<String, TestSet> commit : executionData.getCommits().entrySet()) {
+         mergedExecutions.addEmptyCommit(commit.getKey(), commit.getValue().getPredecessor());
+      }
+      for (File changeFileEntry : changeFile) {
+         ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFileEntry, ProjectChanges.class);
+         for (Map.Entry<String, Changes> changeEntry : changes.getCommitChanges().entrySet()) {
+            String commit = changeEntry.getKey();
+            TestSet tests = changeEntry.getValue().getTests();
+            mergedExecutions.addCall(commit, tests);
+         }
+      }
+      return mergedExecutions;
+   }
+
+   public static void generateExecuteCommands(final StaticTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final PrintStream goal)
+         throws IOException {
       generateExecuteCommands(dependencies, changedTests, experimentId, new RunCommandWriterSlurm(new MeasurementConfig(30), goal, experimentId, dependencies));
    }
 
