@@ -26,7 +26,7 @@ public class CleanStarter implements Callable<Void> {
    @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the staticSelectionFile")
    protected File staticSelectionFile;
 
-   @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
+   @Option(names = { "-executionFile", "--executionFile" }, description = "Path to the executionfile")
    protected File executionfile;
 
    @Option(names = { "-data", "--data" }, description = "Path to datafolder")
