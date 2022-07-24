@@ -35,7 +35,7 @@ public class GetChangesStarter implements Callable<Void> {
    @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the static selection file")
    protected File staticSelectionFile;
 
-   @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
+   @Option(names = { "-executionFile", "--executionFile" }, description = "Path to the executionFile")
    protected File executionFile;
 
    @Option(names = { "-data", "--data" }, description = "Path to datafolder")
