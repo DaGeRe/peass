@@ -8,6 +8,8 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
@@ -52,5 +54,14 @@ public class ProjectStatistics {
       }
       commitMap.put(test, statistic);
 
+   }
+
+   @JsonIgnore
+   public int getTestCount() {
+      int tests = 0;
+      for (Map<TestCase, TestcaseStatistic> commitStatistic : statistics.values()) {
+         tests += commitStatistic.size();
+      }
+      return tests;
    }
 }
