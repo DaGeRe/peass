@@ -92,9 +92,25 @@ public class MavenPomUtil {
    }
 
    private static void updateJUnit(final Model model) {
+      boolean needsToInsertLog4jApi = false;
       for (final Dependency dependency : model.getDependencies()) {
          updateDependency(dependency);
+         
+         /** If slf4j is used, we need to insert log4j-api 2.18.0 as direct dependency, since slf4j contains log4j 2.
+          * This might also be necessary if a transitive dependency includes slf4j, but for now, this is sufficient (and it might change in newer slf4j versions)
+          */
+         if (dependency.getGroupId().equals("org.slf4j") && dependency.getArtifactId().equals("slf4j-api")) {
+            needsToInsertLog4jApi = true;
+         }
       }
+      if (needsToInsertLog4jApi) {
+         Dependency log4jApi = new Dependency();
+         log4jApi.setGroupId(LOG4J_GROUPID);
+         log4jApi.setArtifactId("log4j-api");
+         log4jApi.setVersion(LOG4J_VERSION);
+         model.getDependencies().add(log4jApi);
+      }
+      
       if (model.getDependencyManagement() != null) {
          for (final Dependency dependency : model.getDependencyManagement().getDependencies()) {
             updateDependency(dependency);
