@@ -30,8 +30,8 @@ public class PartialDependenciesMerger {
    }
 
    public static StaticTestSelection mergeVersions(final File out, final File[] partFiles, CommitComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
-      final List<StaticTestSelection> deps = readDependencies(partFiles);
-      StaticTestSelection merged = mergeDependencies(deps, comparator);
+      final List<StaticTestSelection> staticTestSelection = readStaticTestSelection(partFiles);
+      StaticTestSelection merged = mergeDependencies(staticTestSelection, comparator);
 
       Constants.OBJECTMAPPER.writeValue(out, merged);
       return merged;
@@ -45,24 +45,24 @@ public class PartialDependenciesMerger {
       mergeVersions(out, partFiles, comparator);
    }
 
-   static List<StaticTestSelection> readDependencies(final File[] partFiles) {
-      final List<StaticTestSelection> deps = new LinkedList<>();
+   static List<StaticTestSelection> readStaticTestSelection(final File[] partFiles) {
+      final List<StaticTestSelection> staticTestSelection = new LinkedList<>();
       for (int i = 0; i < partFiles.length; i++) {
          try {
             LOG.debug("Reading: {}", partFiles[i]);
             final StaticTestSelection currentDependencies = Constants.OBJECTMAPPER.readValue(partFiles[i], StaticTestSelection.class);
-            deps.add(currentDependencies);
-            LOG.debug("Size: {}", deps.get(deps.size() - 1).getCommits().size());
+            staticTestSelection.add(currentDependencies);
+            LOG.debug("Size: {}", staticTestSelection.get(staticTestSelection.size() - 1).getCommits().size());
          } catch (final IOException e) {
             e.printStackTrace();
          }
       }
-      return deps;
+      return staticTestSelection;
    }
 
-   public static StaticTestSelection mergeDependencies(final List<StaticTestSelection> deps, CommitComparatorInstance comparator) {
-      LOG.debug("Sorting {} dependencies", deps.size());
-      deps.sort(new Comparator<StaticTestSelection>() {
+   public static StaticTestSelection mergeDependencies(final List<StaticTestSelection> staticTestSelections, CommitComparatorInstance comparator) {
+      LOG.debug("Sorting {} dependencies", staticTestSelections.size());
+      staticTestSelections.sort(new Comparator<StaticTestSelection>() {
          @Override
          public int compare(final StaticTestSelection o1, final StaticTestSelection o2) {
             final int indexOf = comparator.getVersionIndex(o1.getInitialcommit().getCommit());
@@ -71,14 +71,14 @@ public class PartialDependenciesMerger {
          }
       });
       StaticTestSelection merged;
-      if (deps.size() > 0) {
-         merged = deps.get(0);
-         if (deps.size() > 1) {
-            for (int i = 1; i < deps.size(); i++) {
-               final StaticTestSelection newMergeDependencies = deps.get(i);
-               LOG.debug("Merge: {} Vals: {}", i, newMergeDependencies.getCommitNames());
-               if (newMergeDependencies != null) {
-                  merged = DependencyReaderUtil.mergeDependencies(merged, newMergeDependencies, comparator);
+      if (staticTestSelections.size() > 0) {
+         merged = staticTestSelections.get(0);
+         if (staticTestSelections.size() > 1) {
+            for (int i = 1; i < staticTestSelections.size(); i++) {
+               final StaticTestSelection newMergedSelection = staticTestSelections.get(i);
+               LOG.debug("Merge: {} Vals: {}", i, newMergedSelection.getCommitNames());
+               if (newMergedSelection != null) {
+                  merged = DependencyReaderUtil.mergeDependencies(merged, newMergedSelection, comparator);
                }
             }
          }

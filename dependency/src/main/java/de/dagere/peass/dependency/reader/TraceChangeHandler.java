@@ -35,25 +35,25 @@ public class TraceChangeHandler {
    private final DependencyManager dependencyManager;
    private final PeassFolders folders;
    private final ExecutionConfig executionConfig;
-   private final String version;
+   private final String commit;
 
    public TraceChangeHandler(final DependencyManager dependencyManager, final PeassFolders folders, final ExecutionConfig executionConfig,
-         final String version) {
+         final String commit) {
       this.dependencyManager = dependencyManager;
       this.folders = folders;
       this.executionConfig = executionConfig;
-      this.version = version;
+      this.commit = commit;
    }
 
-   public void handleTraceAnalysisChanges(final CommitStaticSelection newVersionInfo)
+   public void handleTraceAnalysisChanges(final CommitStaticSelection newCommitInfo)
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException {
-      LOG.debug("Updating dependencies.. {}", version);
+      LOG.debug("Updating dependencies.. {}", commit);
 
       final ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
-      final TestSet testsToRun = getTestsToRun(newVersionInfo, mapping);
+      final TestSet testsToRun = getTestsToRun(newCommitInfo, mapping);
 
       if (testsToRun.classCount() > 0) {
-         analyzeTests(newVersionInfo, testsToRun, mapping);
+         analyzeTests(newCommitInfo, testsToRun, mapping);
       }
    }
 
@@ -62,7 +62,7 @@ public class TraceChangeHandler {
                                                                                       // umwandeln
       addAddedTests(newVersionStaticSelection, testsToRun);
       
-      Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
+      Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + commit + ".json"), testsToRun.entrySet());
 
       NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
       
@@ -82,28 +82,28 @@ public class TraceChangeHandler {
       }
    }
 
-   private void analyzeTests(final CommitStaticSelection newVersionInfo, final TestSet testsToRun, ModuleClassMapping mapping)
+   private void analyzeTests(final CommitStaticSelection newCommitInfo, final TestSet testsToRun, ModuleClassMapping mapping)
          throws IOException, XmlPullParserException, InterruptedException, JsonGenerationException, JsonMappingException {
       
-      dependencyManager.runTraceTests(testsToRun, version);
+      dependencyManager.runTraceTests(testsToRun, commit);
 
-      handleDependencyChanges(newVersionInfo, testsToRun, mapping);
+      handleDependencyChanges(newCommitInfo, testsToRun, mapping);
    }
 
    private void handleDependencyChanges(final CommitStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)
          throws IOException, XmlPullParserException, JsonGenerationException, JsonMappingException {
-      final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, version, mapping);
+      final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, mapping);
       final Map<ChangedEntity, Set<TestCase>> addedTestcases = testExistenceChanges.getAddedTests();
 
       if (DETAIL_DEBUG) {
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "add_" + version + ".json"), addedTestcases);
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "remove_" + version + ".json"), testExistenceChanges.getRemovedTests());
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "add_" + commit + ".json"), addedTestcases);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "remove_" + commit + ".json"), testExistenceChanges.getRemovedTests());
       }
 
       DependencyReaderUtil.removeDeletedTestcases(newVersionStaticSelection, testExistenceChanges);
       DependencyReaderUtil.addNewTestcases(newVersionStaticSelection, addedTestcases);
 
       if (DETAIL_DEBUG)
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "finalStaticSelection_" + version + ".json"), newVersionStaticSelection);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "finalStaticSelection_" + commit + ".json"), newVersionStaticSelection);
    }
 }

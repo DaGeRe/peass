@@ -3,6 +3,9 @@ package de.dagere.peass.measurement.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -24,6 +27,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -51,6 +55,9 @@ public class CreateScriptStarter implements Callable<Void> {
    @Option(names = { "-changeFile", "--changeFile" }, description = "Path to the changefile")
    protected File[] changeFile;
 
+   @Option(names = { "-alreadyFinishedFolder", "--alreadyFinishedFolder" }, description = "Path to folder where finished results are (each should be named treeMeasurementResults)")
+   protected File[] alreadyFinishedFolder;
+
    @Option(names = { "-useSlurm", "--useSlurm" }, description = "Use slurm (if not specified, a bash script is created)")
    protected Boolean useSlurm = false;
 
@@ -62,6 +69,8 @@ public class CreateScriptStarter implements Callable<Void> {
 
    private StaticTestSelection staticTestSelection;
    private ExecutionData executionData;
+
+   private Map<String, List<String>> alreadyAnalyzed = new HashMap<>();
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final CreateScriptStarter command = new CreateScriptStarter();
@@ -86,7 +95,29 @@ public class CreateScriptStarter implements Callable<Void> {
 
       PrintStream destination = System.out;
       RunCommandWriter writer;
-      
+
+      if (alreadyFinishedFolder != null) {
+         for (File folder : alreadyFinishedFolder) {
+            for (File versionFolder : folder.listFiles()) {
+               for (File testclazzFolder : versionFolder.listFiles()) {
+                  for (File resultFile : testclazzFolder.listFiles()) {
+                     if (!resultFile.isDirectory()) {
+                        CauseSearchData csd = Constants.OBJECTMAPPER.readValue(resultFile, CauseSearchData.class);
+                        String commit = csd.getMeasurementConfig().getFixedCommitConfig().getCommit();
+//                        System.out.println(csd.getTestcase() + " " + commit);
+
+                        List<String> finishedTests = alreadyAnalyzed.get(commit);
+                        if (finishedTests == null) {
+                           finishedTests = new LinkedList<>();
+                           alreadyAnalyzed.put(commit, finishedTests);
+                        }
+                        finishedTests.add(csd.getTestcase());
+                     }
+                  }
+               }
+            }
+         }
+      }
 
       if (changeFile == null) {
          if (useSlurm) {
@@ -95,11 +126,11 @@ public class CreateScriptStarter implements Callable<Void> {
          } else {
             writer = new RunCommandWriter(config, destination, experimentId, staticTestSelection);
          }
-         
+
          generateExecuteCommands(staticTestSelection, executionData, experimentId, writer);
       } else {
          ExecutionData mergedExecutions = mergeChangeExecutions();
-         
+
          writer = new RunCommandWriterRCA(config, destination, experimentId, mergedExecutions);
          generateExecuteCommands(staticTestSelection, mergedExecutions, experimentId, writer);
       }
@@ -124,7 +155,7 @@ public class CreateScriptStarter implements Callable<Void> {
       return mergedExecutions;
    }
 
-   public static void generateExecuteCommands(final StaticTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final PrintStream goal)
+   public void generateExecuteCommands(final StaticTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final PrintStream goal)
          throws IOException {
       generateExecuteCommands(dependencies, changedTests, experimentId, new RunCommandWriterSlurm(new MeasurementConfig(30), goal, experimentId, dependencies));
    }
@@ -148,7 +179,7 @@ public class CreateScriptStarter implements Callable<Void> {
       }
    }
 
-   public static void generateExecuteCommands(final StaticTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
+   public void generateExecuteCommands(final StaticTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
          throws IOException {
       final String[] versions = dependencies.getCommitNames();
       for (int versionIndex = 0; versionIndex < versions.length; versionIndex++) {
@@ -161,8 +192,14 @@ public class CreateScriptStarter implements Callable<Void> {
             for (final Map.Entry<TestCase, Set<String>> testcase : changedTests.getCommits().get(endversion).getTestcases().entrySet()) {
                for (final String method : testcase.getValue()) {
                   final String testcaseName = testcase.getKey().getClazz() + "#" + method;
-                  writer.createSingleMethodCommand(versionIndex, endversion, testcaseName);
-
+                  List<String> alreadyAnalyzedTests = alreadyAnalyzed.get(endversion);
+                  boolean analyzed = false;
+                  if (alreadyAnalyzedTests != null && alreadyAnalyzedTests.contains(testcaseName)) {
+                     analyzed = true;
+                  }
+                  if (!analyzed) {
+                     writer.createSingleMethodCommand(versionIndex, endversion, testcaseName);
+                  }
                }
             }
          }

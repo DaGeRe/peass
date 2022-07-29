@@ -97,7 +97,7 @@ public class DependencyReaderUtil {
       }
    }
 
-   static CommitStaticSelection createVersionFromChangeMap(final Map<ChangedEntity, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
+   static CommitStaticSelection createCommitFromChangeMap(final Map<ChangedEntity, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
       final CommitStaticSelection newVersionInfo = new CommitStaticSelection();
       newVersionInfo.setRunning(true);
       LOG.debug("Beginning to write");
@@ -156,24 +156,24 @@ public class DependencyReaderUtil {
       }
    }
 
-   public static void write(final StaticTestSelection deps, final File file) {
+   public static void write(final StaticTestSelection staticTestSelection, final File file) {
       LOG.debug("Writing to: {}", file);
       try {
-         Constants.OBJECTMAPPER.writeValue(file, deps);
+         Constants.OBJECTMAPPER.writeValue(file, staticTestSelection);
       } catch (final IOException e) {
          e.printStackTrace();
       }
    }
 
-   public static StaticTestSelection mergeDependencies(final StaticTestSelection deps1, final StaticTestSelection deps2, CommitComparatorInstance comparator) {
+   public static StaticTestSelection mergeDependencies(final StaticTestSelection staticTestSelection1, final StaticTestSelection staticTestSelection2, CommitComparatorInstance comparator) {
       final StaticTestSelection merged;
       final StaticTestSelection newer;
-      if (comparator.isBefore(deps1.getInitialcommit().getCommit(), deps2.getInitialcommit().getCommit())) {
-         merged = deps1;
-         newer = deps2;
+      if (comparator.isBefore(staticTestSelection1.getInitialcommit().getCommit(), staticTestSelection2.getInitialcommit().getCommit())) {
+         merged = staticTestSelection1;
+         newer = staticTestSelection2;
       } else {
-         newer = deps1;
-         merged = deps2;
+         newer = staticTestSelection1;
+         merged = staticTestSelection2;
       }
       LOG.debug("Merging: {}", merged.getCommits().size());
 

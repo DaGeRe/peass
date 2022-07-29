@@ -38,7 +38,7 @@ public class StaticChangeHandler {
       this.dependencyManager = dependencyManager;
    }
 
-   public CommitStaticSelection handleStaticAnalysisChanges(final String version, final DependencyReadingInput input, ModuleClassMapping mapping)
+   public CommitStaticSelection handleStaticAnalysisChanges(final String commit, final DependencyReadingInput input, ModuleClassMapping mapping)
          throws IOException, JsonGenerationException, JsonMappingException {
       final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(input.getChanges()); // tells which tests need to be run, and
       // because of which change they need to be run
@@ -47,16 +47,16 @@ public class StaticChangeHandler {
       handleAddedTests(input, changeTestMap, mapping);
 
       if (executionConfig.isCreateDetailDebugFiles())
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changeTestMap_" + version + ".json"), changeTestMap);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changeTestMap_" + commit + ".json"), changeTestMap);
 
-      final CommitStaticSelection newVersionStaticSelection = DependencyReaderUtil.createVersionFromChangeMap(input.getChanges(), changeTestMap);
-      newVersionStaticSelection.setJdk(dependencyManager.getExecutor().getJDKVersion());
-      newVersionStaticSelection.setPredecessor(input.getPredecessor());
+      final CommitStaticSelection newCommitStaticSelection = DependencyReaderUtil.createCommitFromChangeMap(input.getChanges(), changeTestMap);
+      newCommitStaticSelection.setJdk(dependencyManager.getExecutor().getJDKVersion());
+      newCommitStaticSelection.setPredecessor(input.getPredecessor());
 
       if (executionConfig.isCreateDetailDebugFiles()) {
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "versionStaticSelection_" + version + ".json"), newVersionStaticSelection);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "commitStaticSelection_" + commit + ".json"), newCommitStaticSelection);
       }
-      return newVersionStaticSelection;
+      return newCommitStaticSelection;
    }
 
    private void handleAddedTests(final DependencyReadingInput input, final ChangeTestMapping changeTestMap, ModuleClassMapping mapping) {

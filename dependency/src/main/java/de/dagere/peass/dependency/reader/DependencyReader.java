@@ -225,34 +225,34 @@ public class DependencyReader {
       skippedNoChange.addVersion(version, "No Change at all");
    }
 
-   private int analyseChanges(final String version, final DependencyReadingInput input)
+   private int analyseChanges(final String commit, final DependencyReadingInput input)
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
-      final CommitStaticSelection newVersionInfo = staticChangeHandler.handleStaticAnalysisChanges(version, input, dependencyManager.getModuleClassMapping());
+      final CommitStaticSelection newCommitInfo = staticChangeHandler.handleStaticAnalysisChanges(commit, input, dependencyManager.getModuleClassMapping());
 
       if (!testSelectionConfig.isDoNotUpdateDependencies()) {
-         TraceChangeHandler traceChangeHandler = new TraceChangeHandler(dependencyManager, folders, executionConfig, version);
-         traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
+         TraceChangeHandler traceChangeHandler = new TraceChangeHandler(dependencyManager, folders, executionConfig, commit);
+         traceChangeHandler.handleTraceAnalysisChanges(newCommitInfo);
 
          if (testSelectionConfig.isGenerateTraces()) {
-            executionResult.addEmptyCommit(version, newVersionInfo.getPredecessor());
-            coverageBasedSelection.addEmptyCommit(version, newVersionInfo.getPredecessor());
-            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, traceFileMapping, kiekerConfig, testSelectionConfig);
-            traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
+            executionResult.addEmptyCommit(commit, newCommitInfo.getPredecessor());
+            coverageBasedSelection.addEmptyCommit(commit, newCommitInfo.getPredecessor());
+            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, commit, traceFileMapping, kiekerConfig, testSelectionConfig);
+            traceViewGenerator.generateViews(resultsFolders, newCommitInfo.getTests());
 
-            DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(version));
-            diffGenerator.generateAllDiffs(version, newVersionInfo, traceFileMapping, executionResult);
+            DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(commit));
+            diffGenerator.generateAllDiffs(commit, newCommitInfo, traceFileMapping, executionResult);
 
             if (testSelectionConfig.isGenerateCoverageSelection()) {
-               TestSet dynamicallySelected = executionResult.getCommits().get(version);
-               coverageExecutor.generateCoverageBasedSelection(version, newVersionInfo, dynamicallySelected);
+               TestSet dynamicallySelected = executionResult.getCommits().get(commit);
+               coverageExecutor.generateCoverageBasedSelection(commit, newCommitInfo, dynamicallySelected);
             }
          }
       } else {
          LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");
       }
-      dependencyResult.getCommits().put(version, newVersionInfo);
+      dependencyResult.getCommits().put(commit, newCommitInfo);
 
-      final int changedClazzCount = calculateChangedClassCount(newVersionInfo);
+      final int changedClazzCount = calculateChangedClassCount(newCommitInfo);
       return changedClazzCount;
    }
 
