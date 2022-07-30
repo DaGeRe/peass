@@ -17,10 +17,8 @@ import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil.CallTreeNodeVertex;
 
 /**
- * CallTreeNodes need to be equal if their KiekerPatterns are equal, except for the matching - here, the CallTreeNodes of each partition (version) need to be considered different.
+ * CallTreeNodes need to be equal if their KiekerPatterns are equal, except for the matching - here, the CallTreeNodes of each partition (commit) need to be considered different.
  * Therefore they are identified by their index in the MatchingTreeBuilder.
- * 
- * @author reichelt
  *
  */
 public class MatchingTreeBuilder {

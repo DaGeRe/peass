@@ -33,23 +33,23 @@ public class TestData {
 		data = new TreeMap<>(comparator);
 	}
 	
-	public void addMeasurement(final String versionOfPair, final String currentVersion, final String predecessor, final Kopemedata resultData) {
-	   LOG.trace("Pair-Version: {} Class: {} Method: {}", versionOfPair, testcase.getClazz(), testcase.getMethod());
-      EvaluationPair currentPair = data.get(versionOfPair);
+	public void addMeasurement(final String commitOfPair, final String currentCommit, final String predecessor, final Kopemedata resultData) {
+	   LOG.trace("Pair-Version: {} Class: {} Method: {}", commitOfPair, testcase.getClazz(), testcase.getMethod());
+      EvaluationPair currentPair = data.get(commitOfPair);
       // LOG.debug(currentPair);
       if (currentPair == null) {
 //         final String predecessor = VersionComparator.getPreviousVersionForTestcase(testcase, versionOfPair);
-         LOG.debug("Version: {} Predecessor: {}", versionOfPair, predecessor);
+         LOG.debug("Version: {} Predecessor: {}", commitOfPair, predecessor);
          // TODO Workaround if data are incomplete, e.g. because of build error
-         if (versionOfPair != null){
-            currentPair = new EvaluationPair(versionOfPair, predecessor, new TestCase(resultData));
-            data.put(versionOfPair, currentPair);
+         if (commitOfPair != null){
+            currentPair = new EvaluationPair(commitOfPair, predecessor, new TestCase(resultData));
+            data.put(commitOfPair, currentPair);
          }
       } 
 
       if (currentPair != null){
          final VMResult result = resultData.getFirstResult();
-         if (versionOfPair.equals(currentVersion)) {
+         if (commitOfPair.equals(currentCommit)) {
             currentPair.getCurrent().add(result);
          } else {
             currentPair.getPrevius().add(result);

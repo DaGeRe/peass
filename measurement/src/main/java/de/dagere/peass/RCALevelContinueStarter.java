@@ -56,8 +56,8 @@ public class RCALevelContinueStarter implements Callable<Void> {
          
          CausePersistenceManager persistenceManager = new CausePersistenceManager(data, dataFull, alternateFolders);
 
-         List<String> versions = GitUtils.getCommits(folders.getProjectFolder(), true, true);
-         CommitComparatorInstance comparator = new CommitComparatorInstance(versions);
+         List<String> commits = GitUtils.getCommits(folders.getProjectFolder(), true, true);
+         CommitComparatorInstance comparator = new CommitComparatorInstance(commits);
          
          EnvironmentVariables emptyEnv = new EnvironmentVariables();
          final CauseTester measurer = new CauseTester(alternateFolders, measurementConfig, data.getCauseConfig(), emptyEnv, comparator);
@@ -83,8 +83,8 @@ public class RCALevelContinueStarter implements Callable<Void> {
 
    private File getResultFile(final CauseSearchFolders folders) {
       File resultFile = null;
-      for (final File versionFolder : folders.getRcaTreeFolder().listFiles()) {
-         for (final File testcaseFolder : versionFolder.listFiles()) {
+      for (final File commitFolder : folders.getRcaTreeFolder().listFiles()) {
+         for (final File testcaseFolder : commitFolder.listFiles()) {
             for (final File treeFile : testcaseFolder.listFiles()) {
                if (treeFile.getName().endsWith(".json")) {
                   resultFile = treeFile;
@@ -97,8 +97,8 @@ public class RCALevelContinueStarter implements Callable<Void> {
    
    private File getFullResultFile(final CauseSearchFolders folders) {
       File resultFile = null;
-      for (final File versionFolder : folders.getRcaTreeFolder().listFiles()) {
-         for (final File testcaseFolder : versionFolder.listFiles()) {
+      for (final File commitFolder : folders.getRcaTreeFolder().listFiles()) {
+         for (final File testcaseFolder : commitFolder.listFiles()) {
             File detailsFolder = new File(testcaseFolder, "details");
             for (final File treeFile : detailsFolder.listFiles()) {
                if (treeFile.getName().endsWith(".json")) {

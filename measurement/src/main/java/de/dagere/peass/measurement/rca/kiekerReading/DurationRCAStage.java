@@ -18,21 +18,21 @@ public class DurationRCAStage extends AbstractTraceAnalysisStage<DurationRecord>
    private static final Logger LOG = LogManager.getLogger(DurationRCAStage.class);
 
    private final Map<String, CallTreeNode> measuredNodes = new HashMap<>();
-   private final String version;
+   private final String commit;
 
    /**
     * Creates a new instance of this class using the given parameters.
     *
     * @param repository system model repository
     */
-   public DurationRCAStage(final SystemModelRepository systemModelRepository, final Set<CallTreeNode> measuredNodes, final String version) {
+   public DurationRCAStage(final SystemModelRepository systemModelRepository, final Set<CallTreeNode> measuredNodes, final String commit) {
       super(systemModelRepository);
       for (CallTreeNode node : measuredNodes) {
          this.measuredNodes.put(node.getKiekerPattern(), node);
       }
-      this.version = version;
+      this.commit = commit;
 
-      measuredNodes.forEach(node -> node.initVMData(version));
+      measuredNodes.forEach(node -> node.initVMData(commit));
    }
 
    @Override
@@ -42,7 +42,7 @@ public class DurationRCAStage extends AbstractTraceAnalysisStage<DurationRecord>
       if (node != null) {
          // Get duration in mikroseconds - Kieker produces nanoseconds
          final long duration = (execution.getTout() - execution.getTin());
-         node.addMeasurement(version, duration);
+         node.addMeasurement(commit, duration);
       }
    }
 }

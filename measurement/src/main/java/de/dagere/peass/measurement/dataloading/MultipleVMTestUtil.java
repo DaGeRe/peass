@@ -57,7 +57,7 @@ public class MultipleVMTestUtil {
    }
 
    /**
-    * Takes the given result and the given version and creates a file containing the aggregated result.
+    * Takes the given result and the given commit and creates a file containing the aggregated result.
     * 
     * @param summaryResultFile
     * @param oneRunData

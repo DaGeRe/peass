@@ -27,13 +27,13 @@ import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 /**
- * Runs the dependency test by running the test, where something could have changed, pairwise for every new version. This makes it faster to get potential change candidates, but it
+ * Runs the dependency test by running the test, where something could have changed, pairwise for every new commit. This makes it faster to get potential change candidates, but it
  * takes longer for a whole project.
  * 
  * @author reichelt
  *
  */
-@Command(description = "Measures the defined tests and versions until the number of VMs is reached", name = "measure")
+@Command(description = "Measures the defined tests and commits until the number of VMs is reached", name = "measure")
 public class MeasureStarter extends PairProcessor {
 
    @Mixin
@@ -93,9 +93,9 @@ public class MeasureStarter extends PairProcessor {
    }
 
    /**
-    * Calculates the index of the start version
+    * Calculates the index of the start commit
     * 
-    * @return index of the start version
+    * @return index of the start commit
     */
    private int getStartVersionIndex() {
       int currentStartindex = startcommit != null ? commits.indexOf(startcommit) : 0;
@@ -116,7 +116,7 @@ public class MeasureStarter extends PairProcessor {
                   }
                }
             }
-            LOG.debug("Version only in executefile, next version in static selection file: {}", potentialStart);
+            LOG.debug("Version only in executefile, next commit in static selection file: {}", potentialStart);
             currentStartindex = commits.indexOf(potentialStart);
             if (currentStartindex == -1) {
                throw new RuntimeException("Did not find " + startcommit + " in given PRONTO-files!");
@@ -127,9 +127,9 @@ public class MeasureStarter extends PairProcessor {
    }
 
    /**
-    * Calculates the index of the end version.
+    * Calculates the index of the end commit.
     * 
-    * @return index of the end version
+    * @return index of the end commit
     */
    private int getEndVersion() {
       int currentEndindex = endcommit != null ? commits.indexOf(endcommit) : commits.size();
@@ -154,7 +154,7 @@ public class MeasureStarter extends PairProcessor {
                   }
                }
             }
-            LOG.debug("Version only in executionfile, next version in static selection file: {}", potentialStart);
+            LOG.debug("Version only in executionfile, next commit in static selection file: {}", potentialStart);
             currentEndindex = commits.indexOf(potentialStart);
          }
       }

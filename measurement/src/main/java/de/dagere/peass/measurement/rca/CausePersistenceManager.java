@@ -31,15 +31,15 @@ public class CausePersistenceManager {
       this.dataDetails = finishedDataFull;
       this.folders = folders;
 
-      String version = finishedData.getMeasurementConfig().getFixedCommitConfig().getCommit();
+      String commit = finishedData.getMeasurementConfig().getFixedCommitConfig().getCommit();
       TestCase testCase = finishedData.getCauseConfig().getTestCase();
-      final File treeDataFolder = folders.getRcaTreeFolder(version, testCase);
-      treeDataFile = folders.getRcaTreeFile(version, testCase);
+      final File treeDataFolder = folders.getRcaTreeFolder(commit, testCase);
+      treeDataFile = folders.getRcaTreeFile(commit, testCase);
       if (treeDataFile.exists()) {
          throw new RuntimeException("Old tree data folder " + treeDataFile.getAbsolutePath() + " exists - please cleanup!");
       }
       treeDataFolder.mkdirs();
-      treeDataFileDetails = folders.getRcaTreeFileDetails(version, testCase);
+      treeDataFileDetails = folders.getRcaTreeFileDetails(commit, testCase);
       treeDataFileDetails.getParentFile().mkdirs();
    }
 

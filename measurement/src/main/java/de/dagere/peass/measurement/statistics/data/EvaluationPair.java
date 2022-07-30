@@ -12,7 +12,7 @@ import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 /**
- * Represents an pair of measurement results that should be evaluated, i.e. the versions of both measurements and its results.
+ * Represents an pair of measurement results that should be evaluated, i.e. the commits of both measurements and its results.
  * 
  * @author reichelt
  *
@@ -29,7 +29,7 @@ public class EvaluationPair {
       this.previousCommit = previousCommit;
       this.testcase = testcase;
       if (currentCommit.equals(previousCommit)) {
-         throw new RuntimeException("Unexpected behaviour: Previous " + previousCommit + " == Current " + currentCommit + " version.");
+         throw new RuntimeException("Unexpected behaviour: Previous " + previousCommit + " == Current " + currentCommit + " commit.");
       }
       if (currentCommit == null || previousCommit == null) {
          throw new RuntimeException("Version == null: " + currentCommit + " " + previousCommit + " " + testcase);

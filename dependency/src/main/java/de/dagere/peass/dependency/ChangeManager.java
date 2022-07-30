@@ -20,7 +20,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -62,7 +62,7 @@ public class ChangeManager {
     */
    private List<ChangedEntity> getChangedClasses(final String lastVersion) throws FileNotFoundException, IOException, XmlPullParserException {
       List<File> moduleFiles = testExecutor.getModules().getModules(); 
-      final VersionDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastVersion, config);
+      final CommitDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastVersion, config);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
       return diff.getChangedClasses();
    }

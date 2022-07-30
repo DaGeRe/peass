@@ -28,7 +28,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialCallList;
@@ -107,7 +107,7 @@ public class JmhDependencyReaderMultiParamTest {
       FakeFileIterator fakeIterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, versionList);
       fakeIterator.goToFirstCommit();
       FakeFileIterator iteratorspied = Mockito.spy(fakeIterator);
-      VersionDiff fakedDiff = new VersionDiff(Arrays.asList(TestConstants.CURRENT_FOLDER), TestConstants.CURRENT_FOLDER);
+      CommitDiff fakedDiff = new CommitDiff(Arrays.asList(TestConstants.CURRENT_FOLDER), TestConstants.CURRENT_FOLDER);
       ExecutionConfig defaultConfig = new ExecutionConfig();
       fakedDiff.addChange("src/test/java/de/dagere/peass/ExampleBenchmark.java", defaultConfig);
 

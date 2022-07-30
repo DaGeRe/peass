@@ -23,9 +23,9 @@ public class PatternSetGenerator {
       this.testcase = testcase;
    }
 
-   public Set<String> generatePatternSet(Set<CallTreeNode> includedNodes, final String version) {
+   public Set<String> generatePatternSet(Set<CallTreeNode> includedNodes, final String commit) {
       Set<String> includedPattern = new HashSet<>();
-      if (config.getCommitOld().equals(version)) {
+      if (config.getCommitOld().equals(commit)) {
          includedNodes.forEach(node -> {
             LOG.trace(node);
             if (!node.getKiekerPattern().equals(CauseSearchData.ADDED)) {
@@ -33,7 +33,7 @@ public class PatternSetGenerator {
             }
          });
       } else {
-         LOG.debug("Searching other: " + version);
+         LOG.debug("Searching other: " + commit);
          includedNodes.forEach(node -> {
             LOG.trace(node);
             if (!node.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {

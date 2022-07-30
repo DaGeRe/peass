@@ -20,19 +20,19 @@ import kieker.analysis.trace.reconstruction.TraceReconstructionStage;
 import kieker.tools.source.LogsReaderCompositeStage;
 
 public class KiekerReaderConfigurationDuration extends KiekerReaderConfiguration {
-   public void readDurations(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String version) {
-      OperationExecutionRCAStage stage = new OperationExecutionRCAStage(systemModelRepositoryNew, measuredNodes, version);
+   public void readDurations(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String commit) {
+      OperationExecutionRCAStage stage = new OperationExecutionRCAStage(systemModelRepositoryNew, measuredNodes, commit);
       
       ExecutionRecordTransformationStage executionStage = prepareTillExecutions(kiekerTraceFolder);
       this.connectPorts(executionStage.getOutputPort(), stage.getInputPort());
    }
    
-   protected void readReducedDurations(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String version) {
+   protected void readReducedDurations(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String commit) {
       List<File> inputDirs = new LinkedList<File>();
       inputDirs.add(kiekerTraceFolder);
       LogsReaderCompositeStage logReaderStage = new LogsReaderCompositeStage(inputDirs, true, 4096);
 
-      final DurationRCAStage executionRecordTransformationStage = new DurationRCAStage(systemModelRepositoryNew, measuredNodes, version);
+      final DurationRCAStage executionRecordTransformationStage = new DurationRCAStage(systemModelRepositoryNew, measuredNodes, commit);
 
       final DynamicEventDispatcher dispatcher = new DynamicEventDispatcher(null, false, true, false);
       final IEventMatcher<? extends DurationRecord> operationExecutionRecordMatcher = new ImplementsEventMatcher<>(DurationRecord.class, null);

@@ -99,8 +99,8 @@ public class ExecutionData extends SelectedTests {
          commitNames.addAll(unsorted.keySet());
          Collections.sort(commitNames, new VersionComparator());
 
-         for (final String version : commitNames) {
-            commits.put(version, unsorted.get(version));
+         for (final String commit : commitNames) {
+            commits.put(commit, unsorted.get(commit));
          }
       }
    }

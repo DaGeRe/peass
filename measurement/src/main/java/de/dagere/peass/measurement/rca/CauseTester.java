@@ -91,12 +91,12 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   protected synchronized TestExecutor getExecutor(final PeassFolders temporaryFolders, final String version) {
-      final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
+   protected synchronized TestExecutor getExecutor(final PeassFolders temporaryFolders, final String commit) {
+      final TestExecutor testExecutor = super.getExecutor(temporaryFolders, commit);
       TestTransformer testTransformer = testExecutor.getTestTransformer();
       testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
       PatternSetGenerator patternSetGenerator = new PatternSetGenerator(configuration.getFixedCommitConfig(), testcase);
-      includedPattern = patternSetGenerator.generatePatternSet(includedNodes, version);
+      includedPattern = patternSetGenerator.generatePatternSet(includedNodes, commit);
       final HashSet<String> includedMethodPattern = new HashSet<>(includedPattern);
       testExecutor.setIncludedMethods(includedMethodPattern);
       return testExecutor;
@@ -127,7 +127,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public void handleKiekerResults(final String commit, final File versionResultFolder) {
+   public void handleKiekerResults(final String commit, final File commitResultFolder) {
       if (getCurrentOrganizer().testSuccess(commit)) {
          LOG.info("Did succeed in measurement - analyse values");
 
@@ -137,7 +137,7 @@ public class CauseTester extends AdaptiveTester {
                isOtherVersion);
          kiekerResultReader.setConsiderNodePosition(!configuration.getKiekerConfig().isUseAggregation());
 
-         kiekerResultReader.readResults(versionResultFolder);
+         kiekerResultReader.readResults(commitResultFolder);
       } else {
          LOG.info("Did not success in measurement");
       }

@@ -55,10 +55,10 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    /**
-    * Compares the given testcase for the given versions.
+    * Compares the given testcase for the given commits.
     * 
-    * @param commit Current version to test
-    * @param versionOld Old version to test
+    * @param commit Current commit to test
+    * @param commitOld Old commit to test
     * @param testcase Testcase to test
     * @throws XmlPullParserException
     */

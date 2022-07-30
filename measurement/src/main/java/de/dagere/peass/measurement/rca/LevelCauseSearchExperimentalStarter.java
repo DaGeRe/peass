@@ -29,10 +29,10 @@ public class LevelCauseSearchExperimentalStarter {
    public static void main(final String[] args)
          throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException {
       final File projectFolder = new File("../../projekte/commons-fileupload");
-      final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
+      final String commit = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
 
-      final MeasurementConfig measurementConfiguration = new MeasurementConfig(15 * 1000 * 60, 5, true, version, version + "~1");
+      final MeasurementConfig measurementConfiguration = new MeasurementConfig(15 * 1000 * 60, 5, true, commit, commit + "~1");
       measurementConfiguration.getKiekerConfig().setUseKieker(true);
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, false, 0.1, false, false, RCAStrategy.COMPLETE, 1);
       final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);

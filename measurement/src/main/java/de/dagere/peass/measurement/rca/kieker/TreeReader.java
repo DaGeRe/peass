@@ -31,8 +31,8 @@ public class TreeReader extends KiekerResultManager {
       this.ignoreEOIs = ignoreEOIs;
    }
 
-   public CallTreeNode getTree(final TestCase testcase, final String version) {
-      executeMeasurements(testcase, version);
+   public CallTreeNode getTree(final TestCase testcase, final String commit) {
+      executeMeasurements(testcase, commit);
       
       File resultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
       File kiekerTraceFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder)[0];
@@ -53,9 +53,9 @@ public class TreeReader extends KiekerResultManager {
       return root;
    }
 
-   private void executeMeasurements(final TestCase testcase, final String version) {
+   private void executeMeasurements(final TestCase testcase, final String commit) {
       executor.loadClasses();
-      executeKoPeMeKiekerRun(new TestSet(testcase), version, folders.getTreeLogFolder());
+      executeKoPeMeKiekerRun(new TestSet(testcase), commit, folders.getTreeLogFolder());
    }
 
 }

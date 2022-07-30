@@ -1,7 +1,7 @@
 package de.dagere.peass.measurement.statistics;
 
 /**
- * Represents a performance change, i.e. changed measured values between two versions in one testcase.
+ * Represents a performance change, i.e. changed measured values between two commits in one testcase.
  * 
  * @author reichelt
  *

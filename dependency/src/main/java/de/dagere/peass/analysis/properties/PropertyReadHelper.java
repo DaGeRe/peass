@@ -26,7 +26,7 @@ import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.RTSTestTransformerBuilder;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.EntityUtil;
-import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
@@ -238,14 +238,14 @@ public class PropertyReadHelper {
 
    private void identifyAffectedClasses(final ChangeProperty property, final Set<String> calls) throws FileNotFoundException, IOException {
       List<File> modules = testExecutor.getModules().getModules();
-      final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, commit, config);
+      final CommitDiff diff = GitUtils.getChangedFiles(projectFolder, modules, commit, config);
       removeUncalledClasses(calls, diff);
       property.setAffectedClasses(diff.getChangedClasses().size());
       final int changedLines = GitUtils.getChangedLines(projectFolder, commit, diff.getChangedClasses(), config);
       property.setAffectedLines(changedLines);
    }
 
-   private void removeUncalledClasses(final Set<String> calls, final VersionDiff diff) {
+   private void removeUncalledClasses(final Set<String> calls, final CommitDiff diff) {
       for (final Iterator<ChangedEntity> it = diff.getChangedClasses().iterator(); it.hasNext();) {
          final ChangedEntity entity = it.next();
          boolean called = false;

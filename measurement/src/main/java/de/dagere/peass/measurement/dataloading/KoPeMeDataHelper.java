@@ -32,21 +32,21 @@ public class KoPeMeDataHelper {
    }
 
    private static String[] filterCommits(SelectedTests selectedTests, final String[] commits) {
-      String[] versionNames = selectedTests.getCommitNames();
-      List<String> versionOrderList = Arrays.asList(versionNames);
-      int firstIndex = versionOrderList.indexOf(commits[0]);
-      int secondIndex = versionOrderList.indexOf(commits[1]);
+      String[] commitNames = selectedTests.getCommitNames();
+      List<String> commitOrderList = Arrays.asList(commitNames);
+      int firstIndex = commitOrderList.indexOf(commits[0]);
+      int secondIndex = commitOrderList.indexOf(commits[1]);
       if (firstIndex > secondIndex) {
-         String[] versionsInCorrectOrder = new String[2];
-         versionsInCorrectOrder[0] = commits[1];
-         versionsInCorrectOrder[1] = commits[0];
-         return versionsInCorrectOrder;
+         String[] commitsInCorrectOrder = new String[2];
+         commitsInCorrectOrder[0] = commits[1];
+         commitsInCorrectOrder[1] = commits[0];
+         return commitsInCorrectOrder;
       } else {
          return commits;
       }
    }
    
-   // TODO: Use unified version of this method
+   // TODO: Use unified commit of this method
    public static List<String> getCommitList(final VMResultChunk chunk) {
       List<String> commits = new LinkedList<>();
       for (VMResult result : chunk.getResults()) {
