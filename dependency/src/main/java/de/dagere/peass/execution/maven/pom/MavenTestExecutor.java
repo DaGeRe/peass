@@ -76,7 +76,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
 
       ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
       processBuilderHelper.parseParams(test.getParams());
-      
+
       String[] withPl = addMavenPl(testTransformer.getConfig().getExecutionConfig(), vars);
       Process process = processBuilderHelper.buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
       return process;
@@ -93,7 +93,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
 
       clean(logFile);
       LOG.debug("Starting Test Transformation");
-      prepareKiekerSource(); 
+      prepareKiekerSource();
       transformTests();
 
       AllModulePomPreparer pomPreparer = new AllModulePomPreparer(testTransformer, getModules(), folders);
@@ -120,7 +120,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
       }
-      
+
    }
 
    @Override
@@ -144,7 +144,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
          e.printStackTrace();
       }
    }
-   
+
    @Override
    public boolean doesBuildfileExist() {
       File pomFile = new File(folders.getProjectFolder(), "pom.xml");
@@ -154,9 +154,15 @@ public class MavenTestExecutor extends KoPeMeExecutor {
 
    @Override
    public boolean isCommitRunning(final String version) {
-      MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), getModules());
-      boolean isRunning = mavenRunningTester.isCommitRunning(version);
-      return isRunning;
+      ProjectModules modules = getModules();
+      if (modules != null) {
+         MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), modules);
+         boolean isRunning = mavenRunningTester.isCommitRunning(version);
+         return isRunning;
+      } else {
+         return false;
+      }
+
    }
 
    public Charset getEncoding() {

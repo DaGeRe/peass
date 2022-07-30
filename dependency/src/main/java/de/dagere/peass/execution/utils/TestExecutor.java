@@ -161,6 +161,10 @@ public abstract class TestExecutor {
       }
    }
 
+   /**
+    * Returns the {@link ProjectModules} of the current project; if null is returned, then the project is not parseable in the current commit.
+    * @return {@link ProjectModules} of the current project or null.
+    */
    public abstract ProjectModules getModules();
 
    public List<String> getExistingClasses() {

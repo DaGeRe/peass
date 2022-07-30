@@ -6,15 +6,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Stores the modules that a project contains and a mapping from the module files to the artifactId of each module, so modules that are not included can be removed.
+ *
+ */
 public class ProjectModules {
-   
+
    private final List<File> modules;
    private final Map<File, String> artifactIds = new HashMap<>();
 
    public ProjectModules(final List<File> modules) {
       this.modules = modules;
    }
-   
+
    public ProjectModules(final File current) {
       modules = new LinkedList<File>();
       modules.add(current);
@@ -23,7 +27,7 @@ public class ProjectModules {
    public List<File> getModules() {
       return modules;
    }
-   
+
    public Map<File, String> getArtifactIds() {
       return artifactIds;
    }

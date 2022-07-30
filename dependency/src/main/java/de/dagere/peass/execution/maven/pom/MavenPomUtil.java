@@ -180,16 +180,17 @@ public class MavenPomUtil {
    }
 
    public static ProjectModules getModules(final File pom, final ExecutionConfig config) {
+      ProjectModules modules = null;
       try {
-         ProjectModules modules = new ModuleReader().readModuleFiles(pom);
+         modules = new ModuleReader().readModuleFiles(pom);
          if (config.getPl() != null && !"".equals(config.getPl())) {
             List<String> includedModuleNames = getIncludedModuleNames(pom, config);
 
             for (Iterator<File> moduleIterator = modules.getModules().iterator(); moduleIterator.hasNext();) {
-               File listFile = moduleIterator.next();
-               String fileModuleName = listFile.getName();
+               File moduleFile = moduleIterator.next();
+               String fileModuleName = moduleFile.getName();
                System.out.println("Name: " + fileModuleName + " " + includedModuleNames);
-               String fileArtifactId = modules.getArtifactIds().get(listFile);
+               String fileArtifactId = modules.getArtifactIds().get(moduleFile);
                System.out.println("Artifactid: " + fileArtifactId);
                if (!includedModuleNames.contains(fileModuleName) && !includedModuleNames.contains(fileArtifactId)) {
                   moduleIterator.remove();
@@ -199,8 +200,10 @@ public class MavenPomUtil {
 
          return modules;
       } catch (IOException | XmlPullParserException e) {
-         throw new RuntimeException(e);
+         LOG.error("Was not able to read modules; this commit will not be analyzable!");
+         e.printStackTrace();
       }
+      return null;
    }
 
    private static List<String> getIncludedModuleNames(final File pom, final ExecutionConfig config) throws IOException {
