@@ -12,21 +12,21 @@ import de.dagere.peass.dependencyprocessors.VersionComparator;
 
 public class VersionChangeProperties {
 
-   private Map<String, ChangeProperties> versions = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
+   private Map<String, ChangeProperties> commits = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
 
    public Map<String, ChangeProperties> getVersions() {
-      return versions;
+      return commits;
    }
 
    public void setVersions(final Map<String, ChangeProperties> versionProperties) {
-      this.versions = versionProperties;
+      this.commits = versionProperties;
    }
 
    public void executeProcessor(final PropertyProcessor c) {
-      for (final Entry<String, ChangeProperties> version : versions.entrySet()) {
-         for (final Entry<String, List<ChangeProperty>> testcase : version.getValue().getProperties().entrySet()) {
+      for (final Entry<String, ChangeProperties> commit : commits.entrySet()) {
+         for (final Entry<String, List<ChangeProperty>> testcase : commit.getValue().getProperties().entrySet()) {
             for (final ChangeProperty change : testcase.getValue()) {
-               c.process(version.getKey(), testcase.getKey(), change, version.getValue());
+               c.process(commit.getKey(), testcase.getKey(), change, commit.getValue());
             }
          }
       }
@@ -35,7 +35,7 @@ public class VersionChangeProperties {
    final class Counter implements PropertyProcessor {
       int count = 0;
       @Override
-      public void process(final String version, final String testcase, final ChangeProperty change, final ChangeProperties changeProperties) {
+      public void process(final String commit, final String testcase, final ChangeProperty change, final ChangeProperties changeProperties) {
          if (change.isAffectsSource() && !change.isAffectsTestSource()) {
             count++;
          }

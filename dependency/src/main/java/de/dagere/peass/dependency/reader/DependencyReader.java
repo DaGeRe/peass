@@ -185,10 +185,10 @@ public class DependencyReader {
     * @throws ParseException
     */
    public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
-      final String version = iterator.getTag();
+      final String commit = iterator.getTag();
       if (!testSelectionConfig.isSkipProcessSuccessRuns()) {
          if (!dependencyManager.getExecutor().isCommitRunning(iterator.getTag())) {
-            documentFailure(version);
+            documentFailure(commit);
             return 0;
          }
       }
@@ -200,29 +200,29 @@ public class DependencyReader {
       lastRunningVersion = iterator.getTag();
 
       if (executionConfig.isCreateDetailDebugFiles()) {
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "initialdependencies_" + version + ".json"), dependencyManager.getDependencyMap());
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changes_" + version + ".json"), input.getChanges());
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "initialdependencies_" + commit + ".json"), dependencyManager.getDependencyMap());
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changes_" + commit + ".json"), input.getChanges());
       }
 
       if (input.getChanges().size() > 0) {
-         return analyseChanges(version, input);
+         return analyseChanges(commit, input);
       } else {
-         addEmptyVersionData(version, input);
+         addEmptyCommitData(commit, input);
          return 0;
       }
    }
 
-   private void addEmptyVersionData(final String version, final DependencyReadingInput input) {
-      CommitStaticSelection emptyVersion = new CommitStaticSelection();
-      emptyVersion.setJdk(dependencyManager.getExecutor().getJDKVersion());
-      emptyVersion.setRunning(true);
-      emptyVersion.setPredecessor(input.getPredecessor());
-      dependencyResult.getCommits().put(version, emptyVersion);
+   private void addEmptyCommitData(final String commit, final DependencyReadingInput input) {
+      CommitStaticSelection emptyCommit = new CommitStaticSelection();
+      emptyCommit.setJdk(dependencyManager.getExecutor().getJDKVersion());
+      emptyCommit.setRunning(true);
+      emptyCommit.setPredecessor(input.getPredecessor());
+      dependencyResult.getCommits().put(commit, emptyCommit);
       if (testSelectionConfig.isGenerateTraces()) {
-         executionResult.addEmptyCommit(version, null);
-         coverageBasedSelection.addEmptyCommit(version, null);
+         executionResult.addEmptyCommit(commit, null);
+         coverageBasedSelection.addEmptyCommit(commit, null);
       }
-      skippedNoChange.addVersion(version, "No Change at all");
+      skippedNoChange.addVersion(commit, "No Change at all");
    }
 
    private int analyseChanges(final String commit, final DependencyReadingInput input)
@@ -256,23 +256,23 @@ public class DependencyReader {
       return changedClazzCount;
    }
 
-   private int calculateChangedClassCount(final CommitStaticSelection newVersionInfo) {
-      final int changedClazzCount = newVersionInfo.getChangedClazzes().values().stream().mapToInt(value -> {
+   private int calculateChangedClassCount(final CommitStaticSelection newCommitInfo) {
+      final int changedClazzCount = newCommitInfo.getChangedClazzes().values().stream().mapToInt(value -> {
          return value.getTestcases().values().stream().mapToInt(list -> list.size()).sum();
       }).sum();
       return changedClazzCount;
    }
 
-   public void documentFailure(final String version) {
+   public void documentFailure(final String commit) {
       if (dependencyManager.getExecutor().isAndroid()) {
          dependencyResult.setAndroid(true);
          executionResult.setAndroid(true);
          coverageBasedSelection.setAndroid(true);
       }
-      LOG.error("Version not running");
-      final CommitStaticSelection newVersionInfo = new CommitStaticSelection();
-      newVersionInfo.setRunning(false);
-      dependencyResult.getCommits().put(version, newVersionInfo);
+      LOG.error("Commit not running");
+      final CommitStaticSelection newCommitInfo = new CommitStaticSelection();
+      newCommitInfo.setRunning(false);
+      dependencyResult.getCommits().put(commit, newCommitInfo);
    }
 
    public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {

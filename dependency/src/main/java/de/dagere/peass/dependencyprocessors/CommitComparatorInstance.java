@@ -11,40 +11,40 @@ public class CommitComparatorInstance implements Comparator<String> {
    
    public static final String NO_BEFORE = "NO_BEFORE";
    
-   private final List<String> versions;
+   private final List<String> commits;
 
-   public CommitComparatorInstance(List<String> versions) {
-      this.versions = versions;
+   public CommitComparatorInstance(List<String> commits) {
+      this.commits = commits;
    }
    
    public CommitComparatorInstance(final SelectedTests dependencies2) {
-      versions = new LinkedList<>();
-      Arrays.stream(dependencies2.getCommitNames()).forEach(version -> versions.add(version));
+      commits = new LinkedList<>();
+      Arrays.stream(dependencies2.getCommitNames()).forEach(commit -> commits.add(commit));
    }
 
    @Override
-   public int compare(String version1, String version2) {
-      final int indexOf = versions.indexOf(version1);
-      final int indexOf2 = versions.indexOf(version2);
+   public int compare(String commit1, String commit2) {
+      final int indexOf = commits.indexOf(commit1);
+      final int indexOf2 = commits.indexOf(commit2);
       return indexOf - indexOf2;
    }
    
-   public boolean isBefore(final String version, final String version2) {
-      final int indexOf = versions.indexOf(version);
-      final int indexOf2 = versions.indexOf(version2);
+   public boolean isBefore(final String commit1, final String commit2) {
+      final int indexOf = commits.indexOf(commit1);
+      final int indexOf2 = commits.indexOf(commit2);
       return indexOf < indexOf2;
    }
 
    public List<String> getCommits() {
-      return versions;
+      return commits;
    }
 
-   public int getVersionIndex(String version) {
-      return versions.indexOf(version);
+   public int getVersionIndex(String commit) {
+      return commits.indexOf(commit);
    }
 
-   public String getPreviousVersion(final String version) {
-      final int index = versions.indexOf(version);
-      return index > 0 ? versions.get(index - 1) : NO_BEFORE;
+   public String getPreviousVersion(final String commit) {
+      final int index = commits.indexOf(commit);
+      return index > 0 ? commits.get(index - 1) : NO_BEFORE;
    }
 }

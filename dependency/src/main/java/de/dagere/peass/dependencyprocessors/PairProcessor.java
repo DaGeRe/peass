@@ -26,10 +26,10 @@ public abstract class PairProcessor extends CommitProcessor{
 	}
 
 	@Override
-	public void processInitialVersion(final InitialCommit versioninfo) {
-		for (final Map.Entry<TestCase, InitialCallList> initDependency : versioninfo.getInitialDependencies().entrySet()) {
+	public void processInitialVersion(final InitialCommit commitinfo) {
+		for (final Map.Entry<TestCase, InitialCallList> initDependency : commitinfo.getInitialDependencies().entrySet()) {
          final TestCase testcase = initDependency.getKey();
-			lastTestcaseCalls.put(testcase, versioninfo.getCommit());
+			lastTestcaseCalls.put(testcase, commitinfo.getCommit());
 		}
 	}
 }

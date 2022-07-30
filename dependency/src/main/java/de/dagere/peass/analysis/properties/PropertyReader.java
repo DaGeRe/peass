@@ -41,12 +41,12 @@ public class PropertyReader {
 
    public void readAllTestsProperties() {
       try {
-         final VersionChangeProperties versionProperties = new VersionChangeProperties();
+         final VersionChangeProperties commitProperties = new VersionChangeProperties();
          final File methodFolder = new File(resultsFolders.getPropertiesFolder(), "methods");
          methodFolder.mkdirs();
-         for (final Map.Entry<String, TestSet> version : changedTests.getCommits().entrySet()) {
-            readVersion(versionProperties, methodFolder, version);
-            Constants.OBJECTMAPPER.writeValue(resultsFolders.getPropertiesFile(), versionProperties);
+         for (final Map.Entry<String, TestSet> commit : changedTests.getCommits().entrySet()) {
+            readVersion(commitProperties, methodFolder, commit);
+            Constants.OBJECTMAPPER.writeValue(resultsFolders.getPropertiesFile(), commitProperties);
          }
 
          LOG.info("Analyzed properties: " + count);
@@ -55,23 +55,23 @@ public class PropertyReader {
       }
    }
 
-   private void readVersion(final VersionChangeProperties versionProperties, final File methodFolder, final Map.Entry<String, TestSet> version) throws IOException {
+   private void readVersion(final VersionChangeProperties commitProperties, final File methodFolder, final Map.Entry<String, TestSet> commit) throws IOException {
       // String prevVersion = VersionComparator.getPreviousVersion(version.getKey());
-      LOG.debug("Reading {}", version.getKey());
+      LOG.debug("Reading {}", commit.getKey());
       final ChangeProperties changeProperties = new ChangeProperties();
-      changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, version.getKey()));
-      changeProperties.setCommitter(GitUtils.getCommitter(projectFolder, version.getKey()));
-      versionProperties.getVersions().put(version.getKey(), changeProperties);
-      for (final Entry<TestCase, Set<String>> testclazz : version.getValue().getTestcases().entrySet()) {
+      changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, commit.getKey()));
+      changeProperties.setCommitter(GitUtils.getCommitter(projectFolder, commit.getKey()));
+      commitProperties.getVersions().put(commit.getKey(), changeProperties);
+      for (final Entry<TestCase, Set<String>> testclazz : commit.getValue().getTestcases().entrySet()) {
          final List<ChangeProperty> properties = new LinkedList<>();
          changeProperties.getProperties().put(testclazz.getKey().getClazz(), properties);
          for (final String testmethod : testclazz.getValue()) {
-            readMethod(methodFolder, version, testclazz, properties, testmethod);
+            readMethod(methodFolder, commit, testclazz, properties, testmethod);
          }
       }
    }
 
-   private void readMethod(final File methodSourceFolder, final Map.Entry<String, TestSet> version, final Entry<TestCase, Set<String>> testclazz,
+   private void readMethod(final File methodSourceFolder, final Map.Entry<String, TestSet> commit, final Entry<TestCase, Set<String>> testclazz,
          final List<ChangeProperty> properties, final String testmethod) throws IOException {
       final Change testcaseChange = new Change();
       testcaseChange.setMethod(testmethod);
@@ -79,8 +79,8 @@ public class PropertyReader {
       final ChangedEntity entity = new ChangedEntity(testclazz.getKey().getClazz(), testclazz.getKey().getModule());
       // TODO eventually, we need to set change the version of the config here to  version.getKey(), version.getValue().getPredecessor(),
       FixedCommitConfig copyConfig = new FixedCommitConfig();
-      copyConfig.setCommit(version.getKey());
-      copyConfig.setCommitOld(version.getValue().getPredecessor());
+      copyConfig.setCommit(commit.getKey());
+      copyConfig.setCommitOld(commit.getValue().getPredecessor());
       final PropertyReadHelper reader = new PropertyReadHelper(config, copyConfig,
             entity, testcaseChange,
             projectFolder,

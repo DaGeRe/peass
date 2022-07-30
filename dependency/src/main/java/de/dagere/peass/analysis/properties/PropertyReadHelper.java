@@ -62,7 +62,7 @@ public class PropertyReadHelper {
    private final ExecutionData changedTests;
    private final ChangedEntity testClazz;
    private final ExecutionConfig config;
-   private final String version, versionOld;
+   private final String commit, commitOld;
    private final Change change;
    private final File projectFolder;
 
@@ -97,8 +97,8 @@ public class PropertyReadHelper {
 
    public PropertyReadHelper(final ExecutionConfig config, FixedCommitConfig commitConfig, final ChangedEntity clazz,
          final Change change, final File projectFolder, final File viewFolder, final File methodSourceFolder, final ExecutionData changedTests) {
-      this.version = commitConfig.getCommit();
-      this.versionOld = commitConfig.getCommitOld();
+      this.commit = commitConfig.getCommit();
+      this.commitOld = commitConfig.getCommitOld();
       this.config = config;
       if (clazz.getMethod() != null) {
          throw new RuntimeException("Method must not be set!");
@@ -120,8 +120,8 @@ public class PropertyReadHelper {
 
       getSourceInfos(property);
 
-      LOG.debug("Comparing " + version + " " + property.getMethod());
-      final File folder = new File(viewFolder, "view_" + version + File.separator + testClazz + File.separator + property.getMethod());
+      LOG.debug("Comparing " + commit + " " + property.getMethod());
+      final File folder = new File(viewFolder, "view_" + commit + File.separator + testClazz + File.separator + property.getMethod());
       if (folder.exists()) {
          // analyseTraceChange(folder, property);
          return property;
@@ -133,19 +133,19 @@ public class PropertyReadHelper {
 
    private String getShortPrevVersion() {
       // This happens for the initial version
-      if (versionOld == null) {
+      if (commitOld == null) {
          return "";
       }
-      if (versionOld.endsWith("~1")) {
-         return versionOld.substring(0, 6) + "~1";
+      if (commitOld.endsWith("~1")) {
+         return commitOld.substring(0, 6) + "~1";
       } else {
-         return versionOld.substring(0, 6);
+         return commitOld.substring(0, 6);
       }
    }
 
    public void getSourceInfos(final ChangeProperty property) throws FileNotFoundException, IOException {
-      final File folder = new File(viewFolder, "view_" + version + File.separator + testClazz + File.separator + property.getMethod());
-      final File traceFileCurrent = TraceFileManager.getExistingTraceFile(folder, version.substring(0, 6), OneTraceGenerator.METHOD);
+      final File folder = new File(viewFolder, "view_" + commit + File.separator + testClazz + File.separator + property.getMethod());
+      final File traceFileCurrent = TraceFileManager.getExistingTraceFile(folder, commit.substring(0, 6), OneTraceGenerator.METHOD);
       File traceFileOld = TraceFileManager.getExistingTraceFile(folder, getShortPrevVersion(), OneTraceGenerator.METHOD); 
       if (changedTests != null) {
          traceFileOld = searchOldTraceFile(property, traceFileOld);
@@ -167,7 +167,7 @@ public class PropertyReadHelper {
    }
 
    private void readExpandedFileTrace(final File folder) throws IOException, FileNotFoundException {
-      File expandedFile = new File(folder, version.substring(0, 6) + OneTraceGenerator.METHOD_EXPANDED + TraceFileManager.TXT_ENDING);
+      File expandedFile = new File(folder, commit.substring(0, 6) + OneTraceGenerator.METHOD_EXPANDED + TraceFileManager.TXT_ENDING);
       if (expandedFile.exists()) {
          LOG.info("Reading method sources from expanded tracefile {}", expandedFile);
          final List<String> traceCurrent = Sequitur.getExpandedTrace(expandedFile);
@@ -182,9 +182,9 @@ public class PropertyReadHelper {
 
    private File searchOldTraceFile(final ChangeProperty property, File traceFileOld) {
       List<String> versions = new ArrayList<>(changedTests.getCommits().keySet());
-      int index = versions.indexOf(versionOld);
+      int index = versions.indexOf(commitOld);
       if (index == -1) {
-         index = versions.indexOf(version) - 1;
+         index = versions.indexOf(commit) - 1;
       }
       LOG.debug("Trying old versions starting with {} Versions: {}", index, changedTests.getCommits().keySet());
       while (!traceFileOld.exists() && index >= 0) {
@@ -219,10 +219,10 @@ public class PropertyReadHelper {
    }
 
    private Map<ChangedEntity, ClazzChangeData> getChanges(final PeassFolders folders) {
-      List<String> commits = Arrays.asList(new String[] { version, versionOld });
-      final CommitIteratorGit iterator = new CommitIteratorGit(projectFolder, commits, versionOld);
+      List<String> commits = Arrays.asList(new String[] { commit, commitOld });
+      final CommitIteratorGit iterator = new CommitIteratorGit(projectFolder, commits, commitOld);
       final ChangeManager changeManager = new ChangeManager(folders, iterator, config, testExecutor);
-      final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(versionOld, version);
+      final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(commitOld, commit);
       return changes;
    }
 
@@ -230,7 +230,7 @@ public class PropertyReadHelper {
       for (final String calledInOneMethod : merged) {
          LOG.debug("Loading: " + calledInOneMethod);
          final ChangedEntity entity = EntityUtil.determineEntity(calledInOneMethod);
-         final MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version, config);
+         final MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, folders.getProjectFolder(), folders.getOldSources(), entity, commit, config);
          reader.readMethodChangeData();
          getKeywordChanges(property, reader, entity);
       }
@@ -238,10 +238,10 @@ public class PropertyReadHelper {
 
    private void identifyAffectedClasses(final ChangeProperty property, final Set<String> calls) throws FileNotFoundException, IOException {
       List<File> modules = testExecutor.getModules().getModules();
-      final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, version, config);
+      final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, commit, config);
       removeUncalledClasses(calls, diff);
       property.setAffectedClasses(diff.getChangedClasses().size());
-      final int changedLines = GitUtils.getChangedLines(projectFolder, version, diff.getChangedClasses(), config);
+      final int changedLines = GitUtils.getChangedLines(projectFolder, commit, diff.getChangedClasses(), config);
       property.setAffectedLines(changedLines);
    }
 

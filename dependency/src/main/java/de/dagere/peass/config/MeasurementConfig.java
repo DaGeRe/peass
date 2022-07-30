@@ -56,13 +56,13 @@ public class MeasurementConfig implements Serializable {
       this.kiekerConfig = new KiekerConfig(kiekerConfig);
    }
 
-   public MeasurementConfig(final int vms, final String version, final String versionOld) {
+   public MeasurementConfig(final int vms, final String commit, final String commitOld) {
       executionConfig = new ExecutionConfig(20);
       kiekerConfig = new KiekerConfig();
       fixedCommitConfig = new FixedCommitConfig();
       this.vms = vms;
-      fixedCommitConfig.setCommit(version);
-      fixedCommitConfig.setCommitOld(versionOld);
+      fixedCommitConfig.setCommit(commit);
+      fixedCommitConfig.setCommitOld(commitOld);
    }
 
    public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin,
@@ -94,12 +94,12 @@ public class MeasurementConfig implements Serializable {
       this.earlyStop = earlyStop;
    }
 
-   public MeasurementConfig(final long timeout, final int vms, final boolean earlyStop, final String version, final String versionOld) {
+   public MeasurementConfig(final long timeout, final int vms, final boolean earlyStop, final String commit, final String commitOld) {
       executionConfig = new ExecutionConfig();
       executionConfig.setTimeout(timeout);
       fixedCommitConfig = new FixedCommitConfig();
-      fixedCommitConfig.setCommit(version);
-      fixedCommitConfig.setCommitOld(versionOld);
+      fixedCommitConfig.setCommit(commit);
+      fixedCommitConfig.setCommitOld(commitOld);
       kiekerConfig = new KiekerConfig();
       this.vms = vms;
       this.earlyStop = earlyStop;
