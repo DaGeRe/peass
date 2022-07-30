@@ -153,11 +153,11 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public boolean isCommitRunning(final String version) {
+   public boolean isCommitRunning(final String commit) {
       ProjectModules modules = getModules();
       if (modules != null) {
          MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), modules);
-         boolean isRunning = mavenRunningTester.isCommitRunning(version);
+         boolean isRunning = mavenRunningTester.isCommitRunning(commit);
          return isRunning;
       } else {
          return false;

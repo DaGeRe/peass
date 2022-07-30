@@ -146,20 +146,20 @@ public class ReadProperties implements Callable<Void> {
 
       try (BufferedWriter csvWriter = new BufferedWriter(new FileWriter(resultCSV))) {
          writeCSVHeadline(csvWriter);
-         final VersionChangeProperties versionProperties = new VersionChangeProperties();
+         final VersionChangeProperties commitProperties = new VersionChangeProperties();
 
          final ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changefile, ProjectChanges.class);
 
          int versionCount = 0, testcaseCount = 0;
-         for (final Entry<String, Changes> versionChanges : changes.getCommitChanges().entrySet()) {
-            final String version = versionChanges.getKey();
-            final TestSet tests = changedTests.getCommits().get(version);
+         for (final Entry<String, Changes> commitChanges : changes.getCommitChanges().entrySet()) {
+            final String commit = commitChanges.getKey();
+            final TestSet tests = changedTests.getCommits().get(commit);
             //
-            final String predecessor = tests != null ? tests.getPredecessor() : version + "~1";
+            final String predecessor = tests != null ? tests.getPredecessor() : commit + "~1";
             
-            testcaseCount += detectVersionProperty(projectFolder, viewFolder, csvWriter, versionProperties, versionChanges, predecessor, changedTests);
+            testcaseCount += detectVersionProperty(projectFolder, viewFolder, csvWriter, commitProperties, commitChanges, predecessor, changedTests);
             if (tests == null) {
-               LOG.error("Version not contained in runfile: " + version);
+               LOG.error("Version not contained in runfile: " + commit);
             }
             versionCount++;
          }
@@ -169,15 +169,15 @@ public class ReadProperties implements Callable<Void> {
    }
 
    private int detectVersionProperty(final File projectFolder, final File viewFolder, final BufferedWriter csvWriter,
-         final VersionChangeProperties versionProperties,
+         final VersionChangeProperties commitProperties,
          final Entry<String, Changes> versionChanges, final String predecessor, final ExecutionData data) throws IOException, JsonGenerationException, JsonMappingException {
       final File methodFolder = new File(out.getParentFile(), "methods");
       methodFolder.mkdirs();
-      final String version = versionChanges.getKey();
+      final String commit = versionChanges.getKey();
       final ChangeProperties changeProperties = new ChangeProperties();
-      changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, version));
-      changeProperties.setCommitter(GitUtils.getCommitter(projectFolder, version));
-      versionProperties.getVersions().put(version, changeProperties);
+      changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, commit));
+      changeProperties.setCommitter(GitUtils.getCommitter(projectFolder, commit));
+      commitProperties.getVersions().put(commit, changeProperties);
       int count = 0;
       for (final Entry<String, List<Change>> changes : versionChanges.getValue().getTestcaseChanges().entrySet()) {
          final String testclazz = changes.getKey();
@@ -191,7 +191,7 @@ public class ReadProperties implements Callable<Void> {
          changeProperties.getProperties().put(testclazz, properties);
          for (final Change testcaseChange : changes.getValue()) {
             FixedCommitConfig config = new FixedCommitConfig();
-            config.setCommit(version);
+            config.setCommit(commit);
             config.setCommitOld(predecessor);
             ChangedEntity entity = new ChangedEntity(testclazz, module);
             final PropertyReadHelper reader = new PropertyReadHelper(new ExecutionConfig(), config, entity, testcaseChange, projectFolder, viewFolder,
@@ -199,7 +199,7 @@ public class ReadProperties implements Callable<Void> {
             final ChangeProperty currentProperty = reader.read();
             // if (currentProperty != null) {
             properties.add(currentProperty);
-            Constants.OBJECTMAPPER.writeValue(out, versionProperties);
+            Constants.OBJECTMAPPER.writeValue(out, commitProperties);
             writeCSVLine(csvWriter, currentProperty, projectFolder.getName());
             // }
 
@@ -209,19 +209,19 @@ public class ReadProperties implements Callable<Void> {
       return count;
    }
 
-   public static VersionChangeProperties readVersionProperties(final ProjectChanges knowledge, final File versionFile) {
-      final VersionChangeProperties versionProperties = new VersionChangeProperties();
+   public static VersionChangeProperties readVersionProperties(final ProjectChanges knowledge, final File commitFile) {
+      final VersionChangeProperties commitProperties = new VersionChangeProperties();
       try {
-         final VersionChangeProperties allProperties = Constants.OBJECTMAPPER.readValue(versionFile, VersionChangeProperties.class);
-         for (final Entry<String, Changes> versionChanges : knowledge.getCommitChanges().entrySet()) {
-            final String version = versionChanges.getKey();
-            final ChangeProperties allProps = allProperties.getVersions().get(version);
+         final VersionChangeProperties allProperties = Constants.OBJECTMAPPER.readValue(commitFile, VersionChangeProperties.class);
+         for (final Entry<String, Changes> commitChanges : knowledge.getCommitChanges().entrySet()) {
+            final String commit = commitChanges.getKey();
+            final ChangeProperties allProps = allProperties.getVersions().get(commit);
             if (allProps != null) {
                final ChangeProperties changeProperties = new ChangeProperties();
                changeProperties.setCommitText(allProps.getCommitText());
                changeProperties.setCommitter(allProps.getCommitText());
-               versionProperties.getVersions().put(version, changeProperties);
-               for (final Entry<String, List<Change>> changes : versionChanges.getValue().getTestcaseChanges().entrySet()) {
+               commitProperties.getVersions().put(commit, changeProperties);
+               for (final Entry<String, List<Change>> changes : commitChanges.getValue().getTestcaseChanges().entrySet()) {
                   final String testclazz = changes.getKey();
                   final List<ChangeProperty> properties = new LinkedList<>();
                   final List<ChangeProperty> oldTestcaseProperties = allProps.getProperties().get(changes.getKey());
@@ -242,7 +242,7 @@ public class ReadProperties implements Callable<Void> {
       } catch (final IOException e) {
          e.printStackTrace();
       }
-      return versionProperties;
+      return commitProperties;
    }
 
    public static void writeCSVHeadline(final BufferedWriter csvWriter) throws IOException {

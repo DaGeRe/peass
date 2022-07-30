@@ -33,7 +33,7 @@ public class ResultOrganizerParallel extends ResultOrganizer {
    @Override
    public File getTempResultsFolder(final String commit) {
       PeassFolders currentFolders = sourceFolders.get(commit);
-      LOG.info("Searching method: {} Version: {} Existing versions: {}", testcase, commit, sourceFolders.keySet());
+      LOG.info("Searching method: {} Version: {} Existing commits: {}", testcase, commit, sourceFolders.keySet());
       LOG.info("Instance: " + System.identityHashCode(this));
       final Collection<File> folderCandidates = currentFolders.findTempClazzFolder(testcase);
       if (folderCandidates.size() != 1) {

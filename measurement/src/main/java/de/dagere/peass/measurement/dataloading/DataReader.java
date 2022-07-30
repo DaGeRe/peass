@@ -75,26 +75,26 @@ public final class DataReader {
 
    public static Map<String, TestData> readClassFolder(final File clazzFile, CommitComparatorInstance comparator) {
       final Map<String, TestData> currentMeasurement = new HashMap<>();
-      for (final File versionOfPair : clazzFile.listFiles()) {
-         if (versionOfPair.isDirectory()) {
-            for (final File versionCurrent : versionOfPair.listFiles()) {
-               for (final File measurementFile : versionCurrent.listFiles((FileFilter) new WildcardFileFilter("*.json"))) {
-                  readMeasurementFile(currentMeasurement, versionOfPair, versionCurrent, measurementFile, comparator);
+      for (final File commitOfPair : clazzFile.listFiles()) {
+         if (commitOfPair.isDirectory()) {
+            for (final File commitCurrent : commitOfPair.listFiles()) {
+               for (final File measurementFile : commitCurrent.listFiles((FileFilter) new WildcardFileFilter("*.json"))) {
+                  readMeasurementFile(currentMeasurement, commitOfPair, commitCurrent, measurementFile, comparator);
                }
                
                // For compatibility with reading old xml result data, this needs to stay in the code
-               for (final File measurementFile : versionCurrent.listFiles((FileFilter) new WildcardFileFilter("*.xml"))) {
-                  readMeasurementFile(currentMeasurement, versionOfPair, versionCurrent, measurementFile, comparator);
+               for (final File measurementFile : commitCurrent.listFiles((FileFilter) new WildcardFileFilter("*.xml"))) {
+                  readMeasurementFile(currentMeasurement, commitOfPair, commitCurrent, measurementFile, comparator);
                }
             }
          } else {
-            LOG.error("Version-folder does not exist: {}", versionOfPair.getAbsolutePath());
+            LOG.error("Version-folder does not exist: {}", commitOfPair.getAbsolutePath());
          }
       }
       return currentMeasurement;
    }
 
-   private static void readMeasurementFile(final Map<String, TestData> currentMeasurement, final File versionOfPair, final File versionCurrent, final File measurementFile, CommitComparatorInstance comparator) {
+   private static void readMeasurementFile(final Map<String, TestData> currentMeasurement, final File commitOfPair, final File commitCurrent, final File measurementFile, CommitComparatorInstance comparator) {
       final Kopemedata resultData = JSONDataLoader.loadData(measurementFile);
       final String testclazz = resultData.getClazz();
       TestCase testcase = new TestCase(resultData);
@@ -106,17 +106,17 @@ public final class DataReader {
       }
 
       String predecessor = null;
-      final File versionFiles[] = versionOfPair.listFiles();
-      for (final File version : versionFiles) {
-         if (!version.getName().equals(versionOfPair.getName())) {
-            predecessor = version.getName();
+      final File commitFiles[] = commitOfPair.listFiles();
+      for (final File commitFile : commitFiles) {
+         if (!commitFile.getName().equals(commitOfPair.getName())) {
+            predecessor = commitFile.getName();
          }
       }
 
       if (predecessor != null) {
-         testData.addMeasurement(versionOfPair.getName(), versionCurrent.getName(), predecessor, resultData);
+         testData.addMeasurement(commitOfPair.getName(), commitCurrent.getName(), predecessor, resultData);
       } else {
-         LOG.error("No predecessor data for {} {} {} {}", versionCurrent.getName(), predecessor, testclazz, testcase.getMethodWithParams());
+         LOG.error("No predecessor data for {} {} {} {}", commitCurrent.getName(), predecessor, testclazz, testcase.getMethodWithParams());
       }
 
    }

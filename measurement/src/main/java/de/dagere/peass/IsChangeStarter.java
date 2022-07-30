@@ -45,9 +45,9 @@ public class IsChangeStarter implements Callable<Integer> {
 
       final VMResultChunk chunk = data.getFirstMethodResult().getDatacollectorResults().get(0).getChunks().get(0);
 
-      final String[] versions = KoPeMeDataHelper.getVersions(chunk);
-      LOG.debug(versions[1]);
-      final DescribedChunk describedChunk = new DescribedChunk(chunk, versions[0], versions[1]);
+      final String[] commits = KoPeMeDataHelper.getCommits(chunk);
+      LOG.debug(commits[1]);
+      final DescribedChunk describedChunk = new DescribedChunk(chunk, commits[0], commits[1]);
       final boolean change = describedChunk.getStatistic(statisticConfigMixin.getStasticsConfig()).isChange();
       LOG.info("Change: {}", change);
       // TODO Auto-generated method stub

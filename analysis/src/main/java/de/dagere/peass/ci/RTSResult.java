@@ -10,7 +10,7 @@ public class RTSResult implements Serializable {
 
    private final Set<TestCase> tests;
    private final boolean isRunning;
-   private String versionOld;
+   private String commitOld;
 
    public RTSResult(final Set<TestCase> tests, final boolean isRunning) {
       this.tests = tests;
@@ -26,11 +26,11 @@ public class RTSResult implements Serializable {
    }
    
    public String getVersionOld() {
-      return versionOld;
+      return commitOld;
    }
 
-   public void setVersionOld(final String versionOld) {
-      this.versionOld = versionOld;
+   public void setVersionOld(final String commitOld) {
+      this.commitOld = commitOld;
    }
 
    @Override

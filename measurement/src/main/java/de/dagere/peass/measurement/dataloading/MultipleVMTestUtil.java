@@ -146,10 +146,10 @@ public class MultipleVMTestUtil {
       return realChunk;
    }
 
-   public static DescriptiveStatistics getChunkData(final VMResultChunk chunk, final String version) {
+   public static DescriptiveStatistics getChunkData(final VMResultChunk chunk, final String commit) {
       final DescriptiveStatistics desc1 = new DescriptiveStatistics();
       for (final VMResult result : chunk.getResults()) {
-         if (result.getCommit().equals(version) && !Double.isNaN(result.getValue())) {
+         if (result.getCommit().equals(commit) && !Double.isNaN(result.getValue())) {
             desc1.addValue(result.getValue());
          }
       }

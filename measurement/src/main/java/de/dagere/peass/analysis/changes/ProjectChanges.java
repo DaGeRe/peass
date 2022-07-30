@@ -115,10 +115,10 @@ public class ProjectChanges implements Serializable {
    }
 
    public void executeProcessor(final ChangeProcessor c) {
-      for (final Map.Entry<String, Changes> version : commitChanges.entrySet()) {
-         for (final Entry<String, List<Change>> testcase : version.getValue().getTestcaseChanges().entrySet()) {
+      for (final Map.Entry<String, Changes> commit : commitChanges.entrySet()) {
+         for (final Entry<String, List<Change>> testcase : commit.getValue().getTestcaseChanges().entrySet()) {
             for (final Change change : testcase.getValue()) {
-               c.process(version.getKey(), testcase.getKey(), change);
+               c.process(commit.getKey(), testcase.getKey(), change);
             }
          }
       }

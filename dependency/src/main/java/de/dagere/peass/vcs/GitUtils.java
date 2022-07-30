@@ -300,9 +300,9 @@ public final class GitUtils {
       return null;
    }
 
-   public static VersionDiff getChangedFiles(final File projectFolder, final List<File> modules, final String version, final ExecutionConfig config) {
+   public static VersionDiff getChangedFiles(final File projectFolder, final List<File> modules, final String commit, final ExecutionConfig config) {
       try {
-         final Process process = Runtime.getRuntime().exec("git diff --name-only " + version + ".." + version + "~1", new String[0], projectFolder);
+         final Process process = Runtime.getRuntime().exec("git diff --name-only " + commit + ".." + commit + "~1", new String[0], projectFolder);
          return getDiffFromProcess(process, modules, projectFolder, config);
       } catch (final IOException e) {
          e.printStackTrace();
@@ -319,11 +319,11 @@ public final class GitUtils {
       return diff;
    }
 
-   public static int getChangedLines(final File projectFolder, final String version, final List<ChangedEntity> entities, ExecutionConfig config) {
+   public static int getChangedLines(final File projectFolder, final String commit, final List<ChangedEntity> entities, ExecutionConfig config) {
       try {
 
          final File folderTemp = new File(FilenameUtils.normalize(projectFolder.getAbsolutePath()));
-         final String command = "git diff --stat=250 " + version + ".." + version + "~1";
+         final String command = "git diff --stat=250 " + commit + ".." + commit + "~1";
          final Process process = Runtime.getRuntime().exec(command, new String[0], folderTemp);
          final String output = StreamGobbler.getFullProcess(process, false);
          int size = 0;
@@ -391,7 +391,7 @@ public final class GitUtils {
    }
 
    /**
-    * Lets the project go to the given state by resetting it to revert potential changes and by checking out the given version.
+    * Lets the project go to the given state by resetting it to revert potential changes and by checking out the given commit.
     * 
     * @param tag
     * @param projectFolder
@@ -416,7 +416,7 @@ public final class GitUtils {
                int secondCheckoutWorked = checkout(tag, projectFolder);
 
                if (secondCheckoutWorked != 0) {
-                  LOG.error("Second checkout did not work - an old version is probably analyzed");
+                  LOG.error("Second checkout did not work - an old commit is probably analyzed");
                }
             }
          }

@@ -14,10 +14,10 @@ import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 
 /**
- * Identifies the versions that should be analyzed, by: (1) Using the versions from ExecutionConfig, if both are given and != null (resolving HEAD and HEAD~1 to the real versions)
- * (2) Using the version from ExecutionConfig, if version is given and versionOld is null, and using the *newest runnable version* from Dependencies
+ * Identifies the commits that should be analyzed, by: (1) Using the commits from ExecutionConfig, if both are given and != null (resolving HEAD and HEAD~1 to the real commits)
+ * (2) Using the commit from ExecutionConfig, if commit is given and commitOld is null, and using the *newest runnable commit* from Dependencies
  * 
- * In case (2), the iterator will only be set if analyzing is necessary, i.e. if the *newest version* and version differ. Otherwise, it will be null.
+ * In case (2), the iterator will only be set if analyzing is necessary, i.e. if the *newest commit* and commit differ. Otherwise, it will be null.
  *
  */
 public class DependencyIteratorBuilder {

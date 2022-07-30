@@ -15,7 +15,7 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
-import de.dagere.peass.analysis.helper.read.VersionData;
+import de.dagere.peass.analysis.helper.read.CommitData;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.StatisticsConfig;
@@ -51,7 +51,7 @@ public class ChangeReader {
 
    private double minChange = 0;
 
-   private final VersionData allData = new VersionData();
+   private final CommitData allData = new CommitData();
    // private static VersionKnowledge oldKnowledge;
    private final ResultsFolders resultsFolders;
 
@@ -179,60 +179,60 @@ public class ChangeReader {
          final ProjectStatistics info) {
       for (final VMResultChunk chunk : testcaseMethod.getDatacollectorResults().get(0).getChunks()) {
          folderMeasurements++;
-         final String[] versions = KoPeMeDataHelper.getVersions(chunk, selectedTests);
-         LOG.debug(versions[1]);
-         if (versions[1] != null) {
-            readChunk(fileName, data, changeKnowledge, info, chunk, versions);
+         final String[] commits = KoPeMeDataHelper.getCommits(chunk, selectedTests);
+         LOG.debug(commits[1]);
+         if (commits[1] != null) {
+            readChunk(fileName, data, changeKnowledge, info, chunk, commits);
          }
       }
       return folderMeasurements;
    }
 
    private void readChunk(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info, final VMResultChunk chunk,
-         final String[] versions) {
-      final DescribedChunk describedChunk = new DescribedChunk(chunk, versions[0], versions[1]);
+         final String[] commits) {
+      final DescribedChunk describedChunk = new DescribedChunk(chunk, commits[0], commits[1]);
       describedChunk.removeOutliers();
 
       if (describedChunk.getDescPrevious().getN() > 1 && describedChunk.getDescCurrent().getN() > 1) {
-         getIsChange(fileName, data, changeKnowledge, info, versions, describedChunk);
+         getIsChange(fileName, data, changeKnowledge, info, commits, describedChunk);
       } else {
-         LOG.error("Too few measurements: {} - {} measurements, {} - {} measurements ", versions[0], describedChunk.getDescPrevious().getN(), versions[1],
+         LOG.error("Too few measurements: {} - {} measurements, {} - {} measurements ", commits[0], describedChunk.getDescPrevious().getN(), commits[1],
                describedChunk.getDescCurrent().getN());
       }
    }
 
    public void getIsChange(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info,
-         final String[] versions, final DescribedChunk describedChunk) {
+         final String[] commits, final DescribedChunk describedChunk) {
       LOG.debug(data.getClazz());
       final TestcaseStatistic statistic = describedChunk.getStatistic(config);
-      statistic.setPredecessor(versions[0]);
+      statistic.setPredecessor(commits[0]);
       // if (! (statistic.getTvalue() == Double.NaN)){
       CompareData cd = new CompareData(describedChunk.getPrevious(), describedChunk.getCurrent());
       final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(cd);
-      final TestCase testcase = getTestcase(data, versions, describedChunk);
+      final TestCase testcase = getTestcase(data, commits, describedChunk);
 
       final double diff = describedChunk.getDiff();
       final boolean isBigEnoughDiff = Math.abs(diff) > minChange;
-      allData.addStatistic(versions[1], testcase, fileName, statistic,
+      allData.addStatistic(commits[1], testcase, fileName, statistic,
             statistic.isChange() && isBigEnoughDiff,
             !confidenceResult.equals(Relation.EQUAL));
       if (statistic.isChange() && isBigEnoughDiff) {
-         changeKnowledge.addChange(testcase, versions[1],
+         changeKnowledge.addChange(testcase, commits[1],
                confidenceResult,
                statistic.isChange() ? Relation.GREATER_THAN : Relation.EQUAL,
                describedChunk.getDescPrevious().getMean(), diff,
                statistic.getTvalue(),
                statistic.getVMs());
 
-         writeRunCommands(versions, describedChunk, testcase);
+         writeRunCommands(commits, describedChunk, testcase);
       }
-      info.addMeasurement(versions[1], testcase, statistic);
+      info.addMeasurement(commits[1], testcase, statistic);
    }
 
-   private TestCase getTestcase(final Kopemedata data, final String[] versions, final DescribedChunk describedChunk) {
+   private TestCase getTestcase(final Kopemedata data, final String[] commits, final DescribedChunk describedChunk) {
       TestCase testcase = new TestCase(data);
       if (tests != null) {
-         TestSet testsOfThisVersion = tests.get(versions[1]);
+         TestSet testsOfThisVersion = tests.get(commits[1]);
          for (TestCase test : testsOfThisVersion.getTests()) {
             if (paramsEqual(testcase.getParams(), test)) {
                if (test.getClazz().equals(testcase.getClazz()) && test.getMethod().equals(testcase.getMethod())) {
@@ -252,24 +252,24 @@ public class ChangeReader {
             || (test.getParams() != null && test.getParams().equals(paramString)); // last should only be evaluated if both are not null
    }
 
-   private void writeRunCommands(final String[] versions, final DescribedChunk describedChunk, final TestCase testcase) {
+   private void writeRunCommands(final String[] commits, final DescribedChunk describedChunk, final TestCase testcase) {
       if (runCommandWriter != null) {
          final VMResult exampleResult = describedChunk.getCurrent().get(0);
          final int iterations = (int) exampleResult.getIterations();
          final int repetitions = (int) exampleResult.getRepetitions();
          final int vms = describedChunk.getCurrent().size();
 
-         final int versionIndex = Arrays.binarySearch(selectedTests.getCommitNames(), versions[1]);
+         final int commitIndex = Arrays.binarySearch(selectedTests.getCommitNames(), commits[1]);
 
-         runCommandWriter.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
+         runCommandWriter.createSingleMethodCommand(commitIndex, commits[1], testcase.getExecutable(),
                (int) exampleResult.getWarmup(), iterations, repetitions, vms);
 
-         runCommandWriterSlurm.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
+         runCommandWriterSlurm.createSingleMethodCommand(commitIndex, commits[1], testcase.getExecutable(),
                iterations, repetitions, vms);
       }
    }
 
-   public VersionData getAllData() {
+   public CommitData getAllData() {
       return allData;
    }
 

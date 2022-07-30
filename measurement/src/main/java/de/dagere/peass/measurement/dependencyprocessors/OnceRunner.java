@@ -72,8 +72,8 @@ public class OnceRunner {
       cleanup();
    }
 
-   private File initVMFolder(final String version, final int vmid, final File logFolder) {
-      File vmidFolder = new File(logFolder, "vm_" + vmid + "_" + version);
+   private File initVMFolder(final String commit, final int vmid, final File logFolder) {
+      File vmidFolder = new File(logFolder, "vm_" + vmid + "_" + commit);
       vmidFolder.mkdirs();
 
       LOG.info("Initial checkout finished, VM-Folder " + vmidFolder.getAbsolutePath() + " exists: " + vmidFolder.exists());

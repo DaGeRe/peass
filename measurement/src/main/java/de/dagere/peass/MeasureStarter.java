@@ -48,7 +48,7 @@ public class MeasureStarter extends PairProcessor {
    private static final Logger LOG = LogManager.getLogger(MeasureStarter.class);
 
    protected DependencyTester tester;
-   private final List<String> versions = new LinkedList<>();
+   private final List<String> commits = new LinkedList<>();
    private int startindex, endindex;
    private TestCase test;
 
@@ -65,9 +65,9 @@ public class MeasureStarter extends PairProcessor {
          test = null;
       }
 
-      versions.add(staticTestSelection.getInitialcommit().getCommit());
+      commits.add(staticTestSelection.getInitialcommit().getCommit());
 
-      staticTestSelection.getCommits().keySet().forEach(version -> versions.add(version));
+      staticTestSelection.getCommits().keySet().forEach(commit -> commits.add(commit));
 
       startindex = getStartVersionIndex();
       endindex = getEndVersion();
@@ -98,7 +98,7 @@ public class MeasureStarter extends PairProcessor {
     * @return index of the start version
     */
    private int getStartVersionIndex() {
-      int currentStartindex = startcommit != null ? versions.indexOf(startcommit) : 0;
+      int currentStartindex = startcommit != null ? commits.indexOf(startcommit) : 0;
       // Only bugfix if static selection file and execution file do not fully match
       if (executionData != null) {
          if (startcommit != null && currentStartindex == -1) {
@@ -117,7 +117,7 @@ public class MeasureStarter extends PairProcessor {
                }
             }
             LOG.debug("Version only in executefile, next version in static selection file: {}", potentialStart);
-            currentStartindex = versions.indexOf(potentialStart);
+            currentStartindex = commits.indexOf(potentialStart);
             if (currentStartindex == -1) {
                throw new RuntimeException("Did not find " + startcommit + " in given PRONTO-files!");
             }
@@ -132,7 +132,7 @@ public class MeasureStarter extends PairProcessor {
     * @return index of the end version
     */
    private int getEndVersion() {
-      int currentEndindex = endcommit != null ? versions.indexOf(endcommit) : versions.size();
+      int currentEndindex = endcommit != null ? commits.indexOf(endcommit) : commits.size();
       // Only bugfix if static selection file and execution file do not fully match
       if (executionData != null) {
          if (endcommit != null && currentEndindex == -1) {
@@ -155,24 +155,24 @@ public class MeasureStarter extends PairProcessor {
                }
             }
             LOG.debug("Version only in executionfile, next version in static selection file: {}", potentialStart);
-            currentEndindex = versions.indexOf(potentialStart);
+            currentEndindex = commits.indexOf(potentialStart);
          }
       }
       return currentEndindex;
    }
 
    @Override
-   protected void processVersion(final String version, final CommitStaticSelection versioninfo) {
+   protected void processVersion(final String commit, final CommitStaticSelection commitinfo) {
       LOG.debug("Configuration: VMs: {} Warmup: {} Iterations: {} Repetitions: {}", measurementConfigMixin.getVms(),
             measurementConfigMixin.getWarmup(), measurementConfigMixin.getIterations(), measurementConfigMixin.getRepetitions());
       try {
-         final int currentIndex = versions.indexOf(version);
+         final int currentIndex = commits.indexOf(commit);
          final boolean executeThisVersion = currentIndex >= startindex && currentIndex <= endindex;
 
-         LOG.trace("Processing Version {} Executing Tests: {}", version, executeThisVersion);
+         LOG.trace("Processing Version {} Executing Tests: {}", commit, executeThisVersion);
 
-         final Set<TestCase> testcases = versioninfo.getTests().getTests();
-         final String versionOld = versioninfo.getPredecessor();
+         final Set<TestCase> testcases = commitinfo.getTests().getTests();
+         final String commitOld = commitinfo.getPredecessor();
 
          for (final TestCase testcase : testcases) {
             if (executeThisVersion) {
@@ -183,15 +183,15 @@ public class MeasureStarter extends PairProcessor {
                   }
 
                   if (executeThisTest) {
-                     executeThisTest = checkExecutionData(version, testcase, executeThisTest);
+                     executeThisTest = checkExecutionData(commit, testcase, executeThisTest);
                   }
                   if (executeThisTest) {
-                     tester.setVersions(version, versionOld);
+                     tester.setVersions(commit, commitOld);
                      tester.evaluate(testcase);
                   }
                }
             }
-            lastTestcaseCalls.put(testcase, version);
+            lastTestcaseCalls.put(testcase, commit);
          }
       } catch (IOException | InterruptedException  | XmlPullParserException e) {
          e.printStackTrace();
@@ -203,9 +203,9 @@ public class MeasureStarter extends PairProcessor {
       tester.postEvaluate();
    }
 
-   public boolean checkExecutionData(final String version, final TestCase testcase, boolean executeThisTest) {
+   public boolean checkExecutionData(final String commit, final TestCase testcase, boolean executeThisTest) {
       if (executionData != null) {
-         final TestSet calls = executionData.getCommits().get(version);
+         final TestSet calls = executionData.getCommits().get(commit);
          boolean hasChanges = false;
          if (calls != null) {
             for (final Map.Entry<TestCase, Set<String>> clazzCalls : calls.entrySet()) {
@@ -216,7 +216,7 @@ public class MeasureStarter extends PairProcessor {
             }
          }
          if (!hasChanges) {
-            LOG.debug("Skipping " + testcase + " because of execution-JSON in " + version);
+            LOG.debug("Skipping " + testcase + " because of execution-JSON in " + commit);
             executeThisTest = false;
          }
       }

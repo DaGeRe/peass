@@ -125,7 +125,7 @@ public class Cleaner extends DataAnalyser {
       return -Math.floorDiv(-x, y);
    }
 
-   private List<VMResult> getChunk(final String version, final long minExecutionCount, final List<VMResult> previous) {
+   private List<VMResult> getChunk(final String commit, final long minExecutionCount, final List<VMResult> previous) {
       final List<VMResult> previousClean = StatisticUtil.shortenValues(previous);
       return previousClean.stream()
             .filter(result -> {
@@ -137,12 +137,12 @@ public class Cleaner extends DataAnalyser {
                }
                return isCorrect;
             })
-            .map(result -> cleanResult(version, result))
+            .map(result -> cleanResult(commit, result))
             .collect(Collectors.toList());
    }
 
-   private VMResult cleanResult(final String version, final VMResult result) {
-      result.setCommit(version);
+   private VMResult cleanResult(final String commit, final VMResult result) {
+      result.setCommit(commit);
       result.setWarmup(result.getFulldata().getValues().size());
       result.setIterations(result.getFulldata().getValues().size());
       result.setRepetitions(result.getRepetitions());

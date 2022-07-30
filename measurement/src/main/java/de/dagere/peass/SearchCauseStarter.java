@@ -96,10 +96,9 @@ public class SearchCauseStarter extends MeasureStarter {
 
    private TestCase determineTest() {
       TestCase test = new TestCase(testName);
-      final CommitStaticSelection versionInfo = staticTestSelection.getCommits().get(commit);
-      // boolean found = versionInfo.getTests().getTests().contains(test);
+      final CommitStaticSelection commitInfo = staticTestSelection.getCommits().get(commit);
       boolean found = false;
-      for (TestCase selectedTest : versionInfo.getTests().getTests()) {
+      for (TestCase selectedTest : commitInfo.getTests().getTests()) {
          if (selectedTest.getClazz().equals(test.getClazz()) && selectedTest.getMethodWithParams().equals(test.getMethodWithParams())) {
             found = true;
             test = selectedTest; // required to add module

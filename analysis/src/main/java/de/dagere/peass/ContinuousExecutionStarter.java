@@ -28,7 +28,7 @@ import picocli.CommandLine.Option;
  * @author reichelt
  *
  */
-@Command(description = "Examines the current and last version of a project. If informations are present in default paths, these are used", 
+@Command(description = "Examines the current and last commit of a project. If informations are present in default paths, these are used", 
    name = "continuousExecution")
 public class ContinuousExecutionStarter implements Callable<Void> {
    private static final Logger LOG = LogManager.getLogger(ContinuousExecutionStarter.class);

@@ -15,7 +15,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 
 /**
- * Saves all changes for one version. For each testcase it is saved which change has happened with method, difference in percent etc.
+ * Saves all changes for one commit. For each testcase it is saved which change has happened with method, difference in percent etc.
  * 
  * @author reichelt
  *
