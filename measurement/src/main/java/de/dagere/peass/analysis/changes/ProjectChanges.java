@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.statistics.Relation;
 
@@ -38,8 +39,14 @@ public class ProjectChanges implements Serializable {
 
    public ProjectChanges() {
    }
+   
+   public ProjectChanges(CommitComparatorInstance comparator) {
+      commitChanges = new TreeMap<>(comparator);
+   }
 
-   public ProjectChanges(final StatisticsConfig statisticsConfig) {
+
+   public ProjectChanges(final StatisticsConfig statisticsConfig, CommitComparatorInstance comparator) {
+      this(comparator);
       this.statisticsConfig = statisticsConfig;
    }
 

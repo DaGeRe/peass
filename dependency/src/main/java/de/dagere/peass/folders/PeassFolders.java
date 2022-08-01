@@ -21,6 +21,8 @@ import de.dagere.peass.vcs.VersionControlSystem;
  */
 public class PeassFolders {
 
+   public static final String CLEAN_FOLDER_NAME = "clean";
+
    private static final Logger LOG = LogManager.getLogger(PeassFolders.class);
 
    public static final String MEASUREMENTS = "measurements";
@@ -70,7 +72,7 @@ public class PeassFolders {
       fullResultFolder = new File(peassFolder, "measurementsFull");
       fullResultFolder.mkdir();
       tempFolder = new File(peassFolder, "temp");
-      cleanFolder = new File(peassFolder, "clean");
+      cleanFolder = new File(peassFolder, CLEAN_FOLDER_NAME);
       cleanNativeFolder = new File(cleanFolder, "native");
       debugFolder = new File(peassFolder, "debug");
       // cleanFolder.mkdir();

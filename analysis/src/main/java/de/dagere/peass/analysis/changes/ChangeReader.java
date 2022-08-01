@@ -22,6 +22,7 @@ import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.SelectedTests;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.measurement.dataloading.KoPeMeDataHelper;
 import de.dagere.peass.measurement.statistics.ConfidenceIntervalInterpretion;
@@ -52,7 +53,6 @@ public class ChangeReader {
    private double minChange = 0;
 
    private final CommitData allData = new CommitData();
-   // private static VersionKnowledge oldKnowledge;
    private final ResultsFolders resultsFolders;
 
    private final RunCommandWriterRCA runCommandWriter;
@@ -89,11 +89,11 @@ public class ChangeReader {
       this.tests = tests;
    }
 
-   public ChangeReader(final String projectName, final SelectedTests dependencies) {
+   public ChangeReader(final String projectName, final SelectedTests selectedTests) {
       this.resultsFolders = null;
       runCommandWriter = null;
       runCommandWriterSlurm = null;
-      this.selectedTests = dependencies;
+      this.selectedTests = selectedTests;
    }
 
    public void setConfig(StatisticsConfig config) {
@@ -105,7 +105,7 @@ public class ChangeReader {
    }
 
    public ProjectChanges readFile(final File measurementFolder) {
-      final ProjectChanges changes = new ProjectChanges(config);
+      final ProjectChanges changes = new ProjectChanges(config, new CommitComparatorInstance(selectedTests));
       final ProjectStatistics info = new ProjectStatistics();
       LOG.debug("Reading from " + measurementFolder.getAbsolutePath());
       readFile(measurementFolder, changes, info);

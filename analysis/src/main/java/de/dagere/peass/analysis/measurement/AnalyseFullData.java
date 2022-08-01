@@ -48,7 +48,7 @@ public class AnalyseFullData extends DataAnalyser {
       this.changeFile = changesFile;
       this.mapping = mapping;
       this.info = info;
-      projectChanges = new ProjectChanges(statisticConfig);
+      projectChanges = new ProjectChanges(statisticConfig, comparator);
       LOG.info("Writing changes to: {}", changeFile.getAbsolutePath());
       try {
          Constants.OBJECTMAPPER.writeValue(changeFile, projectChanges);
