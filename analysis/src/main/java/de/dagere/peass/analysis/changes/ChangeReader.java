@@ -120,12 +120,14 @@ public class ChangeReader {
    private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) {
       if (measurementFolder.isDirectory()) {
          for (final File file : measurementFolder.listFiles()) {
-            if (file.getName().matches("[0-9]+_[0-9]+")) {
+            String fileName = file.getName();
+            if (fileName.matches("[0-9]+_[0-9]+")) {
                File slurmCleanFolder = new File(file, "peass/clean");
                readCleanFolder(measurementFolder, changes, info, slurmCleanFolder);
-            } else if (file.getName().equals("clean")) {
+            } else if (fileName.equals("clean")) {
                readCleanFolder(measurementFolder, changes, info, file);
-            } else if (file.getName().endsWith(".json") || file.getName().endsWith(".xml")) {
+            } else if ((fileName.endsWith(".json") || fileName.endsWith(".xml")) 
+                  && !fileName.equals("changes.json") && !fileName.equals("statistics.json")) {
                readFile(measurementFolder, changes, info, file);
             }
          }

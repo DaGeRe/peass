@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.measurement.dataloading.VersionSorter;
+import de.dagere.peass.measurement.dataloading.CommitSorter;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -39,7 +39,7 @@ public class CleanStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      SelectedTests tests = VersionSorter.getSelectedTests(staticSelectionFile, executionfile);
+      SelectedTests tests = CommitSorter.getSelectedTests(staticSelectionFile, executionfile);
       CommitComparatorInstance comparator = new CommitComparatorInstance(tests);
       
       for (int i = 0; i < data.length; i++) {

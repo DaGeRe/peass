@@ -11,14 +11,14 @@ import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.utils.Constants;
 
-public class VersionSorter {
+public class CommitSorter {
    
-   public static SelectedTests getSelectedTests(final File dependencyFile, final File executionFile, final File... additionalDependencyFiles)
+   public static SelectedTests getSelectedTests(final File staticSelectionFile, final File executionFile, final File... additionalSelectionFiles)
          throws IOException, JsonParseException, JsonMappingException {
       StaticTestSelection dependencies = null;
       ExecutionData executionData = null;
-      if (dependencyFile != null) {
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
+      if (staticSelectionFile != null) {
+         dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
          return dependencies;
       }
       if (executionFile != null) {
@@ -26,7 +26,7 @@ public class VersionSorter {
          return executionData;
       }
       if (dependencies == null) {
-         for (final File dependencytest : additionalDependencyFiles) {
+         for (final File dependencytest : additionalSelectionFiles) {
             dependencies = Constants.OBJECTMAPPER.readValue(dependencytest, StaticTestSelection.class);
             return dependencies;
          }

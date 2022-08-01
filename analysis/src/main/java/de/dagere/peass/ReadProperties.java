@@ -35,7 +35,7 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.measurement.dataloading.VersionSorter;
+import de.dagere.peass.measurement.dataloading.CommitSorter;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 import picocli.CommandLine;
@@ -91,7 +91,7 @@ public class ReadProperties implements Callable<Void> {
    public Void call() throws Exception {
       final RepoFolders folders = new RepoFolders();
       final String projectName = projectFolder.getName();
-      SelectedTests selectedTests = VersionSorter.getSelectedTests(staticSelectionFile, executionFile, folders.getDependencyFile(projectName));
+      SelectedTests selectedTests = CommitSorter.getSelectedTests(staticSelectionFile, executionFile, folders.getDependencyFile(projectName));
 
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(selectedTests.getUrl(), projectFolder);

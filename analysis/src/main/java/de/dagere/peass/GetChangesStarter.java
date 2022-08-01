@@ -18,7 +18,7 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.measurement.dataloading.VersionSorter;
+import de.dagere.peass.measurement.dataloading.CommitSorter;
 import de.dagere.peass.measurement.utils.RunCommandWriterRCA;
 import de.dagere.peass.measurement.utils.RunCommandWriterSlurmRCA;
 import de.dagere.peass.utils.Constants;
@@ -67,7 +67,7 @@ public class GetChangesStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      SelectedTests selectedTests = VersionSorter.getSelectedTests(staticSelectionFile, executionFile);
+      SelectedTests selectedTests = CommitSorter.getSelectedTests(staticSelectionFile, executionFile);
 
       if (!out.exists()) {
          out.mkdirs();
