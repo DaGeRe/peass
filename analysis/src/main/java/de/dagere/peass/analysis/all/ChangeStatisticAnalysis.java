@@ -63,7 +63,10 @@ public class ChangeStatisticAnalysis implements Callable<Void> {
 
    private void getChanges() throws FileNotFoundException {
       final ChangeReader reader = new ChangeReader(new ResultsFolders(data, "post-analysis"), null, null, selectedTests);
-      reader.setConfig(new StatisticsConfig());
+      StatisticsConfig config = new StatisticsConfig();
+      config.setType1error(0.001);
+      config.setType2error(0.001);
+      reader.setConfig(config);
       reader.setTests(selectedTests.toExecutionData().getCommits());
       
       reader.readFile(projectFolderName);

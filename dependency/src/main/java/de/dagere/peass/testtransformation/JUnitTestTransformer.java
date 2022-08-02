@@ -361,9 +361,9 @@ public class JUnitTestTransformer implements TestTransformer {
       if (clazzFile != null && clazzFile.getParentFile() != null) {
          if (clazzFile.getParentFile().exists()) {
             LOG.debug("Parent folder {} exists", clazzFile.getParentFile());
-            for (File file : clazzFile.getParentFile().listFiles()) {
-               LOG.debug("File in folder: {}", file);
-            }
+//            for (File file : clazzFile.getParentFile().listFiles()) {
+//               LOG.debug("File in folder: {}", file);
+//            }
          } else {
             LOG.debug("Parent folder {} does not exist", clazzFile.getParentFile());
          }
