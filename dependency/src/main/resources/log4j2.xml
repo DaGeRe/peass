@@ -14,6 +14,9 @@
     <Logger name="de.dagere.kopeme.datastorage.XMLDataLoader" level="info">
       <AppenderRef ref="Console" />
     </Logger>
+    <Logger name="kieker.analysis.source.file.TextMapDeserializer" level="info">
+      <AppenderRef ref="Console" />
+    </Logger>
     <Logger name="org.apache.logging.log4j2" level="info">
       <AppenderRef ref="Console" />
     </Logger>
