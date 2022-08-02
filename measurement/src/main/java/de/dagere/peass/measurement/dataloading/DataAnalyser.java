@@ -11,10 +11,10 @@ import de.dagere.peass.measurement.statistics.data.TestData;
 
 public abstract class DataAnalyser {
    
+   private static final Logger LOG = LogManager.getLogger(DataAnalyser.class);
+   
    private boolean isFinished = false;
    protected final CommitComparatorInstance comparator;
-   
-   private static final Logger LOG = LogManager.getLogger(DataAnalyser.class);
 
    public DataAnalyser(CommitComparatorInstance comparator) {
       this.comparator = comparator;
