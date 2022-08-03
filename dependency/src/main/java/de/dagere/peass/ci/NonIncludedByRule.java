@@ -53,7 +53,7 @@ public class NonIncludedByRule {
       ExecutionConfig executionConfig = transformer.getConfig().getExecutionConfig();
       CompilationUnit unit = getUnit(test, transformer, executionConfig);
       if (unit == null) {
-         LOG.info("Did not find compilation unit for {}, assuming test is not existing but was included before");
+         LOG.info("Did not find compilation unit for {}, assuming test is not existing but was included before", test);
          return true;
       }
       IncludeExcludeInfo testInfo = getIncludeExcludeInfo(executionConfig, unit);
