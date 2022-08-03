@@ -114,7 +114,6 @@ public class NonIncludedByRule {
    private static CompilationUnit getUnit(TestCase test, JUnitTestTransformer transformer, ExecutionConfig executionConfig) {
       ClazzFileFinder finder = new ClazzFileFinder(executionConfig);
       final File clazzFile = finder.getClazzFile(transformer.getProjectFolder(), test);
-      System.out.println("File: " + clazzFile);
       CompilationUnit unit = transformer.getLoadedFiles().get(clazzFile);
       return unit;
    }
