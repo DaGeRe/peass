@@ -19,9 +19,9 @@ import picocli.CommandLine.Command;
       VisualizeRCAStarter.class, 
       ContinuousExecutionStarter.class,
       FindMissingExecutionStarter.class}, synopsisSubcommandLabel = "COMMAND")
-public class PeASSMain implements Callable<Void> {
+public class PeassMain implements Callable<Void> {
    public static void main(final String[] args) {
-      final CommandLine line = new CommandLine(new PeASSMain());
+      final CommandLine line = new CommandLine(new PeassMain());
       if (args.length != 0) {
          System.exit(line.execute(args));
       } else {
