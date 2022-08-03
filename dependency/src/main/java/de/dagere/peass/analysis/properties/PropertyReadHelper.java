@@ -213,7 +213,7 @@ public class PropertyReadHelper {
 
       identifyAffectedClasses(property, merged);
 
-      LOG.info("Calls: " + merged);
+      LOG.trace("Calls: " + merged);
 
       getTestSourceAffection(property, merged, folders, changes);
    }

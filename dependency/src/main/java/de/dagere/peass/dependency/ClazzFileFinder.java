@@ -207,7 +207,7 @@ public class ClazzFileFinder {
       File moduleFolder;
       if (sourceContainingClazz.getModule().length() > 0) {
          moduleFolder = new File(folder, sourceContainingClazz.getModule());
-         LOG.debug("Module: {}", sourceContainingClazz.getModule());
+         LOG.trace("Module: {}", sourceContainingClazz.getModule());
       } else {
          moduleFolder = folder;
       }
