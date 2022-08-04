@@ -120,7 +120,7 @@ public class TraceMethodReader {
    public CompilationUnit getCU(final File clazzFile) throws FileNotFoundException {
       CompilationUnit cu = loadedUnits.get(clazzFile);
       if (cu == null) {
-         LOG.debug("CU {} not imported yet", clazzFile);
+         LOG.trace("CU {} not imported yet", clazzFile);
          cu = JavaParserProvider.parse(clazzFile);
          loadedUnits.put(clazzFile, cu);
       }

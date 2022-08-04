@@ -63,7 +63,7 @@ public class CoverageBasedSelector {
 
    private static void addNotSelectedSummaryInfos(final List<TraceCallSummary> copiedSummaries, final CoverageSelectionCommit resultingInfo) {
       for (TraceCallSummary leftSummary : copiedSummaries) {
-         LOG.debug("Adding unselected left summary: {}", leftSummary.getTestcase(), leftSummary.getOverallScore());
+         LOG.debug("Adding unselected test: {} score: {}", leftSummary.getTestcase(), leftSummary.getOverallScore());
          leftSummary.setSelected(false);
          resultingInfo.getTestcases().put(leftSummary.getTestcase(), leftSummary);
       }
