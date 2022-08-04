@@ -82,7 +82,7 @@ public class JmhDependencyReaderMultiParamTest {
 
    private void checkChangedVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
-      TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
+      TestMethodCall changedBenchmark = new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod");
       TestSet versionTestSet = data.getCommits().get("000002");
       MatcherAssert.assertThat(versionTestSet.getTests(), Matchers.contains(changedBenchmark));
    }
@@ -94,7 +94,7 @@ public class JmhDependencyReaderMultiParamTest {
       InitialCallList initial = initialDependencies.get(new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod", null));
       MatcherAssert.assertThat(initial.getEntities(), Matchers.hasSize(4));
 
-      TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
+      TestMethodCall changedBenchmark = new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod");
       File viewFolder = resultsFolders.getViewMethodDir("000001", changedBenchmark);
       File methodOrderFile = new File(viewFolder, "000001_method.txt");
       String allMethods = FileUtils.readFileToString(methodOrderFile, StandardCharsets.UTF_8);

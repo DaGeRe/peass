@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -20,7 +20,7 @@ public class ProjectStatistics {
 
    private static final Logger LOG = LogManager.getLogger(ProjectStatistics.class);
 
-   public Map<String, Map<TestCase, TestcaseStatistic>> statistics = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
+   public Map<String, Map<TestMethodCall, TestcaseStatistic>> statistics = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
 
    public ProjectStatistics() {
       statistics = VersionComparator.hasVersions() ? new TreeMap<>(CommitByNameComparator.INSTANCE) : new LinkedHashMap<>();
@@ -30,21 +30,21 @@ public class ProjectStatistics {
       statistics = new TreeMap<>(comparator);
    }
    
-   public Map<String, Map<TestCase, TestcaseStatistic>> getStatistics() {
+   public Map<String, Map<TestMethodCall, TestcaseStatistic>> getStatistics() {
       return statistics;
    }
 
-   public void setStatistics(final Map<String, Map<TestCase, TestcaseStatistic>> statistics) {
+   public void setStatistics(final Map<String, Map<TestMethodCall, TestcaseStatistic>> statistics) {
       this.statistics = statistics;
    }
 
-   public void addMeasurement(final String commit, final TestCase test, final DescriptiveStatistics statisticsOld, final DescriptiveStatistics statisticsCurrent, final int calls) {
+   public void addMeasurement(final String commit, final TestMethodCall test, final DescriptiveStatistics statisticsOld, final DescriptiveStatistics statisticsCurrent, final int calls) {
       final TestcaseStatistic statistic = new TestcaseStatistic(statisticsOld, statisticsCurrent, calls, calls);
       addMeasurement(commit, test, statistic);
    }
 
-   public void addMeasurement(final String commit, final TestCase test, final TestcaseStatistic statistic) {
-      Map<TestCase, TestcaseStatistic> commitMap = statistics.get(commit);
+   public void addMeasurement(final String commit, final TestMethodCall test, final TestcaseStatistic statistic) {
+      Map<TestMethodCall, TestcaseStatistic> commitMap = statistics.get(commit);
       if (commitMap == null) {
          commitMap = new TreeMap<>();
          statistics.put(commit, commitMap);
@@ -59,7 +59,7 @@ public class ProjectStatistics {
    @JsonIgnore
    public int getTestCount() {
       int tests = 0;
-      for (Map<TestCase, TestcaseStatistic> commitStatistic : statistics.values()) {
+      for (Map<TestMethodCall, TestcaseStatistic> commitStatistic : statistics.values()) {
          tests += commitStatistic.size();
       }
       return tests;

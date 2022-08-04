@@ -52,7 +52,7 @@ public class MeasureStarter extends PairProcessor {
    protected DependencyTester tester;
    private final List<String> commits = new LinkedList<>();
    private int startindex, endindex;
-   private TestCase test;
+   private TestMethodCall test;
 
    @Override
    public Void call() throws Exception {
@@ -61,7 +61,7 @@ public class MeasureStarter extends PairProcessor {
       createTester(measurementConfiguration);
 
       if (testName != null) {
-         test = new TestCase(testName);
+         test = TestMethodCall.createFromString(testName);
          LOG.info("Test: {}", test);
       } else {
          test = null;

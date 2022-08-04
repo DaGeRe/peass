@@ -212,7 +212,7 @@ public class ChangeReader {
       // if (! (statistic.getTvalue() == Double.NaN)){
       CompareData cd = new CompareData(describedChunk.getPrevious(), describedChunk.getCurrent());
       final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(cd);
-      final TestCase testcase = getTestcase(data, commits, describedChunk);
+      final TestMethodCall testcase = getTestcase(data, commits, describedChunk);
 
       final double diff = describedChunk.getDiff();
       final boolean isBigEnoughDiff = Math.abs(diff) > minChange;
@@ -232,14 +232,14 @@ public class ChangeReader {
       info.addMeasurement(commits[1], testcase, statistic);
    }
 
-   private TestCase getTestcase(final Kopemedata data, final String[] commits, final DescribedChunk describedChunk) {
-      TestCase testcase = new TestMethodCall(data);
+   private TestMethodCall getTestcase(final Kopemedata data, final String[] commits, final DescribedChunk describedChunk) {
+      TestMethodCall testcase = new TestMethodCall(data);
       if (tests != null) {
          TestSet testsOfThisVersion = tests.get(commits[1]);
          for (TestCase test : testsOfThisVersion.getTests()) {
             if (paramsEqual(testcase.getParams(), test)) {
                if (test.getClazz().equals(testcase.getClazz()) && test.getMethod().equals(testcase.getMethod())) {
-                  testcase = test;
+                  testcase = (TestMethodCall) test;
                }
             }
          }

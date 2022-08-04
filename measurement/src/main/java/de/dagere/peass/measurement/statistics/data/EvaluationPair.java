@@ -10,6 +10,7 @@ import java.util.List;
 
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 /**
  * Represents an pair of measurement results that should be evaluated, i.e. the commits of both measurements and its results.
@@ -22,9 +23,9 @@ public class EvaluationPair {
    private final String previousCommit, currentCommit;
    private final List<VMResult> previous = new LinkedList<>();
    private final List<VMResult> current = new LinkedList<>();
-   private final TestCase testcase;
+   private final TestMethodCall testcase;
 
-   public EvaluationPair(final String currentCommit, final String previousCommit, final TestCase testcase) {
+   public EvaluationPair(final String currentCommit, final String previousCommit, final TestMethodCall testcase) {
       this.currentCommit = currentCommit;
       this.previousCommit = previousCommit;
       this.testcase = testcase;
@@ -36,7 +37,7 @@ public class EvaluationPair {
       }
    }
    
-   public TestCase getTestcase() {
+   public TestMethodCall getTestcase() {
       return testcase;
    }
 
