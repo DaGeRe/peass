@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerResultReader;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -74,7 +75,7 @@ public class TestAddedReading {
 
       final Set<CallTreeNode> includedNodes = buildTree();
 
-      final TestCase testcase = new TestCase("A", "parent");
+      final TestMethodCall testcase = new TestMethodCall("A", "parent");
       final KiekerResultReader reader = new KiekerResultReader(false, AllowedKiekerRecord.OPERATIONEXECUTION, includedNodes, "0", testcase, false);
       //      reader.setConsiderNodePosition(true);
       final File kiekerFolder = kiekerTraceFolder.listFiles()[0];
@@ -98,7 +99,7 @@ public class TestAddedReading {
 
       final Set<CallTreeNode> includedNodes = buildTree();
 
-      final TestCase testcase = new TestCase("A", "parent");
+      final TestMethodCall testcase = new TestMethodCall("A", "parent");
       final KiekerResultReader reader = new KiekerResultReader(false, AllowedKiekerRecord.OPERATIONEXECUTION, includedNodes, "0", testcase, false);
       //      reader.setConsiderNodePosition(true);
       final File kiekerFolder = kiekerTraceFolder.listFiles()[0];

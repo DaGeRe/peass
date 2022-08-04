@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class TestNonIncludedTestRemover {
@@ -17,11 +18,11 @@ public class TestNonIncludedTestRemover {
    @Test
    public void testWithSet() {
       Set<TestCase> tests = new HashSet<TestCase>();
-      tests.add(new TestCase("TestA", "method1"));
-      tests.add(new TestCase("TestA", "method2"));
-      tests.add(new TestCase("TestB", "method3"));
-      tests.add(new TestCase("TestC", null));
-      tests.add(new TestCase("TestD", null));
+      tests.add(new TestMethodCall("TestA", "method1"));
+      tests.add(new TestMethodCall("TestA", "method2"));
+      tests.add(new TestMethodCall("TestB", "method3"));
+      tests.add(new TestClazzCall("TestC"));
+      tests.add(new TestClazzCall("TestD"));
 
       NonIncludedTestRemover.removeNotIncluded(tests, new ExecutionConfig(Arrays.asList(new String[] { "TestA#method1", "TestC" }), "test"));
 
@@ -31,11 +32,11 @@ public class TestNonIncludedTestRemover {
    @Test
    public void testWithTestSet() {
       TestSet tests = new TestSet();
-      tests.addTest(new TestCase("TestA", "method1"));
-      tests.addTest(new TestCase("TestA", "method2"));
-      tests.addTest(new TestCase("TestB", "method3"));
-      tests.addTest(new TestCase("TestC", null));
-      tests.addTest(new TestCase("TestD", null));
+      tests.addTest(new TestMethodCall("TestA", "method1"));
+      tests.addTest(new TestMethodCall("TestA", "method2"));
+      tests.addTest(new TestMethodCall("TestB", "method3"));
+      tests.addTest(new TestClazzCall("TestC"));
+      tests.addTest(new TestClazzCall("TestD"));
 
       NonIncludedTestRemover.removeNotIncluded(tests, new ExecutionConfig(Arrays.asList(new String[] { "TestA#method1", "TestC" }), "test"));
 
@@ -71,11 +72,11 @@ public class TestNonIncludedTestRemover {
    @Test
    public void testWithSetExclude() {
       Set<TestCase> tests = new HashSet<TestCase>();
-      tests.add(new TestCase("TestA", "method1"));
-      tests.add(new TestCase("TestA", "method2"));
-      tests.add(new TestCase("TestB", "method3"));
-      tests.add(new TestCase("TestC", null));
-      tests.add(new TestCase("TestD", null));
+      tests.add(new TestMethodCall("TestA", "method1"));
+      tests.add(new TestMethodCall("TestA", "method2"));
+      tests.add(new TestMethodCall("TestB", "method3"));
+      tests.add(new TestClazzCall("TestC"));
+      tests.add(new TestClazzCall("TestD"));
 
       ExecutionConfig executionConfig = new ExecutionConfig(Arrays.asList(new String[] { "TestA#*", "TestC" }), "test");
       executionConfig.setExcludes(Arrays.asList(new String[] { "TestA#method2" }));
@@ -88,11 +89,11 @@ public class TestNonIncludedTestRemover {
    @Test
    public void testWithSetOnlyExclude() {
       Set<TestCase> tests = new HashSet<TestCase>();
-      tests.add(new TestCase("TestA", "method1"));
-      tests.add(new TestCase("TestA", "method2"));
-      tests.add(new TestCase("TestB", "method3"));
-      tests.add(new TestCase("TestC", null));
-      tests.add(new TestCase("TestD", null));
+      tests.add(new TestMethodCall("TestA", "method1"));
+      tests.add(new TestMethodCall("TestA", "method2"));
+      tests.add(new TestMethodCall("TestB", "method3"));
+      tests.add(new TestClazzCall("TestC"));
+      tests.add(new TestClazzCall("TestD"));
 
       ExecutionConfig executionConfig = new ExecutionConfig(Arrays.asList(new String[] { }), "test");
       executionConfig.setExcludes(Arrays.asList(new String[] { "TestA#*" }));

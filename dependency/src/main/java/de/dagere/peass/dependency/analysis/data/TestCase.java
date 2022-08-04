@@ -26,24 +26,6 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    // Saves parameters without paranthesis
    protected final String params;
 
-   public TestCase(final String clazz, final String method) {
-      if (clazz.contains(File.separator)) { // possibly assertion, if speed becomes issue..
-         throw new RuntimeException("Testcase should be full qualified name, not path: " + clazz);
-      }
-      if (clazz.contains(ChangedEntity.METHOD_SEPARATOR)) {
-         throw new RuntimeException("Class and method should be separated: " + clazz);
-      }
-      if (clazz.contains(ChangedEntity.MODULE_SEPARATOR)) {
-         module = clazz.substring(0, clazz.indexOf(ChangedEntity.MODULE_SEPARATOR));
-         this.clazz = clazz.substring(clazz.indexOf(ChangedEntity.MODULE_SEPARATOR) + 1, clazz.length());
-      } else {
-         this.clazz = clazz;
-         module = "";
-      }
-      this.method = method;
-      this.params = null;
-   }
-
    public TestCase(final ChangedEntity entity) {
       this(entity.getClazz(), entity.getMethod(), entity.getModule(), null);
    }

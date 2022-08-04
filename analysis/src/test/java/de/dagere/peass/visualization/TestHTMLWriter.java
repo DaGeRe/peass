@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.CauseSearcherConfigMixin;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -25,7 +26,7 @@ public class TestHTMLWriter {
       rootNode.setName("Test#test");
       GraphNode kopemeConvertedData = new GraphNode("Test#test", "public void Test.test()", "public void Test.test()");
       CauseSearchData data = new CauseSearchData();
-      data.setCauseConfig(new CauseSearcherConfig(new TestCase("Test", "test"), new CauseSearcherConfigMixin()));
+      data.setCauseConfig(new CauseSearcherConfig(new TestMethodCall("Test", "test"), new CauseSearcherConfigMixin()));
       data.setConfig(new MeasurementConfig(10));
       data.getMeasurementConfig().getFixedCommitConfig().setCommit("1");
       
@@ -46,7 +47,7 @@ public class TestHTMLWriter {
       rootNode.setName("Test#test");
       GraphNode kopemeConvertedData = new GraphNode("Test#test", "public void Test.test(int)", "public void Test.test(int)");
       CauseSearchData data = new CauseSearchData();
-      data.setCauseConfig(new CauseSearcherConfig(new TestCase("Test", "test", "", "int"), new CauseSearcherConfigMixin()));
+      data.setCauseConfig(new CauseSearcherConfig(new TestMethodCall("Test", "test", "", "int"), new CauseSearcherConfigMixin()));
       data.setConfig(new MeasurementConfig(10));
       data.getMeasurementConfig().getFixedCommitConfig().setCommit("1");
       

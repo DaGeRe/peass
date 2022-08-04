@@ -24,7 +24,7 @@ public class TraceWriterTest {
    public void testSimpleWriting() throws IOException {
       ResultsFolders resultsFolders = new ResultsFolders(tempDir, "test");
       TestSelectionConfig testSelectionConfig = new TestSelectionConfig(1, false, true, true, true);
-      TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA"), resultsFolders, new TraceFileMapping(), testSelectionConfig);
+      TraceWriter writer = new TraceWriter("000001", new TestMethodCall("ClazzA", "methodA"), resultsFolders, new TraceFileMapping(), testSelectionConfig);
 
       TraceWithMethods exampleTrace = getTrace();
 

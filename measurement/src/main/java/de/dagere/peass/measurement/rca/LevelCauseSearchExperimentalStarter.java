@@ -13,6 +13,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -30,7 +31,7 @@ public class LevelCauseSearchExperimentalStarter {
          throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException {
       final File projectFolder = new File("../../projekte/commons-fileupload");
       final String commit = "4ed6e923cb2033272fcb993978d69e325990a5aa";
-      final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
+      final TestMethodCall test = new TestMethodCall("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
 
       final MeasurementConfig measurementConfiguration = new MeasurementConfig(15 * 1000 * 60, 5, true, commit, commit + "~1");
       measurementConfiguration.getKiekerConfig().setUseKieker(true);

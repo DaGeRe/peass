@@ -15,6 +15,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class NonIncludedTestRemover {
 
@@ -46,7 +47,7 @@ public class NonIncludedTestRemover {
          final Entry<TestClazzCall, Set<String>> testcase) {
       for (Iterator<String> methodIterator = testcase.getValue().iterator(); methodIterator.hasNext();) {
          String method = methodIterator.next();
-         if (!isTestIncluded(new TestCase(testcase.getKey().getClazz(), method), executionConfig)) {
+         if (!isTestIncluded(new TestMethodCall(testcase.getKey().getClazz(), method), executionConfig)) {
             methodIterator.remove();
          }
       }

@@ -11,6 +11,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -66,7 +67,7 @@ public class SearchCauseStarter extends MeasureStarter {
          LOG.info("Commit was not defined, using " + commit);
       }
 
-      TestCase test = determineTest();
+      TestMethodCall test = determineTest();
 
       final String predecessor = staticTestSelection.getCommits().get(commit).getPredecessor();
 
@@ -94,14 +95,14 @@ public class SearchCauseStarter extends MeasureStarter {
       return null;
    }
 
-   private TestCase determineTest() {
-      TestCase test = new TestCase(testName);
+   private TestMethodCall determineTest() {
+      TestMethodCall test = TestMethodCall.createFromString(testName);
       final CommitStaticSelection commitInfo = staticTestSelection.getCommits().get(commit);
       boolean found = false;
       for (TestCase selectedTest : commitInfo.getTests().getTests()) {
          if (selectedTest.getClazz().equals(test.getClazz()) && selectedTest.getMethodWithParams().equals(test.getMethodWithParams())) {
             found = true;
-            test = selectedTest; // required to add module
+            test = (TestMethodCall) selectedTest; // required to add module
          }
       }
       if (!found) {

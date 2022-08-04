@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -37,7 +38,7 @@ public class CauseTester extends AdaptiveTester {
 
    private Set<CallTreeNode> includedNodes;
    private Set<String> includedPattern;
-   private final TestCase testcase;
+   private final TestMethodCall testcase;
    private final CauseSearcherConfig causeConfig;
    private final CauseSearchFolders folders;
    private int levelId = 0;

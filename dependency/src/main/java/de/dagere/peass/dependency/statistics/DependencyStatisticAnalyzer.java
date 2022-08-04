@@ -20,6 +20,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -103,7 +104,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
             for (final Entry<TestClazzCall, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
                final String testclass = testcase.getKey().getClazz();
                for (final String method : testcase.getValue()) {
-                  final TestCase testcase2 = new TestCase(testclass, method);
+                  final TestMethodCall testcase2 = new TestMethodCall(testclass, method);
                   // final String testname = testclass + "." + method;
                   if (currentContainedTests.contains(testcase2)) {
                      currentIterationTests.add(testcase2);

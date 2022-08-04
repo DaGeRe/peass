@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import de.dagere.peass.analysis.properties.ChangedMethodManager;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
@@ -30,7 +31,7 @@ public class TestSourceChangeTreeAnalyzer {
    @Test
    public void testNodeSelection() throws InterruptedException, IOException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException {
       final MeasurementConfig config = new MeasurementConfig(15, "fd2c8ddf3fa52973ee54c4db87b47bb587886200", "fd2c8ddf3fa52973ee54c4db87b47bb587886200~1");
-      BothTreeReader treeReader = new BothTreeReader(new CauseSearcherConfig(new TestCase("de.peass.MainTest#testMe"), new CauseSearcherConfigMixin()),
+      BothTreeReader treeReader = new BothTreeReader(new CauseSearcherConfig(new TestMethodCall("de.peass.MainTest", "testMe"), new CauseSearcherConfigMixin()),
             config,
             new CauseSearchFolders(new File("src/test/resources/sourceChangeRCATest/project_3")),
             new EnvironmentVariables());

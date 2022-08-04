@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.utils.Constants;
 
 /**
@@ -39,7 +40,7 @@ public class JmhKoPeMeConverter {
                String clazzName = name.substring(0, name.lastIndexOf('.'));
                String benchmarkMethodName = name.substring(name.lastIndexOf('.') + 1);
 
-               TestCase testcase = new TestCase(clazzName, benchmarkMethodName);
+               TestMethodCall testcase = new TestMethodCall(clazzName, benchmarkMethodName);
 
                JsonNode primaryMetric = benchmark.get("primaryMetric");
                String scoreUnit = primaryMetric.get("scoreUnit").asText();

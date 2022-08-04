@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 /**
  * Saves all changes for one commit. For each testcase it is saved which change has happened with method, difference in percent etc.
@@ -107,7 +108,7 @@ public class Changes implements Serializable {
          String clazzname = testclazz.getKey();
          for (Change method : testclazz.getValue()) {
             String methodName = method.getMethod();
-            result.addTest(new TestCase(clazzname, methodName));
+            result.addTest(new TestMethodCall(clazzname, methodName));
          }
       }
       return result;
