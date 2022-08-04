@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -34,6 +35,7 @@ public class RCAGenerator {
       this.source = source;
       this.destFolder = destFolder;
       this.folders = folders;
+      
       File details = new File(source.getParentFile(), "details" + File.separator + source.getName());
       data = readData(details);
    }
@@ -47,7 +49,8 @@ public class RCAGenerator {
       final NodePreparator preparator = new NodePreparator(rootPredecessor, rootVersion, data);
       preparator.prepare();
       final GraphNode rootNode = preparator.getRootNode();
-      KoPeMeTreeConverter kopemeTreeConverter = new KoPeMeTreeConverter(folders, data.getMeasurementConfig().getFixedCommitConfig().getCommit(), new TestCase(data.getTestcase()));
+      TestMethodCall testMethodCall = TestMethodCall.createFromString(data.getTestcase());
+      KoPeMeTreeConverter kopemeTreeConverter = new KoPeMeTreeConverter(folders, data.getMeasurementConfig().getFixedCommitConfig().getCommit(), testMethodCall);
       HTMLWriter writer = new HTMLWriter(rootNode, data, destFolder, propertyFolder, kopemeTreeConverter.getData());
       writer.writeHTML();;
 //      writeHTML(rootNode, data);

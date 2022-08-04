@@ -19,6 +19,7 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
@@ -36,19 +37,19 @@ public class KoPeMeTreeConverter {
    private final DescriptiveStatistics statisticsCurrent = new DescriptiveStatistics();
    private final DescriptiveStatistics statisticsOld = new DescriptiveStatistics();
 
-   public KoPeMeTreeConverter(final CauseSearchFolders folders, final String version, final TestCase testcase) {
+   public KoPeMeTreeConverter(final CauseSearchFolders folders, final String commit, final TestMethodCall testcase) {
       node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
       node.setVmValues(new MeasuredValues());
       node.setVmValuesPredecessor(new MeasuredValues());
 
-      readStatistics(folders, version, testcase);
+      readStatistics(folders, commit, testcase);
    }
 
-   public KoPeMeTreeConverter(final PeassFolders folders, final String version, final TestCase testcase) {
-      this(folders.getDetailResultFolder(), version, testcase);
+   public KoPeMeTreeConverter(final PeassFolders folders, final String commit, final TestMethodCall testcase) {
+      this(folders.getDetailResultFolder(), commit, testcase);
    }
 
-   public KoPeMeTreeConverter(final File detailResultFolder, final String commit, final TestCase testcase) {
+   public KoPeMeTreeConverter(final File detailResultFolder, final String commit, final TestMethodCall testcase) {
       File commitFolder = new File(detailResultFolder, testcase.getClazz() + File.separator + commit);
       if (commitFolder.exists()) {
          node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
