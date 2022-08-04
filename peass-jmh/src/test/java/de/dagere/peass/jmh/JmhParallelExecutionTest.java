@@ -14,6 +14,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.jmh.JmhTestExecutor;
 import de.dagere.peass.dependency.jmh.JmhTestTransformer;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -22,7 +23,7 @@ import de.dagere.peass.folders.PeassFolders;
 public class JmhParallelExecutionTest {
 
    private static final File BASE_FOLDER = new File("target/jmh/");
-   private static final TestCase test = new TestCase("de.dagere.peass#ExampleBenchmark");
+   private static final TestMethodCall test = new TestMethodCall("de.dagere.peass", "ExampleBenchmark");
 
    @BeforeEach
    public void clean() throws IOException {

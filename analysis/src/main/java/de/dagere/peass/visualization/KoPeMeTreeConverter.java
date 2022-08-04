@@ -68,12 +68,12 @@ public class KoPeMeTreeConverter {
       }
    }
 
-   private void readStatistics(final CauseSearchFolders folders, final String version, final TestCase testcase) {
-      for (File versionFolder : folders.getArchiveResultFolder(version, testcase).listFiles()) {
+   private void readStatistics(final CauseSearchFolders folders, final String commit, final TestMethodCall testcase) {
+      for (File versionFolder : folders.getArchiveResultFolder(commit, testcase).listFiles()) {
          File levelFolder = new File(versionFolder, "0"); // For the beginning, just analyze topmost KoPeMe-measurement
          for (File kopemeFile : levelFolder.listFiles((FileFilter) new OrFileFilter(new WildcardFileFilter(testcase.getMethod() + "*.json"),
                new WildcardFileFilter(testcase.getMethod() + "*.xml")))) {
-            readFile(version, testcase, versionFolder.getName(), kopemeFile);
+            readFile(commit, testcase, versionFolder.getName(), kopemeFile);
          }
       }
 
@@ -84,7 +84,7 @@ public class KoPeMeTreeConverter {
       node.setValuesPredecessor(statisticsOld.getValues());
    }
 
-   private void readFile(final String version, final TestCase testcase, final String currentVersion, final File kopemeFile) {
+   private void readFile(final String version, final TestMethodCall testcase, final String currentVersion, final File kopemeFile) {
       String stringIndex = kopemeFile.getName().substring(testcase.getMethodWithParams().length() + 1, kopemeFile.getName().lastIndexOf('_'));
       if (!stringIndex.matches("[0-9]+")) {
          LOG.error("Could not read file: {}", kopemeFile);

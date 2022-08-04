@@ -18,6 +18,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.kieker.KiekerEnvironmentPreparer;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
@@ -61,7 +62,7 @@ public abstract class TestExecutor {
 
    public abstract void prepareKoPeMeExecution(File logFile);
 
-   public abstract void executeTest(final TestCase test, final File logFolder, long timeout);
+   public abstract void executeTest(final TestMethodCall test, final File logFolder, long timeout);
 
    protected File getCleanLogFile(final File logFolder, final TestCase test) {
       File clazzLogFolder = getClazzLogFolder(logFolder, test);
@@ -72,7 +73,7 @@ public abstract class TestExecutor {
       return logFile;
    }
 
-   protected File getMethodLogFile(final File logFolder, final TestCase test) {
+   protected File getMethodLogFile(final File logFolder, final TestMethodCall test) {
       File clazzLogFolder = getClazzLogFolder(logFolder, test);
       final File logFile = new File(clazzLogFolder, test.getMethodWithParams() + ".txt");
       return logFile;

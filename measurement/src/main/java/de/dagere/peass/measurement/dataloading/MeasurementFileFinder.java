@@ -8,6 +8,7 @@ import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class MeasurementFileFinder {
 
@@ -15,7 +16,7 @@ public class MeasurementFileFinder {
    private final Kopemedata oneResultData;
    private final DatacollectorResult datacollector;
 
-   public MeasurementFileFinder(final File folder, TestCase testcase) {
+   public MeasurementFileFinder(final File folder, TestMethodCall testcase) {
       String clazz = testcase.getClazz();
       String methodWithParams = testcase.getMethodWithParams();
       final String shortClazz = clazz.substring(clazz.lastIndexOf('.') + 1);

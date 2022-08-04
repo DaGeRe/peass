@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
@@ -12,13 +13,13 @@ public class ParallelExecutionRunnable implements Runnable {
 
    private ResultOrganizerParallel organizer;
    private final String commit;
-   private final TestCase testcase;
+   private final TestMethodCall testcase;
    private final int vmid;
    private final File logFolder;
    private final DependencyTester tester;
    private final PeassFolders temporaryFolders;
 
-   public ParallelExecutionRunnable(final ResultOrganizerParallel organizer, final String commit, final TestCase testcase, final int vmid, final File logFolder,
+   public ParallelExecutionRunnable(final ResultOrganizerParallel organizer, final String commit, final TestMethodCall testcase, final int vmid, final File logFolder,
          final DependencyTester tester, final String gitCryptKey) throws IOException {
       this.organizer = organizer;
       this.commit = commit;

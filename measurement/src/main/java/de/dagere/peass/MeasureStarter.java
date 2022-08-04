@@ -173,10 +173,10 @@ public class MeasureStarter extends PairProcessor {
 
          LOG.trace("Processing Version {} Executing Tests: {}", commit, executeThisVersion);
 
-         final Set<TestCase> testcases = commitinfo.getTests().getTests();
+         final Set<TestMethodCall> testcases = commitinfo.getTests().getTestMethods();
          final String commitOld = commitinfo.getPredecessor();
 
-         for (final TestCase testcase : testcases) {
+         for (final TestMethodCall testcase : testcases) {
             if (executeThisVersion) {
                if (lastTestcaseCalls.containsKey(testcase)) {
                   boolean executeThisTest = true;
@@ -205,7 +205,7 @@ public class MeasureStarter extends PairProcessor {
       tester.postEvaluate();
    }
 
-   public boolean checkExecutionData(final String commit, final TestCase testcase, boolean executeThisTest) {
+   public boolean checkExecutionData(final String commit, final TestMethodCall testcase, boolean executeThisTest) {
       if (executionData != null) {
          final TestSet calls = executionData.getCommits().get(commit);
          boolean hasChanges = false;

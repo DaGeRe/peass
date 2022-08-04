@@ -11,6 +11,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.execution.utils.CommandConcatenator;
@@ -130,7 +131,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public void executeTest(final TestCase test, final File logFolder, final long timeout) {
+   public void executeTest(final TestMethodCall test, final File logFolder, final long timeout) {
       final File module = new File(folders.getProjectFolder(), test.getModule());
       cleanLastTest(module);
       runMethod(logFolder, test, module, timeout);

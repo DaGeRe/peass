@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.visualization.GraphNode;
 import de.dagere.peass.visualization.NodeDashboardWriter;
@@ -60,7 +61,7 @@ public class HTMLWriter {
 
    private File getOutputHTML(final CauseSearchData data) {
       final File output;
-      TestCase testcaseObject = data.getCauseConfig().getTestCase();
+      TestMethodCall testcaseObject = data.getCauseConfig().getTestCase();
       String relativePath = testcaseObject.getTestclazzWithModuleName() + File.separator + testcaseObject.getMethodWithParams() + ".html";
       if (destFolder.getName().equals(data.getMeasurementConfig().getFixedCommitConfig().getCommit())) {
          output = new File(destFolder, relativePath);

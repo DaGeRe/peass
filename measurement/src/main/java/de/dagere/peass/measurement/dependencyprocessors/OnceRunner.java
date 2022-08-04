@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
@@ -42,7 +43,7 @@ public class OnceRunner {
       }
    }
 
-   public void runOnce(final TestCase testcase, final String commit, final int vmid, final File logFolder) {
+   public void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder) {
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
       } else {

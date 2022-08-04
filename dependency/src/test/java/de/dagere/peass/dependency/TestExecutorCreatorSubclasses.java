@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -53,7 +54,7 @@ class DirectSubclass extends TestExecutor{
    }
 
    @Override
-   public void executeTest(final TestCase test, final File logFolder, final long timeout) {
+   public void executeTest(final TestMethodCall test, final File logFolder, final long timeout) {
    }
 
    @Override

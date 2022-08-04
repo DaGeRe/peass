@@ -27,6 +27,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.AllModulePomPreparer;
 import de.dagere.peass.execution.maven.MavenCleaner;
@@ -124,7 +125,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public void executeTest(final TestCase test, final File logFolder, final long timeout) {
+   public void executeTest(final TestMethodCall test, final File logFolder, final long timeout) {
       final File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
       runMethod(logFolder, test, moduleFolder, timeout);
    }

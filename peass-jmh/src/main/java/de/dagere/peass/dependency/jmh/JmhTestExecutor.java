@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.AllModulePomPreparer;
 import de.dagere.peass.execution.maven.MavenCleaner;
@@ -55,7 +56,7 @@ public class JmhTestExecutor extends TestExecutor {
    }
 
    @Override
-   public void executeTest(final TestCase test, final File logFolder, final long timeoutInSeconds) {
+   public void executeTest(final TestMethodCall test, final File logFolder, final long timeoutInSeconds) {
       checkConfiguration(timeoutInSeconds);
 
       File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod() + ".json");
