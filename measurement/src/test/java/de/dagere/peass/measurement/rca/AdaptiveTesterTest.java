@@ -17,6 +17,7 @@ import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -28,7 +29,7 @@ import de.dagere.peass.vcs.VersionControlSystem;
 
 public class AdaptiveTesterTest {
 
-   private final TestCase testcase = new TestCase("Dummy#dummyTest");
+   private final TestMethodCall testcase = new TestMethodCall("Dummy", "dummyTest");
    private JUnitTestTransformer testGenerator = Mockito.mock(JUnitTestTransformer.class);
 
    @Rule
@@ -137,7 +138,7 @@ public class AdaptiveTesterTest {
 
       AdaptiveTester tester = new AdaptiveTester(folders, testGenerator.getConfig(), new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
       AdaptiveTester tester2 = Mockito.spy(tester);
-      Mockito.doNothing().when(tester2).runOneComparison(Mockito.any(File.class), Mockito.any(TestCase.class), Mockito.anyInt());
+      Mockito.doNothing().when(tester2).runOneComparison(Mockito.any(File.class), Mockito.any(TestMethodCall.class), Mockito.anyInt());
       return tester2;
    }
 

@@ -16,6 +16,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -62,7 +63,7 @@ public class DependencyTester implements KiekerResultHandler {
     * @param testcase Testcase to test
     * @throws XmlPullParserException
     */
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, XmlPullParserException {
+   public void evaluate(final TestMethodCall testcase) throws IOException, InterruptedException, XmlPullParserException {
       initEvaluation(testcase);
 
       final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);
@@ -71,14 +72,14 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   protected void initEvaluation(final TestCase testcase) {
+   protected void initEvaluation(final TestMethodCall testcase) {
       FixedCommitConfig fixedCommitConfig = configuration.getFixedCommitConfig();
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in commits {} and {}", fixedCommitConfig.getCommitOld(),
             fixedCommitConfig.getCommit());
       new FolderDeterminer(folders).testResultFolders(fixedCommitConfig.getCommit(), fixedCommitConfig.getCommitOld(), testcase);
    }
 
-   private void evaluateSimple(final TestCase testcase, final File logFolder, final ProgressWriter writer)
+   private void evaluateSimple(final TestMethodCall testcase, final File logFolder, final ProgressWriter writer)
          throws IOException, InterruptedException, XmlPullParserException {
       currentChunkStart = System.currentTimeMillis();
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
@@ -191,7 +192,7 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   public void runOneComparison(final File logFolder, final TestCase testcase, final int vmid) throws IOException {
+   public void runOneComparison(final File logFolder, final TestMethodCall testcase, final int vmid) throws IOException {
       String[] commits = getVersions();
 
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
@@ -211,7 +212,7 @@ public class DependencyTester implements KiekerResultHandler {
       return commits;
    }
 
-   private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] commits) throws IOException {
+   private void runParallel(final File logFolder, final TestMethodCall testcase, final int vmid, final String[] commits) throws IOException {
       final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getFixedCommitConfig().getCommit(), currentChunkStart,
             configuration.getKiekerConfig().isUseKieker(),
             configuration.isSaveAll(), testcase,
@@ -240,7 +241,7 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   private void runSequential(final File logFolder, final TestCase testcase, final int vmid, final String commits[])
+   private void runSequential(final File logFolder, final TestMethodCall testcase, final int vmid, final String commits[])
          throws IOException {
       currentOrganizer = new ResultOrganizer(folders, configuration.getFixedCommitConfig().getCommit(), currentChunkStart, configuration.getKiekerConfig().isUseKieker(),
             configuration.isSaveAll(),

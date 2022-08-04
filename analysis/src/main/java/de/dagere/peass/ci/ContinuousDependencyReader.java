@@ -25,6 +25,7 @@ import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.RTSTestTransformerBuilder;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -71,7 +72,7 @@ public class ContinuousDependencyReader {
       final StaticTestSelection dependencies = getDependencies(iterator, url);
 
       RTSResult result;
-      final Set<TestCase> tests;
+      final Set<TestMethodCall> tests;
       if (dependencies.getCommits().size() > 0) {
          CommitStaticSelection commitStaticSelection = dependencies.getCommits().get(commit);
          LOG.debug("Commit static selection for commit {}, running was: {}", commit, commitStaticSelection != null ? commitStaticSelection.isRunning() : "null");
@@ -79,12 +80,12 @@ public class ContinuousDependencyReader {
             tests = selectResults(commit);
             result = new RTSResult(tests, commitStaticSelection.isRunning());
          } else {
-            tests = commitStaticSelection.getTests().getTests();
+            tests = commitStaticSelection.getTests().getTestMethods();
             result = new RTSResult(tests, commitStaticSelection.isRunning());
          }
 
          // final Set<TestCase> tests = selectIncludedTests(dependencies);
-         NonIncludedTestRemover.removeNotIncluded(tests, measurementConfig.getExecutionConfig());
+         NonIncludedTestRemover.removeNotIncludedMethods(tests, measurementConfig.getExecutionConfig());
       } else if (!dependencies.getInitialcommit().isRunning()) {
          tests = new HashSet<>();
          result = new RTSResult(tests, false);
@@ -97,9 +98,9 @@ public class ContinuousDependencyReader {
       return result;
    }
 
-   private Set<TestCase> selectResults(final String commit) {
+   private Set<TestMethodCall> selectResults(final String commit) {
       try {
-         final Set<TestCase> tests;
+         final Set<TestMethodCall> tests;
          if (dependencyConfig.isGenerateCoverageSelection()) {
             LOG.info("Using coverage-based test selection");
             ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageSelectionFile(), ExecutionData.class);
@@ -122,10 +123,10 @@ public class ContinuousDependencyReader {
     * @param executionData
     * @return
     */
-   private Set<TestCase> fetchTestset(final String commit, final ExecutionData executionData) {
-      final Set<TestCase> tests;
+   private Set<TestMethodCall> fetchTestset(final String commit, final ExecutionData executionData) {
+      final Set<TestMethodCall> tests;
       TestSet commitTestSet = executionData.getCommits().get(commit);
-      tests = commitTestSet != null ? commitTestSet.getTests() : new HashSet<TestCase>();
+      tests = commitTestSet != null ? commitTestSet.getTestMethods() : new HashSet<TestMethodCall>();
       return tests;
    }
 

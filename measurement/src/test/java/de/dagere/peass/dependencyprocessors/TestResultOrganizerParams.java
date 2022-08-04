@@ -23,6 +23,7 @@ import de.dagere.kopeme.datastorage.xml.XMLConversionLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 
@@ -51,7 +52,7 @@ public class TestResultOrganizerParams {
 
    @Test
    public void testReading() throws  IOException {
-      TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmarkClazz#calleeMethod(parameter-1)");
+      TestMethodCall testcase = new TestMethodCall("de.dagere.peass.ExampleBenchmarkClazz", "calleeMethod", "", "parameter-1");
       
       PeassFolders folders = mockFolders(testcase);
 

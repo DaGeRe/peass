@@ -18,6 +18,7 @@ import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.PairProcessor;
@@ -189,7 +190,7 @@ public class MeasureStarter extends PairProcessor {
                   }
                   if (executeThisTest) {
                      tester.setVersions(commit, commitOld);
-                     tester.evaluate(testcase);
+                     tester.evaluate((TestMethodCall) testcase);
                   }
                }
             }

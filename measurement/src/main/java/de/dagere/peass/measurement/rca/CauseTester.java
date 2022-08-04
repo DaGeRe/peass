@@ -77,7 +77,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public void evaluate(final TestCase testcase) {
+   public void evaluate(final TestMethodCall testcase) {
       LOG.debug("Adaptive execution: " + includedNodes);
 
       initEvaluation(testcase);

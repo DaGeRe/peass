@@ -22,6 +22,7 @@ import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -94,8 +95,8 @@ public class TestContinuousExecutor {
    }
 
    private void mockRegressionTestSelection(final ContinuousExecutor spied) throws Exception {
-      HashSet<TestCase> tests = new HashSet<TestCase>();
-      tests.add(new TestCase("defaultpackage.TestMe#testMe"));
+      HashSet<TestMethodCall> tests = new HashSet<TestMethodCall>();
+      tests.add(new TestMethodCall("defaultpackage.TestMe", "testMe"));
       RTSResult mockedResult = new RTSResult(tests, true);
       Mockito.doAnswer(new Answer<RTSResult>() {
 

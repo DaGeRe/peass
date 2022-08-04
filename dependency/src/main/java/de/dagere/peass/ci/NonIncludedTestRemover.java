@@ -68,6 +68,19 @@ public class NonIncludedTestRemover {
          }
       }
    }
+   
+   public static void removeNotIncludedMethods(final Set<TestMethodCall> tests, final ExecutionConfig executionConfig) {
+      if (executionConfig.getIncludes().size() > 0 || executionConfig.getExcludes().size() > 0) {
+         for (Iterator<TestMethodCall> it = tests.iterator(); it.hasNext();) {
+            TestCase test = it.next();
+            boolean isIncluded = isTestIncluded(test, executionConfig);
+            if (!isIncluded) {
+               LOG.info("Excluding non-included test {}", test);
+               it.remove();
+            }
+         }
+      }
+   }
 
    public static boolean isTestClassIncluded(final TestCase test, final ExecutionConfig config) {
       List<String> includes = config.getIncludes();

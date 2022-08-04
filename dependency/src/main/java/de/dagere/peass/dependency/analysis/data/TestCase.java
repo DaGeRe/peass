@@ -247,11 +247,6 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       return new ChangedEntity(clazz, module, method);
    }
 
-   public TestCase copy() {
-      TestCase test = new TestCase(clazz, method, module, params);
-      return test;
-   }
-
    @JsonIgnore
    public TestClazzCall onlyClazz() {
       return new TestClazzCall(clazz, module);

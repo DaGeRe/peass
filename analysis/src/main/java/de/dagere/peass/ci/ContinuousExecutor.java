@@ -16,6 +16,7 @@ import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -101,7 +102,7 @@ public class ContinuousExecutor {
       return tests;
    }
 
-   public void measure(final Set<TestCase> tests) {
+   public void measure(final Set<TestMethodCall> tests) {
       try {
          File measurementFolder = executeMeasurement(tests);
          analyzeMeasurements(measurementFolder);
@@ -111,7 +112,7 @@ public class ContinuousExecutor {
    }
 
    public void execute() throws Exception {
-      Set<TestCase> tests = executeRTS().getTests();
+      Set<TestMethodCall> tests = executeRTS().getTests();
       measure(tests);
    }
 
@@ -127,7 +128,7 @@ public class ContinuousExecutor {
       return tests;
    }
 
-   protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, XmlPullParserException {
+   protected File executeMeasurement(final Set<TestMethodCall> tests) throws IOException, InterruptedException, XmlPullParserException {
       final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(commit, commitOld);
       File logFile = resultsFolders.getMeasurementLogFile(commit, commitOld);
       final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(folders, measurementConfig, env, comparator);

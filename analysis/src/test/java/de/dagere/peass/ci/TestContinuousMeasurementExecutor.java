@@ -25,6 +25,7 @@ import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -37,10 +38,10 @@ public class TestContinuousMeasurementExecutor {
 
    private static final int ITERATIONS = 50;
 
-   private static final TestCase TEST1 = new TestCase("de.dagere.peass.TestClazzA#test1");
-   private static final TestCase TEST2 = new TestCase("de.dagere.peass.TestClazzB#test2");
-   private static final TestCase TEST3 = new TestCase("de.dagere.peass.TestClazzB#test4");
-   private static final TestCase TEST4 = new TestCase("de.dagere.peass.TestClazzC#test3");
+   private static final TestMethodCall TEST1 = new TestMethodCall("de.dagere.peass.TestClazzA", "test1");
+   private static final TestMethodCall TEST2 = new TestMethodCall("de.dagere.peass.TestClazzB", "test2");
+   private static final TestMethodCall TEST3 = new TestMethodCall("de.dagere.peass.TestClazzB", "test4");
+   private static final TestMethodCall TEST4 = new TestMethodCall("de.dagere.peass.TestClazzC", "test3");
 
    private final File parentFile = new File("target/continuousMeasurementExecutor/");
 
@@ -53,7 +54,7 @@ public class TestContinuousMeasurementExecutor {
    }
 
    @Test
-   public void testConfigurationChange() throws IOException, InterruptedException,  XmlPullParserException {
+   public void testConfigurationChange() throws IOException, InterruptedException, XmlPullParserException {
       try (MockedStatic<ExecutorCreator> executorCreatorMock = Mockito.mockStatic(ExecutorCreator.class)) {
 
          mockExecutorCreation();
@@ -63,7 +64,7 @@ public class TestContinuousMeasurementExecutor {
          MeasurementConfig measurementConfig = createMeasurementConfig();
          ContinuousMeasurementExecutor cme = new ContinuousMeasurementExecutor(folders, measurementConfig, new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
 
-         Set<TestCase> tests = buildTestSet();
+         Set<TestMethodCall> tests = buildTestSet();
 
          File logFile = new File(parentFile, "log.txt");
          File fullResultsVersion = new File(parentFile, "fullResultsVersion");
@@ -168,8 +169,8 @@ public class TestContinuousMeasurementExecutor {
       return answerOnceRunner;
    }
 
-   private Set<TestCase> buildTestSet() {
-      Set<TestCase> tests = new HashSet<>();
+   private Set<TestMethodCall> buildTestSet() {
+      Set<TestMethodCall> tests = new HashSet<>();
       tests.add(TEST1);
       tests.add(TEST2);
       tests.add(TEST3);

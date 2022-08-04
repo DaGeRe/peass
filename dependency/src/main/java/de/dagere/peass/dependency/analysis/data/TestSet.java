@@ -133,6 +133,12 @@ public class TestSet {
       return testcases.keySet();
    }
 
+   /**
+    * @deprecated should not be used in new code; in the future, there should be test sets for regression test selection
+    * (which might contain test methods and test clazzes) and regular test sets, that only contain test methods (since
+    * data are only managed for test methods) 
+    * @return
+    */
    @JsonIgnore
    public Set<TestCase> getTests() {
       final Set<TestCase> testcases = new LinkedHashSet<>();
@@ -148,6 +154,22 @@ public class TestSet {
             TestClazzCall testClazzCall = new TestClazzCall(clazz, module);
             testcases.add(testClazzCall);
          }
+      }
+      return testcases;
+   }
+   
+   @JsonIgnore
+   public Set<TestMethodCall> getTestMethods() {
+      final Set<TestMethodCall> testcases = new LinkedHashSet<>();
+      for (final Entry<TestClazzCall, Set<String>> classTests : getTestcases().entrySet()) {
+         String clazz = classTests.getKey().getClazz();
+         String module = classTests.getKey().getModule();
+         if (classTests.getValue().size() > 0) {
+            for (final String method : classTests.getValue()) {
+               final TestMethodCall testcase = new TestMethodCall(clazz, method, module);
+               testcases.add(testcase);
+            }
+         } 
       }
       return testcases;
    }

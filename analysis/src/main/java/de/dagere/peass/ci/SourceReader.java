@@ -11,6 +11,7 @@ import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.ci.logHandling.LogRedirector;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -31,7 +32,7 @@ public class SourceReader {
       this.config = config;
    }
 
-   public void readMethodSources(final Set<TestCase> tests) {
+   public void readMethodSources(final Set<TestMethodCall> tests) {
       if (config.isRedirectSubprocessOutputToFile()) {
          File logFile = resultsFolders.getSourceReadLogFile(commit, commitOld);
          LOG.info("Executing source reading - log goes to {}", logFile.getAbsolutePath());
@@ -47,13 +48,13 @@ public class SourceReader {
       }
    }
 
-   public void executeSourceReading(final Set<TestCase> tests) {
+   public void executeSourceReading(final Set<TestMethodCall> tests) {
       ExecutionData executionData = new ExecutionData();
       executionData.addEmptyCommit(commit, commitOld);
       if (commitOld != null) {
          executionData.addEmptyCommit(commitOld, null);
       }
-      for (TestCase test : tests) {
+      for (TestMethodCall test : tests) {
          executionData.addCall(commit, test);
       }
       LOG.info("Reading method sources for {} - {}", commit, commitOld);

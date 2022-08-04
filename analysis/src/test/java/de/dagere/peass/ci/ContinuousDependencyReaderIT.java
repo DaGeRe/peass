@@ -22,6 +22,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
@@ -116,7 +117,7 @@ public class ContinuousDependencyReaderIT {
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
       RTSResult result = reader.getTests(iterator, "", newVersion, new MeasurementConfig(1));
-      Set<TestCase> tests = result.getTests();
+      Set<TestMethodCall> tests = result.getTests();
 
       Assert.assertEquals(tests.size(), 0);
    }
