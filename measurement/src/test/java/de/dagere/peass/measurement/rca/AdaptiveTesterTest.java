@@ -134,7 +134,7 @@ public class AdaptiveTesterTest {
             .thenAnswer((index) -> {
                return new File(folder.getRoot(), "log" + index);
             });
-      Mockito.when(folders.getMeasureLogFolder(Mockito.anyString(), Mockito.any(TestCase.class))).thenReturn(folder.newFile("log"));
+      Mockito.when(folders.getMeasureLogFolder(Mockito.anyString(), Mockito.any(TestMethodCall.class))).thenReturn(folder.newFile("log"));
 
       AdaptiveTester tester = new AdaptiveTester(folders, testGenerator.getConfig(), new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
       AdaptiveTester tester2 = Mockito.spy(tester);

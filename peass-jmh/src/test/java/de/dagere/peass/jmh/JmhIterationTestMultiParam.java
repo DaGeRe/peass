@@ -6,8 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -27,7 +25,7 @@ import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.jmh.JmhTestTransformer;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -53,8 +51,7 @@ public class JmhIterationTestMultiParam {
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, transformer, new EnvironmentVariables());
 
-      // File logFile = new File(folders.getLogFolder(), "test.txt");
-      TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
+      TestMethodCall testcase = new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod");
       executor.prepareKoPeMeExecution(new File(folders.getMeasureLogFolder(), "compile.txt"));
       executor.executeTest(testcase, folders.getMeasureLogFolder(), 100);
 

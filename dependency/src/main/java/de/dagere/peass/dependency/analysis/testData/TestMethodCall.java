@@ -44,6 +44,10 @@ public class TestMethodCall extends TestCase {
          @JsonProperty("params") final String params) {
       super(clazz, method, module, params);
    }
+   
+   public String getMethod() {
+      return method;
+   }
 
    public static String getParamsFromResult(DatacollectorResult datacollector) {
       LinkedHashMap<String, String> paramObject = null;

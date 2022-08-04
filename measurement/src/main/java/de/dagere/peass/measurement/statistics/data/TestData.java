@@ -23,12 +23,12 @@ public class TestData {
    
 	private static final Logger LOG = LogManager.getLogger(TestData.class);
 
-	private final TestCase testcase;
+	private final TestMethodCall testcase;
 	private final File origin;
 
 	private final SortedMap<String, EvaluationPair> data;
 
-	public TestData(final TestCase testcase, final File origin, CommitComparatorInstance comparator) {
+	public TestData(final TestMethodCall testcase, final File origin, CommitComparatorInstance comparator) {
 		this.testcase = testcase;
 		this.origin = origin;
 		data = new TreeMap<>(comparator);
@@ -74,7 +74,7 @@ public class TestData {
 		return data.size();
 	}
 
-   public TestCase getTestCase() {
+   public TestMethodCall getTestCase() {
       return testcase;
    }
 

@@ -105,7 +105,7 @@ public class AnalyseFullData extends DataAnalyser {
       final double diffPercent = ((double) teststatistic.getDiff()) / 100;
       final double mean = teststatistic.getPreviousStatistic().getMean();
 
-      final TestCase currentTest = getCurrentTestcase(measurementEntry);
+      final TestMethodCall currentTest = getCurrentTestcase(measurementEntry);
 
       projectChanges.addChange(currentTest, version,
             teststatistic.getConfidenceResult(), tRelation, mean,
@@ -121,8 +121,8 @@ public class AnalyseFullData extends DataAnalyser {
       System.out.println("git diff " + version + ".." + comparator.getPreviousVersion(version));
    }
 
-   private TestCase getCurrentTestcase(final TestData measurementEntry) {
-      final TestCase currentTest;
+   private TestMethodCall getCurrentTestcase(final TestData measurementEntry) {
+      final TestMethodCall currentTest;
       if (mapping != null) {
          final String module = mapping.getModuleOfClass(measurementEntry.getTestClass());
          currentTest = new TestMethodCall(measurementEntry.getTestClass(), measurementEntry.getTestMethod(), module);

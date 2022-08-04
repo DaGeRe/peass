@@ -10,6 +10,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.KiekerReaderConfiguration;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.TreeStage;
 import kieker.analysis.stage.DynamicEventDispatcher;
@@ -59,7 +60,7 @@ public class KiekerReaderConfigurationDuration extends KiekerReaderConfiguration
       return executionRecordTransformationStage;
    }
    
-   public TreeStage readTree(final File kiekerTraceFolder, final TestCase test, final boolean ignoreEOIs, final MeasurementConfig config, final ModuleClassMapping mapping) {
+   public TreeStage readTree(final File kiekerTraceFolder, final TestMethodCall test, final boolean ignoreEOIs, final MeasurementConfig config, final ModuleClassMapping mapping) {
       TreeStage treeStage = new TreeStage(systemModelRepositoryNew, test, ignoreEOIs, config, mapping);
       
       TraceReconstructionStage executionStage = prepareTillExecutionTrace(kiekerTraceFolder);

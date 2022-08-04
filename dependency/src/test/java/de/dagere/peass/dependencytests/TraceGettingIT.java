@@ -132,7 +132,7 @@ public class TraceGettingIT {
       tracereader.deleteTempFiles();
    }
 
-   public static boolean analyseTrace(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
+   public static boolean analyseTrace(final TestMethodCall testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException {
       final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder)[0];
 
@@ -151,7 +151,7 @@ public class TraceGettingIT {
       return success;
    }
 
-   public static void executeReading(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File kiekerResultFolder)
+   public static void executeReading(final TestMethodCall testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File kiekerResultFolder)
          throws ParseException, IOException {
       final ArrayList<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING, new KiekerConfig()).getShortTrace("");
       LOG.debug("Short Trace: {}", shortTrace.size());

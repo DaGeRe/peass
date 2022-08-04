@@ -103,6 +103,11 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       }
    }
 
+   /**
+    * getMethod should only be called on TestMethodCall
+    * @return
+    */
+   @Deprecated
    public String getMethod() {
       return method;
    }

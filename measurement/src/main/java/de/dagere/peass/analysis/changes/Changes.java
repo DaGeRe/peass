@@ -54,7 +54,7 @@ public class Changes implements Serializable {
     * @param percent How much the performance was changed
     * @return Added Change
     */
-   public Change addChange(final TestCase testcase, final String viewName, final double oldTime, final double percent, final double tvalue, final long vms) {
+   public Change addChange(final TestMethodCall testcase, final String viewName, final double oldTime, final double percent, final double tvalue, final long vms) {
       Change change = new Change();
       change.setDiff(viewName);
       change.setTvalue(tvalue);
@@ -68,7 +68,7 @@ public class Changes implements Serializable {
       return change;
    }
 
-   public Change getChange(final TestCase test) {
+   public Change getChange(final TestMethodCall test) {
       List<Change> changes = testcaseChanges.get(test.getClassWithModule());
       if (changes != null) {
          for (Change candidate : changes) {

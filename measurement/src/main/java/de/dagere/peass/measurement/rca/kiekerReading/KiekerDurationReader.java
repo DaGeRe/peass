@@ -8,6 +8,7 @@ import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.TreeStage;
 import teetime.framework.Execution;
@@ -40,7 +41,7 @@ public class KiekerDurationReader {
       return stage.getValues();
    }
 
-   public static TreeStage executeTreeStage(final File kiekerTraceFolder, final TestCase test, final boolean ignoreEOIs, final MeasurementConfig config,
+   public static TreeStage executeTreeStage(final File kiekerTraceFolder, final TestMethodCall test, final boolean ignoreEOIs, final MeasurementConfig config,
          final ModuleClassMapping mapping) {
       KiekerReaderConfigurationDuration configuration = new KiekerReaderConfigurationDuration();
       TreeStage stage = configuration.readTree(kiekerTraceFolder, test, ignoreEOIs, config, mapping);

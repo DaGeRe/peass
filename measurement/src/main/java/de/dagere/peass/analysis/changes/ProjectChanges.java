@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.statistics.Relation;
@@ -90,7 +91,7 @@ public class ProjectChanges implements Serializable {
       this.commitChanges = commitChanges;
    }
 
-   public void addChange(final TestCase testCase, final String commit,
+   public void addChange(final TestMethodCall testCase, final String commit,
          final Relation confidenceResult,
          final Relation tTestResult, final double oldTime,
          final double diffPercent, final double tvalue,

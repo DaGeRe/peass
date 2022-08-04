@@ -26,6 +26,7 @@ import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -182,24 +183,24 @@ public class CreateScriptStarter implements Callable<Void> {
 
    public void generateExecuteCommands(final StaticTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
          throws IOException {
-      final String[] versions = dependencies.getCommitNames();
-      for (int versionIndex = 0; versionIndex < versions.length; versionIndex++) {
-         final String endversion = versions[versionIndex];
+      final String[] commits = dependencies.getCommitNames();
+      for (int commitIndex = 0; commitIndex < commits.length; commitIndex++) {
+         final String endcommit = commits[commitIndex];
          // System.out.println("-startversion " + startversion + " -endversion " + endversion);
          if (changedTests == null) {
-            final Set<TestCase> tests = dependencies.getCommits().get(endversion).getTests().getTests();
-            writer.createFullVersionCommand(versionIndex, endversion, tests);
-         } else if (changedTests != null && changedTests.getCommits().containsKey(endversion)) {
-            for (final Entry<TestClazzCall, Set<String>> testcase : changedTests.getCommits().get(endversion).getTestcases().entrySet()) {
+            final Set<TestMethodCall> tests = dependencies.getCommits().get(endcommit).getTests().getTestMethods();
+            writer.createFullVersionCommand(commitIndex, endcommit, tests);
+         } else if (changedTests != null && changedTests.getCommits().containsKey(endcommit)) {
+            for (final Entry<TestClazzCall, Set<String>> testcase : changedTests.getCommits().get(endcommit).getTestcases().entrySet()) {
                for (final String method : testcase.getValue()) {
                   final String testcaseName = testcase.getKey().getClazz() + "#" + method;
-                  List<String> alreadyAnalyzedTests = alreadyAnalyzed.get(endversion);
+                  List<String> alreadyAnalyzedTests = alreadyAnalyzed.get(endcommit);
                   boolean analyzed = false;
                   if (alreadyAnalyzedTests != null && alreadyAnalyzedTests.contains(testcaseName)) {
                      analyzed = true;
                   }
                   if (!analyzed) {
-                     writer.createSingleMethodCommand(versionIndex, endversion, testcaseName);
+                     writer.createSingleMethodCommand(commitIndex, endcommit, testcaseName);
                   }
                }
             }
