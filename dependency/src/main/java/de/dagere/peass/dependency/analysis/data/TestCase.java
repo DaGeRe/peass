@@ -47,6 +47,10 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       if (method != null && (method.contains("(") || method.contains(")"))) {
          throw new RuntimeException("Method must not contain paranthesis: " + method);
       }
+      if (module == null) {
+         throw new RuntimeException("Module may not be null, since Files are created on it; please set it to the empty String.");
+      }
+         
       this.clazz = clazz;
       this.method = method;
       this.module = module;

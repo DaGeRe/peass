@@ -6,7 +6,7 @@ public class TestClazzCall extends TestCase {
    private static final long serialVersionUID = 7326687309901903065L;
 
    public TestClazzCall(String clazz) {
-      super(clazz, null, null, null);
+      super(clazz, null, "", null);
    }
 
    public TestClazzCall(String clazz, String module) {
