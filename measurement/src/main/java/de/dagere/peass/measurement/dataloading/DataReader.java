@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.statistics.data.TestData;
 
@@ -97,7 +98,7 @@ public final class DataReader {
    private static void readMeasurementFile(final Map<String, TestData> currentMeasurement, final File commitOfPair, final File commitCurrent, final File measurementFile, CommitComparatorInstance comparator) {
       final Kopemedata resultData = JSONDataLoader.loadData(measurementFile);
       final String testclazz = resultData.getClazz();
-      TestCase testcase = new TestCase(resultData);
+      TestMethodCall testcase = new TestMethodCall(resultData);
       TestData testData = currentMeasurement.get(testcase.getMethodWithParams());
       if (testData == null) {
          final File originFile = measurementFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();

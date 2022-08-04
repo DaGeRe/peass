@@ -2,15 +2,12 @@ package de.dagere.peass.dependency.analysis.data;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.dagere.kopeme.datastorage.ParamNameHelper;
-import de.dagere.kopeme.kopemedata.DatacollectorResult;
-import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 
 /**
  * Represents a testcase with its class and its method. If no method is given, the whole class with all methods is represented.
@@ -22,33 +19,12 @@ public class TestCase implements Comparable<TestCase>, Serializable {
 
    private static final long serialVersionUID = -522183920107191602L;
 
-   private final String module;
-   private final String clazz;
-   private final String method;
+   protected final String module;
+   protected final String clazz;
+   protected final String method;
 
    // Saves parameters without paranthesis
-   private final String params;
-
-   public TestCase(final Kopemedata data) {
-      if (data.getClazz().contains(ChangedEntity.MODULE_SEPARATOR)) {
-         module = data.getClazz().substring(0, data.getClazz().indexOf(ChangedEntity.MODULE_SEPARATOR));
-         this.clazz = data.getClazz().substring(data.getClazz().indexOf(ChangedEntity.MODULE_SEPARATOR) + 1, data.getClazz().length());
-      } else {
-         clazz = data.getClazz();
-         module = "";
-      }
-      method = data.getMethods().get(0).getMethod();
-      DatacollectorResult datacollector = data.getMethods().get(0).getDatacollectorResults().get(0);
-      LinkedHashMap<String, String> paramObject = null;
-      if (datacollector.getResults().size() > 0) {
-         paramObject = datacollector.getResults().get(0).getParameters();
-      } else if (datacollector.getChunks().size() > 0) {
-         paramObject = datacollector.getChunks().get(0).getResults().get(0).getParameters();
-      }
-      String paramString = ParamNameHelper.paramsToString(paramObject);
-      this.params = paramString;
-
-   }
+   protected final String params;
 
    public TestCase(final String clazz, final String method) {
       if (clazz.contains(File.separator)) { // possibly assertion, if speed becomes issue..
@@ -70,13 +46,6 @@ public class TestCase implements Comparable<TestCase>, Serializable {
 
    public TestCase(final ChangedEntity entity) {
       this(entity.getClazz(), entity.getMethod(), entity.getModule(), null);
-   }
-
-   public TestCase(final String clazz, final String method, final String module) {
-      this(clazz,
-            ((method != null && method.indexOf('(') != -1) ? method.substring(0, method.indexOf('(')) : method),
-            module,
-            ((method != null && method.indexOf('(') != -1) ? method.substring(method.indexOf('(') + 1, method.length() - 1) : null));
    }
 
    @JsonCreator
@@ -305,8 +274,8 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    }
 
    @JsonIgnore
-   public TestCase onlyClazz() {
-      return new TestCase(clazz, null, module);
+   public TestClazzCall onlyClazz() {
+      return new TestClazzCall(clazz, module);
    }
 
    public ChangedEntity onlyClazzEntity() {

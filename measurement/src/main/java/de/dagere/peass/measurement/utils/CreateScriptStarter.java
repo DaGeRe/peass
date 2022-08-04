@@ -25,6 +25,7 @@ import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -168,7 +169,7 @@ public class CreateScriptStarter implements Callable<Void> {
          throws IOException {
       int i = 0;
       for (Map.Entry<String, TestSet> entry : changedTests.getCommits().entrySet()) {
-         for (final Map.Entry<TestCase, Set<String>> testcase : entry.getValue().getTestcases().entrySet()) {
+         for (final Entry<TestClazzCall, Set<String>> testcase : entry.getValue().getTestcases().entrySet()) {
             for (final String method : testcase.getValue()) {
                final String testcaseName = testcase.getKey().getClazz() + "#" + method;
                writer.createSingleMethodCommand(i, entry.getKey(), testcaseName);
@@ -189,7 +190,7 @@ public class CreateScriptStarter implements Callable<Void> {
             final Set<TestCase> tests = dependencies.getCommits().get(endversion).getTests().getTests();
             writer.createFullVersionCommand(versionIndex, endversion, tests);
          } else if (changedTests != null && changedTests.getCommits().containsKey(endversion)) {
-            for (final Map.Entry<TestCase, Set<String>> testcase : changedTests.getCommits().get(endversion).getTestcases().entrySet()) {
+            for (final Entry<TestClazzCall, Set<String>> testcase : changedTests.getCommits().get(endversion).getTestcases().entrySet()) {
                for (final String method : testcase.getValue()) {
                   final String testcaseName = testcase.getKey().getClazz() + "#" + method;
                   List<String> alreadyAnalyzedTests = alreadyAnalyzed.get(endversion);

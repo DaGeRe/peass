@@ -48,6 +48,8 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -178,7 +180,7 @@ public class DependencyManager extends KiekerResultManager {
          if (moduleOfClass == null) {
             throw new RuntimeException("Module of class " + testClassName + " is null");
          }
-         TestCase testcase = new TestCase(testClassName, testMethodName, moduleOfClass);
+         TestMethodCall testcase = new TestMethodCall(testClassName, testMethodName, moduleOfClass);
          updateDependenciesOnce(testcase, parent, mapping);
       }
       LOG.debug("Result collection finished");
@@ -221,7 +223,7 @@ public class DependencyManager extends KiekerResultManager {
     * @param testMethodName
     * @param parent
     */
-   public void updateDependenciesOnce(final TestCase testcase, final File parent, final ModuleClassMapping mapping) {
+   public void updateDependenciesOnce(final TestMethodCall testcase, final File parent, final ModuleClassMapping mapping) {
       LOG.debug("Parent: " + parent);
       final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
       final File[] kiekerResultFolders = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
@@ -351,9 +353,9 @@ public class DependencyManager extends KiekerResultManager {
 
       // Remove all old dependencies where changes happened, because they may
       // have been deleted
-      for (final Entry<TestCase, Set<String>> className : testsToUpdate.entrySet()) {
+      for (final Entry<TestClazzCall, Set<String>> className : testsToUpdate.entrySet()) {
          for (final String method : className.getValue()) {
-            final TestCase entity = new TestCase(className.getKey().getClazz(), method, className.getKey().getModule());
+            final TestMethodCall entity = new TestMethodCall(className.getKey().getClazz(), method, className.getKey().getModule());
             dependencies.getDependencyMap().remove(entity);
          }
       }
@@ -370,7 +372,7 @@ public class DependencyManager extends KiekerResultManager {
          final Map<TestCase, Map<ChangedEntity, Set<String>>> oldDepdendencies) throws FileNotFoundException, IOException, XmlPullParserException {
       final TestExistenceChanges changes = new TestExistenceChanges();
 
-      for (final Entry<TestCase, Set<String>> entry : testsToUpdate.entrySet()) {
+      for (final Entry<TestClazzCall, Set<String>> entry : testsToUpdate.entrySet()) {
          final File testclazzFolder = getTestclazzFolder(entry);
          LOG.debug("Suche in {} Existiert: {} Ordner: {} Tests: {} ", testclazzFolder.getAbsolutePath(), testclazzFolder.exists(), testclazzFolder.isDirectory(), entry.getValue());
          if (testclazzFolder.exists()) {
@@ -382,13 +384,13 @@ public class DependencyManager extends KiekerResultManager {
       return changes;
    }
 
-   public File getTestclazzFolder(final Entry<TestCase, Set<String>> entry) throws FileNotFoundException, IOException, XmlPullParserException {
+   public File getTestclazzFolder(final Entry<TestClazzCall, Set<String>> entry) throws FileNotFoundException, IOException, XmlPullParserException {
       File moduleResultFolder = KiekerFolderUtil.getModuleResultFolder(folders, entry.getKey());
       File testclazzFolder = new File(moduleResultFolder, entry.getKey().getClazz());
       return testclazzFolder;
    }
 
-   void updateMethods(final ModuleClassMapping mapping, final TestExistenceChanges changes, final Entry<TestCase, Set<String>> entry, final File testclazzFolder) {
+   void updateMethods(final ModuleClassMapping mapping, final TestExistenceChanges changes, final Entry<TestClazzCall, Set<String>> entry, final File testclazzFolder) {
       final Set<String> notFound = new TreeSet<>();
       notFound.addAll(entry.getValue());
       for (final File testResultFile : testclazzFolder.listFiles((FileFilter) new WildcardFileFilter("*.json"))) {
@@ -399,22 +401,22 @@ public class DependencyManager extends KiekerResultManager {
          final File parent = testResultFile.getParentFile();
          final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - ".json".length());
          final String module = mapping.getModuleOfClass(entry.getKey().getClazz());
-         updateDependenciesOnce(new TestCase(entry.getKey().getClazz(), testMethodName, module), parent, mapping);
+         updateDependenciesOnce(new TestMethodCall(entry.getKey().getClazz(), testMethodName, module), parent, mapping);
          notFound.remove(testMethodName);
       }
       LOG.debug("Removed tests: {}", notFound);
       for (final String testMethodName : notFound) {
-         final TestCase entity = new TestCase(entry.getKey().getClazz(), testMethodName, entry.getKey().getModule());
+         final TestCase entity = new TestMethodCall(entry.getKey().getClazz(), testMethodName, entry.getKey().getModule());
          dependencies.removeTest(entity);
          // testsToUpdate.removeTest(entry.getKey(), testMethodName);
-         changes.addRemovedTest(new TestCase(entry.getKey().getClazz(), testMethodName, entry.getKey().getModule()));
+         changes.addRemovedTest(new TestMethodCall(entry.getKey().getClazz(), testMethodName, entry.getKey().getModule()));
       }
    }
 
-   void checkRemoved(final Map<TestCase, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes, final Entry<TestCase, Set<String>> entry,
+   void checkRemoved(final Map<TestCase, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes, final Entry<TestClazzCall, Set<String>> entry,
          final File testclazzFolder) {
       LOG.error("Testclass {} does not exist anymore or does not create results. Folder: {}", entry.getKey(), testclazzFolder);
-      final TestCase testclass = new TestCase(entry.getKey().getClazz(), "", entry.getKey().getModule());
+      final TestCase testclass = new TestMethodCall(entry.getKey().getClazz(), "", entry.getKey().getModule());
       boolean oldContained = false;
       for (final TestCase oldTest : oldDepdendencies.keySet()) {
          if (testclass.getClazz().equals(oldTest.getClazz()) && testclass.getModule().equals(oldTest.getModule())) {
@@ -455,7 +457,7 @@ public class DependencyManager extends KiekerResultManager {
       }
    }
 
-   public void addDependencies(final TestCase testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
-      dependencies.addDependencies(testClassName, calledClasses);
+   public void addDependencies(final TestCase test, final Map<ChangedEntity, Set<String>> calledClasses) {
+      dependencies.addDependencies(test, calledClasses);
    }
 }

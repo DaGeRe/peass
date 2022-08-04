@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 
 /**
@@ -77,7 +78,7 @@ public class ExecutionData extends SelectedTests {
    public boolean commitContainsTest(final String commit, final TestCase currentIterationTest) {
       final TestSet clazzExecutions = commits.get(commit);
       if (clazzExecutions != null) {
-         for (final Map.Entry<TestCase, Set<String>> clazz : clazzExecutions.entrySet()) {
+         for (final Entry<TestClazzCall, Set<String>> clazz : clazzExecutions.entrySet()) {
             final TestCase testclazz = clazz.getKey();
             final Set<String> methods = clazz.getValue();
             if (testclazz.getClazz().equals(currentIterationTest.getClazz()) && methods.contains(currentIterationTest.getMethod())) {

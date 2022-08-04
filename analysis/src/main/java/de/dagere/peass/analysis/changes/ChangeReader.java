@@ -21,6 +21,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.folders.ResultsFolders;
@@ -232,7 +233,7 @@ public class ChangeReader {
    }
 
    private TestCase getTestcase(final Kopemedata data, final String[] commits, final DescribedChunk describedChunk) {
-      TestCase testcase = new TestCase(data);
+      TestCase testcase = new TestMethodCall(data);
       if (tests != null) {
          TestSet testsOfThisVersion = tests.get(commits[1]);
          for (TestCase test : testsOfThisVersion.getTests()) {

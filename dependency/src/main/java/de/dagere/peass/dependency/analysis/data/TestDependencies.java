@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 
 /**
@@ -72,7 +73,7 @@ public class TestDependencies {
       return tests.getCalledMethods();
    }
    
-   public void setDependencies(final TestCase testClassName, final Map<ChangedEntity, Set<String>> allCalledClasses) {
+   public void setDependencies(final TestMethodCall testClassName, final Map<ChangedEntity, Set<String>> allCalledClasses) {
       final Map<ChangedEntity, Set<String>> testDependencies = getOrAddDependenciesForTest(testClassName);
       testDependencies.putAll(allCalledClasses);
    }
@@ -80,12 +81,12 @@ public class TestDependencies {
    /**
     * Since we have no information about complete dependencies when reading an old static selection file, just add dependencies
     * 
-    * @param testClassName
+    * @param testMethod
     * @param testMethodName
     * @param calledClasses Map from name of the called class to the methods of the class that are called
     */
-   public void addDependencies(final TestCase testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
-      final Map<ChangedEntity, Set<String>> testDependencies = getOrAddDependenciesForTest(testClassName);
+   public void addDependencies(final TestCase testMethod, final Map<ChangedEntity, Set<String>> calledClasses) {
+      final Map<ChangedEntity, Set<String>> testDependencies = getOrAddDependenciesForTest(testMethod);
       for (final Map.Entry<ChangedEntity, Set<String>> calledEntity : calledClasses.entrySet()) {
          LOG.debug("Adding call: " + calledEntity.getKey());
          LOG.debug(testDependencies.keySet());

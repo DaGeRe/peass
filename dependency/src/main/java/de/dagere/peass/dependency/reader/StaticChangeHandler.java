@@ -18,6 +18,8 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
@@ -65,8 +67,8 @@ public class StaticChangeHandler {
          if (!changedEntry.isOnlyMethodChange()) {
             for (ChangedEntity change : changedEntry.getChanges()) {
                File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
-               TestCase potentialTest = new TestCase(change.getClazz(), change.getMethod(), change.getModule());
-               List<TestCase> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
+               TestClazzCall potentialTest = new TestClazzCall(change.getClazz(), change.getModule());
+               List<TestMethodCall> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
                for (TestCase added : addedTests) {
                   if (NonIncludedTestRemover.isTestIncluded(added, executionConfig)) {
                      if (dependencyManager.getTestTransformer() instanceof JUnitTestTransformer) {

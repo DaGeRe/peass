@@ -33,6 +33,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 /**
  * Represents a set of tests which are executed for one version by its class and its list of methods.
@@ -48,7 +50,7 @@ public class TestSet {
 
    @JsonInclude(JsonInclude.Include.NON_EMPTY)
    @JsonDeserialize(keyUsing = TestcaseKeyDeserializer.class, contentAs = TreeSet.class, as = TreeMap.class)
-   private final Map<TestCase, Set<String>> testcases = new TreeMap<>();
+   private final Map<TestClazzCall, Set<String>> testcases = new TreeMap<>();
    private String predecessor;
 
    public TestSet() {
@@ -70,7 +72,7 @@ public class TestSet {
 
    @JsonIgnore
    public void addTest(final TestCase testcase) {
-      final TestCase entity = new TestCase(testcase.getClazz(), null, testcase.getModule());
+      final TestClazzCall entity = new TestClazzCall(testcase.getClazz(), testcase.getModule());
       addTest(entity, testcase.getMethodWithParams());
    }
 
@@ -81,10 +83,7 @@ public class TestSet {
     * @param classname
     * @param methodname
     */
-   public void addTest(final TestCase classname, final String methodname) {
-      if (classname.getMethod() != null && classname.getMethod() != "") {
-         throw new RuntimeException("A testset should only get Changed Entities with empty method, but was " + classname.getMethod());
-      }
+   public void addTest(final TestClazzCall classname, final String methodname) {
       Set<String> methods = testcases.get(classname);
       if (methods == null) {
          methods = new TreeSet<>();
@@ -100,7 +99,7 @@ public class TestSet {
 
    @JsonIgnore
    public void addTestSet(final TestSet testSet) {
-      for (final Map.Entry<TestCase, Set<String>> newTestEntry : testSet.entrySet()) {
+      for (final Map.Entry<TestClazzCall, Set<String>> newTestEntry : testSet.entrySet()) {
          Set<String> methods = testcases.get(newTestEntry.getKey());
          if (methods == null) {
             methods = new TreeSet<>();
@@ -119,7 +118,7 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public Set<Entry<TestCase, Set<String>>> entrySet() {
+   public Set<Entry<TestClazzCall, Set<String>>> entrySet() {
       return testcases.entrySet();
    }
 
@@ -129,27 +128,27 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public Set<TestCase> getClasses() {
+   public Set<TestClazzCall> getClasses() {
       return testcases.keySet();
    }
 
    @JsonIgnore
    public Set<TestCase> getTests() {
       final Set<TestCase> testcases = new LinkedHashSet<>();
-      for (final Entry<TestCase, Set<String>> classTests : getTestcases().entrySet()) {
+      for (final Entry<TestClazzCall, Set<String>> classTests : getTestcases().entrySet()) {
          if (classTests.getValue().size() > 0) {
             for (final String method : classTests.getValue()) {
-               final TestCase testcase = new TestCase(classTests.getKey().getClazz(), method, classTests.getKey().getModule());
+               final TestCase testcase = new TestMethodCall(classTests.getKey().getClazz(), method, classTests.getKey().getModule());
                testcases.add(testcase);
             }
          } else {
-            testcases.add(new TestCase(classTests.getKey().getClazz(), null, classTests.getKey().getModule()));
+            testcases.add(new TestClazzCall(classTests.getKey().getClazz(), classTests.getKey().getModule()));
          }
       }
       return testcases;
    }
 
-   public Map<TestCase, Set<String>> getTestcases() {
+   public Map<TestClazzCall, Set<String>> getTestcases() {
       return testcases;
    }
 

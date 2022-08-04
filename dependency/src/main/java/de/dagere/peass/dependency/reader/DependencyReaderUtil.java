@@ -33,6 +33,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -56,14 +57,14 @@ public class DependencyReaderUtil {
          for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
             final TestSet testSet = dependency.getValue();
             if (removedTest.getMethod().length() > 0) {
-               for (final Entry<TestCase, Set<String>> testcase : testSet.getTestcases().entrySet()) {
+               for (final Entry<TestClazzCall, Set<String>> testcase : testSet.getTestcases().entrySet()) {
                   if (testcase.getKey().getClazz().equals(removedTest.getClazz())) {
                      testcase.getValue().remove(removedTest.getMethod());
                   }
                }
             } else {
                TestCase removeTestcase = null;
-               for (final Entry<TestCase, Set<String>> testcase : testSet.getTestcases().entrySet()) {
+               for (final Entry<TestClazzCall, Set<String>> testcase : testSet.getTestcases().entrySet()) {
                   if (testcase.getKey().getClazz().equals(removedTest.getClazz())) {
                      removeTestcase = testcase.getKey();
                   }

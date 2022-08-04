@@ -24,6 +24,7 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -56,7 +57,7 @@ public class TestPeassFilter {
       PeassFolders folders = new PeassFolders(CURRENT);
       final KiekerResultManager manager = new KiekerResultManager(folders, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
       final TestSet testset = new TestSet();
-      final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
+      final TestMethodCall testcase = new TestMethodCall("defaultpackage.TestMe", "testMe", "");
       testset.addTest(testcase);
       
       final ModuleClassMapping mapping = new ModuleClassMapping(manager.getExecutor());

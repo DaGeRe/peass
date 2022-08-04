@@ -16,6 +16,7 @@ import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
@@ -124,7 +125,7 @@ public class AnalyseFullData extends DataAnalyser {
       final TestCase currentTest;
       if (mapping != null) {
          final String module = mapping.getModuleOfClass(measurementEntry.getTestClass());
-         currentTest = new TestCase(measurementEntry.getTestClass(), measurementEntry.getTestMethod(), module);
+         currentTest = new TestMethodCall(measurementEntry.getTestClass(), measurementEntry.getTestMethod(), module);
       } else {
          currentTest = measurementEntry.getTestCase();
       }

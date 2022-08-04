@@ -31,6 +31,7 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependency.traces.TraceMethodReader;
 import de.dagere.peass.dependency.traces.TraceWithMethods;
@@ -118,13 +119,13 @@ public class TraceGettingIT {
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       final KiekerResultManager tracereader = new KiekerResultManager(folders, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
       final TestSet testset = new TestSet();
-      testset.addTest(new TestCase("viewtest.TestMe", "test", ""));
+      testset.addTest(new TestMethodCall("viewtest.TestMe", "test", ""));
       tracereader.getExecutor().loadClasses();
       tracereader.executeKoPeMeKiekerRun(testset, "1", folders.getDependencyLogFolder());
 
       LOG.debug("Trace-Analysis..");
 
-      final boolean worked = analyseTrace(new TestCase("viewtest.TestMe", "test", ""), VIEWS_FOLDER_TEST, new HashMap<>(), githash,
+      final boolean worked = analyseTrace(new TestMethodCall("viewtest.TestMe", "test", ""), VIEWS_FOLDER_TEST, new HashMap<>(), githash,
             tracereader.getXMLFileFolder(TestConstants.CURRENT_FOLDER));
       Assert.assertEquals(true, worked);
 

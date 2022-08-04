@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.requitur.ReducedTraceElement;
 import de.dagere.requitur.content.StringContent;
@@ -38,7 +39,7 @@ public class TraceWriterTest {
       ResultsFolders resultsFolders = new ResultsFolders(tempDir, "test");
       
       TestSelectionConfig testSelectionConfig = new TestSelectionConfig(1, false, true, true, true);
-      TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA", "moduleA"), resultsFolders, new TraceFileMapping(), testSelectionConfig);
+      TraceWriter writer = new TraceWriter("000001", new TestMethodCall("ClazzA", "methodA", "moduleA"), resultsFolders, new TraceFileMapping(), testSelectionConfig);
 
       TraceWithMethods exampleTrace = getTrace();
 

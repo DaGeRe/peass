@@ -21,6 +21,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
@@ -75,7 +76,7 @@ public class TraceChangeHandler {
    public void addAddedTests(final CommitStaticSelection newVersionInfo, final TestSet testsToRun) {
       for (final ChangedEntity testName : newVersionInfo.getChangedClazzes().keySet()) {
          ChangedEntity simplyClazz = testName.getSourceContainingClazz();
-         TestCase potentialTest = new TestCase(simplyClazz.getClazz(), null, testName.getModule());
+         TestClazzCall potentialTest = new TestClazzCall(simplyClazz.getClazz(), testName.getModule());
          if (NonIncludedTestRemover.isTestClassIncluded(potentialTest, executionConfig)) {
             testsToRun.addTest(potentialTest, null);
          }

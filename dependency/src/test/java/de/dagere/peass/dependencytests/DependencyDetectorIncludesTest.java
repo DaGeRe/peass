@@ -17,6 +17,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -92,7 +93,7 @@ public class DependencyDetectorIncludesTest {
       System.out.println(reader.getDependencies());
       
       Map<TestCase, InitialCallList> initialDependencies = reader.getDependencies().getInitialcommit().getInitialDependencies();
-      TestCase removeMeEntity = new TestCase("defaultpackage.TestMe", notIncludedMethod, "");
+      TestMethodCall removeMeEntity = new TestMethodCall("defaultpackage.TestMe", notIncludedMethod, "");
       System.out.println(initialDependencies.get(removeMeEntity));
       Assert.assertNull(initialDependencies.get(removeMeEntity));
    }

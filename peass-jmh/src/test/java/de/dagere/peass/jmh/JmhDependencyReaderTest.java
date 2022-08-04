@@ -30,6 +30,7 @@ import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -104,7 +105,7 @@ public class JmhDependencyReaderTest {
       StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       Map<TestCase, InitialCallList> initialDependencies = dependencies.getInitialcommit().getInitialDependencies();
       MatcherAssert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
-      InitialCallList initial = initialDependencies.get(new TestCase("de.dagere.peass.ExampleBenchmark", "testMethod", null));
+      InitialCallList initial = initialDependencies.get(new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod", null));
       MatcherAssert.assertThat(initial.getEntities(), Matchers.hasSize(2));
    }
 

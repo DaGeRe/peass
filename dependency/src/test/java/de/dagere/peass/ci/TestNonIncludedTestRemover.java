@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class TestNonIncludedTestRemover {
 
@@ -44,9 +45,9 @@ public class TestNonIncludedTestRemover {
    @Test
    public void testWithModulesRegular() {
       Set<TestCase> tests = new HashSet<TestCase>();
-      tests.add(new TestCase("TestA", "method1", "moduleA"));
-      tests.add(new TestCase("TestB", "method1", "moduleB"));
-      tests.add(new TestCase("TestC", "method1", "moduleC"));
+      tests.add(new TestMethodCall("TestA", "method1", "moduleA"));
+      tests.add(new TestMethodCall("TestB", "method1", "moduleB"));
+      tests.add(new TestMethodCall("TestC", "method1", "moduleC"));
 
       NonIncludedTestRemover.removeNotIncluded(tests, new ExecutionConfig(Arrays.asList(new String[] { "moduleA§TestA#method1", "TestC" }), "test"));
 
@@ -57,9 +58,9 @@ public class TestNonIncludedTestRemover {
    @Test
    public void testWithModulesSameNameButDifferentModule() {
       Set<TestCase> tests = new HashSet<TestCase>();
-      tests.add(new TestCase("TestA", "method1", "moduleA"));
-      tests.add(new TestCase("TestB", "method1", "moduleB"));
-      tests.add(new TestCase("TestA", "method1", "moduleC"));
+      tests.add(new TestMethodCall("TestA", "method1", "moduleA"));
+      tests.add(new TestMethodCall("TestB", "method1", "moduleB"));
+      tests.add(new TestMethodCall("TestA", "method1", "moduleC"));
 
       NonIncludedTestRemover.removeNotIncluded(tests, new ExecutionConfig(Arrays.asList(new String[] { "moduleA§TestA#method1", "TestC" }), "test"));
 

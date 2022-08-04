@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 
 /**
@@ -42,7 +43,7 @@ public class TestData {
          LOG.debug("Version: {} Predecessor: {}", commitOfPair, predecessor);
          // TODO Workaround if data are incomplete, e.g. because of build error
          if (commitOfPair != null){
-            currentPair = new EvaluationPair(commitOfPair, predecessor, new TestCase(resultData));
+            currentPair = new EvaluationPair(commitOfPair, predecessor, new TestMethodCall(resultData));
             data.put(commitOfPair, currentPair);
          }
       } 
