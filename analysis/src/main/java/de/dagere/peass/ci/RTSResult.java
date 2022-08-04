@@ -3,7 +3,6 @@ package de.dagere.peass.ci;
 import java.io.Serializable;
 import java.util.Set;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class RTSResult implements Serializable {

@@ -15,8 +15,9 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.execution.utils.ProjectModules;
@@ -30,7 +31,7 @@ public class TraceViewGenerator {
 
    private final DependencyManager dependencyManager;
    private final PeassFolders folders;
-   private final String version;
+   private final String commit;
    private final TraceFileMapping traceFileMapping;
    
    private final KiekerConfig kiekerConfig;
@@ -40,7 +41,7 @@ public class TraceViewGenerator {
          final KiekerConfig kiekerConfig, TestSelectionConfig testSelectionConfig) {
       this.dependencyManager = dependencyManager;
       this.folders = folders;
-      this.version = version;
+      this.commit = version;
       this.traceFileMapping = mapping;
       this.kiekerConfig = kiekerConfig;
       this.testSelectionConfig = testSelectionConfig;
@@ -48,14 +49,19 @@ public class TraceViewGenerator {
 
    public void generateViews(final ResultsFolders resultsFolders, final TestSet examinedTests)
          throws IOException, ParseException {
-      LOG.debug("Generating views for {}", version);
+      LOG.debug("Generating views for {}", commit);
       GitUtils.reset(folders.getProjectFolder());
       ProjectModules modules = dependencyManager.getExecutor().getModules();
       ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
       List<File> classpathFolders = getClasspathFolders(modules);
-      for (TestCase testcase : examinedTests.getTests()) {
-         final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, traceFileMapping, version, classpathFolders, mapping, kiekerConfig, testSelectionConfig);
-         oneViewGenerator.generateTrace(version);
+      
+      for (TestClazzCall clazzCall : examinedTests.getTestClazzes()) {
+         LOG.debug("Test clazz {} did not contain tests and therefore is not analyzed further", clazzCall);
+      }
+      
+      for (TestMethodCall testcase : examinedTests.getTestMethods()) {
+         final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, traceFileMapping, commit, classpathFolders, mapping, kiekerConfig, testSelectionConfig);
+         oneViewGenerator.generateTrace(commit);
       }
    }
 

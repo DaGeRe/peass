@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;

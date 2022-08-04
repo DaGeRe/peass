@@ -1,6 +1,7 @@
 package de.dagere.peass.measurement.rca;
 
 import de.dagere.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
+import de.dagere.peass.measurement.rca.analyzer.SourceChangeTreeAnalyzer;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
 
 /**

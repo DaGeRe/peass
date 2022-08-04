@@ -33,7 +33,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.peass.dependency.analysis.data.deserializer.TestClazzCallKeyDeserializer;
-import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
@@ -151,6 +150,20 @@ public class TestSet {
                testcases.add(testcase);
             }
          } else {
+            TestClazzCall testClazzCall = new TestClazzCall(clazz, module);
+            testcases.add(testClazzCall);
+         }
+      }
+      return testcases;
+   }
+   
+   @JsonIgnore
+   public Set<TestClazzCall> getTestClazzes() {
+      final Set<TestClazzCall> testcases = new LinkedHashSet<>();
+      for (final Entry<TestClazzCall, Set<String>> classTests : getTestcases().entrySet()) {
+         String clazz = classTests.getKey().getClazz();
+         String module = classTests.getKey().getModule();
+         if (classTests.getValue().size() == 0) {
             TestClazzCall testClazzCall = new TestClazzCall(clazz, module);
             testcases.add(testClazzCall);
          }

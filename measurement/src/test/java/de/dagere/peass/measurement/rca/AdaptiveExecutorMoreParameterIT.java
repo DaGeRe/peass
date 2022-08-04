@@ -19,7 +19,6 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;

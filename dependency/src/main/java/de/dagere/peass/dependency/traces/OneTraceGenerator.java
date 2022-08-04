@@ -14,8 +14,8 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
@@ -30,7 +30,7 @@ public class OneTraceGenerator {
    private static final Logger LOG = LogManager.getLogger(OneTraceGenerator.class);
 
    private final PeassFolders folders;
-   private final TestCase testcase;
+   private final TestMethodCall testcase;
    private final TraceFileMapping traceFileMapping;
    private final String commit;
    private final ResultsFolders resultsFolders;
@@ -39,7 +39,7 @@ public class OneTraceGenerator {
    private final KiekerConfig kiekerConfig;
    private final TestSelectionConfig testSelectionConfig;
 
-   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeassFolders folders, final TestCase testcase, final TraceFileMapping traceFileMapping, final String commit,
+   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeassFolders folders, final TestMethodCall testcase, final TraceFileMapping traceFileMapping, final String commit,
          final List<File> classpathFolders, final ModuleClassMapping mapping, final KiekerConfig kiekerConfig, TestSelectionConfig testSelectionConfig) {
       this.resultsFolders = resultsFolders;
       this.folders = folders;

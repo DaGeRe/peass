@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.folders.PeassFolders;
-import groovy.transform.Sortable;
 
 public class RCAFolderSearcher {
 

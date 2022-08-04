@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.ci.logHandling.LogRedirector;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.PeassFolders;
