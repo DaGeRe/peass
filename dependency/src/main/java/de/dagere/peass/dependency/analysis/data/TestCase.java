@@ -152,9 +152,6 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       if (obj == null) {
          return false;
       }
-      if (getClass() != obj.getClass()) {
-         return false;
-      }
       final TestCase other = (TestCase) obj;
       if (clazz == null) {
          if (other.clazz != null) {

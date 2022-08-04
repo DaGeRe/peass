@@ -63,7 +63,7 @@ public class DependencyReaderUtil {
                   }
                }
             } else {
-               TestCase removeTestcase = null;
+               TestClazzCall removeTestcase = null;
                for (final Entry<TestClazzCall, Set<String>> testcase : testSet.getTestcases().entrySet()) {
                   if (testcase.getKey().getClazz().equals(removedTest.getClazz())) {
                      removeTestcase = testcase.getKey();

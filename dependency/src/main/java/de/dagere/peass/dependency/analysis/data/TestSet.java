@@ -32,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import de.dagere.peass.dependency.analysis.data.deserializer.TestClazzCallKeyDeserializer;
 import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
@@ -49,7 +50,7 @@ public class TestSet {
    
 
    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-   @JsonDeserialize(keyUsing = TestcaseKeyDeserializer.class, contentAs = TreeSet.class, as = TreeMap.class)
+   @JsonDeserialize(keyUsing = TestClazzCallKeyDeserializer.class, contentAs = TreeSet.class, as = TreeMap.class)
    private final Map<TestClazzCall, Set<String>> testcases = new TreeMap<>();
    private String predecessor;
 
@@ -136,13 +137,16 @@ public class TestSet {
    public Set<TestCase> getTests() {
       final Set<TestCase> testcases = new LinkedHashSet<>();
       for (final Entry<TestClazzCall, Set<String>> classTests : getTestcases().entrySet()) {
+         String clazz = classTests.getKey().getClazz();
+         String module = classTests.getKey().getModule();
          if (classTests.getValue().size() > 0) {
             for (final String method : classTests.getValue()) {
-               final TestCase testcase = new TestMethodCall(classTests.getKey().getClazz(), method, classTests.getKey().getModule());
+               final TestCase testcase = new TestMethodCall(clazz, method, module);
                testcases.add(testcase);
             }
          } else {
-            testcases.add(new TestClazzCall(classTests.getKey().getClazz(), classTests.getKey().getModule()));
+            TestClazzCall testClazzCall = new TestClazzCall(clazz, module);
+            testcases.add(testClazzCall);
          }
       }
       return testcases;
@@ -152,15 +156,12 @@ public class TestSet {
       return testcases;
    }
 
-   public void removeTest(final TestCase testClassName) {
-      if (testClassName.getMethod() != null && testClassName.getMethod() != "") {
-         throw new RuntimeException("Testset class removal should only be done with empty method of ChangedEntity!");
-      }
+   public void removeTest(final TestClazzCall testClassName) {
       testcases.remove(testClassName);
    }
 
    @JsonIgnore
-   public void removeTest(final TestCase testClassName, final String testMethodName) {
+   public void removeTest(final TestClazzCall testClassName, final String testMethodName) {
       if (testClassName.getMethod() != null && testClassName.getMethod() != "") {
          throw new RuntimeException("Testset class removal should only be done with empty method of ChangedEntity!");
       }
@@ -201,7 +202,7 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public Set<String> getMethods(final TestCase clazz) {
+   public Set<String> getMethods(final TestClazzCall clazz) {
       return testcases.get(clazz);
    }
 
