@@ -3,6 +3,7 @@ package de.dagere.peass.dependency.analysis.testData;
 import java.io.File;
 import java.util.LinkedHashMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.dagere.kopeme.datastorage.ParamNameHelper;
@@ -47,6 +48,15 @@ public class TestMethodCall extends TestCase {
    
    public String getMethod() {
       return method;
+   }
+   
+   @JsonIgnore
+   public String getMethodWithParams() {
+      if (params == null) {
+         return method;
+      } else {
+         return method + "(" + params + ")";
+      }
    }
 
    public static String getParamsFromResult(DatacollectorResult datacollector) {

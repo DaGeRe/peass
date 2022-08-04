@@ -17,6 +17,7 @@ import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.jmh.JmhResultMover;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -40,7 +41,7 @@ public class TestResultMoving {
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
 
       File jsonResultFile = new File(folders.getTempMeasurementFolder(), "testMethod.json");
-      TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
+      TestMethodCall testcase = new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod");
       new JmhResultMover(folders, new MeasurementConfig(1)).moveToMethodFolder(testcase, jsonResultFile);
 
       // TODO Assert correct file and fix JmhResultMover
@@ -49,7 +50,7 @@ public class TestResultMoving {
 
       final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
       final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder)[0];
-      
+
       List<File> fileNames = Arrays.asList(kiekerResultFolder.listFiles()).stream()
             .filter(file -> file.getName().endsWith(".dat"))
             .collect(Collectors.toList());

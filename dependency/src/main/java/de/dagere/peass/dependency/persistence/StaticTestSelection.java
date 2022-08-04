@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class StaticTestSelection extends SelectedTests {
 
@@ -38,7 +39,7 @@ public class StaticTestSelection extends SelectedTests {
             versionDependencies.getChangedClazzes().put(new ChangedEntity("unknown", ""), version.getValue());
             String commitHash = version.getKey();
             commits.put(commitHash, versionDependencies);
-            for (TestCase test : version.getValue().getTests()) {
+            for (TestMethodCall test : version.getValue().getTestMethods()) {
                initialcommit.addDependency(test, new ChangedEntity(test.getClazz(), ""));
             }
          }

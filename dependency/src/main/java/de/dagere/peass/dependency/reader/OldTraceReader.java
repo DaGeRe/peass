@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -40,21 +41,21 @@ public class OldTraceReader {
    private void addRegularVersions() {
       for (Entry<String, CommitStaticSelection> commit : dependencyResult.getCommits().entrySet()) {
          TestSet tests = commit.getValue().getTests();
-         for (TestCase testcase : tests.getTests()) {
+         for (TestMethodCall testcase : tests.getTestMethods()) {
             addPotentialTracefile(testcase, commit.getKey());
          }
       }
    }
 
    private void addInitialVersion() {
-      for (Entry<TestCase, InitialCallList> classDependency : dependencyResult.getInitialcommit().getInitialDependencies().entrySet()) {
-         TestCase testcase = classDependency.getKey();
+      for (Entry<TestMethodCall, InitialCallList> classDependency : dependencyResult.getInitialcommit().getInitialDependencies().entrySet()) {
+         TestMethodCall testcase = classDependency.getKey();
          String initialVersion = dependencyResult.getInitialcommit().getCommit();
          addPotentialTracefile(testcase, initialVersion);
       }
    }
    
-   private void addPotentialTracefile(final TestCase testcase, final String initialVersion) {
+   private void addPotentialTracefile(final TestMethodCall testcase, final String initialVersion) {
       String shortVersion = TraceWriter.getShortCommit(initialVersion);
       
       for (String ending : new String[] {"", TraceFileManager.TXT_ENDING, TraceFileManager.ZIP_ENDING}) {

@@ -88,7 +88,7 @@ public class TestPeassFilter {
       Assert.assertEquals("defaultpackage.NormalDependency#innerMethod(java.lang.Integer)", compareTrace.get(3).toString());
    }
 
-   private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet testset, final TestCase testcase, final ModuleClassMapping mapping, final int i)
+   private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet testset, final TestMethodCall testcase, final ModuleClassMapping mapping, final int i)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, FileNotFoundException {
       cleanup();
       PeassFolders peassFolders = new PeassFolders(CURRENT);

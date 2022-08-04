@@ -9,13 +9,14 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 
 public class KiekerFolderUtil {
 
    private static final Logger LOG = LogManager.getLogger(KiekerFolderUtil.class);
 
-   public static File[] getClazzMethodFolder(final TestCase testcase, final File resultsFolder) {
+   public static File[] getClazzMethodFolder(final TestMethodCall testcase, final File resultsFolder) {
       final File testclazzResultFolder = new File(resultsFolder, testcase.getClazz());
       final File[] kiekerTimestampFolders = testclazzResultFolder.listFiles(new FileFilter() {
          @Override
@@ -59,7 +60,7 @@ public class KiekerFolderUtil {
       }
    }
 
-   private static File getMethodFolder(final TestCase testcase, final File[] kiekerTimestampFolders) {
+   private static File getMethodFolder(final TestMethodCall testcase, final File[] kiekerTimestampFolders) {
       String methodName = testcase.getMethodWithParams();
       File methodResult = new File(kiekerTimestampFolders[0], methodName);
       for (final File test : kiekerTimestampFolders) {

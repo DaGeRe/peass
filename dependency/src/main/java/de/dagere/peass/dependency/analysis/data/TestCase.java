@@ -112,6 +112,11 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       return method;
    }
 
+   /**
+    * getMethodWithParams should only be called on TestMethodCall
+    * @return
+    */
+   @Deprecated
    @JsonIgnore
    public String getMethodWithParams() {
       if (params == null) {

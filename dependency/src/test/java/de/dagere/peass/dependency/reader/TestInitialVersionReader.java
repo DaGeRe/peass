@@ -13,6 +13,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
@@ -21,8 +22,8 @@ import de.dagere.peass.vcs.CommitIterator;
 
 public class TestInitialVersionReader {
 
-   private static final TestCase TESTCASE = new TestCase("de.dagere.peass.MyTest#test");
-   
+   private static final TestMethodCall TESTCASE = new TestMethodCall("de.dagere.peass.MyTest", "test");
+
    private static final String VERSION2 = "000002";
    private static final String VERSION1 = "000001";
 
@@ -46,14 +47,13 @@ public class TestInitialVersionReader {
 
       InitialCommitReader reader = new InitialCommitReader(dependencyResult, dependencyManagerMock, Mockito.mock(CommitIterator.class));
       reader.readCompletedVersions(new CommitComparatorInstance(Arrays.asList(new String[] { VERSION1, VERSION2 })));
-      
+
       Set<ChangedEntity> currentlyCalledClasses = currentTestDependencies.getDependencyMap().get(TESTCASE).getCalledClasses();
-      MatcherAssert.assertThat(currentlyCalledClasses, 
+      MatcherAssert.assertThat(currentlyCalledClasses,
             IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.MyCallee")));
-      MatcherAssert.assertThat(currentlyCalledClasses, 
+      MatcherAssert.assertThat(currentlyCalledClasses,
             IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.MyTest")));
-      
-      
+
    }
 
 }

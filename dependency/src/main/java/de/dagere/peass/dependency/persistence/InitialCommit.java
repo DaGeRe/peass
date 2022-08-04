@@ -12,12 +12,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.data.deserializer.TestMethodCallKeyDeserializer;
 import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class InitialCommit {
 
    private String commit;
-
+   
    // To asure compatibility to old versions, this field still needs to stay here; but in all future serializations, it should be replaced by commit
    @Deprecated
    @JsonInclude(value = JsonInclude.Include.NON_NULL)
@@ -26,8 +28,8 @@ public class InitialCommit {
    private int jdk = 8;
    private boolean running = true;
 
-   @JsonDeserialize(keyUsing = TestcaseKeyDeserializer.class)
-   private Map<TestCase, InitialCallList> initialDependencies = new TreeMap<>();
+   @JsonDeserialize(keyUsing = TestMethodCallKeyDeserializer.class)
+   private Map<TestMethodCall, InitialCallList> initialDependencies = new TreeMap<>();
 
    public String getCommit() {
       return commit;
@@ -55,11 +57,11 @@ public class InitialCommit {
       this.running = running;
    }
 
-   public Map<TestCase, InitialCallList> getInitialDependencies() {
+   public Map<TestMethodCall, InitialCallList> getInitialDependencies() {
       return initialDependencies;
    }
 
-   public void setInitialDependencies(final Map<TestCase, InitialCallList> initialDependencies) {
+   public void setInitialDependencies(final Map<TestMethodCall, InitialCallList> initialDependencies) {
       this.initialDependencies = initialDependencies;
    }
 
@@ -71,7 +73,7 @@ public class InitialCommit {
       this.jdk = jdk;
    }
 
-   public void addDependency(final TestCase testcase, final ChangedEntity callee) {
+   public void addDependency(final TestMethodCall testcase, final ChangedEntity callee) {
       InitialCallList dependency = initialDependencies.get(testcase);
       if (dependency == null) {
          dependency = new InitialCallList();

@@ -103,7 +103,7 @@ public class JmhDependencyReaderTest {
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
-      Map<TestCase, InitialCallList> initialDependencies = dependencies.getInitialcommit().getInitialDependencies();
+      Map<TestMethodCall, InitialCallList> initialDependencies = dependencies.getInitialcommit().getInitialDependencies();
       MatcherAssert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
       InitialCallList initial = initialDependencies.get(new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod", null));
       MatcherAssert.assertThat(initial.getEntities(), Matchers.hasSize(2));

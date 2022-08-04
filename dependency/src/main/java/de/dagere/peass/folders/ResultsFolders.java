@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class ResultsFolders {
 
@@ -155,7 +156,7 @@ public class ResultsFolders {
       return commitViewFolder;
    }
 
-   public File getViewMethodDir(final String commit, final TestCase testcase) {
+   public File getViewMethodDir(final String commit, final TestMethodCall testcase) {
       final File methodDir = new File(getClazzDir(commit, testcase), testcase.getMethodWithParams());
       if (!methodDir.exists()) {
          boolean create = methodDir.mkdirs();

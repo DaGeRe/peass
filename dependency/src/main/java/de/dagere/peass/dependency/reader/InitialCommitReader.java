@@ -62,8 +62,8 @@ public class InitialCommitReader {
       initialversion.setCommit(iterator.getTag());
       initialversion.setJdk(jdkversion);
       LOG.debug("Starting writing: {}", dependencyMap.getDependencyMap().size());
-      for (final Entry<TestCase, CalledMethods> dependencyEntry : dependencyMap.getDependencyMap().entrySet()) {
-         final TestCase testcase = dependencyEntry.getKey();
+      for (final Entry<TestMethodCall, CalledMethods> dependencyEntry : dependencyMap.getDependencyMap().entrySet()) {
+         final TestMethodCall testcase = dependencyEntry.getKey();
          for (final Map.Entry<ChangedEntity, Set<String>> calledClassEntry : dependencyEntry.getValue().getCalledMethods().entrySet()) {
             final ChangedEntity dependentclass = calledClassEntry.getKey();
             if (!dependentclass.getJavaClazzName().contains("junit") && !dependentclass.getJavaClazzName().contains("log4j")) {
@@ -109,7 +109,7 @@ public class InitialCommitReader {
                methods.add(callee.getMethod());
                calledClasses.put(new ChangedEntity(callee.getClazz(), callee.getModule()), methods);
                final TestCase testClazz = testcase.getKey();
-               TestCase test = new TestMethodCall(testClazz.getClazz(), testMethod, testClazz.getModule());
+               TestMethodCall test = new TestMethodCall(testClazz.getClazz(), testMethod, testClazz.getModule());
                dependencyManager.addDependencies(test, calledClasses);
             }
          }
@@ -117,16 +117,16 @@ public class InitialCommitReader {
    }
 
    private void fillInitialTestDependencies() {
-      for (final Entry<TestCase, InitialCallList> dependency : dependencyResult.getInitialcommit().getInitialDependencies().entrySet()) {
+      for (final Entry<TestMethodCall, InitialCallList> dependency : dependencyResult.getInitialcommit().getInitialDependencies().entrySet()) {
          for (final ChangedEntity dependentClass : dependency.getValue().getEntities()) {
-            TestCase testClassName = dependency.getKey();
-            addDependencies(testClassName, dependentClass);
+            TestMethodCall testName = dependency.getKey();
+            addDependencies(testName, dependentClass);
          }
       }
    }
 
-   private void addDependencies(final TestCase testClassName , final ChangedEntity dependentClass) {
-      final Map<ChangedEntity, Set<String>> testDependencies = dependencyMap.getOrAddDependenciesForTest(testClassName);
+   private void addDependencies(final TestMethodCall testName , final ChangedEntity dependentClass) {
+      final Map<ChangedEntity, Set<String>> testDependencies = dependencyMap.getOrAddDependenciesForTest(testName);
       final ChangedEntity dependencyEntity = new ChangedEntity(dependentClass.getClazz(), dependentClass.getModule());
       Set<String> methods = testDependencies.get(dependencyEntity);
       if (methods == null) {
@@ -138,7 +138,7 @@ public class InitialCommitReader {
    }
    
    private void checkCorrectness() {
-      for (final Entry<TestCase, CalledMethods> entry : dependencyMap.getDependencyMap().entrySet()) {
+      for (final Entry<TestMethodCall, CalledMethods> entry : dependencyMap.getDependencyMap().entrySet()) {
          if (entry.getKey().getModule() == null) {
             throw new RuntimeException("Entry " + entry.getKey() + " has null module!");
          }

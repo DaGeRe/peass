@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.utils.Constants;
@@ -32,8 +33,8 @@ public class CompareDependencies {
 		
 		final List<TestCase> notFoundNewDependencies = new LinkedList<>();
 		notFoundNewDependencies.addAll(newDependencies.getInitialcommit().getInitialDependencies().keySet());
-		for (final Entry<TestCase, InitialCallList> initialDepOld : oldDependencies.getInitialcommit().getInitialDependencies().entrySet()) {
-			for (final Entry<TestCase, InitialCallList> initialDepNew : newDependencies.getInitialcommit().getInitialDependencies().entrySet()) {
+		for (final Entry<TestMethodCall, InitialCallList> initialDepOld : oldDependencies.getInitialcommit().getInitialDependencies().entrySet()) {
+			for (final Entry<TestMethodCall, InitialCallList> initialDepNew : newDependencies.getInitialcommit().getInitialDependencies().entrySet()) {
 				if (initialDepNew.getKey().equals(initialDepOld.getKey())) {
 					final List<String> missing = getDifference(initialDepOld.getValue(), initialDepNew.getValue());
 

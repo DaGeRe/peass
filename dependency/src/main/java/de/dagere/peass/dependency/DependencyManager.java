@@ -437,7 +437,7 @@ public class DependencyManager extends KiekerResultManager {
     * @param changes
     */
    private void findAddedTests(final Map<TestCase, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes) {
-      for (final Map.Entry<TestCase, CalledMethods> newDependency : dependencies.getDependencyMap().entrySet()) {
+      for (final Map.Entry<TestMethodCall, CalledMethods> newDependency : dependencies.getDependencyMap().entrySet()) {
          // testclass -> depending class -> method
          final TestCase testcase = newDependency.getKey();
          if (!oldDepdendencies.containsKey(testcase)) {
@@ -457,7 +457,7 @@ public class DependencyManager extends KiekerResultManager {
       }
    }
 
-   public void addDependencies(final TestCase test, final Map<ChangedEntity, Set<String>> calledClasses) {
+   public void addDependencies(final TestMethodCall test, final Map<ChangedEntity, Set<String>> calledClasses) {
       dependencies.addDependencies(test, calledClasses);
    }
 }

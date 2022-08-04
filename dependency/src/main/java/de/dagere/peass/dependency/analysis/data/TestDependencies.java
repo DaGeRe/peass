@@ -41,13 +41,13 @@ public class TestDependencies {
    /**
     * Map from testcase (package.clazz.method) to dependent class to the list of called methods of this class
     */
-   private final Map<TestCase, CalledMethods> dependencyMap = new HashMap<>();
+   private final Map<TestMethodCall, CalledMethods> dependencyMap = new HashMap<>();
 
    public TestDependencies() {
 
    }
 
-   public Map<TestCase, CalledMethods> getDependencyMap() {
+   public Map<TestMethodCall, CalledMethods> getDependencyMap() {
       return dependencyMap;
    }
 
@@ -56,7 +56,7 @@ public class TestDependencies {
     * 
     * @param test
     */
-   public Map<ChangedEntity, Set<String>> getOrAddDependenciesForTest(final TestCase test) {
+   public Map<ChangedEntity, Set<String>> getOrAddDependenciesForTest(final TestMethodCall test) {
       CalledMethods tests = dependencyMap.get(test);
       if (tests == null) {
          tests = new CalledMethods();
@@ -85,7 +85,7 @@ public class TestDependencies {
     * @param testMethodName
     * @param calledClasses Map from name of the called class to the methods of the class that are called
     */
-   public void addDependencies(final TestCase testMethod, final Map<ChangedEntity, Set<String>> calledClasses) {
+   public void addDependencies(final TestMethodCall testMethod, final Map<ChangedEntity, Set<String>> calledClasses) {
       final Map<ChangedEntity, Set<String>> testDependencies = getOrAddDependenciesForTest(testMethod);
       for (final Map.Entry<ChangedEntity, Set<String>> calledEntity : calledClasses.entrySet()) {
          LOG.debug("Adding call: " + calledEntity.getKey());
@@ -109,7 +109,7 @@ public class TestDependencies {
 
    public Map<TestCase, Map<ChangedEntity, Set<String>>> getCopiedDependencies() {
       final Map<TestCase, Map<ChangedEntity, Set<String>>> copy = new HashMap<>();
-      for (final Map.Entry<TestCase, CalledMethods> entry : dependencyMap.entrySet()) {
+      for (final Map.Entry<TestMethodCall, CalledMethods> entry : dependencyMap.entrySet()) {
          final Map<ChangedEntity, Set<String>> dependencies = new HashMap<>();
          for (final Map.Entry<ChangedEntity, Set<String>> testcase : entry.getValue().getCalledMethods().entrySet()) {
             final Set<String> copiedMethods = new HashSet<>();
@@ -136,7 +136,7 @@ public class TestDependencies {
     */
    public ChangeTestMapping getChangeTestMap(final Map<ChangedEntity, ClazzChangeData> changes) {
       final ChangeTestMapping changeTestMap = new ChangeTestMapping();
-      for (final Entry<TestCase, CalledMethods> dependencyEntry : dependencyMap.entrySet()) {
+      for (final Entry<TestMethodCall, CalledMethods> dependencyEntry : dependencyMap.entrySet()) {
          final TestCase currentTestcase = dependencyEntry.getKey();
          final CalledMethods currentTestDependencies = dependencyEntry.getValue();
          for (ClazzChangeData changedEntry : changes.values()) {
