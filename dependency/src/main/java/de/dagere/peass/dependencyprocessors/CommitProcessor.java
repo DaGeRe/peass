@@ -61,8 +61,8 @@ public abstract class CommitProcessor implements Callable<Void> {
    /**
     * The file defining the selected tests, i.e. a traceTestSelection or coverageSelection file. Peass CLI options should be camel case, therefore the not camel case variant is deprecated and will be removed.
     */
-   @Option(names = { "-executionfile", "--executionfile", "-executionFile", "--executionFile" }, description = "Path to the executionfile (may be trace based selection or coverage selection file)")
-   protected File executionfile;
+   @Option(names = { "-executionFile", "--executionFile" }, description = "Path to the executionfile (may be trace based selection or coverage selection file)")
+   protected File executionFile;
 
    public CommitProcessor(final File projectFolder, final StaticTestSelection dependencies) {
       this.folders = new PeassFolders(projectFolder);
@@ -131,8 +131,8 @@ public abstract class CommitProcessor implements Callable<Void> {
          VersionComparator.setDependencies(staticTestSelection);
          executionData = new ExecutionData(staticTestSelection);
       }
-      if (executionfile != null) {
-         executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
+      if (executionFile != null) {
+         executionData = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
          staticTestSelection = new StaticTestSelection(executionData);
       }
       if (executionData == null && staticTestSelection == null) {
