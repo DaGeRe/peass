@@ -45,11 +45,11 @@ public class TestMethodCall extends TestCase {
          @JsonProperty("params") final String params) {
       super(clazz, method, module, params);
    }
-   
+
    public String getMethod() {
       return method;
    }
-   
+
    @JsonIgnore
    public String getMethodWithParams() {
       if (params == null) {
@@ -68,6 +68,27 @@ public class TestMethodCall extends TestCase {
       }
       String paramString = ParamNameHelper.paramsToString(paramObject);
       return paramString;
+   }
+
+   public static TestMethodCall createFromClassString(String clazzAndModule, String methodAndParams) {
+      String clazz, module, method, params;
+      int moduleIndex = clazzAndModule.indexOf(ChangedEntity.MODULE_SEPARATOR);
+      if (moduleIndex == -1) {
+         clazz = clazzAndModule;
+         module = "";
+      } else {
+         clazz = clazzAndModule.substring(moduleIndex + 1);
+         module = clazzAndModule.substring(0, moduleIndex);
+      }
+
+      if (methodAndParams.contains("(")) {
+         method = methodAndParams.substring(0, methodAndParams.indexOf("("));
+         params = methodAndParams.substring(methodAndParams.indexOf("(") + 1, methodAndParams.length() - 1);
+      } else {
+         method = methodAndParams;
+         params = null;
+      }
+      return new TestMethodCall(clazz, method, module, params);
    }
 
    public static TestMethodCall createFromString(String testcase) {
