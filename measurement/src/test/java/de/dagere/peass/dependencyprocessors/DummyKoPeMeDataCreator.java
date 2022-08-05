@@ -73,7 +73,7 @@ public class DummyKoPeMeDataCreator {
       }};
       writer.setDataCollectors(collectors);
       for (int i = 0; i < count; i++) {
-         writer.executionStart(i);
+         writer.iterationStart(i);
          writer.writeValues(collectors);
       }
       writer.finalizeCollection();
