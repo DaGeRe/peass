@@ -221,7 +221,7 @@ public class TestSet {
    }
 
    private void removeMethod(final TestCase testClassName, final String testMethodName, final Set<String> testMethods) {
-      LOG.debug("Removing: " + testClassName + "#" + testMethodName);
+      LOG.trace("Removing: " + testClassName + "#" + testMethodName);
       if (!testMethods.remove(testMethodName)) {
          LOG.error("Problem: " + testMethodName + " can not be removed.");
          // throw new RuntimeException("Test " + testMethodName + " was not in TestSet!");

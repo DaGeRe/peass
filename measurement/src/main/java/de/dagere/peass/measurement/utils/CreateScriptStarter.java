@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.changes.Changes;
 import de.dagere.peass.analysis.changes.ProjectChanges;
+import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
@@ -30,6 +31,7 @@ import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -54,8 +56,11 @@ public class CreateScriptStarter implements Callable<Void> {
    @Option(names = { "-executionfile", "--executionfile", "-executionFile", "--executionFile" }, description = "Path to the executionfile")
    protected File executionfile;
 
-   @Option(names = { "-changeFile", "--changeFile" }, description = "Path to the changefile")
+   @Option(names = { "-changeFile", "--changeFile" }, description = "Path to the change file")
    protected File[] changeFile;
+
+   @Option(names = { "-statisticsFile", "--statisticsFile" }, description = "Path to the statistics file")
+   protected File[] statisticsFile;
 
    @Option(names = { "-alreadyFinishedFolder", "--alreadyFinishedFolder" }, description = "Path to folder where finished results are (each should be named treeMeasurementResults)")
    protected File[] alreadyFinishedFolder;
@@ -106,7 +111,7 @@ public class CreateScriptStarter implements Callable<Void> {
                      if (!resultFile.isDirectory()) {
                         CauseSearchData csd = Constants.OBJECTMAPPER.readValue(resultFile, CauseSearchData.class);
                         String commit = csd.getMeasurementConfig().getFixedCommitConfig().getCommit();
-//                        System.out.println(csd.getTestcase() + " " + commit);
+                        // System.out.println(csd.getTestcase() + " " + commit);
 
                         List<String> finishedTests = alreadyAnalyzed.get(commit);
                         if (finishedTests == null) {
@@ -127,6 +132,21 @@ public class CreateScriptStarter implements Callable<Void> {
             writer = new RunCommandWriterSlurm(config, System.out, experimentId, staticTestSelection);
          } else {
             writer = new RunCommandWriter(config, destination, experimentId, staticTestSelection);
+         }
+
+         if (statisticsFile != null) {
+            for (File statisticFile : statisticsFile) {
+               ProjectStatistics statistics = Constants.OBJECTMAPPER.readValue(statisticFile, ProjectStatistics.class);
+               for (Entry<String, Map<TestMethodCall, TestcaseStatistic>> commitEntry : statistics.getStatistics().entrySet()) {
+                  String commit = commitEntry.getKey();
+                  for (Entry<TestMethodCall, TestcaseStatistic> methodCallEntry : commitEntry.getValue().entrySet()) {
+                     TestMethodCall methodCall = methodCallEntry.getKey();
+                     TestSet currentCommitTestSet = executionData.getCommits().get(commit);
+                     currentCommitTestSet.removeTest(methodCall.onlyClazz(), methodCall.getMethod());
+                  }
+               }
+                  
+            }
          }
 
          generateExecuteCommands(staticTestSelection, executionData, experimentId, writer);
