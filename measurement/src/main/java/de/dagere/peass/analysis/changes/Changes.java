@@ -2,15 +2,21 @@ package de.dagere.peass.analysis.changes;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 /**
- * Saves all changes for one version. For each testcase it is saved which change has happened with method, difference in percent etc.
+ * Saves all changes for one commit. For each testcase it is saved which change has happened with method, difference in percent etc.
  * 
  * @author reichelt
  *
@@ -28,6 +34,16 @@ public class Changes implements Serializable {
    public void setTestcaseChanges(final Map<String, List<Change>> testcaseChanges) {
       this.testcaseChanges = testcaseChanges;
    }
+   
+   @JsonIgnore
+   public Map<TestCase, List<Change>> getTestcaseObjectChanges(){
+      Map<TestCase, List<Change>> resultChanges = new LinkedHashMap<>();
+      for (Entry<String, List<Change>> testcaseEntry : testcaseChanges.entrySet()) {
+         TestCase test = new TestCase(testcaseEntry.getKey());
+         resultChanges.put(test, testcaseEntry.getValue());
+      }
+      return resultChanges;
+   }
 
    /**
     * Adds a change
@@ -38,7 +54,7 @@ public class Changes implements Serializable {
     * @param percent How much the performance was changed
     * @return Added Change
     */
-   public Change addChange(final TestCase testcase, final String viewName, final double oldTime, final double percent, final double tvalue, final long vms) {
+   public Change addChange(final TestMethodCall testcase, final String viewName, final double oldTime, final double percent, final double tvalue, final long vms) {
       Change change = new Change();
       change.setDiff(viewName);
       change.setTvalue(tvalue);
@@ -52,7 +68,7 @@ public class Changes implements Serializable {
       return change;
    }
 
-   public Change getChange(final TestCase test) {
+   public Change getChange(final TestMethodCall test) {
       List<Change> changes = testcaseChanges.get(test.getClassWithModule());
       if (changes != null) {
          for (Change candidate : changes) {
@@ -83,5 +99,18 @@ public class Changes implements Serializable {
             return o1.getDiff().compareTo(o2.getDiff());
          }
       });
+   }
+
+   @JsonIgnore
+   public TestSet getTests() {
+      TestSet result = new TestSet();
+      for (Entry<String, List<Change>> testclazz : testcaseChanges.entrySet()) {
+         String clazzname = testclazz.getKey();
+         for (Change method : testclazz.getValue()) {
+            String methodName = method.getMethod();
+            result.addTest(new TestMethodCall(clazzname, methodName));
+         }
+      }
+      return result;
    }
 }

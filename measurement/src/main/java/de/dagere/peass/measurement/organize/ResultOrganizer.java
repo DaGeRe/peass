@@ -22,6 +22,7 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
 
@@ -30,22 +31,22 @@ public class ResultOrganizer {
    private static final Logger LOG = LogManager.getLogger(ResultOrganizer.class);
 
    protected final PeassFolders folders;
-   // mainVersion equals current version
+   // mainVersion equals current commit
    private final String mainCommit;
    private final long currentChunkStart;
    private final boolean isUseKieker;
 
    private final boolean saveAll;
-   protected final TestCase testcase;
+   protected final TestMethodCall testcase;
    private boolean success = true;
    private final int expectedIterations;
    private final KiekerFileCompressor compressor = new KiekerFileCompressor();
 
-   public ResultOrganizer(final PeassFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll,
-         final TestCase test,
+   public ResultOrganizer(final PeassFolders folders, final String currentCommit, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll,
+         final TestMethodCall test,
          final int expectedIterations) {
       this.folders = folders;
-      this.mainCommit = currentVersion;
+      this.mainCommit = currentCommit;
       this.currentChunkStart = currentChunkStart;
       this.isUseKieker = isUseKieker;
       this.saveAll = saveAll;
@@ -211,8 +212,8 @@ public class ResultOrganizer {
       return compressor;
    }
 
-   public File getResultFile(final TestCase testcase, final int vmid, final String version) {
-      return folders.getResultFile(testcase, vmid, version, mainCommit);
+   public File getResultFile(final TestCase testcase, final int vmid, final String commit) {
+      return folders.getResultFile(testcase, vmid, commit, mainCommit);
    }
 
    public boolean isSaveAll() {

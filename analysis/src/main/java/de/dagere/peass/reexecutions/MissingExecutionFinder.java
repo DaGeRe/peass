@@ -19,6 +19,7 @@ import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.helper.read.TestcaseData;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.measurement.utils.CreateScriptStarter;
 
@@ -105,7 +106,7 @@ public class MissingExecutionFinder {
 
    public static void removeTestFromTestSet(final String clazz, final String testmethod, final TestSet versionsTests) {
       LOG.debug(versionsTests.classCount());
-      final TestCase ce = new TestCase(clazz, "");
+      final TestClazzCall ce = new TestClazzCall(clazz);
       versionsTests.removeTest(ce, testmethod);
       LOG.debug(versionsTests.classCount());
    }

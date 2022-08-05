@@ -23,8 +23,8 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.RTSTestTransformerBuilder;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -71,7 +71,7 @@ public class ContinuousDependencyReader {
       final StaticTestSelection dependencies = getDependencies(iterator, url);
 
       RTSResult result;
-      final Set<TestCase> tests;
+      final Set<TestMethodCall> tests;
       if (dependencies.getCommits().size() > 0) {
          CommitStaticSelection commitStaticSelection = dependencies.getCommits().get(commit);
          LOG.debug("Commit static selection for commit {}, running was: {}", commit, commitStaticSelection != null ? commitStaticSelection.isRunning() : "null");
@@ -79,12 +79,12 @@ public class ContinuousDependencyReader {
             tests = selectResults(commit);
             result = new RTSResult(tests, commitStaticSelection.isRunning());
          } else {
-            tests = commitStaticSelection.getTests().getTests();
+            tests = commitStaticSelection.getTests().getTestMethods();
             result = new RTSResult(tests, commitStaticSelection.isRunning());
          }
 
          // final Set<TestCase> tests = selectIncludedTests(dependencies);
-         NonIncludedTestRemover.removeNotIncluded(tests, measurementConfig.getExecutionConfig());
+         NonIncludedTestRemover.removeNotIncludedMethods(tests, measurementConfig.getExecutionConfig());
       } else if (!dependencies.getInitialcommit().isRunning()) {
          tests = new HashSet<>();
          result = new RTSResult(tests, false);
@@ -97,17 +97,17 @@ public class ContinuousDependencyReader {
       return result;
    }
 
-   private Set<TestCase> selectResults(final String version) {
+   private Set<TestMethodCall> selectResults(final String commit) {
       try {
-         final Set<TestCase> tests;
+         final Set<TestMethodCall> tests;
          if (dependencyConfig.isGenerateCoverageSelection()) {
             LOG.info("Using coverage-based test selection");
             ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageSelectionFile(), ExecutionData.class);
-            tests = fetchTestset(version, executionData);
+            tests = fetchTestset(commit, executionData);
          } else {
             LOG.info("Using dynamic test selection results");
             ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
-            tests = fetchTestset(version, executionData);
+            tests = fetchTestset(commit, executionData);
          }
          return tests;
       } catch (IOException e) {
@@ -116,16 +116,16 @@ public class ContinuousDependencyReader {
    }
 
    /**
-    * Fetches the test set from the current version; it is required to allow null, in case a compile error occured
+    * Fetches the test set from the current commit; it is required to allow null, in case a compile error occured
     * 
-    * @param version
+    * @param commit
     * @param executionData
     * @return
     */
-   private Set<TestCase> fetchTestset(final String version, final ExecutionData executionData) {
-      final Set<TestCase> tests;
-      TestSet versionTestSet = executionData.getCommits().get(version);
-      tests = versionTestSet != null ? versionTestSet.getTests() : new HashSet<TestCase>();
+   private Set<TestMethodCall> fetchTestset(final String commit, final ExecutionData executionData) {
+      final Set<TestMethodCall> tests;
+      TestSet commitTestSet = executionData.getCommits().get(commit);
+      tests = commitTestSet != null ? commitTestSet.getTestMethods() : new HashSet<TestMethodCall>();
       return tests;
    }
 
@@ -221,7 +221,7 @@ public class ContinuousDependencyReader {
          createFailedSelection(iterator);
       } else {
          if (!reader.readInitialCommit()) {
-            LOG.error("Analyzing first version did not yield results");
+            LOG.error("Analyzing first commit did not yield results");
          } else {
             reader.readDependencies();
          }
@@ -239,7 +239,7 @@ public class ContinuousDependencyReader {
    }
 
    private void createFailedSelection(final CommitIterator iterator) throws IOException, StreamWriteException, DatabindException {
-      LOG.debug("Predecessor version is not running, skipping execution");
+      LOG.debug("Predecessor commit is not running, skipping execution");
       StaticTestSelection initialVersionFailed = new StaticTestSelection();
       initialVersionFailed.getInitialcommit().setCommit(iterator.getTag());
       initialVersionFailed.getInitialcommit().setRunning(false);

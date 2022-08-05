@@ -9,14 +9,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CauseSearcherConfig implements Serializable {
 
    private static final long serialVersionUID = 5893295648840988829L;
 
-   private final TestCase testCase;
+   private final TestMethodCall testCase;
    private final boolean ignoreEOIs;
    private final boolean splitAggregated;
    private final double minTime;
@@ -28,7 +28,7 @@ public class CauseSearcherConfig implements Serializable {
    private final int levels;
 
    @JsonCreator
-   public CauseSearcherConfig(@JsonProperty("testcase") final TestCase testCase,
+   public CauseSearcherConfig(@JsonProperty("testcase") final TestMethodCall testCase,
          @JsonProperty("splitAggregated") final boolean splitAggregated,
          @JsonProperty("minTime") final double minTime,
          @JsonProperty("calibrationRun") final boolean calibrationRun,
@@ -53,20 +53,20 @@ public class CauseSearcherConfig implements Serializable {
       }
    }
 
-   public CauseSearcherConfig(final TestCase test, final CauseSearcherConfigMixin config) {
+   public CauseSearcherConfig(final TestMethodCall test, final CauseSearcherConfigMixin config) {
       this(test, !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs(),
             config.getStrategy(), config.getLevels());
       this.propertyFolder = config.getPropertyFolder();
    }
 
-   public CauseSearcherConfig(final TestCase testCase, final CauseSearcherConfig causeConfig) {
+   public CauseSearcherConfig(final TestMethodCall testCase, final CauseSearcherConfig causeConfig) {
       this(testCase,
             causeConfig.isSplitAggregated(), causeConfig.getMinTime(), causeConfig.useCalibrationRun(), causeConfig.isIgnoreEOIs(),
             causeConfig.getRcaStrategy(), causeConfig.getLevels());
       this.propertyFolder = causeConfig.getPropertyFolder();
    }
 
-   public TestCase getTestCase() {
+   public TestMethodCall getTestCase() {
       return testCase;
    }
 

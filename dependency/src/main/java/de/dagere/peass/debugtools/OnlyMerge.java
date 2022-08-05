@@ -37,7 +37,7 @@ public class OnlyMerge implements Callable<Void>{
       final File projectFolder = config.getProjectFolder();
       final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), projectFolder);
       
-      final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("deps*.json"));
+      final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("staticTestSelection_*.json"));
       CommitComparatorInstance instance = new CommitComparatorInstance(commits);
       PartialDependenciesMerger.mergeVersions(new File(config.getResultBaseFolder(), "merged.json"), files, instance);
       return null;

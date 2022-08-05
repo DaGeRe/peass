@@ -6,7 +6,9 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.StreamGobbler;
+import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 
 public enum ContinuousFolderUtil {
@@ -15,7 +17,7 @@ public enum ContinuousFolderUtil {
    private static final Logger LOG = LogManager.getLogger(ContinuousFolderUtil.class);
 
    public static File getLocalFolder(final File projectFolder) {
-      return new File(projectFolder, ".." + File.separator + projectFolder.getName() + "_fullPeass");
+      return new File(projectFolder, ".." + File.separator + projectFolder.getName() + PeassFolders.PEASS_FULL_POSTFIX);
    }
 
    public static String getSubFolderPath(final File projectFolder) throws IOException {
@@ -34,7 +36,7 @@ public enum ContinuousFolderUtil {
       }
    }
 
-   public static void cloneProject(final File cloneProjectFolder, final File localFolder) throws InterruptedException, IOException {
+   public static void cloneProject(final File cloneProjectFolder, final File localFolder, final String gitCryptKey) throws InterruptedException, IOException {
       localFolder.mkdirs();
       File originalVcsFolder = VersionControlSystem.findVCSFolder(cloneProjectFolder);
       if (originalVcsFolder != null && originalVcsFolder.exists()) {
@@ -49,6 +51,11 @@ public enum ContinuousFolderUtil {
          throw new RuntimeException("No git folder in " + cloneProjectFolder.getAbsolutePath() + " (or parent) present - "
                + "currently, only git projects are supported");
       }
+
+      if (gitCryptKey != null) {
+         GitUtils.unlockWithGitCrypt(new File(localFolder, originalVcsFolder.getName()), gitCryptKey);
+      }
+
    }
 
    private static void assureProcessFinished(Process process) throws InterruptedException {

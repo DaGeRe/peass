@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestShortener;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -46,7 +47,7 @@ public abstract class KoPeMeExecutor extends TestExecutor {
 
    protected abstract void runTest(File moduleFolder, final File logFile, TestCase test, final String testname, final long timeout);
 
-   protected void runMethod(final File logFolder, final TestCase test, final File moduleFolder, final long timeout) {
+   protected void runMethod(final File logFolder, final TestMethodCall test, final File moduleFolder, final long timeout) {
       try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, test.toEntity(), test.getMethod())) {
          if (testTransformer.getConfig().isDirectlyMeasureKieker()) {
             File fileToInstrument = shortener.getCalleeClazzFile();

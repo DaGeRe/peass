@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
@@ -42,7 +43,7 @@ public class OnceRunner {
       }
    }
 
-   public void runOnce(final TestCase testcase, final String commit, final int vmid, final File logFolder) {
+   public void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder) {
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
       } else {
@@ -72,8 +73,8 @@ public class OnceRunner {
       cleanup();
    }
 
-   private File initVMFolder(final String version, final int vmid, final File logFolder) {
-      File vmidFolder = new File(logFolder, "vm_" + vmid + "_" + version);
+   private File initVMFolder(final String commit, final int vmid, final File logFolder) {
+      File vmidFolder = new File(logFolder, "vm_" + vmid + "_" + commit);
       vmidFolder.mkdirs();
 
       LOG.info("Initial checkout finished, VM-Folder " + vmidFolder.getAbsolutePath() + " exists: " + vmidFolder.exists());

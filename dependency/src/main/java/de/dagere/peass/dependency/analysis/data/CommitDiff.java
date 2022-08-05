@@ -26,23 +26,23 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.config.ExecutionConfig;
 
 /**
- * Holds data of the difference between two versions, i.e. which classes are changed and whether the pom has changed or not.
+ * Holds data of the difference between two commits, i.e. which classes are changed and whether the pom has changed or not.
  * 
  * @author reichelt
  *
  */
-public class VersionDiff {
+public class CommitDiff {
 
    public static final String JAVA_ENDING = ".java";
 
-   private static final Logger LOG = LogManager.getLogger(VersionDiff.class);
+   private static final Logger LOG = LogManager.getLogger(CommitDiff.class);
 
    private boolean pomChanged;
    private final List<ChangedEntity> changedClasses;
    private final List<File> modules;
    private final File projectFolder;
 
-   public VersionDiff(final List<File> modules, final File projectFolder) {
+   public CommitDiff(final List<File> modules, final File projectFolder) {
       changedClasses = new LinkedList<>();
       pomChanged = false;
       this.modules = modules;

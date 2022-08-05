@@ -63,7 +63,7 @@ public class CoverageBasedSelector {
 
    private static void addNotSelectedSummaryInfos(final List<TraceCallSummary> copiedSummaries, final CoverageSelectionCommit resultingInfo) {
       for (TraceCallSummary leftSummary : copiedSummaries) {
-         LOG.debug("Adding unselected left summary: {}", leftSummary.getTestcase(), leftSummary.getOverallScore());
+         LOG.debug("Adding unselected test: {} score: {}", leftSummary.getTestcase(), leftSummary.getOverallScore());
          leftSummary.setSelected(false);
          resultingInfo.getTestcases().put(leftSummary.getTestcase(), leftSummary);
       }
@@ -83,7 +83,7 @@ public class CoverageBasedSelector {
             for (Map.Entry<String, Integer> callCount : selected.getCallCounts().entrySet()) {
                // The prefix needs to be used since otherwise inner classes are falsely selected (e.g. ChangedEntity de.Example would select de.Example$InnerClass#methodA)
                String signaturePrefix = change.toString() + ChangedEntity.METHOD_SEPARATOR;
-               LOG.debug("Testing: " + signaturePrefix + " vs " + callCount.getKey());
+               LOG.trace("Testing: {} vs {}" , signaturePrefix , callCount.getKey());
                if (callCount.getKey().startsWith(signaturePrefix)) {
                   used = true;
                }
@@ -122,10 +122,10 @@ public class CoverageBasedSelector {
       summary.getSelectedChanges().clear();
       int currentCallSum = 0;
       LOG.debug("Changes: {} Test: {}", changes.size(), summary.getTestcase());
-      LOG.debug("Trace Callcounts: {}", summary.getCallCounts().keySet());
+      LOG.trace("Trace Callcounts: {}", summary.getCallCounts().keySet());
       for (ChangedEntity change : changes) {
          String changeSignature = change.toString();
-         LOG.debug("Change signature: " + changeSignature);
+         LOG.trace("Change signature: {}", changeSignature);
          if (change.getMethod() != null) {
             currentCallSum = addExactCallCount(summary, currentCallSum, changeSignature);
          } else {
@@ -137,11 +137,11 @@ public class CoverageBasedSelector {
    }
 
    private static int addClassbasedCallCount(final TraceCallSummary summary, int currentCallSum, final String changeSignature) {
-      LOG.debug("Call counts: " + summary.getCallCounts().size());
+      LOG.trace("Call counts: {}", summary.getCallCounts().size());
       for (Map.Entry<String, Integer> callCount : summary.getCallCounts().entrySet()) {
          // The prefix needs to be used since otherwise inner classes are falsely selected (e.g. ChangedEntity de.Example would select de.Example$InnerClass#methodA)
          String signaturePrefix = changeSignature + ChangedEntity.METHOD_SEPARATOR;
-         LOG.debug("Testing: " + signaturePrefix + " vs " + callCount.getKey());
+         LOG.trace("Testing: {} vs {}", signaturePrefix, callCount.getKey());
          if (callCount.getKey().startsWith(signaturePrefix)) {
             currentCallSum += callCount.getValue();
             summary.getSelectedChanges().add(callCount.getKey());

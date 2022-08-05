@@ -18,7 +18,7 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.measurement.dataloading.VersionSorter;
+import de.dagere.peass.measurement.dataloading.CommitSorter;
 import de.dagere.peass.measurement.utils.RunCommandWriterRCA;
 import de.dagere.peass.measurement.utils.RunCommandWriterSlurmRCA;
 import de.dagere.peass.utils.Constants;
@@ -35,7 +35,7 @@ public class GetChangesStarter implements Callable<Void> {
    @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the static selection file")
    protected File staticSelectionFile;
 
-   @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
+   @Option(names = { "-executionFile", "--executionFile" }, description = "Path to the executionFile")
    protected File executionFile;
 
    @Option(names = { "-data", "--data" }, description = "Path to datafolder")
@@ -67,7 +67,7 @@ public class GetChangesStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      SelectedTests selectedTests = VersionSorter.getSelectedTests(staticSelectionFile, executionFile);
+      SelectedTests selectedTests = CommitSorter.getSelectedTests(staticSelectionFile, executionFile);
 
       if (!out.exists()) {
          out.mkdirs();
@@ -91,6 +91,9 @@ public class GetChangesStarter implements Callable<Void> {
       }
 
       for (final File dataFile : data) {
+         if (!dataFile.exists()) {
+            throw new RuntimeException("File " + dataFile + " does not exist!");
+         }
          reader.readFile(dataFile);
       }
       return null;

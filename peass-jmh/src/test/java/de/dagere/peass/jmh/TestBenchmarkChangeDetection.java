@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.jmh.JmhTestTransformer;
 
 public class TestBenchmarkChangeDetection {
@@ -20,7 +21,7 @@ public class TestBenchmarkChangeDetection {
    public void testBenchmarkDetection() throws FileNotFoundException, IOException, XmlPullParserException {
       JmhTestTransformer jmhTransformer = new JmhTestTransformer(JmhTestConstants.BASIC_VERSION, TestBenchmarkDetection.JMH_CONFIG);
       
-      TestSet originalTests = new TestSet(new TestCase("de.dagere.peass.ExampleBenchmark", (String) null, ""));
+      TestSet originalTests = new TestSet(new TestMethodCall("de.dagere.peass.ExampleBenchmark", (String) null, ""));
       
       ModuleClassMapping mapping = Mockito.mock(ModuleClassMapping.class);
       Mockito.when(mapping.getModules()).thenReturn(Arrays.asList(new File[] {JmhTestConstants.BASIC_VERSION}));

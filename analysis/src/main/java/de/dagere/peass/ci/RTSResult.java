@@ -3,21 +3,21 @@ package de.dagere.peass.ci;
 import java.io.Serializable;
 import java.util.Set;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class RTSResult implements Serializable {
    private static final long serialVersionUID = 700041797958688300L;
 
-   private final Set<TestCase> tests;
+   private final Set<TestMethodCall> tests;
    private final boolean isRunning;
-   private String versionOld;
+   private String commitOld;
 
-   public RTSResult(final Set<TestCase> tests, final boolean isRunning) {
+   public RTSResult(final Set<TestMethodCall> tests, final boolean isRunning) {
       this.tests = tests;
       this.isRunning = isRunning;
    }
 
-   public Set<TestCase> getTests() {
+   public Set<TestMethodCall> getTests() {
       return tests;
    }
    
@@ -26,11 +26,11 @@ public class RTSResult implements Serializable {
    }
    
    public String getVersionOld() {
-      return versionOld;
+      return commitOld;
    }
 
-   public void setVersionOld(final String versionOld) {
-      this.versionOld = versionOld;
+   public void setVersionOld(final String commitOld) {
+      this.commitOld = commitOld;
    }
 
    @Override

@@ -361,7 +361,7 @@ function visualizeHistogram() {
 	var version = {
 		x: averagesCurrentFiltered,
 		type: "histogram",
-		name: "Version",
+		name: "Current Commit",
 		opacity: 0.5,
 		marker: {
 			color: 'green',
@@ -370,7 +370,7 @@ function visualizeHistogram() {
 	var predecessor = {
 		x: averagesPredecessorFiltered,
 		type: "histogram",
-		name: "Predecessor",
+		name: "Predecessor Commit",
 		opacity: 0.6,
 		marker: {
 			color: 'red',

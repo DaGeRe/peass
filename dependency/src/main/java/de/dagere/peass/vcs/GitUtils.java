@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -171,7 +171,7 @@ public final class GitUtils {
             }
          }
       }
-      System.out.println("Removing: " + notRelevantCommits.size());
+      LOG.debug("Removing: " + notRelevantCommits.size());
       commits.removeAll(notRelevantCommits);
    }
 
@@ -285,7 +285,7 @@ public final class GitUtils {
       }
    }
 
-   public static VersionDiff getChangedClasses(final File projectFolder, final List<File> modules, final String lastVersion, final ExecutionConfig config) {
+   public static CommitDiff getChangedClasses(final File projectFolder, final List<File> modules, final String lastVersion, final ExecutionConfig config) {
       try {
          final Process process;
          if (lastVersion != null) {
@@ -300,9 +300,9 @@ public final class GitUtils {
       return null;
    }
 
-   public static VersionDiff getChangedFiles(final File projectFolder, final List<File> modules, final String version, final ExecutionConfig config) {
+   public static CommitDiff getChangedFiles(final File projectFolder, final List<File> modules, final String commit, final ExecutionConfig config) {
       try {
-         final Process process = Runtime.getRuntime().exec("git diff --name-only " + version + ".." + version + "~1", new String[0], projectFolder);
+         final Process process = Runtime.getRuntime().exec("git diff --name-only " + commit + ".." + commit + "~1", new String[0], projectFolder);
          return getDiffFromProcess(process, modules, projectFolder, config);
       } catch (final IOException e) {
          e.printStackTrace();
@@ -310,8 +310,8 @@ public final class GitUtils {
       return null;
    }
 
-   private static VersionDiff getDiffFromProcess(final Process p, final List<File> modules, final File projectFolder, final ExecutionConfig config) {
-      final VersionDiff diff = new VersionDiff(modules, projectFolder);
+   private static CommitDiff getDiffFromProcess(final Process p, final List<File> modules, final File projectFolder, final ExecutionConfig config) {
+      final CommitDiff diff = new CommitDiff(modules, projectFolder);
       final String output = StreamGobbler.getFullProcess(p, false);
       for (final String line : output.split("\n")) {
          diff.addChange(line, config);
@@ -319,11 +319,11 @@ public final class GitUtils {
       return diff;
    }
 
-   public static int getChangedLines(final File projectFolder, final String version, final List<ChangedEntity> entities, ExecutionConfig config) {
+   public static int getChangedLines(final File projectFolder, final String commit, final List<ChangedEntity> entities, ExecutionConfig config) {
       try {
 
          final File folderTemp = new File(FilenameUtils.normalize(projectFolder.getAbsolutePath()));
-         final String command = "git diff --stat=250 " + version + ".." + version + "~1";
+         final String command = "git diff --stat=250 " + commit + ".." + commit + "~1";
          final Process process = Runtime.getRuntime().exec(command, new String[0], folderTemp);
          final String output = StreamGobbler.getFullProcess(process, false);
          int size = 0;
@@ -356,8 +356,8 @@ public final class GitUtils {
    }
 
    public static String getClazz(String currentFileName, ExecutionConfig config) {
-      if (currentFileName.endsWith(VersionDiff.JAVA_ENDING)) {
-         String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - VersionDiff.JAVA_ENDING.length());
+      if (currentFileName.endsWith(CommitDiff.JAVA_ENDING)) {
+         String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - CommitDiff.JAVA_ENDING.length());
          String containedPath = null;
          for (String path : config.getAllClazzFolders()) {
             if (fileNameWithoutExtension.contains(path)) {
@@ -369,7 +369,7 @@ public final class GitUtils {
          if (containedPath != null) {
             final int indexOf = currentFileName.indexOf(containedPath);
             final String pathWithFolder = currentFileName.substring(indexOf);
-            final String classPath = VersionDiff.replaceClazzFolderFromName(pathWithFolder, containedPath);
+            final String classPath = CommitDiff.replaceClazzFolderFromName(pathWithFolder, containedPath);
             return classPath;
          }
       }
@@ -391,7 +391,7 @@ public final class GitUtils {
    }
 
    /**
-    * Lets the project go to the given state by resetting it to revert potential changes and by checking out the given version.
+    * Lets the project go to the given state by resetting it to revert potential changes and by checking out the given commit.
     * 
     * @param tag
     * @param projectFolder
@@ -416,7 +416,7 @@ public final class GitUtils {
                int secondCheckoutWorked = checkout(tag, projectFolder);
 
                if (secondCheckoutWorked != 0) {
-                  LOG.error("Second checkout did not work - an old version is probably analyzed");
+                  LOG.error("Second checkout did not work - an old commit is probably analyzed");
                }
             }
          }
@@ -517,8 +517,8 @@ public final class GitUtils {
       return 0;
    }
 
-   protected static void unlockWithGitCrypt(final File projectFolder, final String gitCryptKey) {
-      LOG.debug("GIT_CRYPT_KEY is set, unlocking repo.");
+   public static void unlockWithGitCrypt(final File projectFolder, final String gitCryptKey) {
+      LOG.debug("GIT_CRYPT_KEY is set, unlocking: {}", projectFolder);
       final ProcessBuilder processBuilder = new ProcessBuilder("git-crypt", "unlock", gitCryptKey);
       try {
          if (processBuilder.directory(projectFolder).start().waitFor() != 0) {
@@ -530,10 +530,14 @@ public final class GitUtils {
 
       if (!checkIsUnlockedWithGitCrypt(projectFolder)) {
          LOG.error("Folder is still locked, something went wrong!");
-         // TODO stop execution?
+         throw new RuntimeException("Folder is still locked, something went wrong!");
       }
    }
 
+   /*
+    * This will probably not work, if you have a git-Repo inside a git-repo!
+    * e.g. if you run peass-ci-plugin with mvn hpi:run, where your jenkins-workspace is "surrounded" by the peass-ci-plugin-repo
+    */
    protected static boolean checkIsUnlockedWithGitCrypt(final File projectFolder) {
       final ProcessBuilder processBuilder = new ProcessBuilder("git", "config", "--local", "--get", "filter.git-crypt.smudge");
       processBuilder.directory(projectFolder);

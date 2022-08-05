@@ -27,11 +27,12 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
+import de.dagere.peass.execution.maven.AllModulePomPreparer;
 import de.dagere.peass.execution.maven.MavenCleaner;
 import de.dagere.peass.execution.maven.MavenRunningTester;
 import de.dagere.peass.execution.maven.MavenUpdater;
-import de.dagere.peass.execution.maven.PomPreparer;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.utils.CommandConcatenator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -76,7 +77,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
 
       ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
       processBuilderHelper.parseParams(test.getParams());
-      
+
       String[] withPl = addMavenPl(testTransformer.getConfig().getExecutionConfig(), vars);
       Process process = processBuilderHelper.buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
       return process;
@@ -93,10 +94,10 @@ public class MavenTestExecutor extends KoPeMeExecutor {
 
       clean(logFile);
       LOG.debug("Starting Test Transformation");
-      prepareKiekerSource(); 
+      prepareKiekerSource();
       transformTests();
 
-      PomPreparer pomPreparer = new PomPreparer(testTransformer, getModules(), folders);
+      AllModulePomPreparer pomPreparer = new AllModulePomPreparer(testTransformer, getModules(), folders);
       pomPreparer.preparePom();
       lastEncoding = pomPreparer.getLastEncoding();
    }
@@ -120,11 +121,11 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
       }
-      
+
    }
 
    @Override
-   public void executeTest(final TestCase test, final File logFolder, final long timeout) {
+   public void executeTest(final TestMethodCall test, final File logFolder, final long timeout) {
       final File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
       runMethod(logFolder, test, moduleFolder, timeout);
    }
@@ -144,7 +145,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
          e.printStackTrace();
       }
    }
-   
+
    @Override
    public boolean doesBuildfileExist() {
       File pomFile = new File(folders.getProjectFolder(), "pom.xml");
@@ -153,10 +154,16 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public boolean isCommitRunning(final String version) {
-      MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), getModules());
-      boolean isRunning = mavenRunningTester.isCommitRunning(version);
-      return isRunning;
+   public boolean isCommitRunning(final String commit) {
+      ProjectModules modules = getModules();
+      if (modules != null) {
+         MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), modules);
+         boolean isRunning = mavenRunningTester.isCommitRunning(commit);
+         return isRunning;
+      } else {
+         return false;
+      }
+
    }
 
    public Charset getEncoding() {

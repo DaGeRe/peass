@@ -42,7 +42,7 @@ public class ChangeTestMapping {
          changes.put(changedFullname, changedClasses);
          // TODO: Statt einfach die Klasse nehmen prüfen, ob die Methode genutzt wird
       }
-      LOG.debug("Füge {} zu {} hinzu", currentTestcase, changedFullname);
+      LOG.trace("Adding {} to {}", currentTestcase, changedFullname);
       changedClasses.add(currentTestcase);
    }
 }

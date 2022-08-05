@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
@@ -30,13 +31,13 @@ public class DiffFileGenerator {
       }
    }
 
-   public void generateAllDiffs(final String version, final CommitStaticSelection newVersionInfo, final TraceFileMapping mapping,
+   public void generateAllDiffs(final String commit, final CommitStaticSelection newCommitInfo, final TraceFileMapping mapping,
          final ExecutionData executionResult) throws IOException {
-      for (TestCase testcase : newVersionInfo.getTests().getTests()) {
+      for (TestMethodCall testcase : newCommitInfo.getTests().getTestMethods()) {
          boolean tracesChanged = tracesChanged(testcase, mapping);
          if (tracesChanged) {
             generateDiffFiles(testcase, mapping);
-            executionResult.addCall(version, testcase);
+            executionResult.addCall(commit, testcase);
          }
       }
    }
@@ -89,7 +90,7 @@ public class DiffFileGenerator {
     * @return Whether a change happened
     * @throws IOException If files can't be read of written
     */
-   public void generateDiffFiles(final TestCase testcase, final TraceFileMapping traceFileMap) throws IOException {
+   public void generateDiffFiles(final TestMethodCall testcase, final TraceFileMapping traceFileMap) throws IOException {
       final long size = FileUtils.sizeOfDirectory(diffFolder);
       final long sizeInMB = size / (1024 * 1024);
       LOG.debug("Filesize: {} ({})", sizeInMB, size);
@@ -97,7 +98,7 @@ public class DiffFileGenerator {
       createAllDiffs(testcase, traceFiles);
    }
 
-   private void createAllDiffs(final TestCase testcase, final List<File> traceFiles) throws IOException {
+   private void createAllDiffs(final TestMethodCall testcase, final List<File> traceFiles) throws IOException {
       final String testcaseName = testcase.getShortClazz() + "#" + testcase.getMethod();
 
       File firstFile = traceFiles.get(1);

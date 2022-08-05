@@ -17,7 +17,7 @@ import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.peass.TestUtil;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.rca.helper.TestConstants;
@@ -30,7 +30,7 @@ public class TestResultOrganizer {
 
    private static final Logger LOG = LogManager.getLogger(TestResultOrganizer.class);
 
-   public static final TestCase searchedTest = new TestCase("de.test.Test#testMethod");
+   public static final TestMethodCall searchedTest = new TestMethodCall("de.test.Test", "testMethod");
    private PeassFolders folders;
    private ResultOrganizer organizer;
    private File methodFolder;

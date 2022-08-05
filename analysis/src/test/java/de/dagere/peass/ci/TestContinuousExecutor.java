@@ -22,11 +22,13 @@ import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.ProjectBuilderHelper;
 import net.lingala.zip4j.ZipFile;
@@ -35,7 +37,7 @@ import net.lingala.zip4j.exception.ZipException;
 public class TestContinuousExecutor {
 
    private static final String NEWER_VERSION = "a23e385264c31def8dcda86c3cf64faa698c62d8";
-   private static final File fullPeassFolder = new File(DependencyTestConstants.CURRENT.getParentFile(), DependencyTestConstants.CURRENT.getName() + "_fullPeass");
+   private static final File fullPeassFolder = new File(DependencyTestConstants.CURRENT.getParentFile(), DependencyTestConstants.CURRENT.getName() + PeassFolders.PEASS_FULL_POSTFIX);
 
    @Before
    public void clearFolders() {
@@ -93,8 +95,8 @@ public class TestContinuousExecutor {
    }
 
    private void mockRegressionTestSelection(final ContinuousExecutor spied) throws Exception {
-      HashSet<TestCase> tests = new HashSet<TestCase>();
-      tests.add(new TestCase("defaultpackage.TestMe#testMe"));
+      HashSet<TestMethodCall> tests = new HashSet<TestMethodCall>();
+      tests.add(new TestMethodCall("defaultpackage.TestMe", "testMe"));
       RTSResult mockedResult = new RTSResult(tests, true);
       Mockito.doAnswer(new Answer<RTSResult>() {
 

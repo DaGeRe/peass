@@ -23,6 +23,8 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.execution.utils.ProjectModules;
@@ -61,17 +63,17 @@ public class JmhTestTransformer implements TestTransformer {
    @Override
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping modules) {
       final TestSet tests = new TestSet();
-      for (final TestCase clazzname : testsToUpdate.getClasses()) {
+      for (final TestClazzCall clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
             final File moduleFolder = new File(projectFolder, clazzname.getModule());
-            final List<TestCase> methods = getTestMethodNames(moduleFolder, clazzname);
-            for (final TestCase test : methods) {
+            final List<TestMethodCall> methods = getTestMethodNames(moduleFolder, clazzname);
+            for (final TestMethodCall test : methods) {
                addTestIfIncluded(tests, test);
             }
          } else {
             for (final String method : currentClazzMethods) {
-               TestCase test = new TestCase(clazzname.getClazz(), method, clazzname.getModule());
+               TestCase test = new TestMethodCall(clazzname.getClazz(), method, clazzname.getModule());
                tests.addTest(test);
             }
          }
@@ -99,7 +101,7 @@ public class JmhTestTransformer implements TestTransformer {
       ClazzFileFinder finder = new ClazzFileFinder(measurementConfig.getExecutionConfig());
       for (final String clazz : finder.getClasses(module)) {
          String currentModule = ModuleClassMapping.getModuleName(projectFolder, module);
-         final List<TestCase> testMethodNames = getTestMethodNames(module, new TestCase(clazz, null, currentModule));
+         final List<TestMethodCall> testMethodNames = getTestMethodNames(module, new TestClazzCall(clazz, currentModule));
          for (TestCase test : testMethodNames) {
             if (includedModules == null || includedModules.contains(test.getModule())) {
                addTestIfIncluded(moduleTests, test);
@@ -122,8 +124,8 @@ public class JmhTestTransformer implements TestTransformer {
    }
 
    @Override
-   public List<TestCase> getTestMethodNames(final File module, final TestCase clazzname) {
-      final List<TestCase> methods = new LinkedList<>();
+   public List<TestMethodCall> getTestMethodNames(final File module, final TestClazzCall clazzname) {
+      final List<TestMethodCall> methods = new LinkedList<>();
       ClazzFileFinder finder = new ClazzFileFinder(measurementConfig.getExecutionConfig());
       final File clazzFile = finder.getClazzFile(module, clazzname);
       try {
@@ -138,7 +140,7 @@ public class JmhTestTransformer implements TestTransformer {
                if (parsedClassName.equals(clazzname.getShortClazz())) {
                   List<String> benchmarkMethods = JUnitParseUtil.getAnnotatedMethods(clazz, "org.openjdk.jmh.annotations.Benchmark", "Benchmark");
                   for (String benchmarkMethod : benchmarkMethods) {
-                     TestCase foundBenchmark = new TestCase(clazzname.getClazz(), benchmarkMethod, clazzname.getModule());
+                     TestMethodCall foundBenchmark = new TestMethodCall(clazzname.getClazz(), benchmarkMethod, clazzname.getModule());
                      methods.add(foundBenchmark);
                   }
                }

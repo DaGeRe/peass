@@ -19,7 +19,7 @@ import org.mockito.Mockito;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -41,7 +41,7 @@ public class AdaptiveExecutorTest {
    private static final Logger LOG = LogManager.getLogger(AdaptiveExecutorTest.class);
 
    private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state/");
-   private final TestCase TEST = new TestCase("defaultpackage.TestMe", "testMe");
+   private final TestMethodCall TEST = new TestMethodCall("defaultpackage.TestMe", "testMe");
 
    private File projectFolder = TestConstants.CURRENT_FOLDER;
    private CauseTester executor;

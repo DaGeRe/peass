@@ -121,13 +121,13 @@ public final class MeasurementAnalysationUtil {
 			LOG.warn("Mehr als ein DataCollector bei: {}", method);
 		}
 		for (final VMResult result : datacollectors.get(0).getResults()) {
-			final String gitversion = result.getCommit();
-			if (!results.containsKey(gitversion)) {
-				results.put(gitversion, new LinkedList<>());
+			final String gitCommit = result.getCommit();
+			if (!results.containsKey(gitCommit)) {
+				results.put(gitCommit, new LinkedList<>());
 			}
-			results.get(gitversion).add(result);
-			if (results.get(gitversion).size() > maxResultSize) {
-				maxResultSize = results.get(gitversion).size();
+			results.get(gitCommit).add(result);
+			if (results.get(gitCommit).size() > maxResultSize) {
+				maxResultSize = results.get(gitCommit).size();
 			}
 		}
 

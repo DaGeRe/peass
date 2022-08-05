@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -37,13 +37,13 @@ public class KiekerResultReader {
    private final AllowedKiekerRecord usedRecord;
    private final Set<CallTreeNode> includedNodes;
    final String commit;
-   final TestCase testcase;
+   final TestMethodCall testcase;
    final boolean otherCommit;
 
    boolean considerNodePosition = false;
 
    public KiekerResultReader(final boolean useAggregation, final AllowedKiekerRecord usedRecord, final Set<CallTreeNode> includedNodes, final String commit,
-         final TestCase testcase, final boolean otherCommit) {
+         final TestMethodCall testcase, final boolean otherCommit) {
       this.useAggregation = useAggregation;
       this.usedRecord = usedRecord;
       this.includedNodes = includedNodes;

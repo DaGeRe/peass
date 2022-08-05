@@ -16,6 +16,7 @@ import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
@@ -48,7 +49,7 @@ public class AnalyseFullData extends DataAnalyser {
       this.changeFile = changesFile;
       this.mapping = mapping;
       this.info = info;
-      projectChanges = new ProjectChanges(statisticConfig);
+      projectChanges = new ProjectChanges(statisticConfig, comparator);
       LOG.info("Writing changes to: {}", changeFile.getAbsolutePath());
       try {
          Constants.OBJECTMAPPER.writeValue(changeFile, projectChanges);
@@ -104,7 +105,7 @@ public class AnalyseFullData extends DataAnalyser {
       final double diffPercent = ((double) teststatistic.getDiff()) / 100;
       final double mean = teststatistic.getPreviousStatistic().getMean();
 
-      final TestCase currentTest = getCurrentTestcase(measurementEntry);
+      final TestMethodCall currentTest = getCurrentTestcase(measurementEntry);
 
       projectChanges.addChange(currentTest, version,
             teststatistic.getConfidenceResult(), tRelation, mean,
@@ -120,11 +121,11 @@ public class AnalyseFullData extends DataAnalyser {
       System.out.println("git diff " + version + ".." + comparator.getPreviousVersion(version));
    }
 
-   private TestCase getCurrentTestcase(final TestData measurementEntry) {
-      final TestCase currentTest;
+   private TestMethodCall getCurrentTestcase(final TestData measurementEntry) {
+      final TestMethodCall currentTest;
       if (mapping != null) {
          final String module = mapping.getModuleOfClass(measurementEntry.getTestClass());
-         currentTest = new TestCase(measurementEntry.getTestClass(), measurementEntry.getTestMethod(), module);
+         currentTest = new TestMethodCall(measurementEntry.getTestClass(), measurementEntry.getTestMethod(), module);
       } else {
          currentTest = measurementEntry.getTestCase();
       }

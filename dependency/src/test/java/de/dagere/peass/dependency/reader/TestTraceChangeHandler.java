@@ -11,6 +11,7 @@ import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 
@@ -26,7 +27,7 @@ public class TestTraceChangeHandler {
 
       TestSet test = getTestSet(emptyConfig, versionInfo);
 
-      MatcherAssert.assertThat(test.getTests(), IsIterableContaining.hasItem(new TestCase("de.dagere.peass.TestA", null, "testModule")));
+      MatcherAssert.assertThat(test.getTests(), IsIterableContaining.hasItem(new TestClazzCall("de.dagere.peass.TestA", "testModule")));
    }
 
    @Test
@@ -42,8 +43,8 @@ public class TestTraceChangeHandler {
 
       TestSet test = getTestSet(executionConfigWithBasicInclude, versionInfo);
 
-      MatcherAssert.assertThat(test.getTests(), IsIterableContaining.hasItem(new TestCase("de.dagere.pass.TestA", null, "testModule")));
-      MatcherAssert.assertThat(test.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestCase("de.dagere.peass.MyIntegrationT", null, "testModule"))));
+      MatcherAssert.assertThat(test.getTests(), IsIterableContaining.hasItem(new TestClazzCall("de.dagere.pass.TestA", "testModule")));
+      MatcherAssert.assertThat(test.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestClazzCall("de.dagere.peass.MyIntegrationT", "testModule"))));
    }
    
    @Test
@@ -59,8 +60,8 @@ public class TestTraceChangeHandler {
 
       TestSet test = getTestSet(executionConfigWithBasicInclude, versionInfo);
 
-      MatcherAssert.assertThat(test.getTests(), IsIterableContaining.hasItem(new TestCase("de.dagere.peass.MySpecialTestcase", null, "testModule")));
-      MatcherAssert.assertThat(test.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestCase("de.dagere.peass.TestA", null, "testModule"))));
+      MatcherAssert.assertThat(test.getTests(), IsIterableContaining.hasItem(new TestClazzCall("de.dagere.peass.MySpecialTestcase", "testModule")));
+      MatcherAssert.assertThat(test.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestClazzCall("de.dagere.peass.TestA", "testModule"))));
    }
 
    private TestSet getTestSet(ExecutionConfig executionConfigWithBasicInclude, CommitStaticSelection versionInfo) {

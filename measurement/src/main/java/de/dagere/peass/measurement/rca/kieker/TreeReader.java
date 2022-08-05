@@ -7,6 +7,7 @@ import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -31,8 +32,8 @@ public class TreeReader extends KiekerResultManager {
       this.ignoreEOIs = ignoreEOIs;
    }
 
-   public CallTreeNode getTree(final TestCase testcase, final String version) {
-      executeMeasurements(testcase, version);
+   public CallTreeNode getTree(final TestMethodCall testcase, final String commit) {
+      executeMeasurements(testcase, commit);
       
       File resultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
       File kiekerTraceFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder)[0];
@@ -41,7 +42,7 @@ public class TreeReader extends KiekerResultManager {
       return root;
    }
 
-   private CallTreeNode readTree(final TestCase testcase, final File kiekerTraceFolder) {
+   private CallTreeNode readTree(final TestMethodCall testcase, final File kiekerTraceFolder) {
       final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules(), realConfig.getExecutionConfig());
       
       TreeStage stage = KiekerDurationReader.executeTreeStage(kiekerTraceFolder, testcase, ignoreEOIs, realConfig, mapping);
@@ -53,9 +54,9 @@ public class TreeReader extends KiekerResultManager {
       return root;
    }
 
-   private void executeMeasurements(final TestCase testcase, final String version) {
+   private void executeMeasurements(final TestCase testcase, final String commit) {
       executor.loadClasses();
-      executeKoPeMeKiekerRun(new TestSet(testcase), version, folders.getTreeLogFolder());
+      executeKoPeMeKiekerRun(new TestSet(testcase), commit, folders.getTreeLogFolder());
    }
 
 }

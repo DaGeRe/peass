@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -26,10 +27,10 @@ public abstract class PairProcessor extends CommitProcessor{
 	}
 
 	@Override
-	public void processInitialVersion(final InitialCommit versioninfo) {
-		for (final Map.Entry<TestCase, InitialCallList> initDependency : versioninfo.getInitialDependencies().entrySet()) {
+	public void processInitialVersion(final InitialCommit commitinfo) {
+		for (final Map.Entry<TestMethodCall, InitialCallList> initDependency : commitinfo.getInitialDependencies().entrySet()) {
          final TestCase testcase = initDependency.getKey();
-			lastTestcaseCalls.put(testcase, versioninfo.getCommit());
+			lastTestcaseCalls.put(testcase, commitinfo.getCommit());
 		}
 	}
 }

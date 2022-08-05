@@ -5,10 +5,11 @@ import java.io.IOException;
 
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
+import de.dagere.peass.execution.maven.AllModulePomPreparer;
 import de.dagere.peass.execution.maven.MavenCleaner;
 import de.dagere.peass.execution.maven.MavenRunningTester;
-import de.dagere.peass.execution.maven.PomPreparer;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.maven.pom.MavenTestExecutor;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
@@ -38,7 +39,8 @@ public class JmhTestExecutor extends TestExecutor {
    public void prepareKoPeMeExecution(final File logFile) {
 
       prepareKiekerSource();
-      new PomPreparer(testTransformer, getModules(), folders).preparePom();
+      AllModulePomPreparer allModulePomPreparer = new AllModulePomPreparer(testTransformer, getModules(), folders);
+      allModulePomPreparer.preparePom();
 
       String[] basicParameters = new String[] { env.fetchMavenCall(),
             "--batch-mode",
@@ -54,7 +56,7 @@ public class JmhTestExecutor extends TestExecutor {
    }
 
    @Override
-   public void executeTest(final TestCase test, final File logFolder, final long timeoutInSeconds) {
+   public void executeTest(final TestMethodCall test, final File logFolder, final long timeoutInSeconds) {
       checkConfiguration(timeoutInSeconds);
 
       File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod() + ".json");

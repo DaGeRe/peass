@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -31,15 +32,15 @@ public class CausePersistenceManager {
       this.dataDetails = finishedDataFull;
       this.folders = folders;
 
-      String version = finishedData.getMeasurementConfig().getFixedCommitConfig().getCommit();
-      TestCase testCase = finishedData.getCauseConfig().getTestCase();
-      final File treeDataFolder = folders.getRcaTreeFolder(version, testCase);
-      treeDataFile = folders.getRcaTreeFile(version, testCase);
+      String commit = finishedData.getMeasurementConfig().getFixedCommitConfig().getCommit();
+      TestMethodCall testCase = finishedData.getCauseConfig().getTestCase();
+      final File treeDataFolder = folders.getRcaTreeFolder(commit, testCase);
+      treeDataFile = folders.getRcaTreeFile(commit, testCase);
       if (treeDataFile.exists()) {
          throw new RuntimeException("Old tree data folder " + treeDataFile.getAbsolutePath() + " exists - please cleanup!");
       }
       treeDataFolder.mkdirs();
-      treeDataFileDetails = folders.getRcaTreeFileDetails(version, testCase);
+      treeDataFileDetails = folders.getRcaTreeFileDetails(commit, testCase);
       treeDataFileDetails.getParentFile().mkdirs();
    }
 

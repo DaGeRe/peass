@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.List;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.dependency.analysis.data.CommitDiff;
 
 /**
  * Iterator for VCS, moving always the position of the iterator alongside with the version saved in the folder.
@@ -88,7 +88,7 @@ public abstract class CommitIterator {
 
    public abstract boolean goToPreviousCommit();
 
-   public abstract VersionDiff getChangedClasses(File projectFolder, List<File> genericModules, String lastVersion, ExecutionConfig config);
+   public abstract CommitDiff getChangedClasses(File projectFolder, List<File> genericModules, String lastVersion, ExecutionConfig config);
 
    public abstract List<String> getCommits();
 

@@ -44,7 +44,7 @@ function plotOverallHistogram(divName, node){
   var version = {
     x: currentValues,
     type: "histogram",
-    name: "Version",
+    name: "Current Commit",
     opacity: 0.5,
     marker: {
      color: 'green',
@@ -53,7 +53,7 @@ function plotOverallHistogram(divName, node){
   var predecessor = {
     x: predecessorValues,
     type: "histogram",
-    name: "Predecessor",
+    name: "Predecessor Commit",
     opacity: 0.6,
     marker: {
      color: 'red',

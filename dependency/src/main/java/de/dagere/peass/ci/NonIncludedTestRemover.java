@@ -2,7 +2,7 @@ package de.dagere.peass.ci;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
@@ -13,6 +13,8 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class NonIncludedTestRemover {
 
@@ -20,8 +22,8 @@ public class NonIncludedTestRemover {
 
    public static void removeNotIncluded(final TestSet tests, final ExecutionConfig executionConfig) {
       if (executionConfig.getIncludes().size() > 0) {
-         for (Iterator<Map.Entry<TestCase, Set<String>>> testcaseIterator = tests.getTestcases().entrySet().iterator(); testcaseIterator.hasNext();) {
-            Map.Entry<TestCase, Set<String>> testcase = testcaseIterator.next();
+         for (Iterator<Entry<TestClazzCall, Set<String>>> testcaseIterator = tests.getTestcases().entrySet().iterator(); testcaseIterator.hasNext();) {
+            Entry<TestClazzCall, Set<String>> testcase = testcaseIterator.next();
             if (!testcase.getValue().isEmpty()) {
                removeTestsWithMethod(executionConfig, testcaseIterator, testcase);
             } else {
@@ -32,19 +34,19 @@ public class NonIncludedTestRemover {
 
    }
 
-   private static void removeTestsWithoutMethod(final ExecutionConfig executionConfig, final Iterator<Map.Entry<TestCase, Set<String>>> testcaseIterator,
-         final Map.Entry<TestCase, Set<String>> testcase) {
+   private static void removeTestsWithoutMethod(final ExecutionConfig executionConfig, final Iterator<Entry<TestClazzCall, Set<String>>> testcaseIterator,
+         final Entry<TestClazzCall, Set<String>> testcase) {
       TestCase test = new TestCase(testcase.getKey().getClazz());
       if (!isTestIncluded(test, executionConfig)) {
          testcaseIterator.remove();
       }
    }
 
-   private static void removeTestsWithMethod(final ExecutionConfig executionConfig, final Iterator<Map.Entry<TestCase, Set<String>>> testcaseIterator,
-         final Map.Entry<TestCase, Set<String>> testcase) {
+   private static void removeTestsWithMethod(final ExecutionConfig executionConfig, final Iterator<Entry<TestClazzCall, Set<String>>> testcaseIterator,
+         final Entry<TestClazzCall, Set<String>> testcase) {
       for (Iterator<String> methodIterator = testcase.getValue().iterator(); methodIterator.hasNext();) {
          String method = methodIterator.next();
-         if (!isTestIncluded(new TestCase(testcase.getKey().getClazz(), method), executionConfig)) {
+         if (!isTestIncluded(new TestMethodCall(testcase.getKey().getClazz(), method), executionConfig)) {
             methodIterator.remove();
          }
       }
@@ -56,6 +58,19 @@ public class NonIncludedTestRemover {
    public static void removeNotIncluded(final Set<TestCase> tests, final ExecutionConfig executionConfig) {
       if (executionConfig.getIncludes().size() > 0 || executionConfig.getExcludes().size() > 0) {
          for (Iterator<TestCase> it = tests.iterator(); it.hasNext();) {
+            TestCase test = it.next();
+            boolean isIncluded = isTestIncluded(test, executionConfig);
+            if (!isIncluded) {
+               LOG.info("Excluding non-included test {}", test);
+               it.remove();
+            }
+         }
+      }
+   }
+   
+   public static void removeNotIncludedMethods(final Set<TestMethodCall> tests, final ExecutionConfig executionConfig) {
+      if (executionConfig.getIncludes().size() > 0 || executionConfig.getExcludes().size() > 0) {
+         for (Iterator<TestMethodCall> it = tests.iterator(); it.hasNext();) {
             TestCase test = it.next();
             boolean isIncluded = isTestIncluded(test, executionConfig);
             if (!isIncluded) {

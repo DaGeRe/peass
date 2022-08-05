@@ -36,7 +36,7 @@ import de.dagere.peass.measurement.statistics.data.TestcaseStatistic.TestcaseSta
  * 
  * 4) repeat 2) and 3) until all measurements are read
  * 
- * 5) call createStatistics with both versions
+ * 5) call createStatistics with both commits
  * 
  * @author reichelt
  *
@@ -100,15 +100,15 @@ public class CallTreeNode extends BasicNode {
       return parent;
    }
 
-   public void addMeasurement(final String version, final Long duration) {
-      checkDataAddPossible(version);
-      LOG.trace("Adding measurement: {} Call: {}", version, call);
-      CallTreeStatistics callTreeStatistics = data.get(version);
+   public void addMeasurement(final String commit, final Long duration) {
+      checkDataAddPossible(commit);
+      LOG.trace("Adding measurement: {} Call: {}", commit, call);
+      CallTreeStatistics callTreeStatistics = data.get(commit);
       callTreeStatistics.addMeasurement(duration);
    }
 
    /**
-    * Adds the measurement of *one full VM* to the measurements of the version
+    * Adds the measurement of *one full VM* to the measurements of the commit
     * 
     * @param commit
     * @param statistic
@@ -121,12 +121,12 @@ public class CallTreeNode extends BasicNode {
 
    private void checkDataAddPossible(final String commit) {
       if (getOtherKiekerPattern() == null) {
-         throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
+         throw new RuntimeException("Other commit node needs to be defined before measurement! Node: " + call);
       }
       if (getOtherKiekerPattern().equals(CauseSearchData.ADDED) && commit.equals(config.getFixedCommitConfig().getCommit())) {
-         LOG.error("Error occured in version {}", commit);
+         LOG.error("Error occured in commit {}", commit);
          LOG.error("Node: {}", kiekerPattern);
-         LOG.error("Other version node: {}", getOtherKiekerPattern());
+         LOG.error("Other commit node: {}", getOtherKiekerPattern());
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + commit);
       }
       if (call.equals(CauseSearchData.ADDED) && commit.equals(config.getFixedCommitConfig().getCommitOld())) {

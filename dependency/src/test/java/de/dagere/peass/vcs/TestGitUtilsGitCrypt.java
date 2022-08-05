@@ -16,6 +16,9 @@ import net.lingala.zip4j.exception.ZipException;
 
 public class TestGitUtilsGitCrypt {
 
+   /*
+    * disabled, since it does not work in maven release environment
+    */
    @Test
    @DisabledOnOs(OS.WINDOWS)
    @Disabled

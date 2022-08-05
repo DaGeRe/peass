@@ -9,7 +9,7 @@ import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
 
 public class TestMeasurementFileFinder {
@@ -22,25 +22,25 @@ public class TestMeasurementFileFinder {
       String shortPackageName = "de.peass.Test";
       String longerPackageName = "de.peass.otherPackage.Test";
       
-      MeasurementFileFinder finderBasic = new MeasurementFileFinder(temp, new TestCase(shortPackageName, "testMe"));
+      MeasurementFileFinder finderBasic = new MeasurementFileFinder(temp, new TestMethodCall(shortPackageName, "testMe"));
       finderBasic.getDataCollector().getChunks().add(new VMResultChunk());
       JSONDataStorer.storeData(finderBasic.getMeasurementFile(), finderBasic.getOneResultData());
       testClazzName(shortPackageName, finderBasic);
       
-      MeasurementFileFinder finderSame = new MeasurementFileFinder(temp, new TestCase(shortPackageName, "testMe"));
+      MeasurementFileFinder finderSame = new MeasurementFileFinder(temp, new TestMethodCall(shortPackageName, "testMe"));
       JSONDataStorer.storeData(finderSame.getMeasurementFile(), finderSame.getOneResultData());
       testClazzName(shortPackageName, finderSame);
       
-      MeasurementFileFinder finderOtherPackage = new MeasurementFileFinder(temp, new TestCase(longerPackageName, "testMe"));
+      MeasurementFileFinder finderOtherPackage = new MeasurementFileFinder(temp, new TestMethodCall(longerPackageName, "testMe"));
       finderOtherPackage.getDataCollector().getChunks().add(new VMResultChunk());
       JSONDataStorer.storeData(finderOtherPackage.getMeasurementFile(), finderOtherPackage.getOneResultData());
       testClazzName(longerPackageName, finderOtherPackage);
       
-      MeasurementFileFinder finderSamePackage = new MeasurementFileFinder(temp, new TestCase(shortPackageName, "testMe"));
+      MeasurementFileFinder finderSamePackage = new MeasurementFileFinder(temp, new TestMethodCall(shortPackageName, "testMe"));
       JSONDataStorer.storeData(finderSamePackage.getMeasurementFile(), finderSamePackage.getOneResultData());
       testClazzName(shortPackageName, finderSamePackage);
       
-      MeasurementFileFinder finderOtherPackage2 = new MeasurementFileFinder(temp, new TestCase(longerPackageName, "testMe"));
+      MeasurementFileFinder finderOtherPackage2 = new MeasurementFileFinder(temp, new TestMethodCall(longerPackageName, "testMe"));
       JSONDataStorer.storeData(finderOtherPackage2.getMeasurementFile(), finderOtherPackage2.getOneResultData());
       testClazzName(longerPackageName, finderOtherPackage2);
    }

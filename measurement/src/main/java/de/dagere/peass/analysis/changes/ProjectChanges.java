@@ -12,9 +12,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.peass.analysis.changes.processors.ChangeProcessor;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.statistics.Relation;
 
@@ -39,8 +40,14 @@ public class ProjectChanges implements Serializable {
 
    public ProjectChanges() {
    }
+   
+   public ProjectChanges(CommitComparatorInstance comparator) {
+      commitChanges = new TreeMap<>(comparator);
+   }
 
-   public ProjectChanges(final StatisticsConfig statisticsConfig) {
+
+   public ProjectChanges(final StatisticsConfig statisticsConfig, CommitComparatorInstance comparator) {
+      this(comparator);
       this.statisticsConfig = statisticsConfig;
    }
 
@@ -84,7 +91,7 @@ public class ProjectChanges implements Serializable {
       this.commitChanges = commitChanges;
    }
 
-   public void addChange(final TestCase testCase, final String commit,
+   public void addChange(final TestMethodCall testCase, final String commit,
          final Relation confidenceResult,
          final Relation tTestResult, final double oldTime,
          final double diffPercent, final double tvalue,
@@ -116,10 +123,10 @@ public class ProjectChanges implements Serializable {
    }
 
    public void executeProcessor(final ChangeProcessor c) {
-      for (final Map.Entry<String, Changes> version : commitChanges.entrySet()) {
-         for (final Entry<String, List<Change>> testcase : version.getValue().getTestcaseChanges().entrySet()) {
+      for (final Map.Entry<String, Changes> commit : commitChanges.entrySet()) {
+         for (final Entry<String, List<Change>> testcase : commit.getValue().getTestcaseChanges().entrySet()) {
             for (final Change change : testcase.getValue()) {
-               c.process(version.getKey(), testcase.getKey(), change);
+               c.process(commit.getKey(), testcase.getKey(), change);
             }
          }
       }

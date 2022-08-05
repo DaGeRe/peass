@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import kieker.analysis.trace.AbstractTraceProcessingStage;
 import kieker.model.repository.SystemModelRepository;
@@ -21,12 +21,12 @@ public class TreeStage extends AbstractTraceProcessingStage<ExecutionTrace> {
 
    private MeasurementConfig measurementConfig;
 
-   private final TestCase test;
+   private final TestMethodCall test;
 
    private final boolean ignoreEOIs;
    private final ModuleClassMapping mapping;
 
-   public TreeStage(final SystemModelRepository systemModelRepository, final TestCase test, final boolean ignoreEOIs, final MeasurementConfig config,
+   public TreeStage(final SystemModelRepository systemModelRepository, final TestMethodCall test, final boolean ignoreEOIs, final MeasurementConfig config,
          final ModuleClassMapping mapping) {
       super(systemModelRepository);
 

@@ -18,6 +18,8 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
@@ -38,7 +40,7 @@ public class StaticChangeHandler {
       this.dependencyManager = dependencyManager;
    }
 
-   public CommitStaticSelection handleStaticAnalysisChanges(final String version, final DependencyReadingInput input, ModuleClassMapping mapping)
+   public CommitStaticSelection handleStaticAnalysisChanges(final String commit, final DependencyReadingInput input, ModuleClassMapping mapping)
          throws IOException, JsonGenerationException, JsonMappingException {
       final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(input.getChanges()); // tells which tests need to be run, and
       // because of which change they need to be run
@@ -47,16 +49,16 @@ public class StaticChangeHandler {
       handleAddedTests(input, changeTestMap, mapping);
 
       if (executionConfig.isCreateDetailDebugFiles())
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changeTestMap_" + version + ".json"), changeTestMap);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changeTestMap_" + commit + ".json"), changeTestMap);
 
-      final CommitStaticSelection newVersionStaticSelection = DependencyReaderUtil.createVersionFromChangeMap(input.getChanges(), changeTestMap);
-      newVersionStaticSelection.setJdk(dependencyManager.getExecutor().getJDKVersion());
-      newVersionStaticSelection.setPredecessor(input.getPredecessor());
+      final CommitStaticSelection newCommitStaticSelection = DependencyReaderUtil.createCommitFromChangeMap(input.getChanges(), changeTestMap);
+      newCommitStaticSelection.setJdk(dependencyManager.getExecutor().getJDKVersion());
+      newCommitStaticSelection.setPredecessor(input.getPredecessor());
 
       if (executionConfig.isCreateDetailDebugFiles()) {
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "versionStaticSelection_" + version + ".json"), newVersionStaticSelection);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "commitStaticSelection_" + commit + ".json"), newCommitStaticSelection);
       }
-      return newVersionStaticSelection;
+      return newCommitStaticSelection;
    }
 
    private void handleAddedTests(final DependencyReadingInput input, final ChangeTestMapping changeTestMap, ModuleClassMapping mapping) {
@@ -65,8 +67,8 @@ public class StaticChangeHandler {
          if (!changedEntry.isOnlyMethodChange()) {
             for (ChangedEntity change : changedEntry.getChanges()) {
                File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
-               TestCase potentialTest = new TestCase(change.getClazz(), change.getMethod(), change.getModule());
-               List<TestCase> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
+               TestClazzCall potentialTest = new TestClazzCall(change.getClazz(), change.getModule());
+               List<TestMethodCall> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
                for (TestCase added : addedTests) {
                   if (NonIncludedTestRemover.isTestIncluded(added, executionConfig)) {
                      if (dependencyManager.getTestTransformer() instanceof JUnitTestTransformer) {

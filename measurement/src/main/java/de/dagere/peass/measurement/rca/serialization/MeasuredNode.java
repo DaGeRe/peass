@@ -73,7 +73,7 @@ public class MeasuredNode extends BasicNode {
    }
 
    /**
-    * Gets precessor version VMs that are there without processing (i.e. outliers are still contained)
+    * Gets precessor commit VMs that are there without processing (i.e. outliers are still contained)
     * 
     * @return
     */
@@ -130,11 +130,11 @@ public class MeasuredNode extends BasicNode {
       return value;
    }
 
-   public void setValues(final CallTreeNode rawDataNode, final String version, final String predecessor) {
-      System.out.println("Persisting: " + version + " " + rawDataNode.getCall());
+   public void setValues(final CallTreeNode rawDataNode, final String commit, final String predecessor) {
+      System.out.println("Persisting: " + commit + " " + rawDataNode.getCall());
       values = new MeasuredValues();
       valuesPredecessor = new MeasuredValues();
-      persistValues(rawDataNode.getResults(version), values);
+      persistValues(rawDataNode.getResults(commit), values);
       persistValues(rawDataNode.getResults(predecessor), valuesPredecessor);
    }
 

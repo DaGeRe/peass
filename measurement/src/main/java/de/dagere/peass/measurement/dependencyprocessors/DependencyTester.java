@@ -16,6 +16,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -55,14 +56,14 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    /**
-    * Compares the given testcase for the given versions.
+    * Compares the given testcase for the given commits.
     * 
-    * @param commit Current version to test
-    * @param versionOld Old version to test
+    * @param commit Current commit to test
+    * @param commitOld Old commit to test
     * @param testcase Testcase to test
     * @throws XmlPullParserException
     */
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, XmlPullParserException {
+   public void evaluate(final TestMethodCall testcase) throws IOException, InterruptedException, XmlPullParserException {
       initEvaluation(testcase);
 
       final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);
@@ -71,14 +72,14 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   protected void initEvaluation(final TestCase testcase) {
+   protected void initEvaluation(final TestMethodCall testcase) {
       FixedCommitConfig fixedCommitConfig = configuration.getFixedCommitConfig();
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in commits {} and {}", fixedCommitConfig.getCommitOld(),
             fixedCommitConfig.getCommit());
       new FolderDeterminer(folders).testResultFolders(fixedCommitConfig.getCommit(), fixedCommitConfig.getCommitOld(), testcase);
    }
 
-   private void evaluateSimple(final TestCase testcase, final File logFolder, final ProgressWriter writer)
+   private void evaluateSimple(final TestMethodCall testcase, final File logFolder, final ProgressWriter writer)
          throws IOException, InterruptedException, XmlPullParserException {
       currentChunkStart = System.currentTimeMillis();
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
@@ -112,11 +113,11 @@ public class DependencyTester implements KiekerResultHandler {
 
    boolean updateExecutions(final TestCase testcase, final int vmid) {
       boolean shouldBreak = false;
-      final VMResult versionOldResult = getLastResult(configuration.getFixedCommitConfig().getCommitOld(), testcase, vmid);
-      final VMResult versionNewResult = getLastResult(configuration.getFixedCommitConfig().getCommit(), testcase, vmid);
+      final VMResult commitOldResult = getLastResult(configuration.getFixedCommitConfig().getCommitOld(), testcase, vmid);
+      final VMResult commitNewResult = getLastResult(configuration.getFixedCommitConfig().getCommit(), testcase, vmid);
       if (vmid < 40) {
-         int reducedIterations = Math.min(shouldReduce(configuration.getFixedCommitConfig().getCommitOld(), versionOldResult),
-               shouldReduce(configuration.getFixedCommitConfig().getCommit(), versionNewResult));
+         int reducedIterations = Math.min(shouldReduce(configuration.getFixedCommitConfig().getCommitOld(), commitOldResult),
+               shouldReduce(configuration.getFixedCommitConfig().getCommit(), commitNewResult));
          if (reducedIterations != configuration.getIterations()) {
             LOG.error("Should originally run {} iterations, but did not succeed - reducing to {}", configuration.getIterations(), reducedIterations);
             // final int lessIterations = testTransformer.getConfig().getIterations() / 5;
@@ -127,11 +128,11 @@ public class DependencyTester implements KiekerResultHandler {
       return shouldBreak;
    }
 
-   private int shouldReduce(final String version, final VMResult result) {
+   private int shouldReduce(final String commit, final VMResult result) {
       final int reducedIterations;
       if (result == null) {
          reducedIterations = configuration.getIterations() / 2;
-         LOG.error("Measurement for {} is null", version);
+         LOG.error("Measurement for {} is null", commit);
       } else if (result.getIterations() < configuration.getIterations() || Double.isNaN(result.getValue())) {
          LOG.error("Measurement executions: {}", result.getIterations());
          final int minOfExecuted = (int) result.getIterations() - 2;
@@ -191,27 +192,27 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   public void runOneComparison(final File logFolder, final TestCase testcase, final int vmid) throws IOException {
-      String[] versions = getVersions();
+   public void runOneComparison(final File logFolder, final TestMethodCall testcase, final int vmid) throws IOException {
+      String[] commits = getVersions();
 
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
          LOG.info("Running sequential");
-         runSequential(logFolder, testcase, vmid, versions);
+         runSequential(logFolder, testcase, vmid, commits);
       } else if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.PARALLEL)) {
          LOG.info("Running parallel");
-         runParallel(logFolder, testcase, vmid, versions);
+         runParallel(logFolder, testcase, vmid, commits);
       }
    }
 
    private String[] getVersions() {
-      String versions[] = new String[2];
-      versions[0] = configuration.getFixedCommitConfig().getCommitOld().equals("HEAD~1") ? configuration.getFixedCommitConfig().getCommit() + "~1"
+      String commits[] = new String[2];
+      commits[0] = configuration.getFixedCommitConfig().getCommitOld().equals("HEAD~1") ? configuration.getFixedCommitConfig().getCommit() + "~1"
             : configuration.getFixedCommitConfig().getCommitOld();
-      versions[1] = configuration.getFixedCommitConfig().getCommit();
-      return versions;
+      commits[1] = configuration.getFixedCommitConfig().getCommit();
+      return commits;
    }
 
-   private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws IOException {
+   private void runParallel(final File logFolder, final TestMethodCall testcase, final int vmid, final String[] commits) throws IOException {
       final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getFixedCommitConfig().getCommit(), currentChunkStart,
             configuration.getKiekerConfig().isUseKieker(),
             configuration.isSaveAll(), testcase,
@@ -219,8 +220,8 @@ public class DependencyTester implements KiekerResultHandler {
       currentOrganizer = organizer;
       final ParallelExecutionRunnable[] runnables = new ParallelExecutionRunnable[2];
       for (int i = 0; i < 2; i++) {
-         final String version = versions[i];
-         runnables[i] = new ParallelExecutionRunnable(organizer, version, testcase, vmid, logFolder, this, configuration.getExecutionConfig().getGitCryptKey());
+         final String commit = commits[i];
+         runnables[i] = new ParallelExecutionRunnable(organizer, commit, testcase, vmid, logFolder, this, configuration.getExecutionConfig().getGitCryptKey());
       }
       runParallel(runnables);
    }
@@ -240,23 +241,23 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   private void runSequential(final File logFolder, final TestCase testcase, final int vmid, final String versions[])
+   private void runSequential(final File logFolder, final TestMethodCall testcase, final int vmid, final String commits[])
          throws IOException {
       currentOrganizer = new ResultOrganizer(folders, configuration.getFixedCommitConfig().getCommit(), currentChunkStart, configuration.getKiekerConfig().isUseKieker(),
             configuration.isSaveAll(),
             testcase, configuration.getAllIterations());
-      for (String version : versions) {
-         runOnce(testcase, version, vmid, logFolder);
+      for (String commit : commits) {
+         runOnce(testcase, commit, vmid, logFolder);
       }
    }
 
-   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder) {
-      final TestExecutor testExecutor = getExecutor(folders, version);
+   public void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder) {
+      final TestExecutor testExecutor = getExecutor(folders, commit);
       final OnceRunner runner = new OnceRunner(folders, testExecutor, getCurrentOrganizer(), this);
-      runner.runOnce(testcase, version, vmid, logFolder);
+      runner.runOnce(testcase, commit, vmid, logFolder);
    }
 
-   protected synchronized TestExecutor getExecutor(final PeassFolders currentFolders, final String version) {
+   protected synchronized TestExecutor getExecutor(final PeassFolders currentFolders, final String commit) {
       TestTransformer transformer = ExecutorCreator.createTestTransformer(currentFolders, configuration.getExecutionConfig(), configuration);
       final TestExecutor testExecutor = ExecutorCreator.createExecutor(currentFolders, transformer, env);
       return testExecutor;
@@ -268,13 +269,13 @@ public class DependencyTester implements KiekerResultHandler {
     * @param folder
     */
    @Override
-   public void handleKiekerResults(final String version, final File folder) {
+   public void handleKiekerResults(final String commit, final File folder) {
 
    }
 
-   public void setVersions(final String version, final String versionOld) {
-      configuration.getFixedCommitConfig().setCommit(version);
-      configuration.getFixedCommitConfig().setCommitOld(versionOld);
+   public void setVersions(final String commit, final String commitOld) {
+      configuration.getFixedCommitConfig().setCommit(commit);
+      configuration.getFixedCommitConfig().setCommitOld(commitOld);
    }
 
    protected boolean checkIsDecidable(final TestCase testcase, final int vmid) {

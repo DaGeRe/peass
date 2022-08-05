@@ -61,6 +61,8 @@ import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.execution.utils.ProjectModules;
 
@@ -150,8 +152,8 @@ public class JUnitTestTransformer implements TestTransformer {
       ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
       for (final String clazz : finder.getTestClazzes(module)) {
          final String currentModule = mapping.getModuleOfClass(clazz);
-         final List<TestCase> testMethodNames = getTestMethodNames(module, new TestCase(clazz, null, currentModule));
-         for (TestCase test : testMethodNames) {
+         final List<TestMethodCall> testMethodNames = getTestMethodNames(module, new TestClazzCall(clazz, currentModule));
+         for (TestMethodCall test : testMethodNames) {
             if (includedModules == null || includedModules.contains(test.getModule())) {
                addTestIfIncluded(moduleTests, test, mapping);
             }
@@ -160,7 +162,7 @@ public class JUnitTestTransformer implements TestTransformer {
       return moduleTests;
    }
 
-   private void addTestIfIncluded(final TestSet moduleTests, final TestCase test, ModuleClassMapping mapping) {
+   private void addTestIfIncluded(final TestSet moduleTests, final TestMethodCall test, ModuleClassMapping mapping) {
       if (NonIncludedTestRemover.isTestIncluded(test, getConfig().getExecutionConfig())) {
          if (NonIncludedByRule.isTestIncluded(test, this, mapping)) {
             moduleTests.addTest(test);
@@ -172,17 +174,17 @@ public class JUnitTestTransformer implements TestTransformer {
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping mapping) {
       final TestSet tests = new TestSet();
       determineVersions(mapping.getModules());
-      for (final TestCase clazzname : testsToUpdate.getClasses()) {
+      for (final TestClazzCall clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
             final File moduleFolder = new File(projectFolder, clazzname.getModule());
-            final List<TestCase> methods = getTestMethodNames(moduleFolder, clazzname);
-            for (final TestCase test : methods) {
+            final List<TestMethodCall> methods = getTestMethodNames(moduleFolder, clazzname);
+            for (final TestMethodCall test : methods) {
                addTestIfIncluded(tests, test, mapping);
             }
          } else {
             for (final String method : currentClazzMethods) {
-               TestCase test = new TestCase(clazzname.getClazz(), method, clazzname.getModule());
+               TestMethodCall test = new TestMethodCall(clazzname.getClazz(), method, clazzname.getModule());
                addTestIfIncluded(tests, test, mapping);
             }
          }
@@ -324,8 +326,8 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    @Override
-   public List<TestCase> getTestMethodNames(final File module, final TestCase clazzname) {
-      final List<TestCase> methods = new LinkedList<>();
+   public List<TestMethodCall> getTestMethodNames(final File module, final TestClazzCall clazzname) {
+      final List<TestMethodCall> methods = new LinkedList<>();
       ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
       final File clazzFile = finder.getClazzFile(module, clazzname);
       final CompilationUnit unit = loadedFiles.get(clazzFile);
@@ -361,9 +363,9 @@ public class JUnitTestTransformer implements TestTransformer {
       if (clazzFile != null && clazzFile.getParentFile() != null) {
          if (clazzFile.getParentFile().exists()) {
             LOG.debug("Parent folder {} exists", clazzFile.getParentFile());
-            for (File file : clazzFile.getParentFile().listFiles()) {
-               LOG.debug("File in folder: {}", file);
-            }
+//            for (File file : clazzFile.getParentFile().listFiles()) {
+//               LOG.debug("File in folder: {}", file);
+//            }
          } else {
             LOG.debug("Parent folder {} does not exist", clazzFile.getParentFile());
          }
@@ -372,22 +374,22 @@ public class JUnitTestTransformer implements TestTransformer {
       }
    }
 
-   private void addTestMethodNames(final TestCase clazzname, final List<TestCase> methods, final Integer junit,
+   private void addTestMethodNames(final TestCase clazzname, final List<TestMethodCall> methods, final Integer junit,
          final ClassOrInterfaceDeclaration clazz) {
       if (junit == 3) {
          for (final MethodDeclaration method : clazz.getMethods()) {
             if (method.getNameAsString().toLowerCase().contains("test")) {
-               methods.add(new TestCase(clazzname.getClazz(), method.getNameAsString(), clazzname.getModule()));
+               methods.add(new TestMethodCall(clazzname.getClazz(), method.getNameAsString(), clazzname.getModule()));
             }
          }
       } else if (junit == 4) {
          for (String junit4method : getAnnotatedMethods(clazz, 4)) {
-            TestCase test = new TestCase(clazzname.getClazz(), junit4method, clazzname.getModule());
+            TestMethodCall test = new TestMethodCall(clazzname.getClazz(), junit4method, clazzname.getModule());
             methods.add(test);
          }
       } else if (junit == 5) {
          for (String junit5method : getAnnotatedMethods(clazz, 5)) {
-            TestCase test = new TestCase(clazzname.getClazz(), junit5method, clazzname.getModule());
+            TestMethodCall test = new TestMethodCall(clazzname.getClazz(), junit5method, clazzname.getModule());
             methods.add(test);
          }
       }

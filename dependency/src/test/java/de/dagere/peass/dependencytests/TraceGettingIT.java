@@ -31,6 +31,7 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependency.traces.TraceMethodReader;
 import de.dagere.peass.dependency.traces.TraceWithMethods;
@@ -118,20 +119,20 @@ public class TraceGettingIT {
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       final KiekerResultManager tracereader = new KiekerResultManager(folders, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
       final TestSet testset = new TestSet();
-      testset.addTest(new TestCase("viewtest.TestMe", "test", ""));
+      testset.addTest(new TestMethodCall("viewtest.TestMe", "test", ""));
       tracereader.getExecutor().loadClasses();
       tracereader.executeKoPeMeKiekerRun(testset, "1", folders.getDependencyLogFolder());
 
       LOG.debug("Trace-Analysis..");
 
-      final boolean worked = analyseTrace(new TestCase("viewtest.TestMe", "test", ""), VIEWS_FOLDER_TEST, new HashMap<>(), githash,
+      final boolean worked = analyseTrace(new TestMethodCall("viewtest.TestMe", "test", ""), VIEWS_FOLDER_TEST, new HashMap<>(), githash,
             tracereader.getXMLFileFolder(TestConstants.CURRENT_FOLDER));
       Assert.assertEquals(true, worked);
 
       tracereader.deleteTempFiles();
    }
 
-   public static boolean analyseTrace(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
+   public static boolean analyseTrace(final TestMethodCall testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException {
       final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder)[0];
 
@@ -150,7 +151,7 @@ public class TraceGettingIT {
       return success;
    }
 
-   public static void executeReading(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File kiekerResultFolder)
+   public static void executeReading(final TestMethodCall testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File kiekerResultFolder)
          throws ParseException, IOException {
       final ArrayList<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING, new KiekerConfig()).getShortTrace("");
       LOG.debug("Short Trace: {}", shortTrace.size());

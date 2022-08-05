@@ -19,6 +19,7 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
@@ -36,19 +37,19 @@ public class KoPeMeTreeConverter {
    private final DescriptiveStatistics statisticsCurrent = new DescriptiveStatistics();
    private final DescriptiveStatistics statisticsOld = new DescriptiveStatistics();
 
-   public KoPeMeTreeConverter(final CauseSearchFolders folders, final String version, final TestCase testcase) {
+   public KoPeMeTreeConverter(final CauseSearchFolders folders, final String commit, final TestMethodCall testcase) {
       node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
       node.setVmValues(new MeasuredValues());
       node.setVmValuesPredecessor(new MeasuredValues());
 
-      readStatistics(folders, version, testcase);
+      readStatistics(folders, commit, testcase);
    }
 
-   public KoPeMeTreeConverter(final PeassFolders folders, final String version, final TestCase testcase) {
-      this(folders.getDetailResultFolder(), version, testcase);
+   public KoPeMeTreeConverter(final PeassFolders folders, final String commit, final TestMethodCall testcase) {
+      this(folders.getDetailResultFolder(), commit, testcase);
    }
 
-   public KoPeMeTreeConverter(final File detailResultFolder, final String commit, final TestCase testcase) {
+   public KoPeMeTreeConverter(final File detailResultFolder, final String commit, final TestMethodCall testcase) {
       File commitFolder = new File(detailResultFolder, testcase.getClazz() + File.separator + commit);
       if (commitFolder.exists()) {
          node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
@@ -67,12 +68,12 @@ public class KoPeMeTreeConverter {
       }
    }
 
-   private void readStatistics(final CauseSearchFolders folders, final String version, final TestCase testcase) {
-      for (File versionFolder : folders.getArchiveResultFolder(version, testcase).listFiles()) {
+   private void readStatistics(final CauseSearchFolders folders, final String commit, final TestMethodCall testcase) {
+      for (File versionFolder : folders.getArchiveResultFolder(commit, testcase).listFiles()) {
          File levelFolder = new File(versionFolder, "0"); // For the beginning, just analyze topmost KoPeMe-measurement
          for (File kopemeFile : levelFolder.listFiles((FileFilter) new OrFileFilter(new WildcardFileFilter(testcase.getMethod() + "*.json"),
                new WildcardFileFilter(testcase.getMethod() + "*.xml")))) {
-            readFile(version, testcase, versionFolder.getName(), kopemeFile);
+            readFile(commit, testcase, versionFolder.getName(), kopemeFile);
          }
       }
 
@@ -83,7 +84,7 @@ public class KoPeMeTreeConverter {
       node.setValuesPredecessor(statisticsOld.getValues());
    }
 
-   private void readFile(final String version, final TestCase testcase, final String currentVersion, final File kopemeFile) {
+   private void readFile(final String version, final TestMethodCall testcase, final String currentVersion, final File kopemeFile) {
       String stringIndex = kopemeFile.getName().substring(testcase.getMethodWithParams().length() + 1, kopemeFile.getName().lastIndexOf('_'));
       if (!stringIndex.matches("[0-9]+")) {
          LOG.error("Could not read file: {}", kopemeFile);

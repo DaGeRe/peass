@@ -61,7 +61,7 @@ public class ErrorLogWriter {
                   if (foundLogFolder.exists()) {
                      writeLogFolderContent(foundLogFolder);
                   } else {
-                     LOG.info("Expected log folder {] did not exist", foundLogFolder);
+                     LOG.info("Expected log folder {} did not exist", foundLogFolder);
                   }
 
                }

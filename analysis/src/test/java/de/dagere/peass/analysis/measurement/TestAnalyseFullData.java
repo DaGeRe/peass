@@ -53,6 +53,7 @@ public class TestAnalyseFullData {
       CommitComparatorInstance comparator = new CommitComparatorInstance(versions);
       
       ModuleClassMapping mapping = Mockito.mock(ModuleClassMapping.class);
+      Mockito.when(mapping.getModuleOfClass(Mockito.anyString())).thenReturn("");
       ProjectStatistics statistics = new ProjectStatistics(CommitByNameComparator.INSTANCE);
       AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), statistics, mapping, new StatisticsConfig(), comparator);
       

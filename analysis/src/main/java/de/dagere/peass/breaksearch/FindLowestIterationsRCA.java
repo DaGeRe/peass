@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -203,7 +203,7 @@ public class FindLowestIterationsRCA {
 
    final FullDataCallTreeNode rootPredecessor;
    final String mainVersion, predecessor;
-   final TestCase testcase;
+   final TestMethodCall testcase;
    final File testmethodFolder;
 
    private Set<CallTreeNode> nodesPredecessor;
@@ -214,7 +214,7 @@ public class FindLowestIterationsRCA {
       final File testclassFolder = mainVersionFolder.listFiles()[0];
       testmethodFolder = testclassFolder.listFiles()[0];
 
-      testcase = new TestCase(testclassFolder.getName(), testmethodFolder.getName());
+      testcase = new TestMethodCall(testclassFolder.getName(), testmethodFolder.getName());
       mainVersion = mainVersionFolder.getName();
       final File treeCache = folders.getTreeCacheFolder(mainVersion, testcase);
       final File potentialCacheFileOld = new File(treeCache, mainVersion);

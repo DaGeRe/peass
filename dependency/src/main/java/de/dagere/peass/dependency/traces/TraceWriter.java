@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
 import de.dagere.peass.dependency.traces.coverage.TraceSummaryTransformer;
 import de.dagere.peass.folders.ResultsFolders;
@@ -28,13 +29,13 @@ public class TraceWriter {
    private static final Logger LOG = LogManager.getLogger(TraceWriter.class);
 
    private final String version;
-   private final TestCase testcase;
+   private final TestMethodCall testcase;
    private final ResultsFolders resultsFolders;
    private final TraceFileMapping traceFileMapping;
 
    private final TestSelectionConfig testSelectionConfig;
 
-   public TraceWriter(final String version, final TestCase testcase, final ResultsFolders resultsFolders, final TraceFileMapping traceFileMapping,
+   public TraceWriter(final String version, final TestMethodCall testcase, final ResultsFolders resultsFolders, final TraceFileMapping traceFileMapping,
          TestSelectionConfig testSelectionConfig) {
       this.version = version;
       this.testcase = testcase;

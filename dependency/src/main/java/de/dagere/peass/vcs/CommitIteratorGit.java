@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.dependency.analysis.data.CommitDiff;
 
 /**
  * Allows iteration over git-versions
@@ -141,8 +141,8 @@ public class CommitIteratorGit extends CommitIterator {
    }
    
    @Override
-   public VersionDiff getChangedClasses(final File projectFolder, final List<File> genericModules, final String lastVersion, final ExecutionConfig config) {
-      VersionDiff diff = GitUtils.getChangedClasses(projectFolder, genericModules, lastVersion, config);
+   public CommitDiff getChangedClasses(final File projectFolder, final List<File> genericModules, final String lastVersion, final ExecutionConfig config) {
+      CommitDiff diff = GitUtils.getChangedClasses(projectFolder, genericModules, lastVersion, config);
       return diff;
    }
    

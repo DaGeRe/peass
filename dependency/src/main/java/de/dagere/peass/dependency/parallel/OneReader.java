@@ -41,7 +41,7 @@ public final class OneReader implements Runnable {
          if (init) {
             LOG.debug("Reader initalized: " + reader + " This: " + this);
             if (!reader.readInitialCommit()) {
-               LOG.error("Analyzing first version was not possible");
+               LOG.error("Analyzing first commit was not possible");
             } else {
                final boolean readingSuccess = reader.readDependencies();
                if (readingSuccess) {

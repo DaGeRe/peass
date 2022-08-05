@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -33,6 +36,8 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
  *
  */
 public class ClazzChangeData {
+   private static final Logger LOG = LogManager.getLogger(ClazzChangeData.class);
+   
    private boolean isChange = false;
    private boolean isOnlyMethodChange = true;
    private final Map<String, Set<String>> changedMethods = new HashMap<>();
@@ -171,7 +176,7 @@ public class ClazzChangeData {
 
    private String getFQN(final String className) {
       String fullQualifiedClassname;
-      System.out.println("Containing file: " + containingFile + " " + className + " Package: " + containingFile.getPackage());
+      LOG.trace("Containing file: {} {} package: {}", containingFile, className, containingFile.getPackage());
       if (!"".equals(containingFile.getPackage())) {
          fullQualifiedClassname = containingFile.getPackage() + "." + className;
       } else {

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class TestSequiturView {
@@ -22,7 +22,7 @@ public class TestSequiturView {
 	public void testRepetitionRepetition() throws ParseException, IOException, ViewNotFoundException {
 		final File clazzDir = new File("target/viewtest/");
 		clazzDir.mkdirs();
-		TraceGettingIT.executeReading(new TestCase("viewtest.TestMe", "test", ""), clazzDir, new HashMap<>(), "5", new File("src/test/resources/exampletrace/test"));
+		TraceGettingIT.executeReading(new TestMethodCall("viewtest.TestMe", "test", ""), clazzDir, new HashMap<>(), "5", new File("src/test/resources/exampletrace/test"));
 
 		final File viewFile = new File(clazzDir, "test_hash_5_method");
 

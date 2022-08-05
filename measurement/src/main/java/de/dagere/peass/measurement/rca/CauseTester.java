@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -37,7 +38,7 @@ public class CauseTester extends AdaptiveTester {
 
    private Set<CallTreeNode> includedNodes;
    private Set<String> includedPattern;
-   private final TestCase testcase;
+   private final TestMethodCall testcase;
    private final CauseSearcherConfig causeConfig;
    private final CauseSearchFolders folders;
    private int levelId = 0;
@@ -76,7 +77,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public void evaluate(final TestCase testcase) {
+   public void evaluate(final TestMethodCall testcase) {
       LOG.debug("Adaptive execution: " + includedNodes);
 
       initEvaluation(testcase);
@@ -91,12 +92,12 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   protected synchronized TestExecutor getExecutor(final PeassFolders temporaryFolders, final String version) {
-      final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
+   protected synchronized TestExecutor getExecutor(final PeassFolders temporaryFolders, final String commit) {
+      final TestExecutor testExecutor = super.getExecutor(temporaryFolders, commit);
       TestTransformer testTransformer = testExecutor.getTestTransformer();
       testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
       PatternSetGenerator patternSetGenerator = new PatternSetGenerator(configuration.getFixedCommitConfig(), testcase);
-      includedPattern = patternSetGenerator.generatePatternSet(includedNodes, version);
+      includedPattern = patternSetGenerator.generatePatternSet(includedNodes, commit);
       final HashSet<String> includedMethodPattern = new HashSet<>(includedPattern);
       testExecutor.setIncludedMethods(includedMethodPattern);
       return testExecutor;
@@ -127,7 +128,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public void handleKiekerResults(final String commit, final File versionResultFolder) {
+   public void handleKiekerResults(final String commit, final File commitResultFolder) {
       if (getCurrentOrganizer().testSuccess(commit)) {
          LOG.info("Did succeed in measurement - analyse values");
 
@@ -137,7 +138,7 @@ public class CauseTester extends AdaptiveTester {
                isOtherVersion);
          kiekerResultReader.setConsiderNodePosition(!configuration.getKiekerConfig().isUseAggregation());
 
-         kiekerResultReader.readResults(versionResultFolder);
+         kiekerResultReader.readResults(commitResultFolder);
       } else {
          LOG.info("Did not success in measurement");
       }

@@ -27,6 +27,7 @@ import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -118,7 +119,7 @@ public class DependencyDetectorMultimoduleIT {
    private void checkInitialVersion(final StaticTestSelection dependencies) {
       LOG.debug(dependencies.getInitialcommit().getInitialDependencies());
       final InitialCallList dependency = dependencies.getInitialcommit().getInitialDependencies()
-            .get(new TestCase("de.AnotherTest", "testMeAlso", "using-module"));
+            .get(new TestMethodCall("de.AnotherTest", "testMeAlso", "using-module"));
       LOG.debug(dependency.getEntities());
       MatcherAssert.assertThat(dependency.getEntities(), IsIterableContaining.hasItem(new ChangedEntity("de.dagere.base.BaseChangeable", "base-module", "doSomething")));
    }

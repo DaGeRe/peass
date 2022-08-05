@@ -19,6 +19,7 @@ import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.maven.pom.MavenTestExecutor;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -48,29 +49,29 @@ public class DirectKiekerExecutionIT {
       MavenTestExecutor executor = new MavenTestExecutor(folders, testTransformer, new EnvironmentVariables());
 
       runOnce(testTransformer, folders, executor);
-      
+
       File expectedResultFile = new File(folders.getTempMeasurementFolder(), "de.peran.example/example/defaultpackage.TestMe/testMe.json");
       Assert.assertTrue(expectedResultFile.exists());
-      
+
       JSONDataLoader loader = new JSONDataLoader(expectedResultFile);
       List<DatacollectorResult> collectors = loader.getFullData().getMethods().get(0).getDatacollectorResults();
       MatcherAssert.assertThat(collectors, IsIterableWithSize.iterableWithSize(1));
-      
+
       runOnce(testTransformer, folders, executor);
-      
+
       JSONDataLoader loaderSecondRun = new JSONDataLoader(expectedResultFile);
       List<DatacollectorResult> collectorsSecondRun = loaderSecondRun.getFullData().getMethods().get(0).getDatacollectorResults();
       MatcherAssert.assertThat(collectorsSecondRun, IsIterableWithSize.iterableWithSize(2));
    }
 
    private void runOnce(JUnitTestTransformer testTransformer, PeassFolders folders, MavenTestExecutor executor) {
-      try (MockedStatic<GitUtils> gu = Mockito.mockStatic(GitUtils.class)){
+      try (MockedStatic<GitUtils> gu = Mockito.mockStatic(GitUtils.class)) {
          OnceRunner runner = new OnceRunner(folders, executor, Mockito.mock(ResultOrganizer.class), Mockito.mock(KiekerResultHandler.class));
-         
+
          testTransformer.determineVersions(Arrays.asList(new File[] { DependencyTestConstants.CURRENT }));
          testTransformer.transformTests();
 
-         runner.runOnce(new TestCase("defaultpackage.TestMe#testMe"), "123456", 0, folders.getMeasureLogFolder());
+         runner.runOnce(new TestMethodCall("defaultpackage.TestMe", "testMe"), "123456", 0, folders.getMeasureLogFolder());
       }
    }
 }

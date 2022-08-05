@@ -166,7 +166,7 @@ public class ClazzFileFinder {
       if (!moduleOrProjectFolder.exists()) {
          throw new RuntimeException("Module folder " + moduleOrProjectFolder.getAbsolutePath() + " did not exist");
       }
-      LOG.debug("Searching: {} in {}", entity, moduleOrProjectFolder.getAbsolutePath());
+      LOG.trace("Searching: {} in {}", entity, moduleOrProjectFolder.getAbsolutePath());
       final String clazzName = getOuterClass(entity.getClazz());
       final String clazzFileName = clazzName.endsWith(".java") ? clazzName : clazzName.replace('.', File.separatorChar) + ".java";
       final File naturalCandidate = new File(moduleOrProjectFolder, clazzFileName);
@@ -207,7 +207,7 @@ public class ClazzFileFinder {
       File moduleFolder;
       if (sourceContainingClazz.getModule().length() > 0) {
          moduleFolder = new File(folder, sourceContainingClazz.getModule());
-         LOG.debug("Module: {}", sourceContainingClazz.getModule());
+         LOG.trace("Module: {}", sourceContainingClazz.getModule());
       } else {
          moduleFolder = folder;
       }

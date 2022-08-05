@@ -32,7 +32,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
+import de.dagere.peass.dependency.analysis.data.deserializer.TestClazzCallKeyDeserializer;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 /**
  * Represents a set of tests which are executed for one version by its class and its list of methods.
@@ -47,8 +49,8 @@ public class TestSet {
    
 
    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-   @JsonDeserialize(keyUsing = TestcaseKeyDeserializer.class, contentAs = TreeSet.class, as = TreeMap.class)
-   private final Map<TestCase, Set<String>> testcases = new TreeMap<>();
+   @JsonDeserialize(keyUsing = TestClazzCallKeyDeserializer.class, contentAs = TreeSet.class, as = TreeMap.class)
+   private final Map<TestClazzCall, Set<String>> testcases = new TreeMap<>();
    private String predecessor;
 
    public TestSet() {
@@ -69,9 +71,9 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public void addTest(final TestCase classname) {
-      final TestCase entity = new TestCase(classname.getClazz(), null, classname.getModule());
-      addTest(entity, classname.getMethodWithParams());
+   public void addTest(final TestCase testcase) {
+      final TestClazzCall entity = new TestClazzCall(testcase.getClazz(), testcase.getModule());
+      addTest(entity, testcase.getMethodWithParams());
    }
 
    /**
@@ -81,10 +83,7 @@ public class TestSet {
     * @param classname
     * @param methodname
     */
-   public void addTest(final TestCase classname, final String methodname) {
-      if (classname.getMethod() != null && classname.getMethod() != "") {
-         throw new RuntimeException("A testset should only get Changed Entities with empty method, but was " + classname.getMethod());
-      }
+   public void addTest(final TestClazzCall classname, final String methodname) {
       Set<String> methods = testcases.get(classname);
       if (methods == null) {
          methods = new TreeSet<>();
@@ -100,7 +99,7 @@ public class TestSet {
 
    @JsonIgnore
    public void addTestSet(final TestSet testSet) {
-      for (final Map.Entry<TestCase, Set<String>> newTestEntry : testSet.entrySet()) {
+      for (final Map.Entry<TestClazzCall, Set<String>> newTestEntry : testSet.entrySet()) {
          Set<String> methods = testcases.get(newTestEntry.getKey());
          if (methods == null) {
             methods = new TreeSet<>();
@@ -119,7 +118,7 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public Set<Entry<TestCase, Set<String>>> entrySet() {
+   public Set<Entry<TestClazzCall, Set<String>>> entrySet() {
       return testcases.entrySet();
    }
 
@@ -129,39 +128,75 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public Set<TestCase> getClasses() {
+   public Set<TestClazzCall> getClasses() {
       return testcases.keySet();
    }
 
+   /**
+    * @deprecated should not be used in new code; in the future, there should be test sets for regression test selection
+    * (which might contain test methods and test clazzes) and regular test sets, that only contain test methods (since
+    * data are only managed for test methods) 
+    * @return
+    */
    @JsonIgnore
    public Set<TestCase> getTests() {
       final Set<TestCase> testcases = new LinkedHashSet<>();
-      for (final Entry<TestCase, Set<String>> classTests : getTestcases().entrySet()) {
+      for (final Entry<TestClazzCall, Set<String>> classTests : getTestcases().entrySet()) {
+         String clazz = classTests.getKey().getClazz();
+         String module = classTests.getKey().getModule();
          if (classTests.getValue().size() > 0) {
             for (final String method : classTests.getValue()) {
-               final TestCase testcase = new TestCase(classTests.getKey().getClazz(), method, classTests.getKey().getModule());
+               final TestCase testcase = new TestMethodCall(clazz, method, module);
                testcases.add(testcase);
             }
          } else {
-            testcases.add(new TestCase(classTests.getKey().getClazz(), null, classTests.getKey().getModule()));
+            TestClazzCall testClazzCall = new TestClazzCall(clazz, module);
+            testcases.add(testClazzCall);
          }
       }
       return testcases;
    }
-
-   public Map<TestCase, Set<String>> getTestcases() {
+   
+   @JsonIgnore
+   public Set<TestClazzCall> getTestClazzes() {
+      final Set<TestClazzCall> testcases = new LinkedHashSet<>();
+      for (final Entry<TestClazzCall, Set<String>> classTests : getTestcases().entrySet()) {
+         String clazz = classTests.getKey().getClazz();
+         String module = classTests.getKey().getModule();
+         if (classTests.getValue().size() == 0) {
+            TestClazzCall testClazzCall = new TestClazzCall(clazz, module);
+            testcases.add(testClazzCall);
+         }
+      }
+      return testcases;
+   }
+   
+   @JsonIgnore
+   public Set<TestMethodCall> getTestMethods() {
+      final Set<TestMethodCall> testcases = new LinkedHashSet<>();
+      for (final Entry<TestClazzCall, Set<String>> classTests : getTestcases().entrySet()) {
+         String clazz = classTests.getKey().getClazz();
+         String module = classTests.getKey().getModule();
+         if (classTests.getValue().size() > 0) {
+            for (final String method : classTests.getValue()) {
+               final TestMethodCall testcase = new TestMethodCall(clazz, method, module);
+               testcases.add(testcase);
+            }
+         } 
+      }
       return testcases;
    }
 
-   public void removeTest(final TestCase testClassName) {
-      if (testClassName.getMethod() != null && testClassName.getMethod() != "") {
-         throw new RuntimeException("Testset class removal should only be done with empty method of ChangedEntity!");
-      }
+   public Map<TestClazzCall, Set<String>> getTestcases() {
+      return testcases;
+   }
+
+   public void removeTest(final TestClazzCall testClassName) {
       testcases.remove(testClassName);
    }
 
    @JsonIgnore
-   public void removeTest(final TestCase testClassName, final String testMethodName) {
+   public void removeTest(final TestClazzCall testClassName, final String testMethodName) {
       if (testClassName.getMethod() != null && testClassName.getMethod() != "") {
          throw new RuntimeException("Testset class removal should only be done with empty method of ChangedEntity!");
       }
@@ -186,7 +221,7 @@ public class TestSet {
    }
 
    private void removeMethod(final TestCase testClassName, final String testMethodName, final Set<String> testMethods) {
-      LOG.debug("Removing: " + testClassName + "#" + testMethodName);
+      LOG.trace("Removing: " + testClassName + "#" + testMethodName);
       if (!testMethods.remove(testMethodName)) {
          LOG.error("Problem: " + testMethodName + " can not be removed.");
          // throw new RuntimeException("Test " + testMethodName + " was not in TestSet!");
@@ -202,7 +237,7 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public Set<String> getMethods(final TestCase clazz) {
+   public Set<String> getMethods(final TestClazzCall clazz) {
       return testcases.get(clazz);
    }
 

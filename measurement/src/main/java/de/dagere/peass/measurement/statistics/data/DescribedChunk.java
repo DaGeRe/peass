@@ -22,7 +22,7 @@ public class DescribedChunk {
    private final List<VMResult> previous = new LinkedList<>();
    private final List<VMResult> current = new LinkedList<>();
 
-   public DescribedChunk(final VMResultChunk chunk, final String versionPrevious, final String versionCurrent) {
+   public DescribedChunk(final VMResultChunk chunk, final String commitPrevious, final String commitCurrent) {
       long minRepetitions = MultipleVMTestUtil.getMinRepetitionCount(chunk.getResults());
       long minIterations = MultipleVMTestUtil.getMinIterationCount(chunk.getResults());
 
@@ -32,11 +32,11 @@ public class DescribedChunk {
          if (!Double.isNaN(result.getValue()) &&
                result.getIterations() == minIterations &&
                result.getRepetitions() == minRepetitions) {
-            if (result.getCommit().equals(versionPrevious)) {
+            if (result.getCommit().equals(commitPrevious)) {
                descPrev.addValue(result.getValue());
                previous.add(result);
             }
-            if (result.getCommit().equals(versionCurrent)) {
+            if (result.getCommit().equals(commitCurrent)) {
                descCurrent.addValue(result.getValue());
                current.add(result);
             }

@@ -10,6 +10,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -28,7 +29,7 @@ public class AdaptiveTester extends DependencyTester {
    }
 
    @Override
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, XmlPullParserException {
+   public void evaluate(final TestMethodCall testcase) throws IOException, InterruptedException, XmlPullParserException {
       initEvaluation(testcase);
 
       final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);
@@ -38,7 +39,7 @@ public class AdaptiveTester extends DependencyTester {
       }
    }
 
-   protected void evaluateWithAdaption(final TestCase testcase, final File logFolder, final ProgressWriter writer) throws IOException {
+   protected void evaluateWithAdaption(final TestMethodCall testcase, final File logFolder, final ProgressWriter writer) throws IOException {
       currentChunkStart = System.currentTimeMillis();
       for (finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
          long comparisonStart = System.currentTimeMillis();

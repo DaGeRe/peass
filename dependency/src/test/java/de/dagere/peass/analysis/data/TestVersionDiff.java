@@ -15,7 +15,7 @@ import com.google.common.io.Files;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.dependency.analysis.data.CommitDiff;
 
 public class TestVersionDiff {
    
@@ -32,7 +32,7 @@ public class TestVersionDiff {
       createFile(MAVEN_PATH_FILE);
       createFile(NO_SOURCE_FOLDER);
       
-      VersionDiff diff = createVersionDiff();
+      CommitDiff diff = createVersionDiff();
       
       ExecutionConfig config = new ExecutionConfig();
       diff.addChange(MAVEN_PATH_FILE, config);
@@ -46,7 +46,7 @@ public class TestVersionDiff {
       createFile(JAVA_PATH_FILE);
       createFile(NO_SOURCE_FOLDER);
       
-      VersionDiff diff = createVersionDiff();
+      CommitDiff diff = createVersionDiff();
       
       ExecutionConfig config = new ExecutionConfig();
       config.getClazzFolders().clear();
@@ -63,7 +63,7 @@ public class TestVersionDiff {
       createFile(TOMCAT_EXAMPLE);
       createFile(NO_SOURCE_FOLDER);
       
-      VersionDiff diff = createVersionDiff();
+      CommitDiff diff = createVersionDiff();
       
       ExecutionConfig config = new ExecutionConfig();
       config.getClazzFolders().clear();
@@ -77,10 +77,10 @@ public class TestVersionDiff {
       MatcherAssert.assertThat(diff.getChangedClasses(), Matchers.not(IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.Example2"))));
    }
 
-   private VersionDiff createVersionDiff() {
+   private CommitDiff createVersionDiff() {
       List<File> modules = new LinkedList<>();
       modules.add(tempDir);
-      VersionDiff diff = new VersionDiff(modules, tempDir);
+      CommitDiff diff = new CommitDiff(modules, tempDir);
       return diff;
    }
 

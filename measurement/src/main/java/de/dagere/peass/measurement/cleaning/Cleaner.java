@@ -15,6 +15,7 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
@@ -62,7 +63,7 @@ public class Cleaner extends DataAnalyser {
    }
 
    public void cleanTestVersionPair(final Entry<String, EvaluationPair> entry) {
-      TestCase testcase = entry.getValue().getTestcase();
+      TestMethodCall testcase = entry.getValue().getTestcase();
       if (entry.getValue().getPrevius().size() >= 2 && entry.getValue().getCurrent().size() >= 2) {
          final VMResultChunk cleanedChunk = new VMResultChunk();
          final long minExecutionCount = MultipleVMTestUtil.getMinIterationCount(entry.getValue().getPrevius());
@@ -91,7 +92,7 @@ public class Cleaner extends DataAnalyser {
       return chunkStartTime;
    }
 
-   private void handleChunk(final Entry<String, EvaluationPair> entry, TestCase testcase, final VMResultChunk cleanedChunk) {
+   private void handleChunk(final Entry<String, EvaluationPair> entry, TestMethodCall testcase, final VMResultChunk cleanedChunk) {
       final MeasurementFileFinder finder = new MeasurementFileFinder(cleanFolder, testcase);
       final File measurementFile = finder.getMeasurementFile();
       final Kopemedata oneResultData = finder.getOneResultData();
@@ -125,7 +126,7 @@ public class Cleaner extends DataAnalyser {
       return -Math.floorDiv(-x, y);
    }
 
-   private List<VMResult> getChunk(final String version, final long minExecutionCount, final List<VMResult> previous) {
+   private List<VMResult> getChunk(final String commit, final long minExecutionCount, final List<VMResult> previous) {
       final List<VMResult> previousClean = StatisticUtil.shortenValues(previous);
       return previousClean.stream()
             .filter(result -> {
@@ -137,12 +138,12 @@ public class Cleaner extends DataAnalyser {
                }
                return isCorrect;
             })
-            .map(result -> cleanResult(version, result))
+            .map(result -> cleanResult(commit, result))
             .collect(Collectors.toList());
    }
 
-   private VMResult cleanResult(final String version, final VMResult result) {
-      result.setCommit(version);
+   private VMResult cleanResult(final String commit, final VMResult result) {
+      result.setCommit(commit);
       result.setWarmup(result.getFulldata().getValues().size());
       result.setIterations(result.getFulldata().getValues().size());
       result.setRepetitions(result.getRepetitions());

@@ -20,6 +20,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
 
    public void createSingleMethodCommand(final int versionIndex, final String commit, final String testcaseName, final int warmup, final int iterations, final int repetitions,
          final int vms) {
+      long timeoutInMinutes = config.getTimeoutInSeconds() / 60;
       goal.println("./peass searchcause "
             + "-rcaStrategy " + RCAStrategy.UNTIL_SOURCE_CHANGE + " "
             + "-propertyFolder results/properties_" + name + " "
@@ -28,7 +29,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
             + "-iterations " + config.getIterations() + " "
             + "-repetitions " + repetitions + " "
             + "-vms " + vms + " "
-            + "-timeout " + config.getTimeoutInSeconds() + " "
+            + "-timeout " + timeoutInMinutes + " "
             + "-type1error 0.2 "
             + "-type2error 0.1 "
             + "-measurementStrategy " + config.getMeasurementStrategy() + " "
@@ -36,7 +37,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
             + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")
             + "-commit " + commit + " "
             + "-folder " + DEFAULT_PROJECT_FOLDER_LOCATION + name + "/ "
-            + "-executionfile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
+            + "-executionFile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + " &> rca_" + commit.substring(0, 6) + "_" + testcaseName + ".txt");
    }
 

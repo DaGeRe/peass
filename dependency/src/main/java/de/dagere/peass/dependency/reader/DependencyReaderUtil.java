@@ -33,6 +33,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -56,14 +57,14 @@ public class DependencyReaderUtil {
          for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
             final TestSet testSet = dependency.getValue();
             if (removedTest.getMethod().length() > 0) {
-               for (final Entry<TestCase, Set<String>> testcase : testSet.getTestcases().entrySet()) {
+               for (final Entry<TestClazzCall, Set<String>> testcase : testSet.getTestcases().entrySet()) {
                   if (testcase.getKey().getClazz().equals(removedTest.getClazz())) {
                      testcase.getValue().remove(removedTest.getMethod());
                   }
                }
             } else {
-               TestCase removeTestcase = null;
-               for (final Entry<TestCase, Set<String>> testcase : testSet.getTestcases().entrySet()) {
+               TestClazzCall removeTestcase = null;
+               for (final Entry<TestClazzCall, Set<String>> testcase : testSet.getTestcases().entrySet()) {
                   if (testcase.getKey().getClazz().equals(removedTest.getClazz())) {
                      removeTestcase = testcase.getKey();
                   }
@@ -97,7 +98,7 @@ public class DependencyReaderUtil {
       }
    }
 
-   static CommitStaticSelection createVersionFromChangeMap(final Map<ChangedEntity, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
+   static CommitStaticSelection createCommitFromChangeMap(final Map<ChangedEntity, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
       final CommitStaticSelection newVersionInfo = new CommitStaticSelection();
       newVersionInfo.setRunning(true);
       LOG.debug("Beginning to write");
@@ -156,24 +157,24 @@ public class DependencyReaderUtil {
       }
    }
 
-   public static void write(final StaticTestSelection deps, final File file) {
+   public static void write(final StaticTestSelection staticTestSelection, final File file) {
       LOG.debug("Writing to: {}", file);
       try {
-         Constants.OBJECTMAPPER.writeValue(file, deps);
+         Constants.OBJECTMAPPER.writeValue(file, staticTestSelection);
       } catch (final IOException e) {
          e.printStackTrace();
       }
    }
 
-   public static StaticTestSelection mergeDependencies(final StaticTestSelection deps1, final StaticTestSelection deps2, CommitComparatorInstance comparator) {
+   public static StaticTestSelection mergeDependencies(final StaticTestSelection staticTestSelection1, final StaticTestSelection staticTestSelection2, CommitComparatorInstance comparator) {
       final StaticTestSelection merged;
       final StaticTestSelection newer;
-      if (comparator.isBefore(deps1.getInitialcommit().getCommit(), deps2.getInitialcommit().getCommit())) {
-         merged = deps1;
-         newer = deps2;
+      if (comparator.isBefore(staticTestSelection1.getInitialcommit().getCommit(), staticTestSelection2.getInitialcommit().getCommit())) {
+         merged = staticTestSelection1;
+         newer = staticTestSelection2;
       } else {
-         newer = deps1;
-         merged = deps2;
+         newer = staticTestSelection1;
+         merged = staticTestSelection2;
       }
       LOG.debug("Merging: {}", merged.getCommits().size());
 

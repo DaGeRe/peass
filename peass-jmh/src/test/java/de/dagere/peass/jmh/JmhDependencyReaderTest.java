@@ -30,7 +30,8 @@ import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialCallList;
@@ -96,15 +97,15 @@ public class JmhDependencyReaderTest {
 
    private void checkChangedVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
-      TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
+      TestMethodCall changedBenchmark = new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod");
       MatcherAssert.assertThat(data.getCommits().get("000002").getTests(), Matchers.contains(changedBenchmark));
    }
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
-      Map<TestCase, InitialCallList> initialDependencies = dependencies.getInitialcommit().getInitialDependencies();
+      Map<TestMethodCall, InitialCallList> initialDependencies = dependencies.getInitialcommit().getInitialDependencies();
       MatcherAssert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
-      InitialCallList initial = initialDependencies.get(new TestCase("de.dagere.peass.ExampleBenchmark", "testMethod", null));
+      InitialCallList initial = initialDependencies.get(new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod", ""));
       MatcherAssert.assertThat(initial.getEntities(), Matchers.hasSize(2));
    }
 
@@ -114,7 +115,7 @@ public class JmhDependencyReaderTest {
       FakeFileIterator fakeIterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, versionList);
       fakeIterator.goToFirstCommit();
       FakeFileIterator iteratorspied = Mockito.spy(fakeIterator);
-      VersionDiff fakedDiff = new VersionDiff(Arrays.asList(TestConstants.CURRENT_FOLDER), TestConstants.CURRENT_FOLDER);
+      CommitDiff fakedDiff = new CommitDiff(Arrays.asList(TestConstants.CURRENT_FOLDER), TestConstants.CURRENT_FOLDER);
       ExecutionConfig defaultConfig = new ExecutionConfig();
       fakedDiff.addChange("src/test/java/de/dagere/peass/ExampleBenchmark.java", defaultConfig);
 

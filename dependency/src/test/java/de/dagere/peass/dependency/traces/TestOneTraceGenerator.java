@@ -15,6 +15,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 
@@ -55,7 +56,7 @@ public class TestOneTraceGenerator {
 
          ResultsFolders resultsFolders = new ResultsFolders(new File("target/"), "test-results");
          PeassFolders folders = Mockito.mock(PeassFolders.class);
-         TestCase testcase = new TestCase("de.dagere.peass.ExampleTest#test");
+         TestMethodCall testcase = new TestMethodCall("de.dagere.peass.ExampleTest", "test");
          OneTraceGenerator generator = new OneTraceGenerator(resultsFolders, folders, testcase, new TraceFileMapping(), "d4d964daa4a77bac09422174509c31a19d082ed4",
                new LinkedList<>(),
                Mockito.mock(ModuleClassMapping.class), new KiekerConfig(), new TestSelectionConfig(1, false));

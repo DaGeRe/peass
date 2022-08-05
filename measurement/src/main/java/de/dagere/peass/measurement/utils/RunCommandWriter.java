@@ -5,6 +5,7 @@ import java.util.Set;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.folders.ResultsFolders;
 
@@ -41,8 +42,8 @@ public class RunCommandWriter {
       this.nice = nice;
    }
 
-   public void createFullVersionCommand(final int commitIndex, final String commit, final Set<TestCase> tests) {
-      for (TestCase testcase : tests) {
+   public void createFullVersionCommand(final int commitIndex, final String commit, final Set<TestMethodCall> tests) {
+      for (TestMethodCall testcase : tests) {
          final String testcaseName = testcase.getClazz() + "#" + testcase.getMethod();
          createSingleMethodCommand(commitIndex, commit, testcaseName);
       }
@@ -61,8 +62,9 @@ public class RunCommandWriter {
             + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")
             + (config.getExecutionConfig().isShowStart() ? "-showStart " : "")
             + (!config.getExecutionConfig().isRedirectToNull() ? "-dontRedirectToNull " : "")
+            + (config.isDirectlyMeasureKieker() ? "-directlyMeasureKieker " : "")
             + "-commit " + commit + " "
-            + "-executionfile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
+            + "-executionFile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + "-folder " + DEFAULT_PROJECT_FOLDER_LOCATION + name + "/ "
             + " &> measurement_" + commit.substring(0, 6) + "_" + testcaseName
             + ".txt");

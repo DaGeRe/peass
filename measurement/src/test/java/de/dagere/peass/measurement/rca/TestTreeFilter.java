@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -77,7 +77,7 @@ public class TestTreeFilter {
       config.getStatisticsConfig().setOutlierFactor(18);
       TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, config, new EnvironmentVariables());
 
-      TestCase test = new TestCase("defaultpackage.TestMe", "testMe");
+      TestMethodCall test = new TestMethodCall("defaultpackage.TestMe", "testMe");
       // executor.executeKoPeMeKiekerRun(new TestSet(test), "1");
       CallTreeNode node = executor.getTree(test, "1");
       return node;

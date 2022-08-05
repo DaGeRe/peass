@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
 
 /**
  * Base class for node implementations:

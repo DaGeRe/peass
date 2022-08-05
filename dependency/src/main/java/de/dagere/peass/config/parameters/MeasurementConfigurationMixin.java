@@ -20,7 +20,7 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
    int warmup = DEFAULT_WARMUP;
 
-   @Option(names = { "-repetitions", "--repetitions" }, description = "Last version that should be analysed")
+   @Option(names = { "-repetitions", "--repetitions" }, description = "Number of repetitions (executions of the workload inside of one iteration)")
    int repetitions = DEFAULT_REPETITIONS;
 
    @Option(names = { "-processTimeout",

@@ -14,16 +14,17 @@ import de.dagere.peass.TestUtil;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.Constants;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
 public class ContinuousExecutorIT {
 
-   private static final File fullPeassFolder = new File(DependencyTestConstants.CURRENT.getParentFile(), DependencyTestConstants.CURRENT.getName() + "_fullPeass");
+   private static final File fullPeassFolder = new File(DependencyTestConstants.CURRENT.getParentFile(), DependencyTestConstants.CURRENT.getName() + PeassFolders.PEASS_FULL_POSTFIX);
 
    @Before
    public void clearFolders() {
@@ -59,7 +60,7 @@ public class ContinuousExecutorIT {
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
       
       String changedTestClass = changes.getCommitChanges("ff2ab99a0d24c90abe610fb318a17db6da473208").getTestcaseChanges().keySet().iterator().next();
-      TestCase tc = new TestCase(changedTestClass);
+      TestClazzCall tc = new TestClazzCall(changedTestClass);
       Assert.assertEquals("com.example.android_example.ExampleUnitTest", tc.getClazz());
    }
 

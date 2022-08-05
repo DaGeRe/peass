@@ -45,7 +45,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
 
    @Override
    protected void execute(final ExecutionTrace trace) throws Exception {
-      LOG.info("Trace: " + trace.getTraceId());
+      LOG.trace("Trace: {}", trace.getTraceId());
 
       for (final Execution execution : trace.getTraceAsSortedExecutionSet()) {
          if (calls.size() > CALLCOUNT) {
@@ -76,7 +76,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
             }
          }
       }
-      LOG.info("Finished");
+      LOG.trace("Finished");
    }
 
    private void addCalledMethod(final String fullClassname, final String methodname, final TraceElement traceelement) {

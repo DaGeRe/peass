@@ -18,12 +18,12 @@ public class FolderDeterminer {
       this.folders = folders;
    }
 
-   public void testResultFolders(final String version, final String versionOld, final TestCase testcase) {
-      final File resultFile = folders.getResultFile(testcase, 0, version, version);
+   public void testResultFolders(final String commit, final String commitOld, final TestCase testcase) {
+      final File resultFile = folders.getResultFile(testcase, 0, commit, commit);
       if (resultFile.exists()) {
          throw new RuntimeException("File " + resultFile.getAbsolutePath() + " exists - please remove data from old measurement!");
       }
-      final File resultFile2 = folders.getResultFile(testcase, 0, versionOld, version);
+      final File resultFile2 = folders.getResultFile(testcase, 0, commitOld, commit);
       if (resultFile2.exists()) {
          throw new RuntimeException("File " + resultFile2.getAbsolutePath() + " exists - please remove data from old measurement!");
       }

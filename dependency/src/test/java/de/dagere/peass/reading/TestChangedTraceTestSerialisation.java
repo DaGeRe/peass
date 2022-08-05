@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
@@ -28,7 +30,7 @@ public class TestChangedTraceTestSerialisation {
    public void testModule() throws IOException {
       final ExecutionData allVersionsTests = new ExecutionData();
       final TestSet testSet = new TestSet();
-      testSet.addTest(new TestCase("MyClazz", "myMethod", "module-3-bla"));
+      testSet.addTest(new TestMethodCall("MyClazz", "myMethod", "module-3-bla"));
       allVersionsTests.addCall("v1", testSet);
       
       final String serialized = Constants.OBJECTMAPPER.writeValueAsString(allVersionsTests);
@@ -59,8 +61,8 @@ public class TestChangedTraceTestSerialisation {
       final ExecutionData deserialize = mapper.readValue(json, ExecutionData.class);
       
       Assert.assertNotNull(deserialize);
-      Map<TestCase, Set<String>> regularV1 = tests.getCommits().get("v1").getTestcases();
-      Map<TestCase, Set<String>> deserializedV1 = deserialize.getCommits().get("v1").getTestcases();
+      Map<TestClazzCall, Set<String>> regularV1 = tests.getCommits().get("v1").getTestcases();
+      Map<TestClazzCall, Set<String>> deserializedV1 = deserialize.getCommits().get("v1").getTestcases();
       Assert.assertEquals(regularV1, deserializedV1);
    }
 }

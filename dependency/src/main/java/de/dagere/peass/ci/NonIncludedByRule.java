@@ -2,7 +2,7 @@ package de.dagere.peass.ci;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +18,7 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.changesreading.FQNDeterminer;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.ParseUtil;
@@ -53,7 +54,7 @@ public class NonIncludedByRule {
       ExecutionConfig executionConfig = transformer.getConfig().getExecutionConfig();
       CompilationUnit unit = getUnit(test, transformer, executionConfig);
       if (unit == null) {
-         LOG.info("Did not find compilation unit for {}, assuming test is not existing but was included before");
+         LOG.info("Did not find compilation unit for {}, assuming test is not existing but was included before", test);
          return true;
       }
       IncludeExcludeInfo testInfo = getIncludeExcludeInfo(executionConfig, unit);
@@ -114,7 +115,6 @@ public class NonIncludedByRule {
    private static CompilationUnit getUnit(TestCase test, JUnitTestTransformer transformer, ExecutionConfig executionConfig) {
       ClazzFileFinder finder = new ClazzFileFinder(executionConfig);
       final File clazzFile = finder.getClazzFile(transformer.getProjectFolder(), test);
-      System.out.println("File: " + clazzFile);
       CompilationUnit unit = transformer.getLoadedFiles().get(clazzFile);
       return unit;
    }
@@ -152,8 +152,8 @@ public class NonIncludedByRule {
    public static void removeNotIncluded(TestSet tests, TestTransformer testTransformer, ModuleClassMapping mapping) {
       if (testTransformer.getConfig().getExecutionConfig().getIncludeByRule().size() > 0 && testTransformer instanceof JUnitTestTransformer) {
          JUnitTestTransformer junitTestTransformer = (JUnitTestTransformer) testTransformer;
-         for (Iterator<Map.Entry<TestCase, Set<String>>> testcaseIterator = tests.getTestcases().entrySet().iterator(); testcaseIterator.hasNext();) {
-            Map.Entry<TestCase, Set<String>> testcase = testcaseIterator.next();
+         for (Iterator<Entry<TestClazzCall, Set<String>>> testcaseIterator = tests.getTestcases().entrySet().iterator(); testcaseIterator.hasNext();) {
+            Entry<TestClazzCall, Set<String>> testcase = testcaseIterator.next();
             if (!isTestIncluded(testcase.getKey(), junitTestTransformer, mapping)) {
                testcaseIterator.remove();
             }

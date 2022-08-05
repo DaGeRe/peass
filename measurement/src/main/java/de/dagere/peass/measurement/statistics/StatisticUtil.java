@@ -109,7 +109,7 @@ public class StatisticUtil {
    }
 
    /**
-    * Determines whether there is a change, no change or no decission can be made. Usually, first the predecessor and than the current version are given.
+    * Determines whether there is a change, no change or no decission can be made. Usually, first the predecessor and than the current commit are given.
     * 
     * @param statisticsPrev
     * @param statisticsVersion

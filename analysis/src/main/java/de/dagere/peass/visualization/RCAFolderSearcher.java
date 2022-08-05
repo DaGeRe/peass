@@ -45,6 +45,8 @@ public class RCAFolderSearcher {
                rcaFilesToHandle.addAll(handlePeassFolder(source));
             } else if (source.getName().equals("galaxy") || source.getParentFile().getName().contains("galaxy")) {
                rcaFilesToHandle.addAll(handleSlurmFolder(source));
+            } else if (source.getName().equals(CauseSearchFolders.RCA_RESULT_FOLDERNAME)) {
+               rcaFilesToHandle.addAll(handleTreeMeasurementResultFolder(source));
             } else {
                boolean containsSlurmChild = false;
                for (final File child : source.listFiles()) {
@@ -58,6 +60,8 @@ public class RCAFolderSearcher {
                   rcaFilesToHandle.addAll(handleSimpleFolder(source));
                }
             }
+         } else if (!source.exists()) {
+            throw new RuntimeException("Source " + source + " did not exist");
          } else {
             rcaFilesToHandle.add(source);
          }
@@ -87,15 +91,22 @@ public class RCAFolderSearcher {
    }
 
    private List<File> handlePeassFolder(final File source) throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
-      List<File> rcaFiles = new LinkedList<>();
+
       final File rcaFolder = new File(source, "rca" + File.separator + CauseSearchFolders.RCA_RESULT_FOLDERNAME);
       if (rcaFolder.exists()) {
-         for (final File versionFolder : rcaFolder.listFiles()) {
-            for (final File testcaseFolder : versionFolder.listFiles()) {
-               for (final File treeFile : testcaseFolder.listFiles()) {
-                  if (treeFile.getName().endsWith(".json")) {
-                     rcaFiles.add(treeFile);
-                  }
+         return handleTreeMeasurementResultFolder(rcaFolder);
+      } else {
+         return new LinkedList<>();
+      }
+   }
+
+   private List<File> handleTreeMeasurementResultFolder(final File rcaFolder) {
+      List<File> rcaFiles = new LinkedList<>();
+      for (final File commitFolder : rcaFolder.listFiles()) {
+         for (final File testcaseFolder : commitFolder.listFiles()) {
+            for (final File treeFile : testcaseFolder.listFiles()) {
+               if (treeFile.getName().endsWith(".json")) {
+                  rcaFiles.add(treeFile);
                }
             }
          }

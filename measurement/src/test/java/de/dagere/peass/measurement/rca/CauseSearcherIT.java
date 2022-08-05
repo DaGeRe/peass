@@ -21,7 +21,7 @@ import org.mockito.Mockito;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
@@ -40,7 +40,7 @@ public class CauseSearcherIT {
 
    private static final Logger LOG = LogManager.getLogger(CauseSearcherIT.class);
 
-   private static final TestCase TESTCASE = new TestCase("defaultpackage.TestMe", "testMe");
+   private static final TestMethodCall TESTCASE = new TestMethodCall("defaultpackage.TestMe", "testMe");
    public final static CauseSearcherConfig CAUSE_CONFIG_TESTME_COMPLETE = new CauseSearcherConfig(TESTCASE,
          false, 0.1,
          false, true, RCAStrategy.COMPLETE, 1);

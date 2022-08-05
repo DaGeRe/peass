@@ -9,11 +9,12 @@ import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class TestTraceFileMapping {
 
-   private static final TestCase TEST_A = new TestCase("TestA", "methodA");
-   private static final TestCase TEST_B = new TestCase("TestB", "methodB");
+   private static final TestMethodCall TEST_A = new TestMethodCall("TestA", "methodA");
+   private static final TestMethodCall TEST_B = new TestMethodCall("TestB", "methodB");
 
    @Test
    public void testBasicInsertion() {

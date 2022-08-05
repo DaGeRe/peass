@@ -36,7 +36,7 @@ public class MavenPomUtil {
    public static final String LOG4J_GROUPID = "org.apache.logging.log4j";
    public static final String LOG4J_SLF4J_IMPL_ARTIFACTID = "log4j-slf4j-impl";
    public static final String LOG4J_TO_SLF4J_ARTIFACTID = "log4j-to-slf4j";
-   public static final String KOPEME_VERSION = "1.1.11";
+   public static final String KOPEME_VERSION = "1.1.12";
    public static final String KIEKER_VERSION = "1.15.1";
    public static final String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
    public static final String SUREFIRE_ARTIFACTID = "maven-surefire-plugin";
@@ -45,6 +45,7 @@ public class MavenPomUtil {
    public static final String COMPILER_PLUGIN_VERSION = "3.10.1";
 
    public static final String JUPITER_VERSION = "5.8.2";
+   public static final String LOG4J_VERSION = "2.18.0";
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
 
@@ -91,13 +92,41 @@ public class MavenPomUtil {
    }
 
    private static void updateJUnit(final Model model) {
+      boolean needsToInsertLog4jApi = false;
       for (final Dependency dependency : model.getDependencies()) {
-         if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
-            dependency.setVersion("4.13.2");
+         updateDependency(dependency);
+         
+         /** If slf4j is used, we need to insert log4j-api 2.18.0 as direct dependency, since slf4j contains log4j 2.
+          * This might also be necessary if a transitive dependency includes slf4j, but for now, this is sufficient (and it might change in newer slf4j versions)
+          */
+         if (dependency.getGroupId().equals("org.slf4j") && dependency.getArtifactId().equals("slf4j-api")) {
+            needsToInsertLog4jApi = true;
          }
-         if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
-            dependency.setVersion("5.8.2");
+      }
+      if (needsToInsertLog4jApi) {
+         Dependency log4jApi = new Dependency();
+         log4jApi.setGroupId(LOG4J_GROUPID);
+         log4jApi.setArtifactId("log4j-api");
+         log4jApi.setVersion(LOG4J_VERSION);
+         model.getDependencies().add(log4jApi);
+      }
+      
+      if (model.getDependencyManagement() != null) {
+         for (final Dependency dependency : model.getDependencyManagement().getDependencies()) {
+            updateDependency(dependency);
          }
+      }
+   }
+
+   private static void updateDependency(final Dependency dependency) {
+      if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
+         dependency.setVersion("4.13.2");
+      }
+      if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
+         dependency.setVersion(JUPITER_VERSION);
+      }
+      if (dependency.getArtifactId().equals("log4j-api") && dependency.getGroupId().equals(LOG4J_GROUPID)) {
+         dependency.setVersion(LOG4J_VERSION);
       }
    }
 
@@ -151,16 +180,17 @@ public class MavenPomUtil {
    }
 
    public static ProjectModules getModules(final File pom, final ExecutionConfig config) {
+      ProjectModules modules = null;
       try {
-         ProjectModules modules = new ModuleReader().readModuleFiles(pom);
+         modules = new ModuleReader().readModuleFiles(pom);
          if (config.getPl() != null && !"".equals(config.getPl())) {
             List<String> includedModuleNames = getIncludedModuleNames(pom, config);
 
             for (Iterator<File> moduleIterator = modules.getModules().iterator(); moduleIterator.hasNext();) {
-               File listFile = moduleIterator.next();
-               String fileModuleName = listFile.getName();
+               File moduleFile = moduleIterator.next();
+               String fileModuleName = moduleFile.getName();
                System.out.println("Name: " + fileModuleName + " " + includedModuleNames);
-               String fileArtifactId = modules.getArtifactIds().get(listFile);
+               String fileArtifactId = modules.getArtifactIds().get(moduleFile);
                System.out.println("Artifactid: " + fileArtifactId);
                if (!includedModuleNames.contains(fileModuleName) && !includedModuleNames.contains(fileArtifactId)) {
                   moduleIterator.remove();
@@ -170,8 +200,10 @@ public class MavenPomUtil {
 
          return modules;
       } catch (IOException | XmlPullParserException e) {
-         throw new RuntimeException(e);
+         LOG.error("Was not able to read modules; this commit will not be analyzable!");
+         e.printStackTrace();
       }
+      return null;
    }
 
    private static List<String> getIncludedModuleNames(final File pom, final ExecutionConfig config) throws IOException {

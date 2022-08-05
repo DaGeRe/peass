@@ -24,6 +24,7 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -74,9 +75,9 @@ public class TraceGeneratorStarter implements Callable<Void> {
 
       KiekerResultManager resultsManager = runTests(newestVersion, tests, folders, executionConfig);
 
-      LOG.info("Analyzing tests: {}", tests.getTests());
+      LOG.info("Analyzing tests: {}", tests.getTestMethods());
       mapping = new ModuleClassMapping(resultsManager.getExecutor());
-      for (TestCase testcase : tests.getTests()) {
+      for (TestMethodCall testcase : tests.getTestMethods()) {
          writeTestcase(newestVersion, folders, resultsManager, testcase);
       }
 
@@ -91,7 +92,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
       return resultsManager;
    }
 
-   private void writeTestcase(final String newestVersion, final PeassFolders folders, final KiekerResultManager resultsManager, final TestCase testcase)
+   private void writeTestcase(final String newestVersion, final PeassFolders folders, final KiekerResultManager resultsManager, final TestMethodCall testcase)
          throws FileNotFoundException, IOException, XmlPullParserException, ViewNotFoundException {
       final File moduleResultFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
       final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultFolder)[0];
@@ -109,11 +110,11 @@ public class TraceGeneratorStarter implements Callable<Void> {
       }
    }
 
-   private void writeTrace(final String newestVersion, final TestCase testcase, final List<TraceElement> shortTrace) throws IOException {
+   private void writeTrace(final String newestCommit, final TestMethodCall testcase, final List<TraceElement> shortTrace) throws IOException {
       ResultsFolders results = new ResultsFolders(new File("results"), projectFolder.getName());
 
-      String shortVersion = TraceWriter.getShortCommit(newestVersion);
-      File methodDir = results.getViewMethodDir(newestVersion, testcase);
+      String shortVersion = TraceWriter.getShortCommit(newestCommit);
+      File methodDir = results.getViewMethodDir(newestCommit, testcase);
 
       final File methodExpandedTrace = new File(methodDir, shortVersion + OneTraceGenerator.METHOD_EXPANDED);
       Files.write(methodExpandedTrace.toPath(), shortTrace

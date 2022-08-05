@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.dagere.peass.vcs.VersionControlSystem;
 
@@ -21,11 +22,14 @@ import de.dagere.peass.vcs.VersionControlSystem;
  */
 public class PeassFolders {
 
+   public static final String CLEAN_FOLDER_NAME = "clean";
+
    private static final Logger LOG = LogManager.getLogger(PeassFolders.class);
 
    public static final String MEASUREMENTS = "measurements";
 
    public static final String PEASS_POSTFIX = "_peass";
+   public static final String PEASS_FULL_POSTFIX = "_fullPeass";
 
    protected final File projectFolder;
    // private final File resultFolder;
@@ -69,7 +73,7 @@ public class PeassFolders {
       fullResultFolder = new File(peassFolder, "measurementsFull");
       fullResultFolder.mkdir();
       tempFolder = new File(peassFolder, "temp");
-      cleanFolder = new File(peassFolder, "clean");
+      cleanFolder = new File(peassFolder, CLEAN_FOLDER_NAME);
       cleanNativeFolder = new File(cleanFolder, "native");
       debugFolder = new File(peassFolder, "debug");
       // cleanFolder.mkdir();
@@ -131,7 +135,7 @@ public class PeassFolders {
       return logFolders.getRCALogFolder();
    }
 
-   public File getExistingMeasureLogFolder(final String commit, final TestCase testcase) {
+   public File getExistingMeasureLogFolder(final String commit, final TestMethodCall testcase) {
       File testLogFolder = new File(getMeasureLogFolder(), commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
       if (testLogFolder.exists()) {
          return testLogFolder;
@@ -140,18 +144,18 @@ public class PeassFolders {
       }
    }
 
-   public File getMeasureLogFolder(final String commit, final TestCase testcase) {
+   public File getMeasureLogFolder(final String commit, final TestMethodCall testcase) {
       File testLogFolder = new File(getMeasureLogFolder(), commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
       testLogFolder.mkdirs();
       return testLogFolder;
    }
 
-   public File getExistingRCALogFolder(final String commit, final TestCase testcase, final int level) {
+   public File getExistingRCALogFolder(final String commit, final TestMethodCall testcase, final int level) {
       File testLogFolder = new File(getRCALogFolder(), commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethod() + File.separator + level);
       return testLogFolder;
    }
 
-   public File getRCALogFolder(final String commit, final TestCase testcase, final int level) {
+   public File getRCALogFolder(final String commit, final TestMethodCall testcase, final int level) {
       File testLogFolder = new File(getRCALogFolder(), commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethod() + File.separator + level);
       testLogFolder.mkdirs();
       return testLogFolder;

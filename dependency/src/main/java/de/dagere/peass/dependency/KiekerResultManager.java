@@ -33,6 +33,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -115,7 +116,7 @@ public class KiekerResultManager {
       }
 
       executor.prepareKoPeMeExecution(new File(logVersionFolder, "clean.txt"));
-      for (final TestCase testcase : testsToUpdate.getTests()) {
+      for (final TestMethodCall testcase : testsToUpdate.getTestMethods()) {
          executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInSeconds());
       }
       cleanAboveSize(logVersionFolder, 100, "txt");

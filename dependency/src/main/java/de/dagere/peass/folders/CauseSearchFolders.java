@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class CauseSearchFolders extends PeassFolders {
 
@@ -78,7 +79,7 @@ public class CauseSearchFolders extends PeassFolders {
       return levelFolder;
    }
 
-   public File getArchiveResultFolder(final String commit, final TestCase testcase) {
+   public File getArchiveResultFolder(final String commit, final TestMethodCall testcase) {
       final File folder = new File(archivedFolder, commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethodWithParams());
       if (!folder.exists()) {
          folder.mkdirs();
@@ -115,19 +116,19 @@ public class CauseSearchFolders extends PeassFolders {
       return treeDataFolder;
    }
 
-   public File getRcaTreeFile(final String commit, final TestCase testcase) {
+   public File getRcaTreeFile(final String commit, final TestMethodCall testcase) {
       final File treeDataFolder = getRcaTreeFolder(commit, testcase);
       File treeFile = new File(treeDataFolder, testcase.getMethodWithParams() + ".json");
       return treeFile;
    }
 
-   public File getRcaTreeFileDetails(final String commit, final TestCase testcase) {
+   public File getRcaTreeFileDetails(final String commit, final TestMethodCall testcase) {
       final File treeDataFolder = getRcaTreeFolder(commit, testcase);
       File treeFile = new File(treeDataFolder, "details" + File.separator + testcase.getMethodWithParams() + ".json");
       return treeFile;
    }
 
-   public File getTreeCacheFolder(final String commit, final TestCase testcase) {
+   public File getTreeCacheFolder(final String commit, final TestMethodCall testcase) {
       final File folder = new File(treeCacheFolder, commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethodWithParams());
       folder.mkdirs();
       return folder;

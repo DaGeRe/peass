@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.visualization.GraphNode;
 import de.dagere.peass.visualization.NodeDashboardWriter;
@@ -60,15 +61,15 @@ public class HTMLWriter {
 
    private File getOutputHTML(final CauseSearchData data) {
       final File output;
-      TestCase testcaseObject = data.getCauseConfig().getTestCase();
+      TestMethodCall testcaseObject = data.getCauseConfig().getTestCase();
       String relativePath = testcaseObject.getTestclazzWithModuleName() + File.separator + testcaseObject.getMethodWithParams() + ".html";
       if (destFolder.getName().equals(data.getMeasurementConfig().getFixedCommitConfig().getCommit())) {
          output = new File(destFolder, relativePath);
          copyResources(destFolder);
       } else {
-         File versionFolder = new File(destFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
-         copyResources(versionFolder);
-         output = new File(versionFolder, relativePath);
+         File commitFolder = new File(destFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
+         copyResources(commitFolder);
+         output = new File(commitFolder, relativePath);
       }
       output.getParentFile().mkdirs();
       return output;
@@ -76,20 +77,21 @@ public class HTMLWriter {
    
    private void copyResources(final File folder) {
       try {
+         File libFolder = new File(folder, "libs");
          URL difflib = RCAGenerator.class.getClassLoader().getResource("visualization/difflib.js");
-         FileUtils.copyURLToFile(difflib, new File(folder, "difflib.js"));
+         FileUtils.copyURLToFile(difflib, new File(libFolder, "difflib.js"));
          URL diffview = RCAGenerator.class.getClassLoader().getResource("visualization/diffview.js");
-         FileUtils.copyURLToFile(diffview, new File(folder, "diffview.js"));
+         FileUtils.copyURLToFile(diffview, new File(libFolder, "diffview.js"));
          URL diffviewcss = RCAGenerator.class.getClassLoader().getResource("visualization/diffview.css");
-         FileUtils.copyURLToFile(diffviewcss, new File(folder, "diffview.css"));
+         FileUtils.copyURLToFile(diffviewcss, new File(libFolder, "diffview.css"));
          URL style = RCAGenerator.class.getClassLoader().getResource("visualization/style.css");
-         FileUtils.copyURLToFile(style, new File(folder, "style.css"));
+         FileUtils.copyURLToFile(style, new File(libFolder, "style.css"));
          URL jsGraphSource = RCAGenerator.class.getClassLoader().getResource("visualization/jsGraphSource.js");
-         FileUtils.copyURLToFile(jsGraphSource, new File(folder, "jsGraphSource.js"));
+         FileUtils.copyURLToFile(jsGraphSource, new File(libFolder, "jsGraphSource.js"));
          URL dashboardStart = RCAGenerator.class.getClassLoader().getResource("visualization/peass-dashboard-start.js");
-         FileUtils.copyURLToFile(dashboardStart, new File(folder, "peass-dashboard-start.js"));
+         FileUtils.copyURLToFile(dashboardStart, new File(libFolder, "peass-dashboard-start.js"));
          URL peassCode = RCAGenerator.class.getClassLoader().getResource("visualization/peass-visualization-code.js");
-         FileUtils.copyURLToFile(peassCode, new File(folder, "peass-visualization-code.js"));
+         FileUtils.copyURLToFile(peassCode, new File(libFolder, "peass-visualization-code.js"));
       } catch (IOException e) {
          e.printStackTrace();
       }
