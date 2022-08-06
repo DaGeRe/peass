@@ -21,7 +21,6 @@ import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;

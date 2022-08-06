@@ -13,7 +13,6 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.deserializer.TestMethodCallKeyDeserializer;
-import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class InitialCommit {

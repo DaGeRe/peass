@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
@@ -32,14 +31,14 @@ public class StaticTestSelection extends SelectedTests {
       // ExecutionData contain an empty first analyzed version; therefore, the initialversion of the dependencies is this first version
       String first = executiondata.getCommits().keySet().iterator().next();
       initialcommit.setCommit(first);
-      for (Map.Entry<String, TestSet> version : executiondata.getCommits().entrySet()) {
-         if (!version.getKey().equals(first)) {
-            CommitStaticSelection versionDependencies = new CommitStaticSelection();
-            versionDependencies.setPredecessor(version.getValue().getPredecessor());
-            versionDependencies.getChangedClazzes().put(new ChangedEntity("unknown", ""), version.getValue());
-            String commitHash = version.getKey();
-            commits.put(commitHash, versionDependencies);
-            for (TestMethodCall test : version.getValue().getTestMethods()) {
+      for (Map.Entry<String, TestSet> commit : executiondata.getCommits().entrySet()) {
+         if (!commit.getKey().equals(first)) {
+            CommitStaticSelection commitDependencies = new CommitStaticSelection();
+            commitDependencies.setPredecessor(commit.getValue().getPredecessor());
+            commitDependencies.getChangedClazzes().put(new ChangedEntity("unknown", ""), commit.getValue());
+            String commitHash = commit.getKey();
+            commits.put(commitHash, commitDependencies);
+            for (TestMethodCall test : commit.getValue().getTestMethods()) {
                initialcommit.addDependency(test, new ChangedEntity(test.getClazz(), ""));
             }
          }
