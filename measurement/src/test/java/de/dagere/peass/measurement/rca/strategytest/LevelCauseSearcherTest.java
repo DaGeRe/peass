@@ -16,7 +16,6 @@ import org.mockito.Mockito;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
@@ -75,7 +74,7 @@ public class LevelCauseSearcherTest {
    }
 
    @Test
-   public void testMeasurement() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   public void testMeasurement() throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
       buildRoots();
       
       root1.getChildren().get(0).setOtherKiekerPattern(null);
@@ -106,7 +105,7 @@ public class LevelCauseSearcherTest {
    
    @Test
    public void testCauseSearching()
-         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
+         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException {
       buildRoots();
 
       searchChanges(TestConstants.SIMPLE_CAUSE_CONFIG);
@@ -120,7 +119,7 @@ public class LevelCauseSearcherTest {
    
    @Test
    public void testCauseSearchingConstantLevels()
-         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
+         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException {
       buildRoots();
       
       CauseSearcherConfig config = new CauseSearcherConfig(new TestMethodCall("Test", "test"), 
@@ -138,7 +137,7 @@ public class LevelCauseSearcherTest {
    
    @Test
    public void testWarmup()
-         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
+         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException {
       measurementConfig = new MeasurementConfig(5, TestConstants.V2, TestConstants.V1);
       measurementConfig.setWarmup(500);
       measurementConfig.setIterations(5);
@@ -161,7 +160,7 @@ public class LevelCauseSearcherTest {
    }
 
    @Test
-   public void testOutlier() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   public void testOutlier() throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
       measurementConfig = new MeasurementConfig(30, TestConstants.V2, TestConstants.V1);
       measurementConfig.setWarmup(5);
       measurementConfig.setIterations(5);
@@ -178,7 +177,7 @@ public class LevelCauseSearcherTest {
       
    }
    
-   private void searchChanges(final CauseSearcherConfig config) throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   private void searchChanges(final CauseSearcherConfig config) throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
       final CauseTester measurer = Mockito.mock(CauseTester.class);
       CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
       CauseSearchFolders folders = new CauseSearchFolders(folder);

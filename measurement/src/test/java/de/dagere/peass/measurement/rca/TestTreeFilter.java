@@ -14,7 +14,6 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -42,7 +41,7 @@ public class TestTreeFilter {
    @ParameterizedTest
    @ValueSource(strings = { "src/test/resources/treeReadExample", "src/test/resources/treeReadExampleGradle" })
    public void testComplexTreeCreation(final String sourceDir)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+         throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
       setUp(sourceDir);
 
       CallTreeNode rootNode = getTree();
@@ -72,7 +71,7 @@ public class TestTreeFilter {
       Assert.assertEquals(18, rootNode.getConfig().getStatisticsConfig().getOutlierFactor(), 0.01);
    }
 
-   public CallTreeNode getTree() throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, ViewNotFoundException, AnalysisConfigurationException {
+   public CallTreeNode getTree() throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, AnalysisConfigurationException {
       final MeasurementConfig config = new MeasurementConfig(1, new ExecutionConfig(15), new KiekerConfig(true));
       config.getStatisticsConfig().setOutlierFactor(18);
       TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, config, new EnvironmentVariables());

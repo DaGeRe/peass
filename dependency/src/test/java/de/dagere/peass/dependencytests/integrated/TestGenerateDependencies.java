@@ -22,7 +22,6 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.DependencyDetectorTestUtil;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.dependencytests.TraceGettingIT;
@@ -37,7 +36,7 @@ public class TestGenerateDependencies {
    private static final Logger LOG = LogManager.getLogger(TestGenerateDependencies.class);
 
    @Test
-   public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
 
       final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(TraceGettingIT.REPETITION));

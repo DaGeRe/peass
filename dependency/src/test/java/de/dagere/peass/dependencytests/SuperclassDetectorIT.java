@@ -29,7 +29,6 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -51,7 +50,7 @@ public class SuperclassDetectorIT {
    }
 
    @Test
-   public void testSuperclassChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testSuperclassChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File secondVersion = new File(VERSIONS_FOLDER, "superclass_changed");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();

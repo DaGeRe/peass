@@ -26,7 +26,6 @@ import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -92,7 +91,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
    }
 
    private void writeTestcase(final String newestVersion, final PeassFolders folders, final KiekerResultManager resultsManager, final TestMethodCall testcase)
-         throws FileNotFoundException, IOException, XmlPullParserException, ViewNotFoundException {
+         throws FileNotFoundException, IOException, XmlPullParserException {
       final File moduleResultFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
       final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultFolder)[0];
 

@@ -37,7 +37,6 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.FakeGitUtil;
 import de.dagere.peass.dependencytests.TraceGettingIT;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
@@ -69,7 +68,7 @@ public class JmhDependencyReaderTest {
    @ParameterizedTest
    @ArgumentsSource(KiekerConfigurationProvider.class)
    public void testVersionReading(final KiekerConfig kiekerConfig)
-         throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException,
+         throws IOException, InterruptedException, XmlPullParserException, ParseException, ClassNotFoundException,
          InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       try (MockedStatic<GitUtils> gitUtilsMock = Mockito.mockStatic(GitUtils.class)) {
          FakeGitUtil.prepareGitUtils(gitUtilsMock);

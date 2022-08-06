@@ -23,7 +23,6 @@ import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
@@ -63,7 +62,7 @@ public class CauseSearcherIT {
 
    @Test
    public void testSlowerState()
-         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
+         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          mockEnvironment(mockedVCS, mockedGitUtils);

@@ -12,7 +12,6 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.vcs.CommitIterator;
 
 public final class OneReader implements Runnable {
@@ -54,7 +53,7 @@ public final class OneReader implements Runnable {
       }
    }
 
-   private void readRemaining(final DependencyReader reader) throws FileNotFoundException, IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
+   private void readRemaining(final DependencyReader reader) throws FileNotFoundException, IOException, XmlPullParserException, InterruptedException, ParseException {
       String newest = reader.getDependencies().getNewestCommit();
       reader.setIterator(reserveIterator);
       while (reserveIterator.hasNextCommit() && comparator.isBefore(newest, minimumCommit)) {

@@ -27,7 +27,6 @@ import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -105,7 +104,7 @@ public class DependencyDetectorTestUtil {
    }
 
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final CommitIterator fakeIterator)
-         throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+         throws IOException, InterruptedException, XmlPullParserException, ParseException {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
@@ -119,7 +118,7 @@ public class DependencyDetectorTestUtil {
 
          reader.analyseVersion(changeManager);
          return reader;
-      } catch (IOException | InterruptedException | XmlPullParserException | ParseException | ViewNotFoundException e) {
+      } catch (IOException | InterruptedException | XmlPullParserException | ParseException e) {
          throw new RuntimeException(e);
       }
    }

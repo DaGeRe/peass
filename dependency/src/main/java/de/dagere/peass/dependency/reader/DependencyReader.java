@@ -26,7 +26,6 @@ import de.dagere.peass.dependency.traces.coverage.CoverageSelectionExecutor;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependency.traces.diff.DiffFileGenerator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -143,13 +142,13 @@ public class DependencyReader {
 
          LOG.debug("Finished dependency-reading");
          return true;
-      } catch (IOException | XmlPullParserException | InterruptedException | ParseException | ViewNotFoundException e) {
+      } catch (IOException | XmlPullParserException | InterruptedException | ParseException e) {
          e.printStackTrace();
          return false;
       }
    }
 
-   public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
+   public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException {
       final int tests = analyseVersion(changeManager);
       GitCommitWriter.writeCurrentCommits(folders, iterator.getCommits(), resultsFolders);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
@@ -184,7 +183,7 @@ public class DependencyReader {
     * @throws ViewNotFoundException
     * @throws ParseException
     */
-   public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
+   public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException {
       final String commit = iterator.getTag();
       if (!testSelectionConfig.isSkipProcessSuccessRuns()) {
          if (!dependencyManager.getExecutor().isCommitRunning(iterator.getTag())) {
@@ -226,7 +225,7 @@ public class DependencyReader {
    }
 
    private int analyseChanges(final String commit, final DependencyReadingInput input)
-         throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
+         throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException {
       final CommitStaticSelection newCommitInfo = staticChangeHandler.handleStaticAnalysisChanges(commit, input, dependencyManager.getModuleClassMapping());
 
       if (!testSelectionConfig.isDoNotUpdateDependencies()) {
@@ -275,7 +274,7 @@ public class DependencyReader {
       dependencyResult.getCommits().put(commit, newCommitInfo);
    }
 
-   public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
@@ -294,7 +293,7 @@ public class DependencyReader {
       }
    }
 
-   private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, ViewNotFoundException, InterruptedException {
+   private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, InterruptedException {
       TestSet initialTests = dependencyResult.getInitialcommit().getInitialTests();
       TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), traceFileMapping, kiekerConfig, testSelectionConfig);
       traceViewGenerator.generateViews(resultsFolders, initialTests);

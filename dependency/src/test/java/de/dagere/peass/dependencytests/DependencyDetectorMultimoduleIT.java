@@ -25,14 +25,12 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -59,7 +57,7 @@ public class DependencyDetectorMultimoduleIT {
    // This test is disabled since it takes too long and nearly tests the same as testTwoChanges; however, since it enables easier debugging, it is left in the code
    @Disabled
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
       final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
@@ -85,7 +83,7 @@ public class DependencyDetectorMultimoduleIT {
 
    @Test
    public void testTwoChanges()
-         throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
+         throws IOException, XmlPullParserException, InterruptedException, ParseException {
       final File thirdVersion = new File(VERSIONS_FOLDER, "another_change");
       final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(thirdVersion));
 

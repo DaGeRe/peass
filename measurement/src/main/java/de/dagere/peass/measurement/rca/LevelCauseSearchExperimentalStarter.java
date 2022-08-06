@@ -14,7 +14,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -27,7 +26,7 @@ public class LevelCauseSearchExperimentalStarter {
    private static final Logger LOG = LogManager.getLogger(LevelCauseSearchExperimentalStarter.class);
    
    public static void main(final String[] args)
-         throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException {
+         throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException {
       final File projectFolder = new File("../../projekte/commons-fileupload");
       final String commit = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestMethodCall test = new TestMethodCall("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");

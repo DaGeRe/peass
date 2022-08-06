@@ -13,7 +13,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.utils.ProjectModules;

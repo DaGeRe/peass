@@ -19,7 +19,6 @@ import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.CommitIterator;
 
@@ -35,7 +34,7 @@ public class DependencyDetectorNoUpdateIT {
    }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change");
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
@@ -50,7 +49,7 @@ public class DependencyDetectorNoUpdateIT {
    }
 
    @Test
-   public void testTestChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testTestChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "changed_test");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
@@ -69,7 +68,7 @@ public class DependencyDetectorNoUpdateIT {
    }
 
    @Test
-   public void testClassRemoval() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testClassRemoval() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_class");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();

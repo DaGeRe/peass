@@ -21,12 +21,10 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 
@@ -52,7 +50,7 @@ public class TestPeassFilter {
    }
 
    @Test
-   public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testExecution() throws IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       Assume.assumeFalse(EnvironmentVariables.isWindows());
       PeassFolders folders = new PeassFolders(CURRENT);
       final KiekerResultManager manager = new KiekerResultManager(folders, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
@@ -89,7 +87,7 @@ public class TestPeassFilter {
    }
 
    private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet testset, final TestMethodCall testcase, final ModuleClassMapping mapping, final int i)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, FileNotFoundException {
+         throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException {
       cleanup();
       PeassFolders peassFolders = new PeassFolders(CURRENT);
       manager.getExecutor().loadClasses();

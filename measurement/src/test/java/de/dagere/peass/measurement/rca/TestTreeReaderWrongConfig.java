@@ -14,7 +14,6 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -43,7 +42,7 @@ public class TestTreeReaderWrongConfig {
    
    @ParameterizedTest
    @ValueSource(strings = {"src/test/resources/treeReadExample", "src/test/resources/treeReadExampleGradle"})
-   public void testComplexTreeCreation(final String sourceDir) throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   public void testComplexTreeCreation(final String sourceDir) throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
       setUp(sourceDir);
       
       CallTreeNode rootNode = getTree();
@@ -71,7 +70,7 @@ public class TestTreeReaderWrongConfig {
       Assert.assertEquals(1, child3.getChildren().size());
    }
 
-   public CallTreeNode getTree() throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, ViewNotFoundException, AnalysisConfigurationException {
+   public CallTreeNode getTree() throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, AnalysisConfigurationException {
       KiekerConfig wrongKiekerConfig = new KiekerConfig(true);
       wrongKiekerConfig.setUseAggregation(true);
       wrongKiekerConfig.setRecord(AllowedKiekerRecord.DURATION);

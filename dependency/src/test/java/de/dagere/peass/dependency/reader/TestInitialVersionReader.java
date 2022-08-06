@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;

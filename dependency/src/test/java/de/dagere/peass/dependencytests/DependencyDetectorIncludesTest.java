@@ -20,7 +20,6 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.CommitIterator;
 
@@ -34,14 +33,14 @@ public class DependencyDetectorIncludesTest {
    }
 
    @Test
-   public void testNormalChangeIncluded() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testNormalChangeIncluded() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
       final DependencyReader reader = executeWithInclude("defaultpackage.TestMe#testMe", DependencyTestConstants.NORMAL_CHANGE, changeManager);
       checkContainsOnlyTestMe(reader);
    }
    
    @Test
-   public void testNormalChangeAddedClass() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testNormalChangeAddedClass() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "added_class");
       final ChangeManager changeManager = DependencyDetectorTestUtil.mockAddedChangeManager();
       final DependencyReader reader = executeWithInclude("defaultpackage.TestMe#testMe", secondVersion, changeManager);
@@ -49,7 +48,7 @@ public class DependencyDetectorIncludesTest {
    }
 
    @Test
-   public void testNormalChangeNotIncluded() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testNormalChangeNotIncluded() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change");
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
       final DependencyReader reader = executeWithInclude("defaultpackage.TestMe#removeMe", secondVersion, changeManager);
@@ -99,7 +98,7 @@ public class DependencyDetectorIncludesTest {
    }
 
    
-   private DependencyReader executeWithInclude(final String includeName, final File secondVersion, final ChangeManager changeManager) throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   private DependencyReader executeWithInclude(final String includeName, final File secondVersion, final ChangeManager changeManager) throws IOException, InterruptedException, XmlPullParserException, ParseException {
       final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
       ExecutionConfig config = new ExecutionConfig(5);

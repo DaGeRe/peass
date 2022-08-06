@@ -8,7 +8,6 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.helper.TreeBuilder;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -16,7 +15,7 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 public class CauseTesterMockUtil {
 
    public static void mockMeasurement(final CauseTester measurer, final TreeBuilder builderPredecessor)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+         throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
       Mockito.doAnswer(new Answer<Void>() {
          @Override
          public Void answer(final InvocationOnMock invocation) throws Throwable {

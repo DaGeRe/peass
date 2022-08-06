@@ -33,7 +33,6 @@ import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -212,7 +211,7 @@ public class ContinuousDependencyReader {
    }
 
    private StaticTestSelection doFullyLoadDependencies(final String url, final CommitIterator iterator, final VersionKeeper nonChanges)
-         throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException, ParseException, ViewNotFoundException {
+         throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException, ParseException {
       final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, kiekerConfig, env);
       iterator.goToPreviousCommit();
 

@@ -8,7 +8,6 @@ import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class TestTraceFileMapping {

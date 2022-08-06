@@ -28,14 +28,12 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependency.traces.TraceMethodReader;
 import de.dagere.peass.dependency.traces.TraceWithMethods;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 
@@ -54,7 +52,8 @@ public class TraceGettingIT {
    private static final File VIEWS_FOLDER_TEST = new File(VIEW_IT_PROJECTFOLDER, "views_test");
 
    @Test
-   public void testBasicView() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testBasicView() throws ParseException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+         IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = BASIC;
       final String githash = "1";
       executeTraceGetting(project, githash);
@@ -62,30 +61,34 @@ public class TraceGettingIT {
    }
 
    @Test
-   public void testRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testRepetition() throws ParseException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+         IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = REPETITION;
       final String githash = "2";
       executeTraceGetting(project, githash);
    }
 
    @Test
-   public void testMultipleRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testMultipleRepetition() throws ParseException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+         IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = REPETITION_MULTIPLE;
       final String githash = "3";
       executeTraceGetting(project, githash);
    }
 
    @Test
-   public void testDeepRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testDeepRepetition() throws ParseException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+         IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = REPETITION_DEEP;
       final String githash = "4";
       executeTraceGetting(project, githash);
    }
 
    @Test
-   public void testRepetitionRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testRepetitionRepetition() throws ParseException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+         IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       Assume.assumeFalse(EnvironmentVariables.isWindows());
-      
+
       final File project = REPETITION_REPETITION;
       final String githash = "5";
       executeTraceGetting(project, githash);
@@ -114,7 +117,8 @@ public class TraceGettingIT {
    }
 
    private void executeTraceGetting(final File project, final String githash)
-         throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+         throws IOException, ParseException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+         IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       DependencyDetectorTestUtil.init(project);
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       final KiekerResultManager tracereader = new KiekerResultManager(folders, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
@@ -132,8 +136,9 @@ public class TraceGettingIT {
       tracereader.deleteTempFiles();
    }
 
-   public static boolean analyseTrace(final TestMethodCall testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
-         throws com.github.javaparser.ParseException, IOException, ViewNotFoundException {
+   public static boolean analyseTrace(final TestMethodCall testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash,
+         final File resultsFolder)
+         throws com.github.javaparser.ParseException, IOException {
       final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder)[0];
 
       boolean success = false;
@@ -151,7 +156,8 @@ public class TraceGettingIT {
       return success;
    }
 
-   public static void executeReading(final TestMethodCall testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File kiekerResultFolder)
+   public static void executeReading(final TestMethodCall testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash,
+         final File kiekerResultFolder)
          throws ParseException, IOException {
       final ArrayList<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING, new KiekerConfig()).getShortTrace("");
       LOG.debug("Short Trace: {}", shortTrace.size());

@@ -20,7 +20,6 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.jmh.JmhResultMover;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.folders.PeassFolders;
 
 public class TestResultMoving {
@@ -37,7 +36,7 @@ public class TestResultMoving {
    }
 
    @Test
-   public void testResultMoving() throws IOException, ViewNotFoundException {
+   public void testResultMoving() throws IOException {
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
 
       File jsonResultFile = new File(folders.getTempMeasurementFolder(), "testMethod.json");

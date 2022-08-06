@@ -14,12 +14,11 @@ import org.junit.jupiter.api.Test;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class TestSequiturView {
 
 	@Test
-	public void testRepetitionRepetition() throws ParseException, IOException, ViewNotFoundException {
+	public void testRepetitionRepetition() throws ParseException, IOException {
 		final File clazzDir = new File("target/viewtest/");
 		clazzDir.mkdirs();
 		TraceGettingIT.executeReading(new TestMethodCall("viewtest.TestMe", "test", ""), clazzDir, new HashMap<>(), "5", new File("src/test/resources/exampletrace/test"));

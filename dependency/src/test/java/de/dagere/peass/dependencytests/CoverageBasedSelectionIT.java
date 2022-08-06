@@ -20,7 +20,6 @@ import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.CommitIterator;
 import de.dagere.peass.vcs.GitUtils;
@@ -36,7 +35,7 @@ public class CoverageBasedSelectionIT {
    }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       try (MockedStatic<GitUtils> staticMock = Mockito.mockStatic(GitUtils.class)) {
          final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
