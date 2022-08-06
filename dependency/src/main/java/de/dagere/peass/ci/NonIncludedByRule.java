@@ -68,7 +68,7 @@ public class NonIncludedByRule {
       boolean anyParentExcluded = false;
       boolean anyParentIncluded = false;
 
-      TestCase parentTest = getParentTest(unit, mapping);
+      TestClazzCall parentTest = getParentTest(unit, mapping);
       while (parentTest != null) {
          CompilationUnit parentUnit = getUnit(parentTest, transformer, executionConfig);
          if (parentUnit == null) {
@@ -90,14 +90,14 @@ public class NonIncludedByRule {
       return parentInfo;
    }
 
-   private static TestCase getParentTest(CompilationUnit unit, ModuleClassMapping mapping) {
+   private static TestClazzCall getParentTest(CompilationUnit unit, ModuleClassMapping mapping) {
       for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
          if (clazz.getExtendedTypes().size() == 1) {
             String extendType = clazz.getExtendedTypes(0).getNameAsString();
             String fqn = FQNDeterminer.getParameterFQN(unit, extendType);
             String module = mapping.getModuleOfClass(fqn);
             ChangedEntity entity = new ChangedEntity(fqn, module);
-            TestCase parentTest = new TestCase(entity);
+            TestClazzCall parentTest = new TestClazzCall(entity);
             return parentTest;
          }
       }

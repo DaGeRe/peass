@@ -26,10 +26,6 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    // Saves parameters without paranthesis
    protected final String params;
 
-   public TestCase(final ChangedEntity entity) {
-      this(entity.getClazz(), entity.getMethod(), entity.getModule(), null);
-   }
-
    @JsonCreator
    public TestCase(@JsonProperty("clazz") final String clazz,
          @JsonProperty("method") final String method,

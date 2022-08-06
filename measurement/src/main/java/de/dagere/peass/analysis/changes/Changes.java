@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 /**
@@ -36,10 +37,10 @@ public class Changes implements Serializable {
    }
    
    @JsonIgnore
-   public Map<TestCase, List<Change>> getTestcaseObjectChanges(){
-      Map<TestCase, List<Change>> resultChanges = new LinkedHashMap<>();
+   public Map<TestClazzCall, List<Change>> getTestcaseObjectChanges(){
+      Map<TestClazzCall, List<Change>> resultChanges = new LinkedHashMap<>();
       for (Entry<String, List<Change>> testcaseEntry : testcaseChanges.entrySet()) {
-         TestCase test = new TestCase(testcaseEntry.getKey());
+         TestClazzCall test = TestClazzCall.createFromString(testcaseEntry.getKey());
          resultChanges.put(test, testcaseEntry.getValue());
       }
       return resultChanges;
