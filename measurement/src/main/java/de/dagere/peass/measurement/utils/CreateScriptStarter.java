@@ -53,8 +53,8 @@ public class CreateScriptStarter implements Callable<Void> {
    @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the static test selection file")
    protected File staticSelectionFile;
 
-   @Option(names = { "-executionfile", "--executionfile", "-executionFile", "--executionFile" }, description = "Path to the executionfile")
-   protected File executionfile;
+   @Option(names = { "-executionFile", "--executionFile" }, description = "Path to the executionfile")
+   protected File executionFile;
 
    @Option(names = { "-changeFile", "--changeFile" }, description = "Path to the change file")
    protected File[] changeFile;
@@ -90,8 +90,8 @@ public class CreateScriptStarter implements Callable<Void> {
       if (staticSelectionFile != null) {
          staticTestSelection = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
       }
-      if (executionfile != null) {
-         executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
+      if (executionFile != null) {
+         executionData = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
          staticTestSelection = new StaticTestSelection(executionData);
       }
       if (executionData == null && staticTestSelection == null) {
