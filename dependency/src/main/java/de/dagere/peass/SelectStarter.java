@@ -20,6 +20,7 @@ import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -97,12 +98,16 @@ public class SelectStarter implements Callable<Void>{
       mergeViews(outFiles, mergedFolders);
       
       if (!config.isDoNotGenerateProperties()) {
-         ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
-         PeassFolders propertyFolder = folders.getTempFolder("propertyReadFolder", executionConfigMixin.getGitCryptKey());
-         final PropertyReader propertyReader = new PropertyReader(resultsFolders, propertyFolder.getProjectFolder(), executionData, executionConfig);
-         propertyReader.readAllTestsProperties();
-         FileUtils.forceDelete(propertyFolder.getProjectFolder());
+         generateProperties(project, executionConfig, folders, executionData);
       }
+   }
+
+   private void generateProperties(final String project, ExecutionConfig executionConfig, final PeassFolders folders, ExecutionData executionData) throws IOException {
+      ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
+      PeassFolders propertyFolder = folders.getTempFolder("propertyReadFolder", executionConfigMixin.getGitCryptKey());
+      final PropertyReader propertyReader = new PropertyReader(resultsFolders, propertyFolder.getProjectFolder(), executionData, executionConfig);
+      propertyReader.readAllTestsProperties();
+      FileUtils.forceDelete(propertyFolder.getProjectFolder());
    }
 
    private void mergeViews(final ResultsFolders[] outFiles, final ResultsFolders mergedFolders) throws IOException {
