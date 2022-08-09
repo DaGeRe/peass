@@ -20,7 +20,7 @@ public class TestTestcaseSerialization {
    public void testSerialization() throws JsonProcessingException {
       CoverageSelectionInfo info = new CoverageSelectionInfo();
       CoverageSelectionCommit version = new CoverageSelectionCommit();
-      TestCase test = new TestCase("ClazzA", "methodA2", "moduleA", "int,String");
+      TestMethodCall test = new TestMethodCall("ClazzA", "methodA2", "moduleA", "int,String");
       TraceCallSummary traceCallSummary = new TraceCallSummary();
       traceCallSummary.addCall("app" + ChangedEntity.MODULE_SEPARATOR + "ClazzB" + ChangedEntity.METHOD_SEPARATOR + "methodB(double)");
       traceCallSummary.setTestcase(test);
@@ -43,7 +43,7 @@ public class TestTestcaseSerialization {
    public void testNoParamSerialization() throws JsonProcessingException {
       CoverageSelectionInfo info = new CoverageSelectionInfo();
       CoverageSelectionCommit version = new CoverageSelectionCommit();
-      TestCase test = new TestMethodCall("ClazzA", "methodA2", "moduleA");
+      TestMethodCall test = new TestMethodCall("ClazzA", "methodA2", "moduleA");
       TraceCallSummary traceCallSummary = new TraceCallSummary();
       traceCallSummary.addCall("app" + ChangedEntity.MODULE_SEPARATOR + "ClazzB" + ChangedEntity.METHOD_SEPARATOR + "methodB");
       traceCallSummary.setTestcase(test);

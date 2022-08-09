@@ -24,6 +24,7 @@ import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
 
 /**
@@ -64,7 +65,7 @@ public class MultipleVMTestUtil {
     * @param commit
     * @
     */
-   public static void saveSummaryData(final File summaryResultFile, final File oneResultFile, final VMResult oneResult, final TestCase testcase, final String commit,
+   public static void saveSummaryData(final File summaryResultFile, final File oneResultFile, final VMResult oneResult, final TestMethodCall testcase, final String commit,
          final long currentChunkStart, final String datacollectorName) {
       LOG.info("Writing to merged result file: {}", summaryResultFile);
       final Kopemedata summaryData = initKopemeData(summaryResultFile, testcase);
@@ -111,7 +112,7 @@ public class MultipleVMTestUtil {
       return st;
    }
 
-   public static Kopemedata initKopemeData(final File summaryResultFile, final TestCase testcase) {
+   public static Kopemedata initKopemeData(final File summaryResultFile, final TestMethodCall testcase) {
       final Kopemedata fullResultData = JSONDataLoader.loadData(summaryResultFile);
       if (fullResultData.getMethods().size() == 0) {
          fullResultData.setClazz(testcase.getClassWithModule());

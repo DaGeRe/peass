@@ -188,7 +188,7 @@ public class ResultOrganizer {
    public void saveSummaryFile(final String commit, final DatacollectorResult timeDataCollector, final File oneResultFile) {
       for (VMResult result : timeDataCollector.getResults()) {
          String paramString = ParamNameHelper.paramsToString(result.getParameters());
-         TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
+         TestMethodCall concreteTestcase = new TestMethodCall(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
 
          final File summaryResultFile = folders.getSummaryFile(concreteTestcase);
          MultipleVMTestUtil.saveSummaryData(summaryResultFile, oneResultFile, result, concreteTestcase, commit, currentChunkStart, timeDataCollector.getName());
@@ -220,7 +220,7 @@ public class ResultOrganizer {
       return saveAll;
    }
 
-   public TestCase getTest() {
+   public TestMethodCall getTest() {
       return testcase;
    }
 
