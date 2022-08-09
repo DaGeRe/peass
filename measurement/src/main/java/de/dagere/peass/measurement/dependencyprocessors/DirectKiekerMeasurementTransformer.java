@@ -19,6 +19,7 @@ import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.rca.kiekerReading.KiekerDurationReader;
 
@@ -32,7 +33,7 @@ public class DirectKiekerMeasurementTransformer {
       this.folders = folders;
    }
 
-   public void transform(TestCase test) {
+   public void transform(TestMethodCall test) {
       List<File> tempClazzFolder = folders.findTempClazzFolder(test);
       if (tempClazzFolder.size() > 0) {
          File tempFile = new File(tempClazzFolder.get(0), test.getMethod() + ".json");

@@ -36,7 +36,7 @@ public class NonIncludedTestRemover {
 
    private static void removeTestsWithoutMethod(final ExecutionConfig executionConfig, final Iterator<Entry<TestClazzCall, Set<String>>> testcaseIterator,
          final Entry<TestClazzCall, Set<String>> testcase) {
-      TestCase test = new TestCase(testcase.getKey().getClazz());
+      TestClazzCall test = testcase.getKey();
       if (!isTestIncluded(test, executionConfig)) {
          testcaseIterator.remove();
       }

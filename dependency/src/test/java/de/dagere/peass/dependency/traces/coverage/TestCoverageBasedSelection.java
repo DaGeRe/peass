@@ -36,7 +36,7 @@ public class TestCoverageBasedSelection {
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
       Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
 
-      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
+      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestMethodCall("ClazzA", "testA")));
    }
 
    @Test
@@ -76,7 +76,7 @@ public class TestCoverageBasedSelection {
       changes.add(entityWithIntParameter);
       Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
 
-      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
+      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestMethodCall("ClazzA", "testA")));
    }
 
    @Test
@@ -87,20 +87,20 @@ public class TestCoverageBasedSelection {
       CoverageSelectionCommit selection = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
       Set<TestCase> selected = selection.getTestcases().keySet();
 
-      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
-      TraceCallSummary traceBSummary = selection.getTestcases().get(new TestCase("ClazzB#testB"));
+      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestMethodCall("ClazzA", "testA")));
+      TraceCallSummary traceBSummary = selection.getTestcases().get(new TestMethodCall("ClazzB", "testB"));
       MatcherAssert.assertThat(traceBSummary.getSelectedChanges(), IsEmptyCollection.empty());
    }
 
    private List<TraceCallSummary> getTraceSummaryList() {
       List<Content> firstTrace = TestTraceSummaryTransformer.buildTestTrace();
-      TraceCallSummary summary = TraceSummaryTransformer.transform(new TestCase("ClazzA#testA"), firstTrace);
+      TraceCallSummary summary = TraceSummaryTransformer.transform(new TestMethodCall("ClazzA", "testA"), firstTrace);
 
       List<Content> secondTrace = TestTraceSummaryTransformer.buildOtherTrace();
-      TraceCallSummary summary2 = TraceSummaryTransformer.transform(new TestCase("ClazzB#testB"), secondTrace);
+      TraceCallSummary summary2 = TraceSummaryTransformer.transform(new TestMethodCall("ClazzB", "testB"), secondTrace);
 
       List<Content> betterTrace = TestTraceSummaryTransformer.buildBetterMatchingOtherTrace();
-      TraceCallSummary summary3 = TraceSummaryTransformer.transform(new TestCase("ClazzC#testC"), betterTrace);
+      TraceCallSummary summary3 = TraceSummaryTransformer.transform(new TestMethodCall("ClazzC", "testC"), betterTrace);
 
       List<TraceCallSummary> traces = Arrays.asList(summary, summary2, summary3);
       return traces;

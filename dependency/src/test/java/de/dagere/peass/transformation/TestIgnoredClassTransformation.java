@@ -14,6 +14,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class TestIgnoredClassTransformation {
 
@@ -21,7 +22,6 @@ public class TestIgnoredClassTransformation {
 
    @TempDir
    public static File testFolder;
-
 
    @BeforeEach
    public void initFolder() throws URISyntaxException, IOException {
@@ -31,21 +31,21 @@ public class TestIgnoredClassTransformation {
    @Test
    public void testJUnit4Ignore() throws IOException {
       TestSet tests = TestIgnoredMethodTransformation.executeTransformation("TestClassIgnored.java", testFolder);
-      
-      MatcherAssert.assertThat(tests.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestCase("TestClassIgnored#testMe"))));
+
+      MatcherAssert.assertThat(tests.getTestMethods(), Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("TestClassIgnored", "testMe"))));
    }
-   
+
    @Test
    public void testJUnit5Disabled() throws IOException {
       TestSet tests = TestIgnoredMethodTransformation.executeTransformation("TestClassDisabled.java", testFolder);
-      
-      MatcherAssert.assertThat(tests.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestCase("TestClassDisabled#testMe"))));
+
+      MatcherAssert.assertThat(tests.getTestMethods(), Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("TestClassDisabled", "testMe"))));
    }
-   
+
    @Test
    public void testJUnit5KoPeMeIgnore() throws IOException {
       TestSet tests = TestIgnoredMethodTransformation.executeTransformation("TestClassKoPeMeIgnore.java", testFolder);
-      
-      MatcherAssert.assertThat(tests.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestCase("TestClassKoPeMeIgnore#testMe"))));
+
+      MatcherAssert.assertThat(tests.getTestMethods(), Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("TestClassKoPeMeIgnore", "#testMe"))));
    }
 }
