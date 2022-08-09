@@ -19,6 +19,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -46,7 +47,8 @@ public class DependenciesOnlyStartversionIT {
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setEndcommit(iterator.getTag());
       executionConfig.setStartcommit(iterator.getPredecessor());
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfig(true), new PeassFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfig(true),
+            new PeassFolders(TestConstants.CURRENT_FOLDER),
             ContinuousDependencyReaderIT.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 
@@ -65,7 +67,8 @@ public class DependenciesOnlyStartversionIT {
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setEndcommit(iterator.getTag());
       executionConfig.setStartcommit(iterator.getPredecessor());
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfig(true), new PeassFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfig(true),
+            new PeassFolders(TestConstants.CURRENT_FOLDER),
             ContinuousDependencyReaderIT.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 
@@ -79,7 +82,7 @@ public class DependenciesOnlyStartversionIT {
 
       MatcherAssert.assertThat(dependencies.getCommits().get(newestVersion), Matchers.notNullValue());
       final TestSet testSet = getTestset(dependencies, newestVersion);
-      Assert.assertEquals(new TestCase("defaultpackage.TestMe#testMe"), testSet.getTests().toArray()[0]);
+      Assert.assertEquals(new TestMethodCall("defaultpackage.TestMe", "testMe"), testSet.getTestMethods().toArray()[0]);
    }
 
    private TestSet getTestset(final StaticTestSelection dependencies, final String newestVersion) {

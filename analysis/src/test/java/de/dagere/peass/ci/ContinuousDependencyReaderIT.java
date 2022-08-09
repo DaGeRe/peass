@@ -128,7 +128,7 @@ public class ContinuousDependencyReaderIT {
 
       MatcherAssert.assertThat(dependencies.getCommits().get(newestVersion), Matchers.notNullValue());
       final TestSet testSet = getTestset(dependencies, newestVersion);
-      Assert.assertEquals(new TestCase("defaultpackage.TestMe#testMe"), testSet.getTests().toArray()[0]);
+      Assert.assertEquals(new TestMethodCall("defaultpackage.TestMe", "testMe"), testSet.getTestMethods().toArray()[0]);
    }
 
    private static TestSet getTestset(final StaticTestSelection dependencies, final String newestVersion) {
