@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.changes.ProjectChanges;
+import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.ResultsFolders;
@@ -56,7 +57,7 @@ public class TestChangeReader {
       StaticTestSelection staticTestSelection = Constants.OBJECTMAPPER.readValue(staticTestSelectionFile, StaticTestSelection.class);
 
       ResultsFolders resultsFolders = new ResultsFolders(new File("target/temp"), "temp");
-      ChangeReader reader = new ChangeReader(resultsFolders, staticTestSelection);
+      ChangeReader reader = new ChangeReader(resultsFolders, staticTestSelection, new StatisticsConfig());
       reader.readFile(measurementsFolder);
 
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(resultsFolders.getChangeFile(), ProjectChanges.class);
