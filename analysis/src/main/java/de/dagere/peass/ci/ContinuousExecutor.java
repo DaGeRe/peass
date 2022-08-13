@@ -138,11 +138,11 @@ public class ContinuousExecutor {
    private void analyzeMeasurements(final File measurementFolder)
          throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       StaticTestSelection selectedTests = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
-      ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests);
+      ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests, measurementConfig.getStatisticsConfig());
       changeReader.readFile(measurementFolder.getParentFile());
    }
 
-   public String getLatestVersion() {
+   public String getLatestCommit() {
       return commit;
    }
 
@@ -150,7 +150,7 @@ public class ContinuousExecutor {
       return folders;
    }
 
-   public String getVersionOld() {
+   public String getCommitOld() {
       LOG.debug("Version old: {}", commitOld);
       return commitOld;
    }

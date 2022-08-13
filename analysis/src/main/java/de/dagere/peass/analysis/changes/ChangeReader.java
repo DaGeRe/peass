@@ -49,7 +49,7 @@ public class ChangeReader {
    private int measurements = 0;
    private int testcases = 0;
 
-   public StatisticsConfig config = new StatisticsConfig();
+   private final StatisticsConfig config;
 
    private double minChange = 0;
 
@@ -62,7 +62,10 @@ public class ChangeReader {
 
    private Map<String, TestSet> tests;
 
-   public ChangeReader(final ResultsFolders resultsFolders, final SelectedTests selectedTests) throws FileNotFoundException {
+   final ProjectChanges changes;
+   final ProjectStatistics info;
+
+   public ChangeReader(final ResultsFolders resultsFolders, final SelectedTests selectedTests, StatisticsConfig config) throws FileNotFoundException {
       this.selectedTests = selectedTests;
       this.resultsFolders = resultsFolders;
       File statisticsFolder = resultsFolders.getStatisticsFile().getParentFile();
@@ -75,15 +78,22 @@ public class ChangeReader {
          runCommandWriter = null;
          runCommandWriterSlurm = null;
       }
+      this.config = config;
+      
+      changes = new ProjectChanges(config, new CommitComparatorInstance(selectedTests));
+      info = new ProjectStatistics(new CommitComparatorInstance(selectedTests));
    }
 
    public ChangeReader(final ResultsFolders resultsFolders, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm,
-         final SelectedTests selectedTests) throws FileNotFoundException {
+         final SelectedTests selectedTests, StatisticsConfig config) throws FileNotFoundException {
       this.resultsFolders = resultsFolders;
       this.runCommandWriter = runCommandWriter;
       this.runCommandWriterSlurm = runCommandWriterSlurm;
       this.selectedTests = selectedTests;
-
+      this.config = config;
+      
+      changes = new ProjectChanges(config, new CommitComparatorInstance(selectedTests));
+      info = new ProjectStatistics(new CommitComparatorInstance(selectedTests));
    }
 
    public void setTests(final Map<String, TestSet> tests) {
@@ -95,19 +105,14 @@ public class ChangeReader {
       runCommandWriter = null;
       runCommandWriterSlurm = null;
       this.selectedTests = selectedTests;
-   }
-
-   public void setConfig(StatisticsConfig config) {
-      this.config = config;
-   }
-
-   public StatisticsConfig getConfig() {
-      return config;
+      
+      this.config = new StatisticsConfig();
+      
+      changes = new ProjectChanges(config, new CommitComparatorInstance(selectedTests));
+      info = new ProjectStatistics(new CommitComparatorInstance(selectedTests));
    }
 
    public ProjectChanges readFile(final File measurementFolder) {
-      final ProjectChanges changes = new ProjectChanges(config, new CommitComparatorInstance(selectedTests));
-      final ProjectStatistics info = new ProjectStatistics();
       LOG.debug("Reading from " + measurementFolder.getAbsolutePath());
       readFile(measurementFolder, changes, info);
 

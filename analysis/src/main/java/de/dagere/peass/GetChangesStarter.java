@@ -109,8 +109,7 @@ public class GetChangesStarter implements Callable<Void> {
          runCommandWriterSlurm = new RunCommandWriterSlurmRCA(config, runCommandPrinterRCA, "default", selectedTests);
       }
      
-      final ChangeReader reader = new ChangeReader(resultsFolders, runCommandWriter, runCommandWriterSlurm, selectedTests);
-      reader.setConfig(config.getStatisticsConfig());
+      final ChangeReader reader = new ChangeReader(resultsFolders, runCommandWriter, runCommandWriterSlurm, selectedTests, config.getStatisticsConfig());
       return reader;
    }
 

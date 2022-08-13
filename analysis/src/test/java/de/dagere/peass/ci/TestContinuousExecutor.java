@@ -84,7 +84,7 @@ public class TestContinuousExecutor {
          @Override
          public File answer(final InvocationOnMock invocation) throws Throwable {
 
-            File measurementFolder = new File(fullPeassFolder, executor.getLatestVersion() + "_" + executor.getVersionOld());
+            File measurementFolder = new File(fullPeassFolder, executor.getLatestCommit() + "_" + executor.getCommitOld());
             measurementFolder.mkdirs();
 
             File measurementRawData = new File("src/test/resources/continuousExecutorTest");
