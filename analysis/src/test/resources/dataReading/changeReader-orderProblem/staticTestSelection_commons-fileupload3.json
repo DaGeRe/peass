@@ -1,8 +1,8 @@
 {
   "url" : "/home/reichelt/daten4/diss/repos/tav-demo/commons-fileupload",
   "testGoal" : null,
-  "initialversion" : {
-    "version" : "fdf011a5f9a15826771b19cdd6795b247b0bc3e4",
+  "initialcommit" : {
+    "commit" : "fdf011a5f9a15826771b19cdd6795b247b0bc3e4",
     "jdk" : 8,
     "initialDependencies" : {
       "org.apache.commons.fileupload.ServletFileUploadTest#testEmptyFile" : {
@@ -2359,7 +2359,7 @@
       }
     }
   },
-  "versions" : {
+  "commits" : {
     "4ed6e923cb2033272fcb993978d69e325990a5aa" : {
       "running" : true,
       "jdk" : 8,
