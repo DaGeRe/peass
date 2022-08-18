@@ -109,7 +109,8 @@ public class Changes implements Serializable {
          String clazzname = testclazz.getKey();
          for (Change method : testclazz.getValue()) {
             String methodName = method.getMethod();
-            result.addTest(new TestMethodCall(clazzname, methodName));
+            TestMethodCall testcase = TestMethodCall.createFromClassString(clazzname, methodName);
+            result.addTest(testcase);
          }
       }
       return result;
