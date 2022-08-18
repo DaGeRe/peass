@@ -56,7 +56,7 @@ public class RunCommandWriter {
             + "-iterations " + config.getIterations() + " "
             + "-repetitions " + config.getRepetitions() + " "
             + "-vms " + config.getVms() + " "
-            + "-timeout " + config.getTimeoutInSeconds() + " "
+            + "-timeout " + config.getTimeoutInSeconds() / 60 + " "
             + "-measurementStrategy " + config.getMeasurementStrategy() + " "
             + (config.getExecutionConfig().isExcludeLog4jToSlf4j() ? "-excludeLog4jToSlf4j " : "")
             + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")
