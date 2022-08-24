@@ -101,63 +101,76 @@ public class CreateScriptStarter implements Callable<Void> {
       MeasurementConfig config = new MeasurementConfig(measurementConfigMixin, executionConfigMixin, new StatisticsConfigMixin(), new KiekerConfigMixin());
 
       PrintStream destination = System.out;
-      RunCommandWriter writer;
 
       if (alreadyFinishedFolder != null) {
-         for (File folder : alreadyFinishedFolder) {
-            for (File commitFolder : folder.listFiles()) {
-               for (File testclazzFolder : commitFolder.listFiles()) {
-                  for (File resultFile : testclazzFolder.listFiles()) {
-                     if (!resultFile.isDirectory()) {
-                        CauseSearchData csd = Constants.OBJECTMAPPER.readValue(resultFile, CauseSearchData.class);
-                        String commit = csd.getMeasurementConfig().getFixedCommitConfig().getCommit();
-                        // System.out.println(csd.getTestcase() + " " + commit);
-
-                        List<String> finishedTests = alreadyAnalyzed.get(commit);
-                        if (finishedTests == null) {
-                           finishedTests = new LinkedList<>();
-                           alreadyAnalyzed.put(commit, finishedTests);
-                        }
-                        finishedTests.add(csd.getTestcase());
-                     }
-                  }
-               }
-            }
-         }
+         determineMeasuredTestCommitPairs();
       }
 
       if (changeFile == null) {
-         if (useSlurm) {
-            destination.println("timestamp=$(date +%s)");
-            writer = new RunCommandWriterSlurm(config, System.out, experimentId, staticTestSelection);
-         } else {
-            writer = new RunCommandWriter(config, destination, experimentId, staticTestSelection);
-         }
-
-         if (statisticsFile != null) {
-            for (File statisticFile : statisticsFile) {
-               ProjectStatistics statistics = Constants.OBJECTMAPPER.readValue(statisticFile, ProjectStatistics.class);
-               for (Entry<String, Map<TestMethodCall, TestcaseStatistic>> commitEntry : statistics.getStatistics().entrySet()) {
-                  String commit = commitEntry.getKey();
-                  for (Entry<TestMethodCall, TestcaseStatistic> methodCallEntry : commitEntry.getValue().entrySet()) {
-                     TestMethodCall methodCall = methodCallEntry.getKey();
-                     TestSet currentCommitTestSet = executionData.getCommits().get(commit);
-                     currentCommitTestSet.removeTest(methodCall.onlyClazz(), methodCall.getMethod());
-                  }
-               }
-                  
-            }
-         }
-
-         generateExecuteCommands(staticTestSelection, executionData, experimentId, writer);
+         generateMeasurementExecuteCommands(config, destination);
       } else {
-         ExecutionData mergedExecutions = mergeChangeExecutions();
-
-         writer = new RunCommandWriterRCA(config, destination, experimentId, mergedExecutions);
-         generateExecuteCommands(staticTestSelection, mergedExecutions, experimentId, writer);
+         generateRCAExecuteCommands(config, destination);
       }
 
       return null;
+   }
+
+   private void determineMeasuredTestCommitPairs() throws IOException, StreamReadException, DatabindException {
+      for (File folder : alreadyFinishedFolder) {
+         for (File commitFolder : folder.listFiles()) {
+            for (File testclazzFolder : commitFolder.listFiles()) {
+               for (File resultFile : testclazzFolder.listFiles()) {
+                  if (!resultFile.isDirectory()) {
+                     CauseSearchData csd = Constants.OBJECTMAPPER.readValue(resultFile, CauseSearchData.class);
+                     String commit = csd.getMeasurementConfig().getFixedCommitConfig().getCommit();
+                     // System.out.println(csd.getTestcase() + " " + commit);
+
+                     List<String> finishedTests = alreadyAnalyzed.get(commit);
+                     if (finishedTests == null) {
+                        finishedTests = new LinkedList<>();
+                        alreadyAnalyzed.put(commit, finishedTests);
+                     }
+                     finishedTests.add(csd.getTestcase());
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   private void generateMeasurementExecuteCommands(MeasurementConfig config, PrintStream destination) throws IOException, StreamReadException, DatabindException {
+      RunCommandWriter writer;
+      if (useSlurm) {
+         destination.println("timestamp=$(date +%s)");
+         writer = new RunCommandWriterSlurm(config, System.out, experimentId, staticTestSelection);
+      } else {
+         writer = new RunCommandWriter(config, destination, experimentId, staticTestSelection);
+      }
+
+      if (statisticsFile != null) {
+         for (File statisticFile : statisticsFile) {
+            ProjectStatistics statistics = Constants.OBJECTMAPPER.readValue(statisticFile, ProjectStatistics.class);
+            for (Entry<String, Map<TestMethodCall, TestcaseStatistic>> commitEntry : statistics.getStatistics().entrySet()) {
+               String commit = commitEntry.getKey();
+               for (Entry<TestMethodCall, TestcaseStatistic> methodCallEntry : commitEntry.getValue().entrySet()) {
+                  TestMethodCall methodCall = methodCallEntry.getKey();
+                  TestSet currentCommitTestSet = executionData.getCommits().get(commit);
+                  currentCommitTestSet.removeTest(methodCall.onlyClazz(), methodCall.getMethod());
+               }
+            }
+               
+         }
+      }
+
+      generateExecuteCommands(staticTestSelection, executionData, experimentId, writer);
+   }
+
+   private void generateRCAExecuteCommands(MeasurementConfig config, PrintStream destination) throws IOException, StreamReadException, DatabindException {
+      RunCommandWriter writer;
+      ExecutionData mergedExecutions = mergeChangeExecutions();
+
+      writer = new RunCommandWriterRCA(config, destination, experimentId, mergedExecutions);
+      generateExecuteCommands(staticTestSelection, mergedExecutions, experimentId, writer);
    }
 
    private ExecutionData mergeChangeExecutions() throws IOException, StreamReadException, DatabindException {
