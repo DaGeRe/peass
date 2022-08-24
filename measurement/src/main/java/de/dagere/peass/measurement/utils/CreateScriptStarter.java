@@ -105,8 +105,8 @@ public class CreateScriptStarter implements Callable<Void> {
 
       if (alreadyFinishedFolder != null) {
          for (File folder : alreadyFinishedFolder) {
-            for (File versionFolder : folder.listFiles()) {
-               for (File testclazzFolder : versionFolder.listFiles()) {
+            for (File commitFolder : folder.listFiles()) {
+               for (File testclazzFolder : commitFolder.listFiles()) {
                   for (File resultFile : testclazzFolder.listFiles()) {
                      if (!resultFile.isDirectory()) {
                         CauseSearchData csd = Constants.OBJECTMAPPER.readValue(resultFile, CauseSearchData.class);
