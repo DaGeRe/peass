@@ -74,7 +74,7 @@ public class CauseTester extends AdaptiveTester {
       final Set<CallTreeNode> includedNodes = new HashSet<CallTreeNode>();
       nodes.forEach(node -> {
          if (!node.getConfig().getKiekerConfig().isMeasureAdded()) {
-            if (node.getKiekerPattern().equals(CauseSearchData.ADDED) || node.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
+            if (!node.getKiekerPattern().equals(CauseSearchData.ADDED) && !node.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
                includedNodes.add(node);
             }
          } else {
