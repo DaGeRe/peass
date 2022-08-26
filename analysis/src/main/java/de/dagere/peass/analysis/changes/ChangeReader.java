@@ -52,6 +52,8 @@ public class ChangeReader {
    private final StatisticsConfig config;
 
    private double minChange = 0;
+   
+   private double maximumRelativeDeviation = 0.25;
 
    private final CommitData allData = new CommitData();
    private final ResultsFolders resultsFolders;
@@ -217,6 +219,15 @@ public class ChangeReader {
       final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(cd);
       final TestMethodCall testcase = getTestcase(data, commits, describedChunk);
 
+      if (statistic.getDeviationOld() / statistic.getMeanOld() > maximumRelativeDeviation) {
+         System.out.println("Skipping " + testcase + " because of deviation: " + statistic.getDeviationOld() / statistic.getMeanOld());
+         return;
+      }
+      if (statistic.getDeviationCurrent() / statistic.getMeanCurrent() > maximumRelativeDeviation) {
+         System.out.println("Skipping " + testcase + " because of deviation: " + statistic.getDeviationCurrent() / statistic.getMeanCurrent());
+         return;
+      }
+      
       final double diff = describedChunk.getDiff();
       final boolean isBigEnoughDiff = Math.abs(diff) > minChange;
       allData.addStatistic(commits[1], testcase, fileName, statistic,
