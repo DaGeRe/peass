@@ -23,6 +23,7 @@ import de.dagere.peass.measurement.dependencyprocessors.AdaptiveTester;
 import de.dagere.peass.measurement.dependencyprocessors.helper.EarlyBreakDecider;
 import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.KiekerResultReader;
 import de.dagere.peass.testtransformation.TestTransformer;
 
@@ -71,7 +72,16 @@ public class CauseTester extends AdaptiveTester {
 
    private Set<CallTreeNode> prepareNodes(final List<CallTreeNode> nodes) {
       final Set<CallTreeNode> includedNodes = new HashSet<CallTreeNode>();
-      includedNodes.addAll(nodes);
+      nodes.forEach(node -> {
+         if (!node.getConfig().getKiekerConfig().isMeasureAdded()) {
+            if (node.getKiekerPattern().equals(CauseSearchData.ADDED) || node.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
+               includedNodes.add(node);
+            }
+         } else {
+            includedNodes.add(node);
+         }
+      });
+
       nodes.forEach(node -> node.initCommitData());
       return includedNodes;
    }

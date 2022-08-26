@@ -3,6 +3,8 @@ package de.dagere.peass.config;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class KiekerConfig implements Serializable {
@@ -20,6 +22,7 @@ public class KiekerConfig implements Serializable {
    private boolean useSourceInstrumentation = true;
    private boolean useSelectiveInstrumentation = true;
    private boolean useAggregation = true;
+   private boolean measureAdded = false;
    private boolean useCircularQueue = USE_CIRCULAR_QUEUE_DEFAULT;
    private boolean enableAdaptiveMonitoring = false;
    private boolean adaptiveInstrumentation = false;
@@ -47,6 +50,7 @@ public class KiekerConfig implements Serializable {
       this.useSourceInstrumentation = other.useSourceInstrumentation;
       this.useSelectiveInstrumentation = other.useSelectiveInstrumentation;
       this.useAggregation = other.useAggregation;
+      this.measureAdded = other.measureAdded;
       this.useCircularQueue = other.useCircularQueue;
       this.enableAdaptiveMonitoring = other.enableAdaptiveMonitoring;
       this.adaptiveInstrumentation = other.adaptiveInstrumentation;
@@ -112,6 +116,15 @@ public class KiekerConfig implements Serializable {
 
    public void setUseAggregation(final boolean useAggregation) {
       this.useAggregation = useAggregation;
+   }
+   
+   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+   public boolean isMeasureAdded() {
+      return measureAdded;
+   }
+   
+   public void setMeasureAdded(boolean measureAdded) {
+      this.measureAdded = measureAdded;
    }
 
    public boolean isUseCircularQueue() {
