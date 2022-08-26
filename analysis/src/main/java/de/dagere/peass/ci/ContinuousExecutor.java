@@ -139,7 +139,7 @@ public class ContinuousExecutor {
          throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       StaticTestSelection selectedTests = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests, measurementConfig.getStatisticsConfig());
-      changeReader.readFile(measurementFolder.getParentFile());
+      changeReader.readFolder(measurementFolder.getParentFile());
    }
 
    public String getLatestCommit() {

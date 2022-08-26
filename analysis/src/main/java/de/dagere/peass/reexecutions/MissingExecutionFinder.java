@@ -93,7 +93,7 @@ public class MissingExecutionFinder {
 
    private void removeSlurmExecutions(final File folder) {
       ChangeReader reader = new ChangeReader(folder.getName(), tests);
-      reader.readFile(folder);
+      reader.readFolder(folder);
       for (Entry<String, TestcaseData> entry : reader.getAllData().getData().entrySet()) {
          String version = entry.getKey();
          TestSet versionsTests = tests.getCommits().get(version);

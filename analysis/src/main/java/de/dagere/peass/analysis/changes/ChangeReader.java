@@ -61,9 +61,9 @@ public class ChangeReader {
    private final SelectedTests selectedTests;
 
    private Map<String, TestSet> tests;
-
+   
    final ProjectChanges changes;
-   final ProjectStatistics info;
+   final ProjectStatistics statistics;
 
    public ChangeReader(final ResultsFolders resultsFolders, final SelectedTests selectedTests, StatisticsConfig config) throws FileNotFoundException {
       this.selectedTests = selectedTests;
@@ -81,7 +81,7 @@ public class ChangeReader {
       this.config = config;
       
       changes = new ProjectChanges(config, new CommitComparatorInstance(selectedTests));
-      info = new ProjectStatistics(new CommitComparatorInstance(selectedTests));
+      statistics = new ProjectStatistics(new CommitComparatorInstance(selectedTests));
    }
 
    public ChangeReader(final ResultsFolders resultsFolders, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm,
@@ -93,7 +93,7 @@ public class ChangeReader {
       this.config = config;
       
       changes = new ProjectChanges(config, new CommitComparatorInstance(selectedTests));
-      info = new ProjectStatistics(new CommitComparatorInstance(selectedTests));
+      statistics = new ProjectStatistics(new CommitComparatorInstance(selectedTests));
    }
 
    public void setTests(final Map<String, TestSet> tests) {
@@ -109,53 +109,53 @@ public class ChangeReader {
       this.config = new StatisticsConfig();
       
       changes = new ProjectChanges(config, new CommitComparatorInstance(selectedTests));
-      info = new ProjectStatistics(new CommitComparatorInstance(selectedTests));
+      statistics = new ProjectStatistics(new CommitComparatorInstance(selectedTests));
    }
 
-   public ProjectChanges readFile(final File measurementFolder) {
+   public ProjectChanges readFolder(final File measurementFolder) {
       LOG.debug("Reading from " + measurementFolder.getAbsolutePath());
-      readFile(measurementFolder, changes, info);
+      readFile(measurementFolder);
 
       changes.setTestcaseCount(measurements);
-      changes.setCommitCount(info.getStatistics().size());
-      writeResults(measurementFolder, changes, info);
+      changes.setCommitCount(statistics.getStatistics().size());
+      writeResults(measurementFolder);
       System.out.println("Measurements: " + folderMeasurements + " Tests: " + testcases + " (last read: " + measurementFolder + ")");
       return changes;
    }
 
-   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) {
+   private void readFile(final File measurementFolder) {
       if (measurementFolder.isDirectory()) {
          for (final File file : measurementFolder.listFiles()) {
             String fileName = file.getName();
             if (fileName.matches("[0-9]+_[0-9]+")) {
                File slurmCleanFolder = new File(file, "peass/clean");
-               readCleanFolder(measurementFolder, changes, info, slurmCleanFolder);
+               readCleanFolder(measurementFolder, slurmCleanFolder);
             } else if (fileName.equals("clean")) {
-               readCleanFolder(measurementFolder, changes, info, file);
+               readCleanFolder(measurementFolder, file);
             } else if ((fileName.endsWith(".json") || fileName.endsWith(".xml")) 
                   && !fileName.equals("changes.json") && !fileName.equals("statistics.json")) {
-               readFile(measurementFolder, changes, info, file);
+               readFile(measurementFolder, file);
             }
          }
       } else {
          if (measurementFolder.getName().endsWith(".json") || measurementFolder.getName().endsWith(".xml")) {
-            readFile(measurementFolder, changes, info, measurementFolder);
+            readFile(measurementFolder, measurementFolder);
          }
       }
    }
 
-   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File cleanParentFolder) {
+   private void readCleanFolder(final File measurementFolder, final File cleanParentFolder) {
       LOG.info("Handling: {}", cleanParentFolder);
       for (File cleanedFolder : cleanParentFolder.listFiles()) {
          for (File childFile : cleanedFolder.listFiles()) {
             if (childFile.getName().endsWith(".json") || childFile.getName().endsWith(".xml")) {
-               readFile(measurementFolder, changes, info, childFile);
+               readFile(measurementFolder, childFile);
             }
          }
       }
    }
 
-   private void writeResults(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) {
+   private void writeResults(final File measurementFolder) {
       if (resultsFolders != null) {
          final String measurementFolderName = measurementFolder.getName();
          String executorName = measurementFolderName.substring(measurementFolderName.lastIndexOf(File.separator) + 1);
@@ -166,51 +166,49 @@ public class ChangeReader {
          final File statisticFile = resultsFolders.getStatisticsFile();
          try {
             Constants.OBJECTMAPPER.writeValue(resultfile, changes);
-            Constants.OBJECTMAPPER.writeValue(statisticFile, info);
+            Constants.OBJECTMAPPER.writeValue(statisticFile, statistics);
          } catch (final IOException e) {
             e.printStackTrace();
          }
       }
    }
 
-   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File file) {
+   private void readFile(final File measurementFolder, final File file) {
       final Kopemedata data = new JSONDataLoader(file).getFullData();
       for (final TestMethod testcaseMethod : data.getMethods()) {
          LOG.info(file.getAbsolutePath());
-         readTestcase(measurementFolder.getName(), data, testcaseMethod, changes, info);
+         readTestcase(measurementFolder.getName(), data, testcaseMethod);
          measurements += testcaseMethod.getDatacollectorResults().get(0).getChunks().size();
          testcases++;
       }
    }
 
-   private int readTestcase(final String fileName, final Kopemedata data, final TestMethod testcaseMethod, final ProjectChanges changeKnowledge,
-         final ProjectStatistics info) {
+   private int readTestcase(final String fileName, final Kopemedata data, final TestMethod testcaseMethod) {
       for (final VMResultChunk chunk : testcaseMethod.getDatacollectorResults().get(0).getChunks()) {
          folderMeasurements++;
          final String[] commits = KoPeMeDataHelper.getCommits(chunk, selectedTests);
          LOG.debug(commits[1]);
          if (commits[1] != null) {
-            readChunk(fileName, data, changeKnowledge, info, chunk, commits);
+            readChunk(fileName, data, chunk, commits);
          }
       }
       return folderMeasurements;
    }
 
-   private void readChunk(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info, final VMResultChunk chunk,
+   private void readChunk(final String fileName, final Kopemedata data, final VMResultChunk chunk,
          final String[] commits) {
       final DescribedChunk describedChunk = new DescribedChunk(chunk, commits[0], commits[1]);
       describedChunk.removeOutliers();
 
       if (describedChunk.getDescPrevious().getN() > 1 && describedChunk.getDescCurrent().getN() > 1) {
-         getIsChange(fileName, data, changeKnowledge, info, commits, describedChunk);
+         getIsChange(fileName, data, commits, describedChunk);
       } else {
          LOG.error("Too few measurements: {} - {} measurements, {} - {} measurements ", commits[0], describedChunk.getDescPrevious().getN(), commits[1],
                describedChunk.getDescCurrent().getN());
       }
    }
 
-   public void getIsChange(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info,
-         final String[] commits, final DescribedChunk describedChunk) {
+   public void getIsChange(final String fileName, final Kopemedata data, final String[] commits, final DescribedChunk describedChunk) {
       LOG.debug(data.getClazz());
       final TestcaseStatistic statistic = describedChunk.getStatistic(config);
       statistic.setPredecessor(commits[0]);
@@ -225,7 +223,7 @@ public class ChangeReader {
             statistic.isChange() && isBigEnoughDiff,
             !confidenceResult.equals(Relation.EQUAL));
       if (statistic.isChange() && isBigEnoughDiff) {
-         changeKnowledge.addChange(testcase, commits[1],
+         changes.addChange(testcase, commits[1],
                confidenceResult,
                statistic.isChange() ? Relation.GREATER_THAN : Relation.EQUAL,
                describedChunk.getDescPrevious().getMean(), diff,
@@ -234,7 +232,7 @@ public class ChangeReader {
 
          writeRunCommands(commits, describedChunk, testcase);
       }
-      info.addMeasurement(commits[1], testcase, statistic);
+      statistics.addMeasurement(commits[1], testcase, statistic);
    }
 
    private TestMethodCall getTestcase(final Kopemedata data, final String[] commits, final DescribedChunk describedChunk) {

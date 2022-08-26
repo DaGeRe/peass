@@ -94,7 +94,7 @@ public class GetChangesStarter implements Callable<Void> {
          if (!dataFile.exists()) {
             throw new RuntimeException("File " + dataFile + " does not exist!");
          }
-         reader.readFile(dataFile);
+         reader.readFolder(dataFile);
       }
       return null;
    }
