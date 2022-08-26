@@ -14,6 +14,14 @@ var svg = d3.select("#tree").append("svg")
   .append("g")
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var faster_removed = textures.paths().d("crosses")
+.background("#99FF99")
+.thicker();
+
+var slower_added = textures.paths().d("caps")
+.background("#FF9999")
+.thicker();
+
 var faster_changed = textures.lines()
 .background("#00FF00")
 .thicker();
@@ -30,6 +38,8 @@ var equal_changed = textures.lines()
 .background("#FFF")
 .thicker();
 
+svg.call(faster_removed);
+svg.call(slower_added);
 svg.call(faster_changed);
 svg.call(slower_changed);
 svg.call(unknown_changed);
@@ -45,6 +55,12 @@ d3.select(self.frameElement).style("height", "500px");
 
 function getTexture(node) {
   if (node.hasSourceChange) { 
+    if (node.kiekerPattern == "ADDED") {
+      return faster_removed.url();
+    }
+    if (node.otherKiekerPattern == "ADDED") {
+      return slower_added.url();
+    }
     switch (node.state) {
 	  case 'FASTER': return faster_changed.url();
 	  case 'SLOWER': return slower_changed.url();
