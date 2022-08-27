@@ -15,8 +15,8 @@ import org.apache.commons.io.FileUtils;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class DiffFileGeneraturTestUtil {
-   public static TraceFileMapping generateFiles(File rawFileFolder, TestCase test, String ending, boolean writeExpanded) throws IOException {
-      TraceFileMapping mapping = writeBasicFiles(rawFileFolder, test, ending);
+   public static TraceFileMapping generateFiles(File rawFileFolder, TestCase test, String ending, boolean writeExpanded, boolean change) throws IOException {
+      TraceFileMapping mapping = writeBasicFiles(rawFileFolder, test, ending, change);
 
       String[] variants;
       if (writeExpanded) {
@@ -25,22 +25,27 @@ public class DiffFileGeneraturTestUtil {
          variants = new String[] { OneTraceGenerator.NOCOMMENT, OneTraceGenerator.METHOD, OneTraceGenerator.SUMMARY };
       }
 
-      writeVariants(rawFileFolder, ending, variants);
+      writeVariants(rawFileFolder, ending, variants, change);
 
       return mapping;
    }
 
-   private static void writeVariants(File rawFileFolder, String ending, String[] variants) throws IOException {
+   private static void writeVariants(File rawFileFolder, String ending, String[] variants, boolean change) throws IOException {
       for (String variant : variants) {
          File version1variantFile = new File(rawFileFolder, "version1" + variant + ending);
          write(version1variantFile, "de.dagere.peass.ExampleTest#test\nSomeSource");
 
          File version2variantFile = new File(rawFileFolder, "version2" + variant + ending);
-         write(version2variantFile, "de.dagere.peass.ExampleTest#test\nChangedSource");
+         if (change) {
+            write(version2variantFile, "de.dagere.peass.ExampleTest#test\nChangedSource");
+         } else {
+            write(version2variantFile, "de.dagere.peass.ExampleTest#test\nSomeSource");
+         }
+
       }
    }
 
-   private static TraceFileMapping writeBasicFiles(File rawFileFolder, TestCase test, String ending) throws IOException {
+   private static TraceFileMapping writeBasicFiles(File rawFileFolder, TestCase test, String ending, boolean change) throws IOException {
       TraceFileMapping mapping = new TraceFileMapping();
 
       File version1trace = new File(rawFileFolder, "version1" + ending);
@@ -48,7 +53,11 @@ public class DiffFileGeneraturTestUtil {
       mapping.addTraceFile(test, version1trace);
 
       File version2trace = new File(rawFileFolder, "version2" + ending);
-      write(version2trace, "de.dagere.peass.ExampleTest#test\nChangedSource");
+      if (change) {
+         write(version2trace, "de.dagere.peass.ExampleTest#test\nChangedSource");
+      } else {
+         write(version2trace, "de.dagere.peass.ExampleTest#test\nSomeSource");
+      }
       mapping.addTraceFile(test, version2trace);
       return mapping;
    }

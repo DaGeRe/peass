@@ -37,7 +37,7 @@ public class TestDiffFileGenerator {
 
    @Test
    public void testTxtDiffGeneration() throws IOException {
-      TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.TXT_ENDING, true);
+      TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.TXT_ENDING, true, true);
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
@@ -61,8 +61,8 @@ public class TestDiffFileGenerator {
    }
 
    @Test
-   public void testZipDiffGeneration() throws IOException {
-      TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.ZIP_ENDING, true);
+   public void testZipDiffGeneration_different() throws IOException {
+      TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.ZIP_ENDING, true, true);
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
@@ -84,10 +84,24 @@ public class TestDiffFileGenerator {
       File expectedResultFileMethodExpanded = new File(diffFolder, "ExampleTest#test" + OneTraceGenerator.METHOD_EXPANDED + ".zip");
       Assert.assertTrue(expectedResultFileMethodExpanded.exists());
    }
+   
+   @Test
+   public void testZipDiffGeneration_equal() throws IOException {
+      TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.ZIP_ENDING, true, false);
+
+      DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
+      CommitStaticSelection staticSelection = new CommitStaticSelection();
+      staticSelection.getChangedClazzes().put(new ChangedEntity("de.SomeClass"), new TestSet(test));
+
+      generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
+
+      File expectedResultFile = new File(diffFolder, "ExampleTest#test.zip");
+      Assert.assertFalse(expectedResultFile.exists());
+   }
 
    @Test
    public void testNoExpandedZipDiffGeneration() throws IOException {
-      TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.ZIP_ENDING, false);
+      TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.ZIP_ENDING, false, true);
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
