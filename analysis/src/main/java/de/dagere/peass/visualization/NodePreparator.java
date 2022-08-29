@@ -11,15 +11,11 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
-import de.dagere.peass.measurement.statistics.Relation;
-import de.dagere.peass.measurement.statistics.StatisticUtil;
-import de.dagere.peass.measurement.statistics.bimodal.CompareData;
 import de.dagere.peass.visualization.GraphNode.State;
 
 public class NodePreparator {
@@ -225,10 +221,7 @@ public class NodePreparator {
    private void setColorFullStatistics(final MeasuredNode measuredNode, final GraphNode graphNode, final StatisticalSummary statisticsOld,
          final StatisticalSummary statisticsCurrent) {
       if (measuredNode.getStatistic().getMeanCurrent() > 0.001 && measuredNode.getStatistic().getMeanOld() > 0.001) {
-         CompareData cd = new CompareData(measuredNode.getValuesPredecessor().getValuesArray(), measuredNode.getValues().getValuesArray());
-         MeasurementConfig measurementConfig = new MeasurementConfig(-1);
-         boolean isChange = StatisticUtil.isDifferent(cd, measurementConfig.getStatisticsConfig()) != Relation.EQUAL;
-//         final boolean isChange = StatisticUtil.isChange(statisticsOld, statisticsCurrent, data.getMeasurementConfig()) == Relation.UNEQUAL;
+         final boolean isChange = measuredNode.isChange(0.01);
          if (isChange) {
             if (measuredNode.getStatistic().getTvalue() < 0) {
                graphNode.setSlower();
