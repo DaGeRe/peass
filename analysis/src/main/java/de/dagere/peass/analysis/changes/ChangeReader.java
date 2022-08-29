@@ -219,6 +219,13 @@ public class ChangeReader {
       final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(cd);
       final TestMethodCall testcase = getTestcase(data, commits, describedChunk);
 
+      final double diff = describedChunk.getDiff();
+      final boolean isBigEnoughDiff = Math.abs(diff) > minChange;
+      allData.addStatistic(commits[1], testcase, fileName, statistic,
+            statistic.isChange() && isBigEnoughDiff,
+            !confidenceResult.equals(Relation.EQUAL));
+      statistics.addMeasurement(commits[1], testcase, statistic);
+      
       if (statistic.getDeviationOld() / statistic.getMeanOld() > maximumRelativeDeviation) {
          System.out.println("Skipping " + testcase + " because of deviation: " + statistic.getDeviationOld() / statistic.getMeanOld());
          return;
@@ -228,11 +235,6 @@ public class ChangeReader {
          return;
       }
       
-      final double diff = describedChunk.getDiff();
-      final boolean isBigEnoughDiff = Math.abs(diff) > minChange;
-      allData.addStatistic(commits[1], testcase, fileName, statistic,
-            statistic.isChange() && isBigEnoughDiff,
-            !confidenceResult.equals(Relation.EQUAL));
       if (statistic.isChange() && isBigEnoughDiff) {
          changes.addChange(testcase, commits[1],
                confidenceResult,
@@ -243,7 +245,7 @@ public class ChangeReader {
 
          writeRunCommands(commits, describedChunk, testcase);
       }
-      statistics.addMeasurement(commits[1], testcase, statistic);
+      
    }
 
    private TestMethodCall getTestcase(final Kopemedata data, final String[] commits, final DescribedChunk describedChunk) {
