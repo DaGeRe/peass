@@ -53,7 +53,7 @@ public class CreateScriptStarter implements Callable<Void> {
    @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the static test selection file")
    protected File staticSelectionFile;
 
-   @Option(names = { "-executionfile", "--executionfile", "-executionFile", "--executionFile" }, description = "Path to the executionfile")
+   @Option(names = { "-executionFile", "--executionFile" }, description = "Path to the executionfile")
    protected File executionfile;
 
    @Option(names = { "-changeFile", "--changeFile" }, description = "Path to the change file")
