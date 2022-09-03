@@ -276,15 +276,16 @@ public class ChangeReader {
          final VMResult exampleResult = describedChunk.getCurrent().get(0);
          final int iterations = (int) exampleResult.getIterations();
          final int repetitions = (int) exampleResult.getRepetitions();
-         final int vms = describedChunk.getCurrent().size();
 
          final int commitIndex = Arrays.binarySearch(selectedTests.getCommitNames(), commits[1]);
 
-         runCommandWriter.createSingleMethodCommand(commitIndex, commits[1], testcase.getExecutable(),
-               (int) exampleResult.getWarmup(), iterations, repetitions, vms);
+         runCommandWriter.getConfig().setIterations(iterations);
+         runCommandWriter.getConfig().setRepetitions(repetitions);
+         
+         runCommandWriter.createSingleMethodCommand(commitIndex, commits[1], testcase.getExecutable());
 
          runCommandWriterSlurm.createSingleMethodCommand(commitIndex, commits[1], testcase.getExecutable(),
-               iterations, repetitions, vms);
+               iterations, repetitions, runCommandWriter.getConfig().getVms());
       }
    }
 

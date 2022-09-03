@@ -48,6 +48,10 @@ public class RunCommandWriter {
          createSingleMethodCommand(commitIndex, commit, testcaseName);
       }
    }
+   
+   public MeasurementConfig getConfig() {
+      return config;
+   }
 
    public void createSingleMethodCommand(final int commitIndex, final String commit, final String testcaseName) {
       goal.println("./peass measure "
