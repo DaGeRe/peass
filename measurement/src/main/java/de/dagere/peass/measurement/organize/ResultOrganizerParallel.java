@@ -20,14 +20,14 @@ public class ResultOrganizerParallel extends ResultOrganizer {
    public ResultOrganizerParallel(final PeassFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, final TestMethodCall test,
          final int expectedIterations) {
       super(folders, currentVersion, currentChunkStart, isUseKieker, saveAll, test, expectedIterations);
-      LOG.debug("Creating new ResultOrganizerParallel");
-      LOG.info("Instance: " + System.identityHashCode(this));
+      LOG.trace("Creating new ResultOrganizerParallel");
+      LOG.trace("Instance: {}", System.identityHashCode(this));
    }
 
    public void addCommitFolders(final String commit, final PeassFolders commitTempFolder) {
       LOG.debug("Adding commit: {}", commit);
       sourceFolders.put(commit, commitTempFolder);
-      LOG.info("Instance: " + System.identityHashCode(this) + " Keys: " + sourceFolders.keySet());
+      LOG.trace("Instance: {} Keys: {}", System.identityHashCode(this), sourceFolders.keySet());
    }
    
    @Override
