@@ -349,7 +349,7 @@ public class DependencyManager extends KiekerResultManager {
     * @throws InterruptedException
     */
    public TestExistenceChanges updateDependencies(final TestSet testsToUpdate, final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
-      final Map<TestCase, Map<ChangedEntity, Set<String>>> oldDepdendencies = dependencies.getCopiedDependencies();
+      final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies = dependencies.getCopiedDependencies();
 
       // Remove all old dependencies where changes happened, because they may
       // have been deleted
@@ -369,7 +369,7 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private TestExistenceChanges populateExistingTests(final TestSet testsToUpdate, final ModuleClassMapping mapping,
-         final Map<TestCase, Map<ChangedEntity, Set<String>>> oldDepdendencies) throws FileNotFoundException, IOException, XmlPullParserException {
+         final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies) throws FileNotFoundException, IOException, XmlPullParserException {
       final TestExistenceChanges changes = new TestExistenceChanges();
 
       for (final Entry<TestClazzCall, Set<String>> entry : testsToUpdate.entrySet()) {
@@ -413,12 +413,12 @@ public class DependencyManager extends KiekerResultManager {
       }
    }
 
-   void checkRemoved(final Map<TestCase, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes, final Entry<TestClazzCall, Set<String>> entry,
+   void checkRemoved(final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes, final Entry<TestClazzCall, Set<String>> entry,
          final File testclazzFolder) {
       LOG.error("Testclass {} does not exist anymore or does not create results. Folder: {}", entry.getKey(), testclazzFolder);
       final TestCase testclass = new TestMethodCall(entry.getKey().getClazz(), "", entry.getKey().getModule());
       boolean oldContained = false;
-      for (final TestCase oldTest : oldDepdendencies.keySet()) {
+      for (final TestMethodCall oldTest : oldDepdendencies.keySet()) {
          if (testclass.getClazz().equals(oldTest.getClazz()) && testclass.getModule().equals(oldTest.getModule())) {
             oldContained = true;
          }
@@ -436,10 +436,10 @@ public class DependencyManager extends KiekerResultManager {
     * @param oldDepdendencies
     * @param changes
     */
-   private void findAddedTests(final Map<TestCase, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes) {
+   private void findAddedTests(final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes) {
       for (final Map.Entry<TestMethodCall, CalledMethods> newDependency : dependencies.getDependencyMap().entrySet()) {
          // testclass -> depending class -> method
-         final TestCase testcase = newDependency.getKey();
+         final TestMethodCall testcase = newDependency.getKey();
          if (!oldDepdendencies.containsKey(testcase)) {
             changes.addAddedTest(testcase.onlyClazzEntity(), testcase);
             for (final Map.Entry<ChangedEntity, Set<String>> newCallees : newDependency.getValue().getCalledMethods().entrySet()) {

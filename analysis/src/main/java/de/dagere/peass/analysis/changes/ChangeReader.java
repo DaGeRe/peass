@@ -252,10 +252,10 @@ public class ChangeReader {
       TestMethodCall testcase = new TestMethodCall(data);
       if (tests != null) {
          TestSet testsOfThisVersion = tests.get(commits[1]);
-         for (TestCase test : testsOfThisVersion.getTests()) {
+         for (TestMethodCall test : testsOfThisVersion.getTestMethods()) {
             if (paramsEqual(testcase.getParams(), test)) {
                if (test.getClazz().equals(testcase.getClazz()) && test.getMethod().equals(testcase.getMethod())) {
-                  testcase = (TestMethodCall) test;
+                  testcase = test;
                }
             }
          }

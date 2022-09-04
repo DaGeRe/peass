@@ -107,8 +107,8 @@ public class TestDependencies {
       return dependencyMap.size();
    }
 
-   public Map<TestCase, Map<ChangedEntity, Set<String>>> getCopiedDependencies() {
-      final Map<TestCase, Map<ChangedEntity, Set<String>>> copy = new HashMap<>();
+   public Map<TestMethodCall, Map<ChangedEntity, Set<String>>> getCopiedDependencies() {
+      final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> copy = new HashMap<>();
       for (final Map.Entry<TestMethodCall, CalledMethods> entry : dependencyMap.entrySet()) {
          final Map<ChangedEntity, Set<String>> dependencies = new HashMap<>();
          for (final Map.Entry<ChangedEntity, Set<String>> testcase : entry.getValue().getCalledMethods().entrySet()) {

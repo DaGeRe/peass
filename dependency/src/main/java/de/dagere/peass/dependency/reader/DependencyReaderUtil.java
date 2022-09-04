@@ -34,6 +34,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -78,8 +79,8 @@ public class DependencyReaderUtil {
       }
    }
 
-   static void addNewTestcases(final CommitStaticSelection newVersionInfo, final Map<ChangedEntity, Set<TestCase>> newTestcases) {
-      for (final Map.Entry<ChangedEntity, Set<TestCase>> newTestcase : newTestcases.entrySet()) {
+   static void addNewTestcases(final CommitStaticSelection newVersionInfo, final Map<ChangedEntity, Set<TestMethodCall>> newTestcases) {
+      for (final Map.Entry<ChangedEntity, Set<TestMethodCall>> newTestcase : newTestcases.entrySet()) {
          final ChangedEntity changedClazz = newTestcase.getKey();
          TestSet testsetForChange = null;
          for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
@@ -92,7 +93,7 @@ public class DependencyReaderUtil {
             testsetForChange = new TestSet();
             newVersionInfo.getChangedClazzes().put(changedClazz, testsetForChange);
          }
-         for (final TestCase testcase : newTestcase.getValue()) {
+         for (final TestMethodCall testcase : newTestcase.getValue()) {
             testsetForChange.addTest(testcase.onlyClazz(), testcase.getMethod());
          }
       }
