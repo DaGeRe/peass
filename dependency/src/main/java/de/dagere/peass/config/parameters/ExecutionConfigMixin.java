@@ -98,6 +98,10 @@ public class ExecutionConfigMixin {
    @Option(names = { "-properties", "--properties" }, description = "Sets the properties that should be passed to the test (e.g. \"-Dmy.var=5\")")
    public String properties;
 
+   @Option(names = { "-useAnbox",
+         "--useAnbox" }, description = "Activates usage of Anbox measurement features (currently experimental)")
+   protected boolean useAnbox = false;
+
    public long getTimeout() {
       return timeout;
    }
@@ -297,6 +301,14 @@ public class ExecutionConfigMixin {
    public void setProperties(final String properties) {
       this.properties = properties;
    }
+   
+   public boolean isUseAnbox() {
+      return useAnbox;
+   }
+   
+   public void setUseAnbox(boolean useAnbox) {
+      this.useAnbox = useAnbox;
+   }
 
    public ExecutionConfig getExecutionConfig() {
       ExecutionConfig config = new ExecutionConfig(timeout);
@@ -374,6 +386,8 @@ public class ExecutionConfigMixin {
       if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
          throw new RuntimeException("executeBeforeClassInMeasurement may only be activated if onlyMeasureWorkload is deactivated!");
       }
+      
+      config.setUseAnbox(useAnbox);
 
       return config;
    }
