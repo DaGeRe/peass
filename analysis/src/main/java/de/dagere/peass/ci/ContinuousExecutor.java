@@ -13,6 +13,8 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.changes.ChangeReader;
+import de.dagere.peass.analysis.changes.ProjectChanges;
+import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
@@ -138,7 +140,11 @@ public class ContinuousExecutor {
    private void analyzeMeasurements(final File measurementFolder)
          throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       StaticTestSelection selectedTests = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
-      ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests, measurementConfig.getStatisticsConfig());
+      
+      ProjectChanges changes = resultsFolders.getChangeFile().exists() ? Constants.OBJECTMAPPER.readValue(resultsFolders.getChangeFile(), ProjectChanges.class) : new ProjectChanges(comparator);
+      ProjectStatistics statistics = resultsFolders.getStatisticsFile().exists() ? Constants.OBJECTMAPPER.readValue(resultsFolders.getStatisticsFile(), ProjectStatistics.class) : new ProjectStatistics(comparator);
+      
+      ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests, measurementConfig.getStatisticsConfig(), changes, statistics);
       changeReader.readFolder(measurementFolder.getParentFile());
    }
 

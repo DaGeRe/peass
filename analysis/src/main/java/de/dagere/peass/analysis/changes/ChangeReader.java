@@ -85,6 +85,25 @@ public class ChangeReader {
       changes = new ProjectChanges(config, new CommitComparatorInstance(selectedTests));
       statistics = new ProjectStatistics(new CommitComparatorInstance(selectedTests));
    }
+   
+   public ChangeReader(final ResultsFolders resultsFolders, final SelectedTests selectedTests, StatisticsConfig config, ProjectChanges oldChanges, ProjectStatistics oldStatistics) throws FileNotFoundException {
+      this.selectedTests = selectedTests;
+      this.resultsFolders = resultsFolders;
+      File statisticsFolder = resultsFolders.getStatisticsFile().getParentFile();
+      if (selectedTests.getUrl() != null && !selectedTests.getUrl().isEmpty()) {
+         final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-rca-" + resultsFolders.getProjectName() + ".sh"));
+         runCommandWriter = new RunCommandWriterRCA(new MeasurementConfig(30), runCommandPrinter, "default", selectedTests);
+         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-slurm-" + resultsFolders.getProjectName() + ".sh"));
+         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(new MeasurementConfig(30), runCommandPrinterRCA, "default", selectedTests);
+      } else {
+         runCommandWriter = null;
+         runCommandWriterSlurm = null;
+      }
+      this.config = config;
+      
+      changes = oldChanges;
+      statistics = oldStatistics;
+   }
 
    public ChangeReader(final ResultsFolders resultsFolders, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm,
          final SelectedTests selectedTests, StatisticsConfig config) throws FileNotFoundException {
