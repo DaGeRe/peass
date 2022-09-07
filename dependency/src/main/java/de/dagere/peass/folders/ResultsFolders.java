@@ -66,6 +66,10 @@ public class ResultsFolders {
    public File getChangeFile() {
       return new File(resultFolder, "changes.json");
    }
+   
+   public File getRCAMappingFile() {
+      return new File(resultFolder, "rcaMapping.json");
+   }
 
    public File getRtsLogFolder() {
       File folder = new File(resultFolder, "rtsLogs");
