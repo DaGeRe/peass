@@ -35,6 +35,7 @@ public abstract class DataAnalyser {
          
          @Override
          public void run() {
+            isFinished = false;
             TestData measurementEntry;
             try {
                measurementEntry = measurements.take();
@@ -55,7 +56,7 @@ public abstract class DataAnalyser {
    }
 
    private void finishProcessingIfRunning(Thread processorThread) throws InterruptedException {
-      Thread.sleep(1000);
+      Thread.sleep(50);
       isFinished = true;
       processorThread.join();
 //      processorThread.interrupt();
