@@ -67,6 +67,8 @@ public class ExecutionConfig implements Serializable {
    private String gitCryptKey;
    private boolean useAnbox = false;
 
+   private List<String> increaseVariableValues = new LinkedList<>();
+
    private String properties;
 
    private List<String> clazzFolders = new LinkedList<>();
@@ -115,6 +117,8 @@ public class ExecutionConfig implements Serializable {
       this.testClazzFolders = other.testClazzFolders;
       
       this.useAnbox = other.useAnbox;
+
+      this.increaseVariableValues = other.getIncreaseVariableValues();
    }
 
    public ExecutionConfig(final long timeoutInMinutes) {
@@ -403,14 +407,27 @@ public class ExecutionConfig implements Serializable {
       allFolders.addAll(testClazzFolders);
       return allFolders;
    }
-   
+
    public boolean isUseAnbox() {
       return useAnbox;
    }
-   
+
    @JsonInclude(value = JsonInclude.Include.NON_DEFAULT)
    public void setUseAnbox(boolean useAnbox) {
       this.useAnbox = useAnbox;
+   }
+
+   @JsonInclude(Include.NON_EMPTY)
+   public List<String> getIncreaseVariableValues() {
+      return increaseVariableValues;
+   }
+
+   public void setIncreaseVariableValues(final List<String> increaseVariableValues) {
+      this.increaseVariableValues = increaseVariableValues;
+   }
+
+   public boolean isIncreaseVariableValues() {
+      return increaseVariableValues != null && !increaseVariableValues.isEmpty();
    }
 
    /**
