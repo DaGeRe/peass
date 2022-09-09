@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -42,7 +43,9 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.ClassExpr;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
@@ -65,6 +68,7 @@ import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.execution.utils.ProjectModules;
+import groovyjarjarantlr4.v4.codegen.model.chunk.TokenPropertyRef_index;
 
 /**
  * Transforms JUnit-Tests to performance tests.
@@ -101,9 +105,6 @@ public class JUnitTestTransformer implements TestTransformer {
       } else {
          datacollectorlist = config.isUseGC() ? DataCollectorList.ONLYTIME : DataCollectorList.ONLYTIME_NOGC;
       }
-
-      if (config.getExecutionConfig().isIncreaseVariableValues())
-         transformationsmethode();
    }
 
    public Map<File, CompilationUnit> getLoadedFiles() {
@@ -208,9 +209,10 @@ public class JUnitTestTransformer implements TestTransformer {
 
       LOG.debug("JUnit Versions Determined: {}", junitVersions.size());
       for (final Map.Entry<File, Integer> fileVersionEntry : junitVersions.entrySet()) {
-         LOG.debug("Editing test file: {} {}", fileVersionEntry.getKey(), fileVersionEntry.getValue()); // TODO
-         // change to
-         // trace
+         LOG.debug("Editing test file: {} {}", fileVersionEntry.getKey(), fileVersionEntry.getValue());
+
+         increaseVariableValues(fileVersionEntry);
+
          if (fileVersionEntry.getValue() == 3) {
             editJUnit3(fileVersionEntry.getKey());
          } else if (fileVersionEntry.getValue() == 4 || fileVersionEntry.getValue() == 34) {
@@ -221,9 +223,30 @@ public class JUnitTestTransformer implements TestTransformer {
       }
    }
 
-   public void transformationsmethode() {
-      System.out.println("List of Variables");
-      config.getExecutionConfig().getIncreaseVariableValues().forEach(System.out::println);
+   private void increaseVariableValues(final Map.Entry<File, Integer> fileVersionEntry) {
+      final CompilationUnit unit = loadedFiles.get(fileVersionEntry.getKey());
+      if (config.getExecutionConfig().getIncreaseVariableValues().size() > 0) {
+         for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
+            for (String toIncreaseVariable : config.getExecutionConfig().getIncreaseVariableValues()) {
+               String clazzName = toIncreaseVariable.substring(0, toIncreaseVariable.lastIndexOf("."));
+               String simpleClazzName = clazzName.substring(clazzName.lastIndexOf(".") + 1);
+
+               String fieldName = toIncreaseVariable.substring(toIncreaseVariable.lastIndexOf(".") + 1, toIncreaseVariable.indexOf(":"));
+
+               if (simpleClazzName.equals(clazz.getNameAsString())) {
+                  Optional<FieldDeclaration> fieldOptional = clazz.getFieldByName(fieldName);
+                  if (fieldOptional.isPresent()) {
+                     FieldDeclaration field = fieldOptional.get();
+                     System.out.println(field);
+                     VariableDeclarator variableDeclarator = field.getVariables().get(0);
+                     
+                     String value = toIncreaseVariable.substring(toIncreaseVariable.indexOf(":")+1);
+                     variableDeclarator.setInitializer(value);
+                  }
+               }
+            }
+         }
+      }
    }
 
    /**
@@ -371,9 +394,9 @@ public class JUnitTestTransformer implements TestTransformer {
       if (clazzFile != null && clazzFile.getParentFile() != null) {
          if (clazzFile.getParentFile().exists()) {
             LOG.debug("Parent folder {} exists", clazzFile.getParentFile());
-//            for (File file : clazzFile.getParentFile().listFiles()) {
-//               LOG.debug("File in folder: {}", file);
-//            }
+            // for (File file : clazzFile.getParentFile().listFiles()) {
+            // LOG.debug("File in folder: {}", file);
+            // }
          } else {
             LOG.debug("Parent folder {} does not exist", clazzFile.getParentFile());
          }

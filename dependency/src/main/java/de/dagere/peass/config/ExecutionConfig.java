@@ -426,10 +426,6 @@ public class ExecutionConfig implements Serializable {
       this.increaseVariableValues = increaseVariableValues;
    }
 
-   public boolean isIncreaseVariableValues() {
-      return increaseVariableValues != null && !increaseVariableValues.isEmpty();
-   }
-
    /**
     * The following boilerplate classes are not very nice; since we want to save most values and eventually change the default values, we cannot use JsonInclude(NON_DEFAULT) at
     * class level; therefore, we need to use custom filters.

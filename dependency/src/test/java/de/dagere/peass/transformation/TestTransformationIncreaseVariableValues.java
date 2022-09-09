@@ -66,7 +66,6 @@ public class TestTransformationIncreaseVariableValues {
             new File(testFolder, "pom.xml"));
    }
 
-   @Disabled
    @ParameterizedTest
    @ValueSource(strings = { "10000", "100000" })
    public void testJUnit5Transformation(String value) throws IOException {
@@ -104,7 +103,7 @@ public class TestTransformationIncreaseVariableValues {
       FieldDeclaration field = clazz.getFieldByName("WAIT_FOR_INITIALIZATION").get();
 
       String number = field.toString().substring(field.toString().lastIndexOf(" ") + 1).replaceAll(";", "");
-      Assert.assertEquals(value, Long.valueOf(number).longValue());
+      Assert.assertEquals(value, number);
 
    }
 
