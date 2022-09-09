@@ -207,11 +207,13 @@ public class JUnitTestTransformer implements TestTransformer {
       }
       LOG.trace("Searching: {}", projectFolder);
 
+      for (File loadedFile : loadedFiles.keySet()) {
+         increaseVariableValues(loadedFile);
+      }
+      
       LOG.debug("JUnit Versions Determined: {}", junitVersions.size());
       for (final Map.Entry<File, Integer> fileVersionEntry : junitVersions.entrySet()) {
          LOG.debug("Editing test file: {} {}", fileVersionEntry.getKey(), fileVersionEntry.getValue());
-
-         increaseVariableValues(fileVersionEntry);
 
          if (fileVersionEntry.getValue() == 3) {
             editJUnit3(fileVersionEntry.getKey());
@@ -223,8 +225,8 @@ public class JUnitTestTransformer implements TestTransformer {
       }
    }
 
-   private void increaseVariableValues(final Map.Entry<File, Integer> fileVersionEntry) {
-      final CompilationUnit unit = loadedFiles.get(fileVersionEntry.getKey());
+   private void increaseVariableValues(File javaFile) {
+      final CompilationUnit unit = loadedFiles.get(javaFile);
       if (config.getExecutionConfig().getIncreaseVariableValues().size() > 0) {
          for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
             for (String toIncreaseVariable : config.getExecutionConfig().getIncreaseVariableValues()) {
