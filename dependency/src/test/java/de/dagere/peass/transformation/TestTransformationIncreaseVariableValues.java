@@ -11,27 +11,6 @@
  */
 package de.dagere.peass.transformation;
 
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.expr.AnnotationExpr;
-import com.github.javaparser.ast.expr.MemberValuePair;
-import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.changesreading.JavaParserProvider;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
-import org.apache.commons.io.FileUtils;
-import org.hamcrest.*;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -41,12 +20,33 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+
+import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
+
 /**
  * Tests the transformationmethode of classes.
  *
  * @author reichelt ExecutionConfig
  */
-public class TestTransformationMethode {
+public class TestTransformationIncreaseVariableValues {
 
    @TempDir
    public static File testFolder;
@@ -93,8 +93,8 @@ public class TestTransformationMethode {
       final AnnotationExpr performanceTestAnnotation = testMethod.getAnnotationByName("PerformanceTest").get();
       Assert.assertNotNull(performanceTestAnnotation);
 
-      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), hasAnnotation("iterations"));
-      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), hasAnnotation("warmup"));
+      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("iterations"));
+      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("warmup"));
 
       for (final Node n : performanceTestAnnotation.getChildNodes()) {
          System.out.println(n);
@@ -109,31 +109,5 @@ public class TestTransformationMethode {
    @After
    public void cleanup() {
       testFile.delete();
-   }
-
-   public static Matcher<List<Node>> hasAnnotation(final String annotationName) {
-      return new BaseMatcher<List<Node>>() {
-         @Override
-         public boolean matches(final Object item) {
-            final List<Node> nodes = (List<Node>) item;
-            boolean contained = false;
-            for (final Node node : nodes) {
-               if (node instanceof MemberValuePair) {
-                  final MemberValuePair pair = (MemberValuePair) node;
-                  if (annotationName.equals(pair.getName().getIdentifier())) {
-                     contained = true;
-                     break;
-                  }
-               }
-               System.out.println(node.getClass());
-            }
-            return contained;
-         }
-
-         @Override
-         public void describeTo(final Description description) {
-            description.appendText("Expected an annotation with value ").appendValue(annotationName);
-         }
-      };
    }
 }
