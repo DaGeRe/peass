@@ -102,6 +102,10 @@ public class ExecutionConfigMixin {
          "--useAnbox" }, description = "Activates usage of Anbox measurement features (currently experimental)")
    protected boolean useAnbox = false;
 
+   @Option(names = { "-increaseVariableValues",
+         "--increaseVariableValues" }, split = ";", description = "List of variables and values to be modified (default: empty). Example: \"package.Clazz.variable:value;otherPackage.otherClazz.otherVariable:otherValue\"")
+   protected String[] increaseVariableValues;
+
    public long getTimeout() {
       return timeout;
    }
@@ -310,6 +314,14 @@ public class ExecutionConfigMixin {
       this.useAnbox = useAnbox;
    }
 
+   public String[] getIncreaseVariableValues() {
+      return increaseVariableValues;
+   }
+
+   public void setIncreaseVariableValues(final String[] increaseVariableValues) {
+      this.increaseVariableValues = increaseVariableValues;
+   }
+
    public ExecutionConfig getExecutionConfig() {
       ExecutionConfig config = new ExecutionConfig(timeout);
 
@@ -386,8 +398,14 @@ public class ExecutionConfigMixin {
       if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
          throw new RuntimeException("executeBeforeClassInMeasurement may only be activated if onlyMeasureWorkload is deactivated!");
       }
-      
+
       config.setUseAnbox(useAnbox);
+
+      if (getIncreaseVariableValues() != null) {
+         for (String variable : getIncreaseVariableValues()) {
+            config.getIncreaseVariableValues().add(variable);
+         }
+      }
 
       return config;
    }

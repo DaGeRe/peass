@@ -101,6 +101,9 @@ public class JUnitTestTransformer implements TestTransformer {
       } else {
          datacollectorlist = config.isUseGC() ? DataCollectorList.ONLYTIME : DataCollectorList.ONLYTIME_NOGC;
       }
+
+      if (config.getExecutionConfig().isIncreaseVariableValues())
+         transformationsmethode();
    }
 
    public Map<File, CompilationUnit> getLoadedFiles() {
@@ -216,6 +219,11 @@ public class JUnitTestTransformer implements TestTransformer {
             editJUnit5(fileVersionEntry.getKey());
          }
       }
+   }
+
+   public void transformationsmethode() {
+      System.out.println("List of Variables");
+      config.getExecutionConfig().getIncreaseVariableValues().forEach(System.out::println);
    }
 
    /**
