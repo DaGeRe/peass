@@ -34,6 +34,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 
@@ -74,7 +75,7 @@ public class TestTransformationIncreaseVariableValues {
       FileUtils.copyFile(old2, testFile);
       MeasurementConfig config = MeasurementConfig.DEFAULT;
 
-      config.getExecutionConfig().setIncreaseVariableValues(Collections.singletonList("TestMe9.WAIT_FOR_INITIALIZATION:" + value));
+      config.getExecutionConfig().setIncreaseVariableValues(Collections.singletonList("de.test.TestMe9.WAIT_FOR_INITIALIZATION:" + value));
 
       final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, config);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
@@ -100,9 +101,10 @@ public class TestTransformationIncreaseVariableValues {
          System.out.println(n);
       }
 
-      String WAIT_FOR_INITIALIZATION = performanceTestAnnotation.getParentNode().get().getChildNodes().get(5).getChildNodes().get(0).toString();
-      WAIT_FOR_INITIALIZATION = WAIT_FOR_INITIALIZATION.replaceAll("[^0-9?!\\.]", "");
-      Assert.assertEquals(value, Long.valueOf(WAIT_FOR_INITIALIZATION).longValue());
+      FieldDeclaration field = clazz.getFieldByName("WAIT_FOR_INITIALIZATION").get();
+
+      String number = field.toString().substring(field.toString().lastIndexOf(" ") + 1).replaceAll(";", "");
+      Assert.assertEquals(value, Long.valueOf(number).longValue());
 
    }
 

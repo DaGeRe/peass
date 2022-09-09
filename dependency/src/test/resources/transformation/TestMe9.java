@@ -14,11 +14,11 @@ import org.junit.jupiter.api.Test;
 
 public class TestMe9 {
 
-    @Test
-    protected void testMethod9() {
-
-        private static final long WAIT_FOR_INITIALIZATION = 1000;
-        System.out.println("This is tested.");
-    }
+   private static final long WAIT_FOR_INITIALIZATION = 1000;
+   
+   @Test
+   protected void testMethod9() {
+       System.out.println("This is tested.");
+   }
 
 }
