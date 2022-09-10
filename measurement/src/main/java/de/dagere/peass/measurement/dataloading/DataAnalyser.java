@@ -56,7 +56,7 @@ public abstract class DataAnalyser {
    }
 
    private void finishProcessingIfRunning(Thread processorThread) throws InterruptedException {
-      Thread.sleep(50);
+      Thread.sleep(100);
       isFinished = true;
       processorThread.join();
 //      processorThread.interrupt();
