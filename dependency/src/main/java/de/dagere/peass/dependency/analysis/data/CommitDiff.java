@@ -89,7 +89,7 @@ public class CommitDiff {
                   addChange(currentFileName, containedPath, indexOf);
                }
             } else {
-               LOG.info("Did not find matching class folder for file {}", containedPath);
+               LOG.info("Did not find matching class folder for file {}", currentFileName);
             }
 
          }

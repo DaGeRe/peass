@@ -42,7 +42,7 @@ public class ClazzFileFinder {
    }
 
    private final ExecutionConfig executionConfig;
-   
+
    public ClazzFileFinder(final ExecutionConfig executionConfig) {
       this.executionConfig = executionConfig;
    }
@@ -55,7 +55,7 @@ public class ClazzFileFinder {
     */
    public List<String> getClasses(final File projectFolder) {
       File clazzpathFolder = getFirstExistingFolder(projectFolder, executionConfig.getClazzFolders());
-      
+
       final List<String> clazzes = new LinkedList<>();
       if (clazzpathFolder != null) {
          addClazzes(clazzes, clazzpathFolder);
@@ -113,7 +113,7 @@ public class ClazzFileFinder {
             }
          } catch (final ParseProblemException e) {
             LOG.error("Problem parsing " + clazz + " from " + clazzFile.getAbsolutePath() + " Existing: " + clazzFile.exists());
-            //throw new RuntimeException("Problem parsing " + clazz + " from " + clazzFile.getAbsolutePath() + " Existing: " + clazzFile.exists(), e);
+            // throw new RuntimeException("Problem parsing " + clazz + " from " + clazzFile.getAbsolutePath() + " Existing: " + clazzFile.exists(), e);
          } catch (final FileNotFoundException e) {
             e.printStackTrace();
          }
@@ -154,6 +154,7 @@ public class ClazzFileFinder {
 
    /**
     * Returns the file of the given testcase class
+    * 
     * @param moduleOrProjectFolder Folder of the module or the project overall
     * @param testcase TestCase that should be searched; if the overall project folder is given, the module *must* be set
     * @return File that contains the testcase source
@@ -161,7 +162,7 @@ public class ClazzFileFinder {
    public File getClazzFile(final File moduleOrProjectFolder, final TestCase testcase) {
       return getClazzFile(moduleOrProjectFolder, testcase.toEntity());
    }
-   
+
    public File getClazzFile(final File moduleOrProjectFolder, final ChangedEntity entity) {
       if (!moduleOrProjectFolder.exists()) {
          throw new RuntimeException("Module folder " + moduleOrProjectFolder.getAbsolutePath() + " did not exist");
@@ -191,7 +192,7 @@ public class ClazzFileFinder {
       if (naturalCandidate.exists()) {
          potentialFile = naturalCandidate;
       }
-      
+
       for (final String potentialFolder : executionConfig.getAllClazzFolders()) {
          final File candidate = new File(sourceParentFolder, potentialFolder + File.separator + clazzFileName);
          if (candidate.exists()) {
@@ -211,7 +212,14 @@ public class ClazzFileFinder {
       } else {
          moduleFolder = folder;
       }
-      return getClazzFile(moduleFolder, sourceContainingClazz);
+      
+      // A module might be removed, than the file can just be considered not existing in the current version
+      if (moduleFolder.exists()) {
+         return getClazzFile(moduleFolder, sourceContainingClazz);
+      } else {
+         return null;
+      }
+
    }
 
 }
