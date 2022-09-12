@@ -56,7 +56,7 @@ public class ExecutionConfigMixin {
    public String testTransformer;
 
    @Option(names = { "-gitCryptKey", "--gitCryptKey" }, description = "If repository uses git-crypt, you should provide location of git-crypt-keyfile)")
-   protected String gitCryptKey = System.getenv("GIT_CRYPT_KEY");;
+   protected String gitCryptKey = System.getenv("GIT_CRYPT_KEY");
 
    @Option(names = { "-useTieredCompilation", "--useTieredCompilation" }, description = "Activate -XX:-TieredCompilation for all measured processes")
    protected boolean useTieredCompilation = false;
