@@ -42,6 +42,9 @@ public class ExecutionConfigMixin {
          + "If you want to use test<VariantName> for Android, please specify a goal (i.e. task name) here."
          + "If you want to run integration tests in maven e.g. by calling failsafe, also specify it here. ")
    protected String testGoal;
+   
+   @Option(names = { "-cleanGoal", "--cleanGoal" }, description = "Clean goal that is called before the test execution *in Gradle*; defaults to cleanTest.")
+   protected String cleanGoal;
 
    @Option(names = { "-pl", "--pl" }, description = "Projectlist (-pl) argument for maven (e.g. :submodule) - only the submodule and its dependencies are analyzed (using -am)")
    protected String pl;
@@ -144,6 +147,14 @@ public class ExecutionConfigMixin {
 
    public String getTestGoal() {
       return testGoal;
+   }
+   
+   public void setCleanGoal(String cleanGoal) {
+      this.cleanGoal = cleanGoal;
+   }
+   
+   public String getCleanGoal() {
+      return cleanGoal;
    }
 
    public String getStartcommit() {
@@ -328,6 +339,7 @@ public class ExecutionConfigMixin {
       config.setStartcommit(getStartcommit());
       config.setEndcommit(getEndcommit());
       config.setTestGoal(getTestGoal());
+      config.setCleanGoal(getCleanGoal());
 
       if (getIncludes() != null) {
          for (String include : getIncludes()) {

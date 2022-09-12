@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
@@ -89,6 +90,13 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       }
    }
 
+   protected String getCleanGoal() {
+      String cleanGoal;
+      ExecutionConfig executionConfig = testTransformer.getConfig().getExecutionConfig();
+      cleanGoal = executionConfig.getCleanGoal() != null ? executionConfig.getCleanGoal() : "cleanTest";
+      return cleanGoal;
+   }
+
    /**
     * Executes the Gradle process; since gradle is run inside the module folder, different parameters than for the maven execution are required
     */
@@ -99,7 +107,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       String[] originals = new String[] { wrapper,
             "--init-script", new File(gradleHome, "init.gradle").getAbsolutePath(),
             "--no-daemon",
-            "cleanTest", testGoal };
+            getCleanGoal(), testGoal };
       LOG.debug("Redirecting to null: {}", testTransformer.getConfig().getExecutionConfig().isRedirectToNull());
       if (!testTransformer.getConfig().getExecutionConfig().isRedirectToNull()) {
          originals = CommandConcatenator.concatenateCommandArrays(originals, new String[] { "--info" });

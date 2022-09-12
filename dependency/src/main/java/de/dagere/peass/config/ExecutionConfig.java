@@ -36,6 +36,7 @@ public class ExecutionConfig implements Serializable {
     * Timeout in milliseconds, default 5 minutes
     */
    private long timeout = 5 * 60 * 1000;
+   private String cleanGoal;
    private String testGoal;
    private List<String> includes = new LinkedList<>();
    private List<String> excludes = new LinkedList<>();
@@ -156,6 +157,15 @@ public class ExecutionConfig implements Serializable {
       return timeout;
    }
 
+   @JsonInclude(Include.NON_NULL)
+   public String getCleanGoal() {
+      return cleanGoal;
+   }
+   
+   public void setCleanGoal(String cleanGoal) {
+      this.cleanGoal = cleanGoal;
+   }
+   
    @JsonInclude(Include.NON_NULL)
    public String getTestGoal() {
       return testGoal;
