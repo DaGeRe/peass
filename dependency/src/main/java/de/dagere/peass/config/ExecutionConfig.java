@@ -91,6 +91,7 @@ public class ExecutionConfig implements Serializable {
    public ExecutionConfig(final ExecutionConfig other) {
       this.timeout = other.getTimeout();
       this.testGoal = other.getTestGoal();
+      this.cleanGoal = other.getCleanGoal();
       this.includes = other.getIncludes();
       this.excludes = other.getExcludes();
       this.includeByRule = other.getIncludeByRule();
