@@ -51,6 +51,7 @@ public class KiekerResultManager {
    protected final TestExecutor executor;
    protected final PeassFolders folders;
    protected final TestTransformer testTransformer;
+   private TestSet ignoredTests;
 
    public KiekerResultManager(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.folders = folders;
@@ -73,15 +74,20 @@ public class KiekerResultManager {
    public ModuleClassMapping getModuleClassMapping() {
       return new ModuleClassMapping(executor);
    }
+   
+   public TestSet getIgnoredTests() {
+      return ignoredTests;
+   }
 
-   public void runTraceTests(final TestSet testsToUpdate, final String version) throws IOException, XmlPullParserException, InterruptedException {
+   public void runTraceTests(final TestSet testsToUpdate, final String version) {
       truncateKiekerResults();
       // TODO Verschieben
       
       LOG.debug("Executing dependency update test, results folder: {}", folders.getTempMeasurementFolder());
       ModuleClassMapping mapping = new ModuleClassMapping(executor);
-      final TestSet tests = testTransformer.buildTestMethodSet(testsToUpdate, mapping);
-      executeKoPeMeKiekerRun(tests, version, folders.getDependencyLogFolder());
+      final RunnableTestInformation tests = testTransformer.buildTestMethodSet(testsToUpdate, mapping);
+      executeKoPeMeKiekerRun(tests.getTestsToUpdate(), version, folders.getDependencyLogFolder());
+      ignoredTests = tests.getIgnoredTests();
    }
 
    private void truncateKiekerResults() {

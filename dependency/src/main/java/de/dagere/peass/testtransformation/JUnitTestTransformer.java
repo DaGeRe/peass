@@ -46,6 +46,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.ClassExpr;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
@@ -61,6 +62,7 @@ import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
+import de.dagere.peass.dependency.RunnableTestInformation;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -68,7 +70,6 @@ import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.execution.utils.ProjectModules;
-import groovyjarjarantlr4.v4.codegen.model.chunk.TokenPropertyRef_index;
 
 /**
  * Transforms JUnit-Tests to performance tests.
@@ -138,25 +139,24 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    @Override
-   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules,
-         final ProjectModules modules) {
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) {
       determineVersions(modules.getModules());
       final TestSet allTests = new TestSet();
       for (final File module : modules.getModules()) {
-         final TestSet moduleTests = findModuleTests(mapping, includedModules, module);
-         allTests.addTestSet(moduleTests);
+         final RunnableTestInformation moduleTests = findModuleTests(mapping, includedModules, module);
+         allTests.addTestSet(moduleTests.getTestsToUpdate());
       }
-      LOG.info("Included tests: {}", allTests.getTests().size());
+      LOG.info("Included tests: {}", allTests.getTestMethods().size());
       return allTests;
    }
 
-   private TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules,
+   private RunnableTestInformation findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules,
          final File module) {
-      final TestSet moduleTests = new TestSet();
+      final RunnableTestInformation moduleTests = new RunnableTestInformation();
       ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
       for (final String clazz : finder.getTestClazzes(module)) {
          final String currentModule = mapping.getModuleOfClass(clazz);
-         final List<TestMethodCall> testMethodNames = getTestMethodNames(module, new TestClazzCall(clazz, currentModule));
+         final Set<TestMethodCall> testMethodNames = getTestMethodNames(module, new TestClazzCall(clazz, currentModule));
          for (TestMethodCall test : testMethodNames) {
             if (includedModules == null || includedModules.contains(test.getModule())) {
                addTestIfIncluded(moduleTests, test, mapping);
@@ -166,25 +166,31 @@ public class JUnitTestTransformer implements TestTransformer {
       return moduleTests;
    }
 
-   private void addTestIfIncluded(final TestSet moduleTests, final TestMethodCall test, ModuleClassMapping mapping) {
+   private void addTestIfIncluded(final RunnableTestInformation moduleTests, final TestMethodCall test, ModuleClassMapping mapping) {
       if (NonIncludedTestRemover.isTestIncluded(test, getConfig().getExecutionConfig())) {
          if (NonIncludedByRule.isTestIncluded(test, this, mapping)) {
-            moduleTests.addTest(test);
+            moduleTests.getTestsToUpdate().addTest(test);
+         } else {
+            moduleTests.getIgnoredTests().addTest(test);
          }
       }
    }
 
    @Override
-   public TestSet buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping mapping) {
-      final TestSet tests = new TestSet();
+   public RunnableTestInformation buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping mapping) {
+      final RunnableTestInformation tests = new RunnableTestInformation();
       determineVersions(mapping.getModules());
       for (final TestClazzCall clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
             final File moduleFolder = new File(projectFolder, clazzname.getModule());
-            final List<TestMethodCall> methods = getTestMethodNames(moduleFolder, clazzname);
-            for (final TestMethodCall test : methods) {
+            RunnableTestInformation rti = getTestRunInformation(moduleFolder, clazzname);
+            for (final TestMethodCall test : rti.getTestsToUpdate().getTestMethods()) {
                addTestIfIncluded(tests, test, mapping);
+            }
+            
+            for (final TestMethodCall test : rti.getIgnoredTests().getTestMethods()) {
+               tests.getIgnoredTests().addTest(test);
             }
          } else {
             for (final String method : currentClazzMethods) {
@@ -210,7 +216,7 @@ public class JUnitTestTransformer implements TestTransformer {
       for (File loadedFile : loadedFiles.keySet()) {
          increaseVariableValues(loadedFile);
       }
-      
+
       LOG.debug("JUnit Versions Determined: {}", junitVersions.size());
       for (final Map.Entry<File, Integer> fileVersionEntry : junitVersions.entrySet()) {
          LOG.debug("Editing test file: {} {}", fileVersionEntry.getKey(), fileVersionEntry.getValue());
@@ -241,8 +247,8 @@ public class JUnitTestTransformer implements TestTransformer {
                      FieldDeclaration field = fieldOptional.get();
                      System.out.println(field);
                      VariableDeclarator variableDeclarator = field.getVariables().get(0);
-                     
-                     String value = toIncreaseVariable.substring(toIncreaseVariable.indexOf(":")+1);
+
+                     String value = toIncreaseVariable.substring(toIncreaseVariable.indexOf(":") + 1);
                      variableDeclarator.setInitializer(value);
                      try {
                         Files.write(javaFile.toPath(), unit.toString().getBytes(charset));
@@ -364,8 +370,14 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    @Override
-   public List<TestMethodCall> getTestMethodNames(final File module, final TestClazzCall clazzname) {
-      final List<TestMethodCall> methods = new LinkedList<>();
+   public Set<TestMethodCall> getTestMethodNames(final File module, final TestClazzCall clazzname) {
+      RunnableTestInformation rti = getTestRunInformation(module, clazzname);
+
+      return rti.getTestsToUpdate().getTestMethods();
+   }
+
+   private RunnableTestInformation getTestRunInformation(final File module, final TestClazzCall clazzname) {
+      RunnableTestInformation rti = new RunnableTestInformation();
       ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
       final File clazzFile = finder.getClazzFile(module, clazzname);
       final CompilationUnit unit = loadedFiles.get(clazzFile);
@@ -380,7 +392,7 @@ public class JUnitTestTransformer implements TestTransformer {
                 */
                String pureClazzName = clazz.getName().toString();
                if (pureClazzName.equals(clazzname.getPureClazz())) {
-                  addTestMethodNames(clazzname, methods, junit, clazz);
+                  addTestMethodNames(clazzname, rti, junit, clazz);
                }
             }
          } else {
@@ -389,8 +401,7 @@ public class JUnitTestTransformer implements TestTransformer {
       } else {
          printSearchDebugInfos(clazzname, clazzFile);
       }
-
-      return methods;
+      return rti;
    }
 
    private void printSearchDebugInfos(final TestCase clazzname, final File clazzFile) {
@@ -412,23 +423,31 @@ public class JUnitTestTransformer implements TestTransformer {
       }
    }
 
-   private void addTestMethodNames(final TestCase clazzname, final List<TestMethodCall> methods, final Integer junit,
+   private void addTestMethodNames(final TestCase clazzname, RunnableTestInformation runnableTests, final Integer junit,
          final ClassOrInterfaceDeclaration clazz) {
       if (junit == 3) {
          for (final MethodDeclaration method : clazz.getMethods()) {
             if (method.getNameAsString().toLowerCase().contains("test")) {
-               methods.add(new TestMethodCall(clazzname.getClazz(), method.getNameAsString(), clazzname.getModule()));
+               runnableTests.getTestsToUpdate().addTest(new TestMethodCall(clazzname.getClazz(), method.getNameAsString(), clazzname.getModule()));
             }
          }
       } else if (junit == 4) {
          for (String junit4method : getAnnotatedMethods(clazz, 4)) {
             TestMethodCall test = new TestMethodCall(clazzname.getClazz(), junit4method, clazzname.getModule());
-            methods.add(test);
+            runnableTests.getTestsToUpdate().addTest(test);
+         }
+         for (String junit4method : getIgnoredMethods(clazz, 4)) {
+            TestMethodCall test = new TestMethodCall(clazzname.getClazz(), junit4method, clazzname.getModule());
+            runnableTests.getIgnoredTests().addTest(test);
          }
       } else if (junit == 5) {
          for (String junit5method : getAnnotatedMethods(clazz, 5)) {
             TestMethodCall test = new TestMethodCall(clazzname.getClazz(), junit5method, clazzname.getModule());
-            methods.add(test);
+            runnableTests.getTestsToUpdate().addTest(test);
+         }
+         for (String junit5method : getIgnoredMethods(clazz, 5)) {
+            TestMethodCall test = new TestMethodCall(clazzname.getClazz(), junit5method, clazzname.getModule());
+            runnableTests.getIgnoredTests().addTest(test);
          }
       }
    }
@@ -441,6 +460,37 @@ public class JUnitTestTransformer implements TestTransformer {
          methods.addAll(JUnitParseUtil.getAnnotatedMethods(clazz, importNameVersion, annotationName));
       }
       return methods;
+   }
+
+   private List<String> getIgnoredMethods(ClassOrInterfaceDeclaration clazz, int version) {
+      final List<String> importNameVersions = junitTestAnnotations.get(version);
+      final List<String> methods = new LinkedList<>();
+      for (String importNameVersion : importNameVersions) {
+         String annotationName = importNameVersion.substring(importNameVersion.lastIndexOf('.') + 1);
+         methods.addAll(getIgnoredMethods(clazz, importNameVersion, annotationName));
+      }
+      return methods;
+   }
+
+   private List<String> getIgnoredMethods(ClassOrInterfaceDeclaration clazz, final String fqnAnnotationName, String annotationName) {
+      List<String> ignoredMethods = new LinkedList<>();
+      for (final MethodDeclaration method : clazz.getMethods()) {
+         boolean found = false;
+         for (final AnnotationExpr annotation : method.getAnnotations()) {
+            final String currentName = annotation.getNameAsString();
+
+            if (currentName.equals(fqnAnnotationName) || currentName.equals(annotationName)) {
+               found = true;
+            }
+         }
+
+         boolean testIsDeactivated = JUnitParseUtil.isDeactivated(method);
+
+         if (found && testIsDeactivated) {
+            ignoredMethods.add(method.getNameAsString());
+         }
+      }
+      return ignoredMethods;
    }
 
    /**

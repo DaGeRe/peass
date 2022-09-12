@@ -369,7 +369,7 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private TestExistenceChanges populateExistingTests(final TestSet testsToUpdate, final ModuleClassMapping mapping,
-         final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies) throws FileNotFoundException, IOException, XmlPullParserException {
+         final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies) {
       final TestExistenceChanges changes = new TestExistenceChanges();
 
       for (final Entry<TestClazzCall, Set<String>> entry : testsToUpdate.entrySet()) {
@@ -384,7 +384,7 @@ public class DependencyManager extends KiekerResultManager {
       return changes;
    }
 
-   public File getTestclazzFolder(final Entry<TestClazzCall, Set<String>> entry) throws FileNotFoundException, IOException, XmlPullParserException {
+   public File getTestclazzFolder(final Entry<TestClazzCall, Set<String>> entry) {
       File moduleResultFolder = KiekerFolderUtil.getModuleResultFolder(folders, entry.getKey());
       File testclazzFolder = new File(moduleResultFolder, entry.getKey().getClazz());
       return testclazzFolder;

@@ -59,10 +59,10 @@ public class TraceChangeHandler {
       }
    }
 
-   private TestSet getTestsToRun(final CommitStaticSelection newVersionStaticSelection, ModuleClassMapping mapping) throws IOException, JsonGenerationException, JsonMappingException {
-      final TestSet testsToRun = newVersionStaticSelection.getTests() ; // contains only the tests that need to be run -> could be changeTestMap.values() und dann
+   private TestSet getTestsToRun(final CommitStaticSelection newCommitStaticSelection, ModuleClassMapping mapping) throws IOException, JsonGenerationException, JsonMappingException {
+      final TestSet testsToRun = newCommitStaticSelection.getTests() ; // contains only the tests that need to be run -> could be changeTestMap.values() und dann
                                                                                       // umwandeln
-      addAddedTests(newVersionStaticSelection, testsToRun);
+      addAddedTests(newCommitStaticSelection, testsToRun);
       
       Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + commit + ".json"), testsToRun.entrySet());
 
@@ -85,15 +85,20 @@ public class TraceChangeHandler {
    }
 
    private void analyzeTests(final CommitStaticSelection newCommitInfo, final TestSet testsToRun, ModuleClassMapping mapping)
-         throws IOException, XmlPullParserException, InterruptedException, JsonGenerationException, JsonMappingException {
+         throws IOException, XmlPullParserException {
       
       dependencyManager.runTraceTests(testsToRun, commit);
 
       handleDependencyChanges(newCommitInfo, testsToRun, mapping);
+      
+      if (dependencyManager.getIgnoredTests().getTestMethods().size() > 0) {
+         newCommitInfo.setIgnoredAffectedTests(dependencyManager.getIgnoredTests());
+      }
+      
    }
 
    private void handleDependencyChanges(final CommitStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)
-         throws IOException, XmlPullParserException, JsonGenerationException, JsonMappingException {
+         throws IOException, XmlPullParserException {
       final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, mapping);
       final Map<ChangedEntity, Set<TestMethodCall>> addedTestcases = testExistenceChanges.getAddedTests();
 

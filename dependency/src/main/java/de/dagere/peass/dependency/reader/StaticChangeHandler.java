@@ -2,7 +2,7 @@ package de.dagere.peass.dependency.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,7 +68,7 @@ public class StaticChangeHandler {
             for (ChangedEntity change : changedEntry.getChanges()) {
                File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
                TestClazzCall potentialTest = new TestClazzCall(change.getClazz(), change.getModule());
-               List<TestMethodCall> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
+               Set<TestMethodCall> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
                for (TestCase added : addedTests) {
                   if (NonIncludedTestRemover.isTestIncluded(added, executionConfig)) {
                      if (dependencyManager.getTestTransformer() instanceof JUnitTestTransformer) {

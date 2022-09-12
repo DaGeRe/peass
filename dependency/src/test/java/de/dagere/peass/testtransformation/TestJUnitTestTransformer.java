@@ -2,7 +2,7 @@ package de.dagere.peass.testtransformation;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -21,11 +21,11 @@ public class TestJUnitTestTransformer {
       JUnitTestTransformer transformer = new JUnitTestTransformer(projectFolder, new MeasurementConfig(5));
       transformer.determineVersions(Arrays.asList(projectFolder));
 
-      List<TestMethodCall> testMethodNamesOuter = transformer.getTestMethodNames(projectFolder, new TestClazzCall("demo.project.gradle.ExampleTest"));
+      Set<TestMethodCall> testMethodNamesOuter = transformer.getTestMethodNames(projectFolder, new TestClazzCall("demo.project.gradle.ExampleTest"));
       System.out.println("Outer: " + testMethodNamesOuter);
       MatcherAssert.assertThat(testMethodNamesOuter, IsIterableContaining.hasItem(new TestMethodCall("demo.project.gradle.ExampleTest", "test", "")));
 
-      List<TestMethodCall> testMethodNamesInner = transformer.getTestMethodNames(projectFolder, new TestClazzCall("demo.project.gradle.ExampleTest$SenselessClazz"));
+      Set<TestMethodCall> testMethodNamesInner = transformer.getTestMethodNames(projectFolder, new TestClazzCall("demo.project.gradle.ExampleTest$SenselessClazz"));
       System.out.println("Inner: " + testMethodNamesInner);
       MatcherAssert.assertThat(testMethodNamesInner, Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("demo.project.gradle.ExampleTest$SenselessClazz", "test", ""))));
       

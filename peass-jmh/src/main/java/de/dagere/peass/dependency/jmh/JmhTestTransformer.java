@@ -2,9 +2,12 @@ package de.dagere.peass.dependency.jmh;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +22,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.ClazzFileFinder;
+import de.dagere.peass.dependency.RunnableTestInformation;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -61,20 +65,20 @@ public class JmhTestTransformer implements TestTransformer {
    }
 
    @Override
-   public TestSet buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping modules) {
-      final TestSet tests = new TestSet();
+   public RunnableTestInformation buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping modules) {
+      final RunnableTestInformation tests = new RunnableTestInformation();
       for (final TestClazzCall clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
             final File moduleFolder = new File(projectFolder, clazzname.getModule());
-            final List<TestMethodCall> methods = getTestMethodNames(moduleFolder, clazzname);
+            final Set<TestMethodCall> methods = getTestMethodNames(moduleFolder, clazzname);
             for (final TestMethodCall test : methods) {
                addTestIfIncluded(tests, test);
             }
          } else {
             for (final String method : currentClazzMethods) {
                TestCase test = new TestMethodCall(clazzname.getClazz(), method, clazzname.getModule());
-               tests.addTest(test);
+               tests.getTestsToUpdate().addTest(test);
             }
          }
       }
@@ -97,18 +101,18 @@ public class JmhTestTransformer implements TestTransformer {
    }
 
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) throws FileNotFoundException {
-      TestSet moduleTests = new TestSet();
+      RunnableTestInformation moduleTests = new RunnableTestInformation();
       ClazzFileFinder finder = new ClazzFileFinder(measurementConfig.getExecutionConfig());
       for (final String clazz : finder.getClasses(module)) {
          String currentModule = ModuleClassMapping.getModuleName(projectFolder, module);
-         final List<TestMethodCall> testMethodNames = getTestMethodNames(module, new TestClazzCall(clazz, currentModule));
+         final Set<TestMethodCall> testMethodNames = getTestMethodNames(module, new TestClazzCall(clazz, currentModule));
          for (TestCase test : testMethodNames) {
             if (includedModules == null || includedModules.contains(test.getModule())) {
                addTestIfIncluded(moduleTests, test);
             }
          }
       }
-      return moduleTests;
+      return moduleTests.getTestsToUpdate();
    }
 
    @Override
@@ -124,8 +128,8 @@ public class JmhTestTransformer implements TestTransformer {
    }
 
    @Override
-   public List<TestMethodCall> getTestMethodNames(final File module, final TestClazzCall clazzname) {
-      final List<TestMethodCall> methods = new LinkedList<>();
+   public Set<TestMethodCall> getTestMethodNames(final File module, final TestClazzCall clazzname) {
+      final Set<TestMethodCall> methods = new LinkedHashSet<>();
       ClazzFileFinder finder = new ClazzFileFinder(measurementConfig.getExecutionConfig());
       final File clazzFile = finder.getClazzFile(module, clazzname);
       try {
@@ -164,9 +168,9 @@ public class JmhTestTransformer implements TestTransformer {
       return parsedClassName;
    }
 
-   private void addTestIfIncluded(final TestSet moduleTests, final TestCase test) {
+   private void addTestIfIncluded(final RunnableTestInformation moduleTests, final TestCase test) {
       if (NonIncludedTestRemover.isTestIncluded(test, getConfig().getExecutionConfig())) {
-         moduleTests.addTest(test);
+         moduleTests.getTestsToUpdate().addTest(test);
       }
    }
 

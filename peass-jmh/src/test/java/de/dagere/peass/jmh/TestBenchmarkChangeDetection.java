@@ -25,7 +25,7 @@ public class TestBenchmarkChangeDetection {
       
       ModuleClassMapping mapping = Mockito.mock(ModuleClassMapping.class);
       Mockito.when(mapping.getModules()).thenReturn(Arrays.asList(new File[] {JmhTestConstants.BASIC_VERSION}));
-      TestSet changedTests = jmhTransformer.buildTestMethodSet(originalTests, mapping);
+      TestSet changedTests = jmhTransformer.buildTestMethodSet(originalTests, mapping).getTestsToUpdate();
       Assert.assertEquals(changedTests.getTests().size(), 1);
       
       TestCase test = changedTests.getTests().iterator().next();

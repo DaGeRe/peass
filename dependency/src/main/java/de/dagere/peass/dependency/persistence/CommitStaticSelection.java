@@ -20,6 +20,9 @@ public class CommitStaticSelection {
    
    @JsonDeserialize(keyUsing = ChangedEntityDeserializer.class)
    private Map<ChangedEntity, TestSet> changedClazzes = new TreeMap<>();
+   
+   
+   private TestSet ignoredAffectedTests = null;
 
    public boolean isRunning() {
       return running;
@@ -43,6 +46,15 @@ public class CommitStaticSelection {
 
    public void setChangedClazzes(final Map<ChangedEntity, TestSet> changedClazzes) {
       this.changedClazzes = changedClazzes;
+   }
+   
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   public TestSet getIgnoredAffectedTests() {
+      return ignoredAffectedTests;
+   }
+   
+   public void setIgnoredAffectedTests(TestSet ignoredAffectedTests) {
+      this.ignoredAffectedTests = ignoredAffectedTests;
    }
    
    @JsonIgnore
