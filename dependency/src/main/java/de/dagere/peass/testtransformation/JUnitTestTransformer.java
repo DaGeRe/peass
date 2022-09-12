@@ -244,6 +244,13 @@ public class JUnitTestTransformer implements TestTransformer {
                      
                      String value = toIncreaseVariable.substring(toIncreaseVariable.indexOf(":")+1);
                      variableDeclarator.setInitializer(value);
+                     try {
+                        Files.write(javaFile.toPath(), unit.toString().getBytes(charset));
+                     } catch (final FileNotFoundException e) {
+                        e.printStackTrace();
+                     } catch (final IOException e) {
+                        e.printStackTrace();
+                     }
                   }
                }
             }
