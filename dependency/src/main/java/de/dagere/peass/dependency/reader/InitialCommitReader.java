@@ -51,12 +51,12 @@ public class InitialCommitReader {
       if (!dependencyManager.initialyGetTraces(iterator.getTag())) {
          return false;
       }
-      final InitialCommit initialversion = createInitialVersion();
-      dependencyResult.setInitialcommit(initialversion);
+      final InitialCommit initialcommit = createInitialCommit();
+      dependencyResult.setInitialcommit(initialcommit);
       return true;
    }
 
-   private InitialCommit createInitialVersion() {
+   private InitialCommit createInitialCommit() {
       int jdkversion = dependencyManager.getExecutor().getJDKVersion();
       final InitialCommit initialversion = new InitialCommit();
       initialversion.setCommit(iterator.getTag());
@@ -82,7 +82,7 @@ public class InitialCommitReader {
       fillInitialTestDependencies();
       checkCorrectness();
 
-      final InitialCommit initialversion = createInitialVersion();
+      final InitialCommit initialversion = createInitialCommit();
       dependencyResult.setInitialcommit(initialversion);
 
       if (dependencyResult.getCommits().size() > 0) {

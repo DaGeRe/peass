@@ -79,14 +79,14 @@ public class KiekerResultManager {
       return ignoredTests;
    }
 
-   public void runTraceTests(final TestSet testsToUpdate, final String version) {
+   public void runTraceTests(final TestSet testsToUpdate, final String commit) {
       truncateKiekerResults();
       // TODO Verschieben
       
       LOG.debug("Executing dependency update test, results folder: {}", folders.getTempMeasurementFolder());
       ModuleClassMapping mapping = new ModuleClassMapping(executor);
       final RunnableTestInformation tests = testTransformer.buildTestMethodSet(testsToUpdate, mapping);
-      executeKoPeMeKiekerRun(tests.getTestsToUpdate(), version, folders.getDependencyLogFolder());
+      executeKoPeMeKiekerRun(tests.getTestsToUpdate(), commit, folders.getDependencyLogFolder());
       ignoredTests = tests.getIgnoredTests();
    }
 
@@ -120,17 +120,17 @@ public class KiekerResultManager {
     * @throws XmlPullParserException
     * @throws InterruptedException
     */
-   public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String version, final File logFolder) {
-      final File logVersionFolder = new File(logFolder, version);
-      if (!logVersionFolder.exists()) {
-         logVersionFolder.mkdir();
+   public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String commit, final File logFolder) {
+      final File commitLogFolder = new File(logFolder, commit);
+      if (!commitLogFolder.exists()) {
+         commitLogFolder.mkdir();
       }
 
-      executor.prepareKoPeMeExecution(new File(logVersionFolder, "clean.txt"));
+      executor.prepareKoPeMeExecution(new File(commitLogFolder, "clean.txt"));
       for (final TestMethodCall testcase : testsToUpdate.getTestMethods()) {
-         executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInSeconds());
+         executor.executeTest(testcase, commitLogFolder, testTransformer.getConfig().getTimeoutInSeconds());
       }
-      cleanAboveSize(logVersionFolder, 100, "txt");
+      cleanAboveSize(commitLogFolder, 100, "txt");
 
       LOG.debug("KoPeMe-Kieker-Run finished");
 
