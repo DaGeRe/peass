@@ -23,7 +23,7 @@ public class TreeReaderFactory {
    public static TreeReader createTreeReader(final PeassFolders parentFolders, final String predecessor, final MeasurementConfig config, final boolean ignoreEOIs,
          final EnvironmentVariables env)  {
       PeassFolders treeReadingFolders = parentFolders.getTempFolder("tree_" + predecessor, config.getExecutionConfig().getGitCryptKey());
-      GitUtils.goToTag(predecessor, treeReadingFolders.getProjectFolder());
+      GitUtils.goToCommit(predecessor, treeReadingFolders.getProjectFolder());
       TreeReader reader = new TreeReader(treeReadingFolders, config, env);
       reader.setIgnoreEOIs(ignoreEOIs);
       return reader;

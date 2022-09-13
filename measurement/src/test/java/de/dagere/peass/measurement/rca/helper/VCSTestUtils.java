@@ -30,7 +30,7 @@ public class VCSTestUtils {
    }
    
    public static void mockGoToTagEmpty(final MockedStatic<GitUtils> mockedGitUtils) {
-      mockedGitUtils.when(() -> GitUtils.goToTag(Mockito.any(), Mockito.any()))
+      mockedGitUtils.when(() -> GitUtils.goToCommit(Mockito.any(), Mockito.any()))
             .thenAnswer(new Answer<Void>() {
 
                @Override
@@ -42,7 +42,7 @@ public class VCSTestUtils {
    }
 
    public static void mockGoToTagAny(final MockedStatic<GitUtils> mockedGitUtils, final File anyVersion) {
-      mockedGitUtils.when(() -> GitUtils.goToTag(Mockito.any(), Mockito.any()))
+      mockedGitUtils.when(() -> GitUtils.goToCommit(Mockito.any(), Mockito.any()))
             .thenAnswer(new Answer<Void>() {
 
                @Override
@@ -70,7 +70,7 @@ public class VCSTestUtils {
    }
    
    public static void mockGoToTag(final MockedStatic<GitUtils> mockedGitUtils, final PeassFolders folders, final File statePredecessor, final File stateMainVersion) {
-      mockedGitUtils.when(() -> GitUtils.goToTag(Mockito.eq("000001~1"), Mockito.any(File.class))).thenAnswer(new Answer<Void>() {
+      mockedGitUtils.when(() -> GitUtils.goToCommit(Mockito.eq("000001~1"), Mockito.any(File.class))).thenAnswer(new Answer<Void>() {
 
          @Override
          public Void answer(final InvocationOnMock invocation) throws Throwable {
@@ -82,7 +82,7 @@ public class VCSTestUtils {
          }
       });
       
-      mockedGitUtils.when(() -> GitUtils.goToTag(Mockito.eq("000001"), Mockito.any(File.class))).thenAnswer(new Answer<Void>() {
+      mockedGitUtils.when(() -> GitUtils.goToCommit(Mockito.eq("000001"), Mockito.any(File.class))).thenAnswer(new Answer<Void>() {
 
          @Override
          public Void answer(final InvocationOnMock invocation) throws Throwable {

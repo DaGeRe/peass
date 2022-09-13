@@ -75,7 +75,7 @@ public class CommitIteratorGit extends CommitIterator {
    @Override
    public boolean goToFirstCommit() {
       tagid = 0;
-      GitUtils.goToTag(entries.get(0), projectFolder);
+      GitUtils.goToCommit(entries.get(0), projectFolder);
       return true;
    }
 
@@ -83,7 +83,7 @@ public class CommitIteratorGit extends CommitIterator {
    public boolean goToNextCommit() {
       tagid++;
       final String nextTag = entries.get(tagid);
-      GitUtils.goToTag(nextTag, projectFolder);
+      GitUtils.goToCommit(nextTag, projectFolder);
       return true;
    }
 
@@ -92,7 +92,7 @@ public class CommitIteratorGit extends CommitIterator {
       if (tagid > 0) {
          tagid--;
          final String nextTag = entries.get(tagid);
-         GitUtils.goToTag(nextTag, projectFolder);
+         GitUtils.goToCommit(nextTag, projectFolder);
          return true;
       } else {
          return false;
@@ -127,7 +127,7 @@ public class CommitIteratorGit extends CommitIterator {
    @Override
    public boolean goTo0thCommit() {
       if (previousIndex != -1) {
-         GitUtils.goToTag(previous, projectFolder);
+         GitUtils.goToCommit(previous, projectFolder);
          tagid = previousIndex;
          return true;
       } else {

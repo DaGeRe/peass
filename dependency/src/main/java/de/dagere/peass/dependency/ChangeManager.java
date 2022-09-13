@@ -114,9 +114,9 @@ public class ChangeManager {
    }
 
    public Map<ChangedEntity, ClazzChangeData> getChanges(final String version1, final String version2) {
-      GitUtils.goToTag(version1, folders.getProjectFolder());
+      GitUtils.goToCommit(version1, folders.getProjectFolder());
       saveOldClasses();
-      GitUtils.goToTag(version2, folders.getProjectFolder());
+      GitUtils.goToCommit(version2, folders.getProjectFolder());
       return getChanges(version1);
    }
 

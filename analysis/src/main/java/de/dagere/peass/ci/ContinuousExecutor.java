@@ -92,7 +92,7 @@ public class ContinuousExecutor {
          GitUtils.reset(projectFolderLocal);
          GitUtils.clean(projectFolderLocal);
          GitUtils.pull(projectFolderLocal);
-         GitUtils.goToTag(measurementConfig.getFixedCommitConfig().getCommit(), projectFolderLocal);
+         GitUtils.goToCommit(measurementConfig.getFixedCommitConfig().getCommit(), projectFolderLocal);
       }
    }
 

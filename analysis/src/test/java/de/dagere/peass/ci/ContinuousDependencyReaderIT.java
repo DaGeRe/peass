@@ -78,7 +78,7 @@ public class ContinuousDependencyReaderIT {
    @Test
    public void testAnotherVersion() throws Exception {
       final String prevTag = builder.getTags().get(builder.getTags().size() - 1);
-      GitUtils.goToTag(prevTag, TestConstants.CURRENT_FOLDER);
+      GitUtils.goToCommit(prevTag, TestConstants.CURRENT_FOLDER);
 
       String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/basic_state"), "test 2");
 
@@ -104,7 +104,7 @@ public class ContinuousDependencyReaderIT {
    @Test
    public void testEmptyVersion() throws Exception {
       final String prevTag = builder.getTags().get(builder.getTags().size() - 1);
-      GitUtils.goToTag(prevTag, TestConstants.CURRENT_FOLDER);
+      GitUtils.goToCommit(prevTag, TestConstants.CURRENT_FOLDER);
 
       String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/only_comment_change"), "test 2");
 
