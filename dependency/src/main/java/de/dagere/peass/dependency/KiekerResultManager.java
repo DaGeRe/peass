@@ -94,6 +94,12 @@ public class KiekerResultManager {
       LOG.debug("Truncating: {}", folders.getTempMeasurementFolder().getAbsolutePath());
       try {
          FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
+         
+         // Workaround: do delete temporary tomcat output folders, so peass-ant "knows" when to re-instrument all classes
+         File outputFolder = new File(folders.getProjectFolder(), "output");
+         if (folders.getProjectName().equals("tomcat") && outputFolder.exists()) {
+        	 FileUtils.deleteDirectory(outputFolder);
+         }
       } catch (final IOException e) {
          e.printStackTrace();
          if (folders.getTempMeasurementFolder().exists()) {
