@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import de.dagere.peass.SelectStarter;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
@@ -47,16 +46,7 @@ public class DetectUncoveredChanges implements Callable<Void> {
 
          boolean anyUncoveredCommit = false, anyCoveredCommit = false;
          for (ChangedEntity entity : changes) {
-            boolean covered = false;
-            for (StaticTestSelection selection : selections) {
-               CommitStaticSelection commitStaticSelection = selection.getCommits().get(commit);
-               if (commitStaticSelection != null) {
-                  TestSet testSet = commitStaticSelection.getChangedClazzes().get(entity);
-                  if (testSet != null && testSet.getTestMethods().size() > 0) {
-                     covered = true;
-                  }
-               }
-            }
+            boolean covered = isEntityCovered(selections, commit, entity);
 
             if (!covered) {
                System.out.println("Not covered in " + commit + ": " + entity);
@@ -75,9 +65,23 @@ public class DetectUncoveredChanges implements Callable<Void> {
          }
       }
 
-      System.out.println("Uncovered commits: " + uncoveredCommits + " Uncovered changes: " + uncoveredChanges);
-      System.out.println("Covered commits: " + coveredCommits + " Covered changes: " + coveredChanges);
+      System.out.println("Uncovered commits: " + uncoveredCommits + " (" + uncoveredChanges + ")");
+      System.out.println("Covered commits: " + coveredCommits + " (" + coveredChanges + ")");
 
       return null;
+   }
+
+   private boolean isEntityCovered(StaticTestSelection[] selections, String commit, ChangedEntity entity) {
+      boolean covered = false;
+      for (StaticTestSelection selection : selections) {
+         CommitStaticSelection commitStaticSelection = selection.getCommits().get(commit);
+         if (commitStaticSelection != null) {
+            TestSet testSet = commitStaticSelection.getChangedClazzes().get(entity);
+            if (testSet != null && testSet.getTestMethods().size() > 0) {
+               covered = true;
+            }
+         }
+      }
+      return covered;
    }
 }
