@@ -107,19 +107,10 @@ public final class GitUtils {
    }
 
    private static void clone(final File projectFolderDest, final File projectFolderSource, final String gitCryptKey) throws InterruptedException, IOException {
-      final String clonedProject = projectFolderSource.getAbsolutePath();
-      final String goalFolder = projectFolderDest.getName();
       if (projectFolderDest.exists()) {
          throw new RuntimeException("Can not clone to existing folder: " + projectFolderDest.getAbsolutePath());
       }
-      final ProcessBuilder builder = new ProcessBuilder("git", "clone", "file://" + clonedProject, goalFolder);
-      builder.directory(projectFolderDest.getParentFile());
-      StreamGobbler.showFullProcess(builder.start());
-
-      if (gitCryptKey != null) {
-         unlockWithGitCrypt(projectFolderDest, gitCryptKey);
-      }
-
+      FileUtils.copyDirectory(projectFolderSource, projectFolderDest);
    }
 
    /**
