@@ -2,6 +2,9 @@ package de.dagere.peass.config;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 
 public class StatisticsConfig implements Serializable {
@@ -17,17 +20,19 @@ public class StatisticsConfig implements Serializable {
    private double type2error = StatisticsConfigMixin.PEASS_DEFAULT_TYPE_2_ERROR;
    private double outlierFactor = DEFAULT_OUTLIER_FACTOR;
    private StatisticalTests statisticTest = StatisticalTests.T_TEST;
-   
+   private double maximumRelativeDeviation = Double.MAX_VALUE;
+
    public static final double DEFAULT_OUTLIER_FACTOR = 3.29; // Does not remove 99% of all values in gaussian distribution
 
    public StatisticsConfig() {
    }
-   
+
    public StatisticsConfig(final StatisticsConfig other) {
       this.type1error = other.type1error;
       this.type2error = other.type2error;
       this.outlierFactor = other.outlierFactor;
       this.statisticTest = other.statisticTest;
+      this.maximumRelativeDeviation = other.maximumRelativeDeviation;
    }
 
    public double getType1error() {
@@ -60,6 +65,15 @@ public class StatisticsConfig implements Serializable {
       this.outlierFactor = outlierFactor;
    }
 
+   @JsonInclude(value = Include.CUSTOM, valueFilter = MaximumRelativeDeviationFilter.class)
+   public double getMaximumRelativeDeviation() {
+      return maximumRelativeDeviation;
+   }
+
+   public void setMaximumRelativeDeviation(double maximumRelativeDeviation) {
+      this.maximumRelativeDeviation = maximumRelativeDeviation;
+   }
+
    public StatisticalTests getStatisticTest() {
       return statisticTest;
    }
@@ -68,4 +82,15 @@ public class StatisticsConfig implements Serializable {
       this.statisticTest = statisticTest;
    }
 
+   public static class MaximumRelativeDeviationFilter {
+      @Override
+      public boolean equals(Object obj) {
+         if (obj instanceof Double) {
+            return Double.MAX_VALUE == (Double) obj;
+         } else {
+            return false;
+         }
+
+      }
+   }
 }

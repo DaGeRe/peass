@@ -11,6 +11,10 @@ public class StatisticsConfigMixin {
    
    @Option(names = { "-outlierFactor", "--outlierFactor" }, description = "Whether outliers should be removed with z-score higher than the given value")
    private double outlierFactor = 3.29;
+   
+   @Option(names = { "-maximumRelativeDeviation", "--maximumRelativeDeviation" }, description = "Significance tests tend to not work on non-standard distributions; "
+         + "if a maximum relative deviation is set, all measurements having higher relative deviation are ignored.")
+   private double maximumRelativeDeviation = Double.MAX_VALUE;
 
    @Option(names = { "-type1error",
          "--type1error" }, description = "Type 1 error of t-test/false positive rate, i.e. probability of considering measurements unequal when they are equal")
@@ -29,6 +33,14 @@ public class StatisticsConfigMixin {
 
    public void setOutlierFactor(final double outlierFactor) {
       this.outlierFactor = outlierFactor;
+   }
+   
+   public double getMaximumRelativeDeviation() {
+      return maximumRelativeDeviation;
+   }
+   
+   public void setMaximumRelativeDeviation(double maximumRelativeDeviation) {
+      this.maximumRelativeDeviation = maximumRelativeDeviation;
    }
 
    public double getType1error() {
@@ -61,6 +73,7 @@ public class StatisticsConfigMixin {
       config.setType2error(getType2error());
       config.setStatisticTest(getStatisticTest());
       config.setOutlierFactor(getOutlierFactor());
+      config.setMaximumRelativeDeviation(getMaximumRelativeDeviation());
       return config;
    }
    

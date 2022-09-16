@@ -53,8 +53,6 @@ public class ChangeReader {
 
    private double minChange = 0;
    
-   private double maximumRelativeDeviation = 0.25;
-
    private final CommitData allData = new CommitData();
    private final ResultsFolders resultsFolders;
 
@@ -245,11 +243,11 @@ public class ChangeReader {
             !confidenceResult.equals(Relation.EQUAL));
       statistics.addMeasurement(commits[1], testcase, statistic);
       
-      if (statistic.getDeviationOld() / statistic.getMeanOld() > maximumRelativeDeviation) {
+      if (statistic.getDeviationOld() / statistic.getMeanOld() > config.getMaximumRelativeDeviation()) {
          System.out.println("Skipping " + testcase + " because of deviation: " + statistic.getDeviationOld() / statistic.getMeanOld());
          return;
       }
-      if (statistic.getDeviationCurrent() / statistic.getMeanCurrent() > maximumRelativeDeviation) {
+      if (statistic.getDeviationCurrent() / statistic.getMeanCurrent() > config.getMaximumRelativeDeviation()) {
          System.out.println("Skipping " + testcase + " because of deviation: " + statistic.getDeviationCurrent() / statistic.getMeanCurrent());
          return;
       }
