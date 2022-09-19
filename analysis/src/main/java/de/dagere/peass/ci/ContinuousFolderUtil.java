@@ -3,6 +3,7 @@ package de.dagere.peass.ci;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,6 +57,17 @@ public enum ContinuousFolderUtil {
          GitUtils.unlockWithGitCrypt(new File(localFolder, originalVcsFolder.getName()), gitCryptKey);
       }
 
+   }
+
+   public static void copyProject(final File projectFolder, final File localFolder) throws IOException {
+      localFolder.mkdirs();
+      File originalVcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
+      File copiedProjectFolder = new File(localFolder, originalVcsFolder.getName());
+
+      if (originalVcsFolder != null && originalVcsFolder.exists()) {
+         LOG.info("Copying {} to {}", originalVcsFolder.getAbsolutePath(), copiedProjectFolder.getAbsolutePath());
+         FileUtils.copyDirectory(originalVcsFolder, copiedProjectFolder);
+      }
    }
 
    private static void assureProcessFinished(Process process) throws InterruptedException {
