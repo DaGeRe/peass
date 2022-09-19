@@ -53,43 +53,6 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       this.params = params;
    }
 
-   public TestCase(final String testcase) {
-      if (testcase.contains(File.separator)) {
-         throw new RuntimeException("Testcase should be full qualified name, not path!");
-      }
-      final int index = testcase.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
-      if (index == -1) {
-         int moduleIndex = testcase.indexOf(ChangedEntity.MODULE_SEPARATOR);
-         if (moduleIndex == -1) {
-            clazz = testcase;
-            module = "";
-         } else {
-            clazz = testcase.substring(moduleIndex + 1);
-            module = testcase.substring(0, moduleIndex);
-         }
-         method = null;
-         params = null;
-      } else {
-         String start = testcase.substring(0, index);
-         int moduleIndex = testcase.indexOf(ChangedEntity.MODULE_SEPARATOR);
-         if (moduleIndex == -1) {
-            clazz = start;
-            module = "";
-         } else {
-            clazz = start.substring(moduleIndex + 1);
-            module = start.substring(0, moduleIndex);
-         }
-
-         if (testcase.contains("(")) {
-            method = testcase.substring(index + 1, testcase.indexOf("("));
-            params = testcase.substring(testcase.indexOf("(") + 1, testcase.length() - 1);
-         } else {
-            method = testcase.substring(index + 1);
-            params = null;
-         }
-      }
-   }
-
    public String getClazz() {
       return clazz;
    }

@@ -54,7 +54,7 @@ public class TreeReader extends KiekerResultManager {
       return root;
    }
 
-   private void executeMeasurements(final TestCase testcase, final String commit) {
+   private void executeMeasurements(final TestMethodCall testcase, final String commit) {
       executor.loadClasses();
       executeKoPeMeKiekerRun(new TestSet(testcase), commit, folders.getTreeLogFolder());
    }
