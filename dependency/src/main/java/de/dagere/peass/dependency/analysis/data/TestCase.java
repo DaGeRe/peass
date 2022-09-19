@@ -3,9 +3,7 @@ package de.dagere.peass.dependency.analysis.data;
 import java.io.File;
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 
@@ -32,28 +30,12 @@ public abstract class TestCase implements Comparable<TestCase>, Serializable {
       if (clazz.contains(ChangedEntity.MODULE_SEPARATOR)) {
          throw new RuntimeException("Class and module should be separated: " + clazz);
       }
+      if (module == null) {
+         throw new RuntimeException("Module may not be null, since Files are created on it; please set it to the empty String.");
+      }
       this.clazz = clazz;
       this.module = module;
    }
-
-   // @JsonCreator
-   // public TestCase(@JsonProperty("clazz") final String clazz,
-   // @JsonProperty("method") final String method,
-   // @JsonProperty("module") final String module,
-   // @JsonProperty("params") final String params) {
-
-   // if (method != null && (method.contains("(") || method.contains(")"))) {
-   // throw new RuntimeException("Method must not contain paranthesis: " + method);
-   // }
-   // if (module == null) {
-   // throw new RuntimeException("Module may not be null, since Files are created on it; please set it to the empty String.");
-   // }
-   //
-   // this.clazz = clazz;
-   // this.method = method;
-   // this.module = module;
-   // this.params = params;
-   // }
 
    public String getClazz() {
       return clazz;

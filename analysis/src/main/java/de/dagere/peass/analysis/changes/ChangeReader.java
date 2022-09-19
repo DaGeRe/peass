@@ -19,7 +19,6 @@ import de.dagere.peass.analysis.helper.read.CommitData;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.StatisticsConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.SelectedTests;

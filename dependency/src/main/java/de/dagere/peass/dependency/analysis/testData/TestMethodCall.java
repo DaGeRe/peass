@@ -49,6 +49,10 @@ public class TestMethodCall extends TestCase {
       super(clazz, module);
       this.method = method;
       this.params = params;
+
+      if (method != null && (method.contains("(") || method.contains(")"))) {
+         throw new RuntimeException("Method must not contain paranthesis: " + method);
+      }
    }
 
    public String getMethod() {
