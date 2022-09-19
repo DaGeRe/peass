@@ -111,7 +111,7 @@ public class TestStaticTestSelection {
 
       StaticTestSelection deserializedOldData = Constants.OBJECTMAPPER.readValue(OLD_DATA_EXAMPLE, StaticTestSelection.class);
       Assert.assertEquals(deserializedOldData.getInitialcommit().getCommit(), "asdasd");
-      Assert.assertNull(deserializedOldData.getInitialversion());
+      Assert.assertNull(deserializedOldData.getInitialcommit());
 
    }
 }
