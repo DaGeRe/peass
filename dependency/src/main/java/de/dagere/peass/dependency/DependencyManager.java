@@ -415,7 +415,7 @@ public class DependencyManager extends KiekerResultManager {
    void checkRemoved(final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes, final Entry<TestClazzCall, Set<String>> entry,
          final File testclazzFolder) {
       LOG.error("Testclass {} does not exist anymore or does not create results. Folder: {}", entry.getKey(), testclazzFolder);
-      final TestCase testclass = new TestMethodCall(entry.getKey().getClazz(), "", entry.getKey().getModule());
+      final TestClazzCall testclass = new TestClazzCall(entry.getKey().getClazz(), entry.getKey().getModule());
       boolean oldContained = false;
       for (final TestMethodCall oldTest : oldDepdendencies.keySet()) {
          if (testclass.getClazz().equals(oldTest.getClazz()) && testclass.getModule().equals(oldTest.getModule())) {
