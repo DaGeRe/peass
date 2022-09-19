@@ -182,21 +182,21 @@ public class JUnitTestTransformer implements TestTransformer {
       determineVersions(mapping.getModules());
       for (final TestClazzCall clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
+         final File moduleFolder = new File(projectFolder, clazzname.getModule());
+         RunnableTestInformation rti = getTestRunInformation(moduleFolder, clazzname);
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
-            final File moduleFolder = new File(projectFolder, clazzname.getModule());
-            RunnableTestInformation rti = getTestRunInformation(moduleFolder, clazzname);
             for (final TestMethodCall test : rti.getTestsToUpdate().getTestMethods()) {
                addTestIfIncluded(tests, test, mapping);
             }
             
-            for (final TestMethodCall test : rti.getIgnoredTests().getTestMethods()) {
-               tests.getIgnoredTests().addTest(test);
-            }
          } else {
             for (final String method : currentClazzMethods) {
                TestMethodCall test = new TestMethodCall(clazzname.getClazz(), method, clazzname.getModule());
                addTestIfIncluded(tests, test, mapping);
             }
+         }
+         for (final TestMethodCall test : rti.getIgnoredTests().getTestMethods()) {
+            tests.getIgnoredTests().addTest(test);
          }
       }
       return tests;
@@ -474,6 +474,7 @@ public class JUnitTestTransformer implements TestTransformer {
 
    private List<String> getIgnoredMethods(ClassOrInterfaceDeclaration clazz, final String fqnAnnotationName, String annotationName) {
       List<String> ignoredMethods = new LinkedList<>();
+      boolean clazzDeactivated = JUnitParseUtil.isDeactivated(clazz);
       for (final MethodDeclaration method : clazz.getMethods()) {
          boolean found = false;
          for (final AnnotationExpr annotation : method.getAnnotations()) {
@@ -484,7 +485,7 @@ public class JUnitTestTransformer implements TestTransformer {
             }
          }
 
-         boolean testIsDeactivated = JUnitParseUtil.isDeactivated(method);
+         boolean testIsDeactivated = clazzDeactivated || JUnitParseUtil.isDeactivated(method);
 
          if (found && testIsDeactivated) {
             ignoredMethods.add(method.getNameAsString());

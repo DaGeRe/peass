@@ -38,6 +38,14 @@ public class TestIgnoredMethodBuilding {
       MatcherAssert.assertThat(tests.getTestsToUpdate().getTestMethods(), IsIterableContaining.hasItem(new TestMethodCall("TestMeIgnored", "testMe2")));
    }
 
+   @Test
+   public void testJUnit4IgnoreClass() throws IOException {
+      RunnableTestInformation tests = executeTransformation("TestClassIgnored.java", testFolder);
+
+      MatcherAssert.assertThat(tests.getTestsToUpdate().getTestMethods(), Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("TestClassIgnored", "testMe"))));
+      MatcherAssert.assertThat(tests.getIgnoredTests().getTestMethods(), IsIterableContaining.hasItem(new TestMethodCall("TestClassIgnored", "testMe")));
+   }
+   
    public static RunnableTestInformation executeTransformation(final String currentClassName, final File testFolder) throws IOException {
       File sourcesFolder = initializeProject(testFolder);
 
@@ -52,7 +60,7 @@ public class TestIgnoredMethodBuilding {
       
       tt.determineVersions(mapping.getModules());
       
-      RunnableTestInformation tests = tt.buildTestMethodSet(new TestSet("TestMeIgnored"), mapping);
+      RunnableTestInformation tests = tt.buildTestMethodSet(new TestSet(currentClassName.split("\\.")[0]), mapping);
 
       return tests;
    }
