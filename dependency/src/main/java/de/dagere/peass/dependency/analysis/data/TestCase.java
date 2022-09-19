@@ -96,29 +96,6 @@ public abstract class TestCase implements Comparable<TestCase>, Serializable {
       return result;
    }
 
-   @Override
-   public boolean equals(final Object obj) {
-      if (this == obj) {
-         return true;
-      }
-      if (obj == null) {
-         return false;
-      }
-      final TestCase other = (TestCase) obj;
-      if (clazz == null) {
-         if (other.clazz != null) {
-            return false;
-         }
-      } else if (!clazz.equals(other.clazz)) {
-         final String shortClazz = clazz.substring(clazz.lastIndexOf('.') + 1);
-         final String shortClazzOther = other.getClazz().substring(other.getClazz().lastIndexOf('.') + 1);
-         if (!shortClazz.equals(shortClazzOther)) { // Dirty Hack - better transfer clazz-info always
-            return false;
-         }
-      }
-      return true;
-   }
-
    @JsonIgnore
    public String getPackage() {
       int lastDotIndex = clazz.lastIndexOf('.');
