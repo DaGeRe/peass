@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.folders.PeassFolders;
 
@@ -31,7 +31,7 @@ public class JmhResultMover {
       }
    }
 
-   public void moveToMethodFolder(final TestCase testcase, final File sourceJsonResultFile) {
+   public void moveToMethodFolder(final TestMethodCall testcase, final File sourceJsonResultFile) {
       final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
       final File clazzResultFolder = new File(moduleResultsFolder, testcase.getClazz());
 

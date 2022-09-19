@@ -64,7 +64,7 @@ public class TestTestcaseSerialization {
    
    @Test
    public void testCreation() {
-      TestCase test = new TestMethodCall("ClazzA", "methodA(A,B,C)", "moduleA");
+      TestMethodCall test = new TestMethodCall("ClazzA", "methodA(A,B,C)", "moduleA");
       Assert.assertEquals("ClazzA", test.getClazz());
       Assert.assertEquals("methodA", test.getMethod());
       Assert.assertEquals("moduleA", test.getModule());

@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 /**
  * Since GitHub actions fails in one test without the option to step into the problem, and since this is not reproducible using GitHubs local docker container, this class tries to
@@ -22,10 +22,10 @@ public class ErrorLogWriter {
 
    private static final Logger LOG = LogManager.getLogger(ErrorLogWriter.class);
 
-   private final TestCase testcase;
+   private final TestMethodCall testcase;
    private final File resultsFolder;
 
-   public ErrorLogWriter(final TestCase testcase, final File resultsFolder) {
+   public ErrorLogWriter(final TestMethodCall testcase, final File resultsFolder) {
       this.testcase = testcase;
       this.resultsFolder = resultsFolder;
    }
