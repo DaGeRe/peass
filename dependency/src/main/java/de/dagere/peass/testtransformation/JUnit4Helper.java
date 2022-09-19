@@ -30,6 +30,7 @@ import com.github.javaparser.ast.type.Type;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 
 public class JUnit4Helper {
 
@@ -140,7 +141,8 @@ public class JUnit4Helper {
    public static void addRule(final ClassOrInterfaceDeclaration clazz) {
       final NodeList<Expression> arguments = new NodeList<>();
       arguments.add(new ThisExpr());
-      final Expression initializer = new ObjectCreationExpr(null, new ClassOrInterfaceType("KoPeMeRule"), arguments);
+      ClassOrInterfaceType kopemeRuleType = JavaParserProvider.getJavaparser().get().parseClassOrInterfaceType("KoPeMeRule").getResult().get();
+      final Expression initializer = new ObjectCreationExpr(null, kopemeRuleType, arguments);
       final FieldDeclaration fieldDeclaration = clazz.addFieldWithInitializer(TestRule.class, "kopemeRule", initializer, Modifier.publicModifier().getKeyword());
       final NormalAnnotationExpr annotation = new NormalAnnotationExpr();
       annotation.setName("Rule");

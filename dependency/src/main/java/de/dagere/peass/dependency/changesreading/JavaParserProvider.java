@@ -34,5 +34,9 @@ public class JavaParserProvider {
       }
       return result.get();
    }
+   
+   public static ThreadLocal<JavaParser> getJavaparser() {
+      return javaParser;
+   }
 
 }
