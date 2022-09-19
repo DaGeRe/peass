@@ -66,7 +66,7 @@ public class ExecutionData extends SelectedTests {
    }
 
    @JsonIgnore
-   public void addCall(final String commit, final TestCase testcase) {
+   public void addCall(final String commit, final TestMethodCall testcase) {
       TestSet executes = commits.get(commit);
       if (executes == null) {
          executes = new TestSet();

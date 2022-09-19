@@ -89,7 +89,7 @@ public class InitialCommit {
    @JsonIgnore
    public TestSet getInitialTests() {
       TestSet initialTests = new TestSet();
-      for (TestCase testEntity : initialDependencies.keySet()) {
+      for (TestMethodCall testEntity : initialDependencies.keySet()) {
          initialTests.addTest(testEntity);
       }
       return initialTests;

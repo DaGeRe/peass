@@ -35,12 +35,10 @@ public class TestNonIncludedTestRemover {
       tests.addTest(new TestMethodCall("TestA", "method1"));
       tests.addTest(new TestMethodCall("TestA", "method2"));
       tests.addTest(new TestMethodCall("TestB", "method3"));
-      tests.addTest(new TestClazzCall("TestC"));
-      tests.addTest(new TestClazzCall("TestD"));
 
-      NonIncludedTestRemover.removeNotIncluded(tests, new ExecutionConfig(Arrays.asList(new String[] { "TestA#method1", "TestC" }), "test"));
+      NonIncludedTestRemover.removeNotIncluded(tests, new ExecutionConfig(Arrays.asList(new String[] { "TestA#method1" }), "test"));
 
-      Assert.assertEquals(2, tests.getTests().size());
+      Assert.assertEquals(1, tests.getTestMethods().size());
    }
 
    @Test

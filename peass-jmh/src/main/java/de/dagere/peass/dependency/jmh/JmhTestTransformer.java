@@ -77,7 +77,7 @@ public class JmhTestTransformer implements TestTransformer {
             }
          } else {
             for (final String method : currentClazzMethods) {
-               TestCase test = new TestMethodCall(clazzname.getClazz(), method, clazzname.getModule());
+               TestMethodCall test = new TestMethodCall(clazzname.getClazz(), method, clazzname.getModule());
                tests.getTestsToUpdate().addTest(test);
             }
          }
@@ -106,7 +106,7 @@ public class JmhTestTransformer implements TestTransformer {
       for (final String clazz : finder.getClasses(module)) {
          String currentModule = ModuleClassMapping.getModuleName(projectFolder, module);
          final Set<TestMethodCall> testMethodNames = getTestMethodNames(module, new TestClazzCall(clazz, currentModule));
-         for (TestCase test : testMethodNames) {
+         for (TestMethodCall test : testMethodNames) {
             if (includedModules == null || includedModules.contains(test.getModule())) {
                addTestIfIncluded(moduleTests, test);
             }
@@ -168,7 +168,7 @@ public class JmhTestTransformer implements TestTransformer {
       return parsedClassName;
    }
 
-   private void addTestIfIncluded(final RunnableTestInformation moduleTests, final TestCase test) {
+   private void addTestIfIncluded(final RunnableTestInformation moduleTests, final TestMethodCall test) {
       if (NonIncludedTestRemover.isTestIncluded(test, getConfig().getExecutionConfig())) {
          moduleTests.getTestsToUpdate().addTest(test);
       }

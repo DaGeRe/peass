@@ -128,7 +128,7 @@ public class DependencyReaderUtil {
          if (!contained) {
             final TestSet tests = new TestSet();
             if (changeTestMap.getChanges().containsKey(underminedChange)) {
-               for (final TestCase testClass : changeTestMap.getChanges().get(underminedChange)) {
+               for (final TestMethodCall testClass : changeTestMap.getChanges().get(underminedChange)) {
                   tests.addTest(testClass);
                }
             }
@@ -141,14 +141,10 @@ public class DependencyReaderUtil {
       for (ChangedEntity underminedChange : changedClassName.getUniqueChanges()) {
          final TestSet tests = new TestSet();
          ChangedEntity realChange = underminedChange.onlyClazz();
-         Set<TestCase> testEntities = changeTestMap.getTests(realChange);
+         Set<TestMethodCall> testEntities = changeTestMap.getTests(realChange);
          if (testEntities != null) {
-            for (final TestCase testcase : testEntities) {
-               if (testcase.getMethod() != null) {
-                  tests.addTest(testcase);
-               } else {
-                  throw new RuntimeException("Testcase without method detected: " + testcase + " Dependency: " + tests);
-               }
+            for (final TestMethodCall testcase : testEntities) {
+               tests.addTest(testcase);
             }
          }
          if (version.getChangedClazzes().containsKey(realChange)) {
@@ -167,7 +163,8 @@ public class DependencyReaderUtil {
       }
    }
 
-   public static StaticTestSelection mergeDependencies(final StaticTestSelection staticTestSelection1, final StaticTestSelection staticTestSelection2, CommitComparatorInstance comparator) {
+   public static StaticTestSelection mergeDependencies(final StaticTestSelection staticTestSelection1, final StaticTestSelection staticTestSelection2,
+         CommitComparatorInstance comparator) {
       final StaticTestSelection merged;
       final StaticTestSelection newer;
       if (comparator.isBefore(staticTestSelection1.getInitialcommit().getCommit(), staticTestSelection2.getInitialcommit().getCommit())) {

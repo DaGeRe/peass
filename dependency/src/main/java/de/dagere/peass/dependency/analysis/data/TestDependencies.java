@@ -137,7 +137,7 @@ public class TestDependencies {
    public ChangeTestMapping getChangeTestMap(final Map<ChangedEntity, ClazzChangeData> changes) {
       final ChangeTestMapping changeTestMap = new ChangeTestMapping();
       for (final Entry<TestMethodCall, CalledMethods> dependencyEntry : dependencyMap.entrySet()) {
-         final TestCase currentTestcase = dependencyEntry.getKey();
+         final TestMethodCall currentTestcase = dependencyEntry.getKey();
          final CalledMethods currentTestDependencies = dependencyEntry.getValue();
          for (ClazzChangeData changedEntry : changes.values()) {
             for (ChangedEntity change : changedEntry.getChanges()) {
@@ -149,14 +149,14 @@ public class TestDependencies {
             }
          }
       }
-      for (final Map.Entry<ChangedEntity, Set<TestCase>> element : changeTestMap.getChanges().entrySet()) {
+      for (final Map.Entry<ChangedEntity, Set<TestMethodCall>> element : changeTestMap.getChanges().entrySet()) {
          LOG.debug("Change: {} Calling: {} {}", element.getKey(), element.getValue().size(), element.getValue());
       }
 
       return changeTestMap;
    }
 
-   private void addCall(final ChangeTestMapping changeTestMap, final TestCase currentTestcase, final CalledMethods currentTestDependencies,
+   private void addCall(final ChangeTestMapping changeTestMap, final TestMethodCall currentTestcase, final CalledMethods currentTestDependencies,
          final ClazzChangeData changedEntry, final ChangedEntity change, final ChangedEntity changedClass) {
       boolean clazzLevelChange = !changedEntry.isOnlyMethodChange();
       if (clazzLevelChange) {

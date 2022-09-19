@@ -69,7 +69,7 @@ public class StaticChangeHandler {
                File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
                TestClazzCall potentialTest = new TestClazzCall(change.getClazz(), change.getModule());
                Set<TestMethodCall> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
-               for (TestCase added : addedTests) {
+               for (TestMethodCall added : addedTests) {
                   if (NonIncludedTestRemover.isTestIncluded(added, executionConfig)) {
                      if (dependencyManager.getTestTransformer() instanceof JUnitTestTransformer) {
                         JUnitTestTransformer testTransformer = (JUnitTestTransformer) dependencyManager.getTestTransformer();
