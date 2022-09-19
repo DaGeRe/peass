@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class FixedCommitConfig implements Serializable {
    
-   private static final long serialVersionUID = 3129231099963995908L;
+   private static final long serialVersionUID = 3129231099963995902L;
    
    private String commit = "HEAD";
    private String commitOld = "HEAD~1";
