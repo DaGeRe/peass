@@ -110,11 +110,6 @@ public final class GitUtils {
       if (projectFolderDest.exists()) {
          throw new RuntimeException("Can not clone to existing folder: " + projectFolderDest.getAbsolutePath());
       }
-
-      if (gitCryptKey != null) {
-         unlockWithGitCrypt(projectFolderSource, gitCryptKey);
-      }
-
       FileUtils.copyDirectory(projectFolderSource, projectFolderDest);
    }
 
