@@ -197,9 +197,6 @@ public class TestSet {
 
    @JsonIgnore
    public void removeTest(final TestClazzCall testClassName, final String testMethodName) {
-      if (testClassName.getMethod() != null && testClassName.getMethod() != "") {
-         throw new RuntimeException("Testset class removal should only be done with empty method of ChangedEntity!");
-      }
       final Set<String> testMethods = testcases.get(testClassName);
       if (testMethods != null) {
          removeMethod(testClassName, testMethodName, testMethods);

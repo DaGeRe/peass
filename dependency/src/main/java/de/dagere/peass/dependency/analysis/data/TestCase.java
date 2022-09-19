@@ -15,22 +15,14 @@ import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
  * @author reichelt
  *
  */
-public class TestCase implements Comparable<TestCase>, Serializable {
+public abstract class TestCase implements Comparable<TestCase>, Serializable {
 
    private static final long serialVersionUID = -522183920107191602L;
 
    protected final String module;
    protected final String clazz;
-   protected final String method;
 
-   // Saves parameters without paranthesis
-   protected final String params;
-
-   @JsonCreator
-   public TestCase(@JsonProperty("clazz") final String clazz,
-         @JsonProperty("method") final String method,
-         @JsonProperty("module") final String module,
-         @JsonProperty("params") final String params) {
+   protected TestCase(String clazz, String module) {
       if (clazz.contains(File.separator)) {
          throw new RuntimeException("Testcase " + clazz + " should be full qualified name, not path!");
       }
@@ -40,18 +32,28 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       if (clazz.contains(ChangedEntity.MODULE_SEPARATOR)) {
          throw new RuntimeException("Class and module should be separated: " + clazz);
       }
-      if (method != null && (method.contains("(") || method.contains(")"))) {
-         throw new RuntimeException("Method must not contain paranthesis: " + method);
-      }
-      if (module == null) {
-         throw new RuntimeException("Module may not be null, since Files are created on it; please set it to the empty String.");
-      }
-         
       this.clazz = clazz;
-      this.method = method;
       this.module = module;
-      this.params = params;
    }
+
+   // @JsonCreator
+   // public TestCase(@JsonProperty("clazz") final String clazz,
+   // @JsonProperty("method") final String method,
+   // @JsonProperty("module") final String module,
+   // @JsonProperty("params") final String params) {
+
+   // if (method != null && (method.contains("(") || method.contains(")"))) {
+   // throw new RuntimeException("Method must not contain paranthesis: " + method);
+   // }
+   // if (module == null) {
+   // throw new RuntimeException("Module may not be null, since Files are created on it; please set it to the empty String.");
+   // }
+   //
+   // this.clazz = clazz;
+   // this.method = method;
+   // this.module = module;
+   // this.params = params;
+   // }
 
    public String getClazz() {
       return clazz;
@@ -66,19 +68,15 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       }
    }
 
-   /**
-    * getMethod should only be called on TestMethodCall
-    * @return
-    */
-   @Deprecated
-   public String getMethod() {
-      return method;
-   }
-
    public String getModule() {
       return module;
    }
 
+   public abstract ChangedEntity toEntity();
+   
+   @JsonIgnore
+   public abstract String getExecutable();
+   
    @JsonIgnore
    public String getTestclazzWithModuleName() {
       String testcase;
@@ -95,7 +93,6 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((clazz == null) ? 0 : clazz.hashCode());
-      result = prime * result + ((method == null) ? 0 : method.hashCode());
       return result;
    }
 
@@ -119,38 +116,7 @@ public class TestCase implements Comparable<TestCase>, Serializable {
             return false;
          }
       }
-      if (method == null) {
-         if (other.method != null) {
-            return false;
-         }
-      } else if (!method.equals(other.method)) {
-         return false;
-      }
-      if (params == null) {
-         if (other.params != null) {
-            return false;
-         }
-      } else if (!params.equals(other.params)) {
-         return false;
-      }
       return true;
-   }
-
-   @Override
-   public String toString() {
-      String result;
-      if (module != null && !"".equals(module)) {
-         result = module + ChangedEntity.MODULE_SEPARATOR + clazz;
-      } else {
-         result = clazz;
-      }
-      if (method != null) {
-         result += ChangedEntity.METHOD_SEPARATOR + method;
-      }
-      if (params != null) {
-         result += "(" + params + ")";
-      }
-      return result;
    }
 
    @JsonIgnore
@@ -160,15 +126,6 @@ public class TestCase implements Comparable<TestCase>, Serializable {
          return clazz.substring(0, lastDotIndex);
       } else {
          return "";
-      }
-   }
-
-   @JsonIgnore
-   public String getExecutable() {
-      if (method != null) {
-         return clazz + "#" + method;
-      } else {
-         return clazz;
       }
    }
 
@@ -196,10 +153,6 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    @Override
    public int compareTo(final TestCase arg0) {
       return toString().compareTo(arg0.toString());
-   }
-
-   public ChangedEntity toEntity() {
-      return new ChangedEntity(clazz, module, method);
    }
 
    @JsonIgnore

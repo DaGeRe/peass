@@ -55,9 +55,9 @@ public class NonIncludedTestRemover {
       }
    }
 
-   public static void removeNotIncluded(final Set<TestCase> tests, final ExecutionConfig executionConfig) {
+   public static void removeNotIncluded(final Set<? extends TestCase> tests, final ExecutionConfig executionConfig) {
       if (executionConfig.getIncludes().size() > 0 || executionConfig.getExcludes().size() > 0) {
-         for (Iterator<TestCase> it = tests.iterator(); it.hasNext();) {
+         for (Iterator<? extends TestCase> it = tests.iterator(); it.hasNext();) {
             TestCase test = it.next();
             boolean isIncluded = isTestIncluded(test, executionConfig);
             if (!isIncluded) {
@@ -71,7 +71,7 @@ public class NonIncludedTestRemover {
    public static void removeNotIncludedMethods(final Set<TestMethodCall> tests, final ExecutionConfig executionConfig) {
       if (executionConfig.getIncludes().size() > 0 || executionConfig.getExcludes().size() > 0) {
          for (Iterator<TestMethodCall> it = tests.iterator(); it.hasNext();) {
-            TestCase test = it.next();
+            TestMethodCall test = it.next();
             boolean isIncluded = isTestIncluded(test, executionConfig);
             if (!isIncluded) {
                LOG.info("Excluding non-included test {}", test);
@@ -81,7 +81,7 @@ public class NonIncludedTestRemover {
       }
    }
 
-   public static boolean isTestClassIncluded(final TestCase test, final ExecutionConfig config) {
+   public static boolean isTestClassIncluded(final TestClazzCall test, final ExecutionConfig config) {
       List<String> includes = config.getIncludes();
       boolean isIncluded;
       if (includes.size() != 0) {

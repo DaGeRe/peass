@@ -111,7 +111,10 @@ public class TestStaticTestSelection {
 
       StaticTestSelection deserializedOldData = Constants.OBJECTMAPPER.readValue(OLD_DATA_EXAMPLE, StaticTestSelection.class);
       Assert.assertEquals(deserializedOldData.getInitialcommit().getCommit(), "asdasd");
-      Assert.assertNull(deserializedOldData.getInitialcommit());
+
+      // This should be deprecated, since it tests that the deprecated method is returning nothing (to enforce usage of the non-deprecated methods). For compatibility with old
+      // data, the deprecated method needs to stay in the code, even not used.
+      Assert.assertNull(deserializedOldData.getInitialversion());
 
    }
 }

@@ -35,7 +35,7 @@ public class TestBenchmarkDetection {
             modules);
 
       Assert.assertEquals(tests.getTestMethods().size(), 1);
-      TestCase test = tests.getTestMethods().iterator().next();
+      TestMethodCall test = tests.getTestMethods().iterator().next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmark#testMethod", test.getExecutable());
    }
 
@@ -47,7 +47,7 @@ public class TestBenchmarkDetection {
             modules);
 
       Assert.assertEquals(tests.getTestMethods().size(), 1);
-      TestCase test = tests.getTestMethods().iterator().next();
+      TestMethodCall test = tests.getTestMethods().iterator().next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmark#testMethod", test.getExecutable());
    }
 
@@ -59,10 +59,10 @@ public class TestBenchmarkDetection {
       ModuleClassMapping mapping = new ModuleClassMapping(JmhTestConstants.MULTIMODULE_VERSION, modules, new ExecutionConfig());
       TestSet tests = jmhTransformer.findModuleTests(mapping, null, modules);
       Iterator<TestMethodCall> iterator = tests.getTestMethods().iterator();
-      TestCase test = iterator.next();
+      TestMethodCall test = iterator.next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmarkBasic#testMethod", test.getExecutable());
 
-      TestCase testUsing = iterator.next();
+      TestMethodCall testUsing = iterator.next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmarkUsing#testMethod", testUsing.getExecutable());
    }
 }

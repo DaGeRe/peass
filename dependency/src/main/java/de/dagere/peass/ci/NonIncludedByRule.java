@@ -96,8 +96,7 @@ public class NonIncludedByRule {
             String extendType = clazz.getExtendedTypes(0).getNameAsString();
             String fqn = FQNDeterminer.getParameterFQN(unit, extendType);
             String module = mapping.getModuleOfClass(fqn);
-            ChangedEntity entity = new ChangedEntity(fqn, module);
-            TestClazzCall parentTest = new TestClazzCall(entity);
+            TestClazzCall parentTest = new TestClazzCall(fqn, module);
             return parentTest;
          }
       }

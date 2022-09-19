@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.FixedCommitConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 
@@ -16,9 +16,9 @@ public class PatternSetGenerator {
    private static final Logger LOG = LogManager.getLogger(PatternSetGenerator.class);
 
    private final FixedCommitConfig config;
-   private final TestCase testcase;
+   private final TestMethodCall testcase;
 
-   public PatternSetGenerator(FixedCommitConfig config, TestCase testcase) {
+   public PatternSetGenerator(FixedCommitConfig config, TestMethodCall testcase) {
       this.config = config;
       this.testcase = testcase;
    }

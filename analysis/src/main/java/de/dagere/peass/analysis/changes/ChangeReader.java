@@ -288,7 +288,7 @@ public class ChangeReader {
             || (test.getParams() != null && test.getParams().equals(paramString)); // last should only be evaluated if both are not null
    }
 
-   private void writeRunCommands(final String[] commits, final DescribedChunk describedChunk, final TestCase testcase) {
+   private void writeRunCommands(final String[] commits, final DescribedChunk describedChunk, final TestMethodCall testcase) {
       if (runCommandWriter != null) {
          final VMResult exampleResult = describedChunk.getCurrent().get(0);
          final int iterations = (int) exampleResult.getIterations();

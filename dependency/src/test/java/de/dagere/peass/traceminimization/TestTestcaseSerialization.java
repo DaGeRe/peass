@@ -74,11 +74,11 @@ public class TestTestcaseSerialization {
    @Test
    public void testError() {
       Assertions.assertThrows(RuntimeException.class, () ->{
-         TestCase test = new TestCase("ClazzA", "methodA(A,B,C)", "moduleA", null);
+         TestCase test = new TestMethodCall("ClazzA", "methodA(A,B,C)", "moduleA", null);
       });
       
       Assertions.assertThrows(RuntimeException.class, () ->{
-         TestCase test = new TestCase("ClazzA#methodA", null, "moduleA", null);
+         TestCase test = new TestMethodCall("ClazzA#methodA", null, "moduleA", null);
       });
    }
 }

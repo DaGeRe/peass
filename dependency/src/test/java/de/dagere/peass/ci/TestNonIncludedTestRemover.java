@@ -43,7 +43,7 @@ public class TestNonIncludedTestRemover {
 
    @Test
    public void testWithModulesRegular() {
-      Set<TestCase> tests = new HashSet<TestCase>();
+      Set<TestMethodCall> tests = new HashSet<TestMethodCall>();
       tests.add(new TestMethodCall("TestA", "method1", "moduleA"));
       tests.add(new TestMethodCall("TestB", "method1", "moduleB"));
       tests.add(new TestMethodCall("TestC", "method1", "moduleC"));

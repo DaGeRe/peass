@@ -57,10 +57,11 @@ public class DependencyReaderUtil {
          LOG.debug("Remove: {}", removedTest);
          for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
             final TestSet testSet = dependency.getValue();
-            if (removedTest.getMethod().length() > 0) {
+            if (removedTest instanceof TestMethodCall) {
                for (final Entry<TestClazzCall, Set<String>> testcase : testSet.getTestcases().entrySet()) {
                   if (testcase.getKey().getClazz().equals(removedTest.getClazz())) {
-                     testcase.getValue().remove(removedTest.getMethod());
+                     String method = ((TestMethodCall) removedTest).getMethod();
+                     testcase.getValue().remove(method);
                   }
                }
             } else {
