@@ -24,6 +24,7 @@ import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
@@ -153,7 +154,7 @@ public class DependencyDetectorIT {
       System.out.println(testMe);
       final ChangedEntity change = dependencies.getCommits().get(DependencyTestConstants.VERSION_1).getChangedClazzes().keySet().iterator().next();
       Assert.assertEquals("defaultpackage.NormalDependency", change.toString());
-      Assert.assertEquals("defaultpackage.TestMe#testMe", testMe.getTests().iterator().next().getExecutable());
+      Assert.assertEquals("defaultpackage.TestMe#testMe", testMe.getTestMethods().iterator().next().getExecutable());
    }
 
    /**
@@ -190,8 +191,8 @@ public class DependencyDetectorIT {
 
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.TestMe", DependencyTestConstants.VERSION_2);
 
-      final TestCase test = testMe.getTests().iterator().next();
-      Assert.assertEquals(1, testMe.getTests().size());
+      final TestMethodCall test = testMe.getTestMethods().iterator().next();
+      Assert.assertEquals(1, testMe.getTestMethods().size());
       Assert.assertEquals("defaultpackage.TestMe", test.getClazz());
       Assert.assertEquals("testMe", test.getMethod());
    }
@@ -221,6 +222,6 @@ public class DependencyDetectorIT {
       System.out.println("Hash: " + key.hashCode());
       final TestSet testSet = changedClazzes.get(key);
       System.out.println("Testset: " + testSet);
-      MatcherAssert.assertThat(testSet.getTests(), Matchers.empty());
+      MatcherAssert.assertThat(testSet.getTestMethods(), Matchers.empty());
    }
 }

@@ -26,15 +26,14 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
-import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialCallList;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencytests.FakeGitUtil;
@@ -97,7 +96,7 @@ public class JmhDependencyReaderTest {
    private void checkChangedVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
       TestMethodCall changedBenchmark = new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod");
-      MatcherAssert.assertThat(data.getCommits().get("000002").getTests(), Matchers.contains(changedBenchmark));
+      MatcherAssert.assertThat(data.getCommits().get("000002").getTestMethods(), Matchers.contains(changedBenchmark));
    }
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {

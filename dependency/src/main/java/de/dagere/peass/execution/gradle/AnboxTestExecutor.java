@@ -31,7 +31,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    }
 
    private void compileSources() {
-      String wrapper = new File(folders.getProjectFolder(), env.fetchGradleCall()).getAbsolutePath();
+      String wrapper = new File(folders.getProjectFolder(), EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
 
       ProcessBuilder builder = new ProcessBuilder(wrapper, "installDebug", "installDebugAndroidTest");
       builder.directory(folders.getProjectFolder());

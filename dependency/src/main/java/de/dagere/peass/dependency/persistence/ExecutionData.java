@@ -111,7 +111,7 @@ public class ExecutionData extends SelectedTests {
    public int getAllExecutions() {
          int count2 = 0;
          for (final Entry<String, TestSet> entry : getCommits().entrySet()) {
-            count2 += entry.getValue().getTests().size();
+            count2 += entry.getValue().getTestMethods().size();
          }
          return count2;
    }

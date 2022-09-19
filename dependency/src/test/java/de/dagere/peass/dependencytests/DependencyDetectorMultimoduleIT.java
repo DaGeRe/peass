@@ -125,7 +125,7 @@ public class DependencyDetectorMultimoduleIT {
    private void testSecondChange(final StaticTestSelection dependencies) {
       final TestSet foundDependency3 = DependencyDetectorTestUtil.findDependency(dependencies, "base-module§de.dagere.base.NextBaseChangeable#doSomething",
             DependencyTestConstants.VERSION_1);
-      MatcherAssert.assertThat(foundDependency3.getTests().stream(), StreamMatchers.anyMatch(
+      MatcherAssert.assertThat(foundDependency3.getTestMethods().stream(), StreamMatchers.anyMatch(
             Matchers.allOf(Matchers.hasProperty("clazz", Matchers.is("de.NextTest")),
                   Matchers.hasProperty("method", Matchers.isOneOf("nextTestMe", "nextTestMeAlso")))));
    }
@@ -140,15 +140,15 @@ public class DependencyDetectorMultimoduleIT {
 
       System.out.println(foundDependency.getTestcases());
 
-      MatcherAssert.assertThat(foundDependency.getTests().stream(), StreamMatchers.anyMatch(
+      MatcherAssert.assertThat(foundDependency.getTestMethods().stream(), StreamMatchers.anyMatch(
             Matchers.allOf(Matchers.hasProperty("clazz", Matchers.is("de.dagere.base.BaseTest")),
                   Matchers.hasProperty("method", Matchers.isOneOf("testMe", "testMeAlso")))));
 
-      MatcherAssert.assertThat(foundDependency.getTests().stream(), StreamMatchers.anyMatch(
+      MatcherAssert.assertThat(foundDependency.getTestMethods().stream(), StreamMatchers.anyMatch(
             Matchers.allOf(Matchers.hasProperty("clazz", Matchers.is("de.NextTest")),
                   Matchers.hasProperty("method", Matchers.is("nextTestMe")))));
 
-      MatcherAssert.assertThat(foundDependency.getTests().stream(), StreamMatchers.anyMatch(
+      MatcherAssert.assertThat(foundDependency.getTestMethods().stream(), StreamMatchers.anyMatch(
             Matchers.allOf(Matchers.hasProperty("clazz", Matchers.is("de.AnotherTest")),
                   Matchers.hasProperty("method", Matchers.isOneOf("testMeAlso")))));
    }

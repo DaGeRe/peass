@@ -80,7 +80,7 @@ public class JmhDependencyReaderMultiParamTest {
       ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
       TestMethodCall changedBenchmark = new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod");
       TestSet versionTestSet = data.getCommits().get("000002");
-      MatcherAssert.assertThat(versionTestSet.getTests(), Matchers.contains(changedBenchmark));
+      MatcherAssert.assertThat(versionTestSet.getTestMethods(), Matchers.contains(changedBenchmark));
    }
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {

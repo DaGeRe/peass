@@ -107,7 +107,7 @@ public class DependencyManager extends KiekerResultManager {
       executor.loadClasses();
 
       TestSet tests = findIncludedTests(mapping);
-      if (tests.getTests().isEmpty()) {
+      if (tests.getTestMethods().isEmpty()) {
          LOG.error("No tests were selected - maybe the tests are all disabled or no tests meets the pattern");
          return false;
       }

@@ -12,7 +12,6 @@ import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.DummyKoPeMeDataCreator;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;

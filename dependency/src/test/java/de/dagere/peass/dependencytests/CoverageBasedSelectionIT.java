@@ -51,7 +51,7 @@ public class CoverageBasedSelectionIT {
          System.out.println(reader.getCoverageBasedSelection());
 
          TestSet tests = reader.getCoverageBasedSelection().getCommits().get(DependencyTestConstants.VERSION_1);
-         MatcherAssert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestMethodCall("defaultpackage.TestMe", "testSecond")));
+         MatcherAssert.assertThat(tests.getTestMethods(), IsIterableContaining.hasItem(new TestMethodCall("defaultpackage.TestMe", "testSecond")));
       }
    }
 

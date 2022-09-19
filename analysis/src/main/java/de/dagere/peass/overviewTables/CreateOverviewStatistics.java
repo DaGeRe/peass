@@ -78,7 +78,7 @@ public class CreateOverviewStatistics {
             stats[1].addValue(changedTests.getCommits().size());
             int tests = 0;
             for (final TestSet testSet : changedTests.getCommits().values()) {
-               tests += testSet.getTests().size();
+               tests += testSet.getTestMethods().size();
             }
             System.out.print(tests + " & ");
             stats[2].addValue(tests);
