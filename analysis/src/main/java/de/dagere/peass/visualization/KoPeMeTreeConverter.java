@@ -18,7 +18,6 @@ import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.VMResult;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.folders.PeassFolders;

@@ -1,7 +1,6 @@
 package de.dagere.peass.dependencytests.integrated;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 

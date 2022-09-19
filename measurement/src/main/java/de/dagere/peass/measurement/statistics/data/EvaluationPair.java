@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.dagere.kopeme.kopemedata.VMResult;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 /**

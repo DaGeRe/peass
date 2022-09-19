@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;

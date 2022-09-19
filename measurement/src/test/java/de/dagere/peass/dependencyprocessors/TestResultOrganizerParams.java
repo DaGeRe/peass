@@ -89,7 +89,7 @@ public class TestResultOrganizerParams {
 
          @Override
          public File answer(final InvocationOnMock invocation) throws Throwable {
-            TestCase test = invocation.getArgument(0);
+            TestMethodCall test = invocation.getArgument(0);
             return new File(TEMP_FULL_DIR, test.getMethod() + "(" + test.getParams() + ").json");
          }
       });
@@ -98,7 +98,7 @@ public class TestResultOrganizerParams {
 
          @Override
          public File answer(final InvocationOnMock invocation) throws Throwable {
-            TestCase test = invocation.getArgument(0);
+            TestMethodCall test = invocation.getArgument(0);
             int index = invocation.getArgument(1);
             String commit = invocation.getArgument(2);
             File resultFile = new File(TEMP_FULL_DIR, test.getMethod() + "(" + test.getParams() + ")_" + index + "_" + commit + ".json");

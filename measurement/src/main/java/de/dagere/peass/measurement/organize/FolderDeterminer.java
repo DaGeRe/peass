@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 
 public class FolderDeterminer {
@@ -18,7 +19,7 @@ public class FolderDeterminer {
       this.folders = folders;
    }
 
-   public void testResultFolders(final String commit, final String commitOld, final TestCase testcase) {
+   public void testResultFolders(final String commit, final String commitOld, final TestMethodCall testcase) {
       final File resultFile = folders.getResultFile(testcase, 0, commit, commit);
       if (resultFile.exists()) {
          throw new RuntimeException("File " + resultFile.getAbsolutePath() + " exists - please remove data from old measurement!");

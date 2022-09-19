@@ -17,7 +17,6 @@ import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;

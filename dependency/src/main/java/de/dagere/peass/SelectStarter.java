@@ -20,7 +20,6 @@ import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;

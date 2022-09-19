@@ -153,7 +153,7 @@ public class ResultOrganizer {
 
       for (VMResult result : timeDataCollector.getResults()) {
          String paramString = ParamNameHelper.paramsToString(result.getParameters());
-         TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
+         TestMethodCall concreteTestcase = new TestMethodCall(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
 
          final File destFile = folders.getResultFile(concreteTestcase, vmid, commit, mainCommit);
          destFile.getParentFile().mkdirs();
@@ -212,7 +212,7 @@ public class ResultOrganizer {
       return compressor;
    }
 
-   public File getResultFile(final TestCase testcase, final int vmid, final String commit) {
+   public File getResultFile(final TestMethodCall testcase, final int vmid, final String commit) {
       return folders.getResultFile(testcase, vmid, commit, mainCommit);
    }
 

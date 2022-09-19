@@ -47,7 +47,6 @@ import com.github.javaparser.ast.expr.MemberValuePair;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
-import de.dagere.peass.testtransformation.TimeBasedTestTransformer;
 
 /**
  * Tests the transformation of classes.

@@ -17,7 +17,6 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.reader.DependencyReader;

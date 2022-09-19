@@ -130,7 +130,7 @@ public class AdaptiveTesterTest {
       final PeassFolders folders = Mockito.mock(PeassFolders.class);
       Mockito.when(folders.getProjectFolder()).thenReturn(folder.newFolder("test"));
       Mockito.when(folders.getProgressFile()).thenReturn(folder.newFile("progress"));
-      Mockito.when(folders.getResultFile(Mockito.any(TestCase.class), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+      Mockito.when(folders.getResultFile(Mockito.any(TestMethodCall.class), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
             .thenAnswer((index) -> {
                return new File(folder.getRoot(), "log" + index);
             });
