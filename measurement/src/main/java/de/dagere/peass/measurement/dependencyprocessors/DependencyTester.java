@@ -278,7 +278,7 @@ public class DependencyTester implements KiekerResultHandler {
       configuration.getFixedCommitConfig().setCommitOld(commitOld);
    }
 
-   protected boolean checkIsDecidable(final TestCase testcase, final int vmid) {
+   protected boolean checkIsDecidable(final TestMethodCall testcase, final int vmid) {
       return false;
    }
 

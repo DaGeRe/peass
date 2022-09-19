@@ -146,7 +146,7 @@ public class TestContinuousMeasurementExecutor {
 
          @Override
          public Void answer(InvocationOnMock invocation) throws Throwable {
-            TestCase testcase = invocation.getArgument(0);
+            TestMethodCall testcase = invocation.getArgument(0);
             String version = invocation.getArgument(1);
             int vmId = invocation.getArgument(2);
             System.out.println("Running test " + testcase + " for version " + version + " and vmId " + vmId);

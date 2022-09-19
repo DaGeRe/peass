@@ -23,6 +23,7 @@ import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -98,7 +99,7 @@ public class DependencyDetectorTestUtil {
    public static void checkChange(final DependencyReader reader, final String change, final String changedTest, final String version, final String testMethod) {
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), change, version);
       System.out.println(testMe);
-      final TestCase testcase = testMe.getTests().iterator().next();
+      final TestMethodCall testcase = testMe.getTestMethods().iterator().next();
       Assert.assertEquals(changedTest, testcase.getClazz());
       Assert.assertEquals(testMethod, testcase.getMethod());
    }

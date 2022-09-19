@@ -114,7 +114,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public boolean checkIsDecidable(final TestCase testcase, final int vmid) {
+   public boolean checkIsDecidable(final TestMethodCall testcase, final int vmid) {
       getDurationsVersion(configuration.getFixedCommitConfig().getCommit());
       getDurationsVersion(configuration.getFixedCommitConfig().getCommitOld());
       boolean allDecidable = super.checkIsDecidable(testcase, vmid);

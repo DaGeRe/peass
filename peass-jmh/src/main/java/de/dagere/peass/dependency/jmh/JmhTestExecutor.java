@@ -80,7 +80,7 @@ public class JmhTestExecutor extends TestExecutor {
       }
    }
 
-   private String[] buildParameterString(final TestCase test, final File jsonResultFile) {
+   private String[] buildParameterString(final TestMethodCall test, final File jsonResultFile) {
       String[] basicParameters;
       if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
          basicParameters = buildKiekerParameters(test);

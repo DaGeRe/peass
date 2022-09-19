@@ -69,7 +69,7 @@ public class AdaptiveTester extends DependencyTester {
    }
 
    @Override
-   public boolean checkIsDecidable(final TestCase testcase, final int vmid) {
+   public boolean checkIsDecidable(final TestMethodCall testcase, final int vmid) {
       final boolean savelyDecidable;
       if (configuration.isEarlyStop()) {
          final ResultLoader loader = new ResultLoader(configuration);

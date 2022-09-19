@@ -59,14 +59,14 @@ public class DependencyDetectorIncludesTest {
       checkInitialDependency(reader, "testMe");
 
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", DependencyTestConstants.VERSION_1);
-      Assert.assertEquals(0, testMe.getTests().size());
+      Assert.assertEquals(0, testMe.getTestMethods().size());
    }
    
    private void checkContainsOnlyTestMe(final DependencyReader reader) {
       checkInitialDependency(reader, "removeMe");
 
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", DependencyTestConstants.VERSION_1);
-      final TestCase testcase = testMe.getTests().iterator().next();
+      final TestMethodCall testcase = testMe.getTestMethods().iterator().next();
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
       
@@ -79,7 +79,7 @@ public class DependencyDetectorIncludesTest {
       checkInitialDependency(reader, "removeMe");
 
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency", DependencyTestConstants.VERSION_1);
-      final TestCase testcase = testMe.getTests().iterator().next();
+      final TestMethodCall testcase = testMe.getTestMethods().iterator().next();
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
       
