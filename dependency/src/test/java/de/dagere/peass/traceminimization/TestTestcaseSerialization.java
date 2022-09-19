@@ -32,7 +32,7 @@ public class TestTestcaseSerialization {
       System.out.println(serialized);
       
       CoverageSelectionInfo deserialized = Constants.OBJECTMAPPER.readValue(serialized, CoverageSelectionInfo.class);
-      TestCase deserializedTest = deserialized.getVersions().get("000001").getTestcases().keySet().iterator().next();
+      TestMethodCall deserializedTest = deserialized.getVersions().get("000001").getTestcases().keySet().iterator().next();
       Assert.assertEquals("ClazzA", deserializedTest.getClazz());
       Assert.assertEquals("methodA2", deserializedTest.getMethod());
       Assert.assertEquals("moduleA", deserializedTest.getModule());
@@ -55,7 +55,7 @@ public class TestTestcaseSerialization {
       System.out.println(serialized);
       
       CoverageSelectionInfo deserialized = Constants.OBJECTMAPPER.readValue(serialized, CoverageSelectionInfo.class);
-      TestCase deserializedTest = deserialized.getVersions().get("000001").getTestcases().keySet().iterator().next();
+      TestMethodCall deserializedTest = deserialized.getVersions().get("000001").getTestcases().keySet().iterator().next();
       Assert.assertEquals("ClazzA", deserializedTest.getClazz());
       Assert.assertEquals("methodA2", deserializedTest.getMethod());
       Assert.assertEquals("moduleA", deserializedTest.getModule());

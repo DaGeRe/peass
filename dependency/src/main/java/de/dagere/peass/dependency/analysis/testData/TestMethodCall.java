@@ -58,6 +58,10 @@ public class TestMethodCall extends TestCase {
          return method + "(" + params + ")";
       }
    }
+   
+   public String getParams() {
+      return params;
+   }
 
    public static String getParamsFromResult(DatacollectorResult datacollector) {
       LinkedHashMap<String, String> paramObject = null;

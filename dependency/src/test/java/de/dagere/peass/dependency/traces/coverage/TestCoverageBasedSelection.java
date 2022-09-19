@@ -13,7 +13,6 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.requitur.content.Content;
 
@@ -24,7 +23,7 @@ public class TestCoverageBasedSelection {
       List<TraceCallSummary> traces = new LinkedList<>();
       Set<ChangedEntity> changes = new HashSet<>();
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
-      Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
+      Set<TestMethodCall> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
 
       MatcherAssert.assertThat(selected, IsEmptyCollection.empty());
    }
@@ -34,7 +33,7 @@ public class TestCoverageBasedSelection {
       List<TraceCallSummary> traces = getTraceSummaryList();
       Set<ChangedEntity> changes = new HashSet<>();
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
-      Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
+      Set<TestMethodCall> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
 
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestMethodCall("ClazzA", "testA")));
    }
@@ -46,7 +45,7 @@ public class TestCoverageBasedSelection {
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazzB", "", "method0"));
       CoverageSelectionCommit selection = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
-      Set<TestCase> selected = selection.getTestcases().keySet();
+      Set<TestMethodCall> selected = selection.getTestcases().keySet();
 
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestMethodCall("ClazzA", "testA")));
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestMethodCall("ClazzC", "testC")));
@@ -74,7 +73,7 @@ public class TestCoverageBasedSelection {
       ChangedEntity entityWithIntParameter = new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method2");
       entityWithIntParameter.getParameters().add("int");
       changes.add(entityWithIntParameter);
-      Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
+      Set<TestMethodCall> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
 
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestMethodCall("ClazzA", "testA")));
    }
@@ -85,7 +84,7 @@ public class TestCoverageBasedSelection {
       Set<ChangedEntity> changes = new HashSet<>();
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", null));
       CoverageSelectionCommit selection = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
-      Set<TestCase> selected = selection.getTestcases().keySet();
+      Set<TestMethodCall> selected = selection.getTestcases().keySet();
 
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestMethodCall("ClazzA", "testA")));
       TraceCallSummary traceBSummary = selection.getTestcases().get(new TestMethodCall("ClazzB", "testB"));

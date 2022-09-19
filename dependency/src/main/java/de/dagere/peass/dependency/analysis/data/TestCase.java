@@ -75,26 +75,8 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       return method;
    }
 
-   /**
-    * getMethodWithParams should only be called on TestMethodCall
-    * @return
-    */
-   @Deprecated
-   @JsonIgnore
-   public String getMethodWithParams() {
-      if (params == null) {
-         return method;
-      } else {
-         return method + "(" + params + ")";
-      }
-   }
-
    public String getModule() {
       return module;
-   }
-
-   public String getParams() {
-      return params;
    }
 
    @JsonIgnore
@@ -145,7 +127,7 @@ public class TestCase implements Comparable<TestCase>, Serializable {
          return false;
       }
       if (params == null) {
-         if (other.getParams() != null) {
+         if (other.params != null) {
             return false;
          }
       } else if (!params.equals(other.params)) {

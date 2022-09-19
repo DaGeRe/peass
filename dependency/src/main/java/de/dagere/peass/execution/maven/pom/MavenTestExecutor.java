@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.AllModulePomPreparer;
@@ -64,7 +63,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       super(folders, testTransformer, env);
    }
 
-   protected Process buildMavenProcess(final File logFile, TestCase test, final String... commandLineAddition) throws IOException, InterruptedException {
+   protected Process buildMavenProcess(final File logFile, TestMethodCall test, final String... commandLineAddition) throws IOException, InterruptedException {
       final String testGoal = getTestGoal();
       String mvnCall = env.fetchMavenCall();
       final String[] originals = new String[] { mvnCall,
@@ -137,7 +136,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
     * @param testname Name of the test that should be run
     */
    @Override
-   protected void runTest(final File module, final File logFile, TestCase test, final String testname, final long timeout) {
+   protected void runTest(final File module, final File logFile, TestMethodCall test, final String testname, final long timeout) {
       try {
          final Process process = buildMavenProcess(logFile, test, "-Dtest=" + testname);
          execute(testname, timeout, process);

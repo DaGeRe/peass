@@ -280,7 +280,7 @@ public class ChangeReader {
       return testcase;
    }
 
-   private boolean paramsEqual(final String paramString, final TestCase test) {
+   private boolean paramsEqual(final String paramString, final TestMethodCall test) {
       boolean bothNull = test.getParams() == paramString && test.getParams() == null;
       boolean stringEmptyAndParamsNull = "".equals(paramString) && test.getParams() == null;
       return bothNull
