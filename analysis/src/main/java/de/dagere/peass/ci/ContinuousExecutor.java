@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -82,18 +83,12 @@ public class ContinuousExecutor {
    }
 
    private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
-      if (!localFolder.exists() || !projectFolderLocal.exists()) {
-         //ContinuousFolderUtil.cloneProject(projectFolder, localFolder, measurementConfig.getExecutionConfig().getGitCryptKey());
-         ContinuousFolderUtil.copyProject(projectFolder, localFolder);
-         if (!projectFolderLocal.exists()) {
-            throw new RuntimeException("Was not able to clone project to " + projectFolderLocal.getAbsolutePath() + " (folder not existing)");
-         }
-      } else {
-         LOG.debug("Going to commit {} on existing folder", measurementConfig.getFixedCommitConfig().getCommit());
-         GitUtils.reset(projectFolderLocal);
-         GitUtils.clean(projectFolderLocal);
-         GitUtils.pull(projectFolderLocal);
-         GitUtils.goToCommit(measurementConfig.getFixedCommitConfig().getCommit(), projectFolderLocal);
+      if (projectFolderLocal.exists()) {
+         FileUtils.deleteDirectory(projectFolderLocal);
+      }
+      ContinuousFolderUtil.copyProject(projectFolder, localFolder);
+      if (!projectFolderLocal.exists()) {
+         throw new RuntimeException("Was not able to clone project to " + projectFolderLocal.getAbsolutePath() + " (folder not existing)");
       }
    }
 
@@ -141,10 +136,12 @@ public class ContinuousExecutor {
    private void analyzeMeasurements(final File measurementFolder)
          throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       StaticTestSelection selectedTests = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
-      
-      ProjectChanges changes = resultsFolders.getChangeFile().exists() ? Constants.OBJECTMAPPER.readValue(resultsFolders.getChangeFile(), ProjectChanges.class) : new ProjectChanges(comparator);
-      ProjectStatistics statistics = resultsFolders.getStatisticsFile().exists() ? Constants.OBJECTMAPPER.readValue(resultsFolders.getStatisticsFile(), ProjectStatistics.class) : new ProjectStatistics(comparator);
-      
+
+      ProjectChanges changes = resultsFolders.getChangeFile().exists() ? Constants.OBJECTMAPPER.readValue(resultsFolders.getChangeFile(), ProjectChanges.class)
+            : new ProjectChanges(comparator);
+      ProjectStatistics statistics = resultsFolders.getStatisticsFile().exists() ? Constants.OBJECTMAPPER.readValue(resultsFolders.getStatisticsFile(), ProjectStatistics.class)
+            : new ProjectStatistics(comparator);
+
       ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests, measurementConfig.getStatisticsConfig(), changes, statistics);
       changeReader.readFolder(measurementFolder.getParentFile());
    }
