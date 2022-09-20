@@ -73,8 +73,8 @@ public class TraceChangeHandler {
       return testsToRun;
    }
 
-   public void addAddedTests(final CommitStaticSelection newVersionInfo, final TestSet testsToRun) {
-      for (final ChangedEntity testName : newVersionInfo.getChangedClazzes().keySet()) {
+   public void addAddedTests(final CommitStaticSelection newCommitInfo, final TestSet testsToRun) {
+      for (final ChangedEntity testName : newCommitInfo.getChangedClazzes().keySet()) {
          ChangedEntity simplyClazz = testName.getSourceContainingClazz();
          TestClazzCall potentialTest = new TestClazzCall(simplyClazz.getClazz(), testName.getModule());
          if (NonIncludedTestRemover.isTestClassIncluded(potentialTest, executionConfig)) {
