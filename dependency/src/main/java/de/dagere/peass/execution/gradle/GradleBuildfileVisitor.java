@@ -155,7 +155,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
          } else {
             if (argument instanceof MethodCallExpression) {
                MethodCallExpression expression = (MethodCallExpression) argument;
-               System.out.println(expression.getArguments());
+//               System.out.println(expression.getArguments());
                if (expression.getArguments() instanceof ArgumentListExpression) {
                   ArgumentListExpression innerArguments = (ArgumentListExpression) expression.getArguments();
                   return parseTaskWithPotentialSystemProperties(innerArguments);

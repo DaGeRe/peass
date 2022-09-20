@@ -425,7 +425,7 @@ public class DependencyManager extends KiekerResultManager {
       if (oldContained) {
          changes.addRemovedTest(testclass);
       } else {
-         LOG.error("Test was only added incorrect, no removing necessary.");
+         LOG.trace("Test was only added incorrect (was not measured before), is not counted as removed test.");
       }
    }
 
