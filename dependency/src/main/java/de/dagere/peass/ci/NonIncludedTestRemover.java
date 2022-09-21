@@ -45,14 +45,28 @@ public class NonIncludedTestRemover {
    private static void removeTestsWithMethod(final ExecutionConfig executionConfig, final Iterator<Entry<TestClazzCall, Set<String>>> testcaseIterator,
          final Entry<TestClazzCall, Set<String>> testcase) {
       for (Iterator<String> methodIterator = testcase.getValue().iterator(); methodIterator.hasNext();) {
-         String method = methodIterator.next();
-         if (!isTestIncluded(new TestMethodCall(testcase.getKey().getClazz(), method), executionConfig)) {
+         String methodAndParams = methodIterator.next();
+         TestMethodCall test = getTestMethodCall(testcase, methodAndParams);
+         if (!isTestIncluded(test, executionConfig)) {
             methodIterator.remove();
          }
       }
       if (testcase.getValue().size() == 0) {
          testcaseIterator.remove();
       }
+   }
+
+   private static TestMethodCall getTestMethodCall(final Entry<TestClazzCall, Set<String>> testcase, String methodAndParams) {
+      String method, params;
+      if (methodAndParams.contains("(")) {
+         method = methodAndParams.substring(0, methodAndParams.indexOf("("));
+         params = methodAndParams.substring(methodAndParams.indexOf("(") + 1, methodAndParams.length() - 1);
+      } else {
+         method = methodAndParams;
+         params = "";
+      }
+      TestMethodCall test = new TestMethodCall(testcase.getKey().getClazz(), method, testcase.getKey().getModule(), params);
+      return test;
    }
 
    public static void removeNotIncluded(final Set<? extends TestCase> tests, final ExecutionConfig executionConfig) {
@@ -67,7 +81,7 @@ public class NonIncludedTestRemover {
          }
       }
    }
-   
+
    public static void removeNotIncludedMethods(final Set<TestMethodCall> tests, final ExecutionConfig executionConfig) {
       if (executionConfig.getIncludes().size() > 0 || executionConfig.getExcludes().size() > 0) {
          for (Iterator<TestMethodCall> it = tests.iterator(); it.hasNext();) {
