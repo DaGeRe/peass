@@ -95,8 +95,13 @@ public class NonIncludedByRule {
             String extendType = clazz.getExtendedTypes(0).getNameAsString();
             String fqn = FQNDeterminer.getParameterFQN(unit, extendType);
             String module = mapping.getModuleOfClass(fqn);
-            TestClazzCall parentTest = new TestClazzCall(fqn, module);
-            return parentTest;
+            
+            // Parent tests outside of the currently examined project are not considered, since we do not have the source code
+            if (module != null) {
+               TestClazzCall parentTest = new TestClazzCall(fqn, module);
+               return parentTest;
+            }
+            
          }
       }
       return null;
