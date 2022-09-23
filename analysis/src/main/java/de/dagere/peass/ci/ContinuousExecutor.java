@@ -77,7 +77,7 @@ public class ContinuousExecutor {
       commit = iteratorBuiler.getCommit();
       String userDefinedCommitOld = iteratorBuiler.getCommitOld();
       measurementConfig.getFixedCommitConfig().setCommit(commit);
-      
+
       LOG.debug("Commit: {} Predecessor Commit: {}", commit, userDefinedCommitOld);
 
       List<String> commits = GitUtils.getCommits(projectFolderLocal, false, true);
@@ -88,16 +88,20 @@ public class ContinuousExecutor {
    }
 
    private String getLatestRunnableCommit(final MeasurementConfig measurementConfig, final EnvironmentVariables env, String userDefinedCommitOld) {
-      File nonRunningCommitFile = new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "notRunnable.json");
-      CommitKeeper commitKeeper = new CommitKeeper(nonRunningCommitFile);
-      RunningCommitFinder latestRunningCommitFinder = new RunningCommitFinder(folders, commitKeeper, iterator, measurementConfig.getExecutionConfig(), env);
-      iterator.goToNamedCommit(userDefinedCommitOld);
-      boolean foundRunningCommit = latestRunningCommitFinder.searchLatestRunningCommit();
-      if (!foundRunningCommit) {
-         throw new RuntimeException("No running predecessor commit before " + userDefinedCommitOld + " was found; measurement not possible");
+      if (iterator != null) {
+         File nonRunningCommitFile = new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "notRunnable.json");
+         CommitKeeper commitKeeper = new CommitKeeper(nonRunningCommitFile);
+         RunningCommitFinder latestRunningCommitFinder = new RunningCommitFinder(folders, commitKeeper, iterator, measurementConfig.getExecutionConfig(), env);
+         iterator.goToNamedCommit(userDefinedCommitOld);
+         boolean foundRunningCommit = latestRunningCommitFinder.searchLatestRunningCommit();
+         if (!foundRunningCommit) {
+            throw new RuntimeException("No running predecessor commit before " + userDefinedCommitOld + " was found; measurement not possible");
+         }
+         String latestRunnableCommit = iterator.getCommitName();
+         return latestRunnableCommit;
+      } else {
+         return userDefinedCommitOld;
       }
-      String latestRunnableCommit = iterator.getCommitName();
-      return latestRunnableCommit;
    }
 
    private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
