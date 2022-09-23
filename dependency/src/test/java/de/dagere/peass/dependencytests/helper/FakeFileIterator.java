@@ -65,8 +65,6 @@ public class FakeFileIterator extends CommitIterator {
       this.tagDiff = tagDiff;
    }
 
-   private int tag = 0;
-
    @Override
    public int getSize() {
       return commits.size();
@@ -74,32 +72,37 @@ public class FakeFileIterator extends CommitIterator {
 
    @Override
    public String getTag() {
-      return "00000" + (tag + tagDiff);
+      return "00000" + (tagid + tagDiff);
    }
 
    @Override
    public boolean hasNextCommit() {
-      return tag + tagDiff < commits.size();
+      return tagid + tagDiff < commits.size();
+   }
+   
+   @Override
+   public boolean hasPreviousCommit() {
+      return tagid > 0;
    }
 
    @Override
    public boolean goToNextCommit() {
-      LOG.debug("Loading commit: " + tag);
-      tag++;
-      return loadVersionFiles(tag - 1);
+      LOG.debug("Loading commit: " + tagid);
+      tagid++;
+      return loadVersionFiles(tagid - 1);
    }
 
    @Override
    public boolean goToFirstCommit() {
-      tag = 1;
+      tagid = 1;
       return loadVersionFiles(0);
    }
 
    @Override
    public boolean goToPreviousCommit() {
-      if (tag > 1) {
-         tag--;
-         return loadVersionFiles(tag - 1);
+      if (tagid > 1) {
+         tagid--;
+         return loadVersionFiles(tagid - 1);
       } else {
          return false;
       }
@@ -120,13 +123,13 @@ public class FakeFileIterator extends CommitIterator {
 
    @Override
    public boolean goTo0thCommit() {
-      tag = -1;
+      tagid = -1;
       return loadVersionFiles(0);
    }
 
    @Override
    public boolean isPredecessor(final String lastRunningVersion) {
-      return lastRunningVersion.equals("00000" + (tag - 1 + tagDiff));
+      return lastRunningVersion.equals("00000" + (tagid - 1 + tagDiff));
    }
 
    @Override
@@ -146,9 +149,9 @@ public class FakeFileIterator extends CommitIterator {
    
    @Override
    public boolean goToNamedCommit(String name) {
-      while (commits.get(tag).getName().equals(name) && tag < commits.size()) {
+      while (commits.get(tagid).getName().equals(name) && tagid < commits.size()) {
          goToNextCommit();
       }
-      return commits.get(tag).getName().equals(name);
+      return commits.get(tagid).getName().equals(name);
    }
 }

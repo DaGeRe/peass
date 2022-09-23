@@ -65,6 +65,9 @@ public class CommitIteratorBuilder {
       String oldCommit;
       if (executionConfig.getCommitOld() != null) {
          oldCommit = executionConfig.getCommitOld();
+         if (oldCommit.equals("HEAD~1")) {
+            oldCommit = GitUtils.getName("HEAD~1", folders.getProjectFolder());
+         }
       } else if (newestRunningCommitName != null) {
          oldCommit = newestRunningCommitName;
       } else {

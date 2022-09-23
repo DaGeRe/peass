@@ -94,4 +94,6 @@ public abstract class CommitIterator {
 
    public abstract List<String> getCommits();
 
+   public abstract boolean hasPreviousCommit();
+
 }

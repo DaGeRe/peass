@@ -55,18 +55,15 @@ public class RunningCommitFinder {
    }
    
    public boolean searchLatestRunningCommit() {
-      boolean isCommitRunning = false;
       // The local test transformer enables testing whether a version runs without full configuration
       TestTransformer transformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, new KiekerConfig(false));
-      while (!isCommitRunning && iterator.hasNextCommit()) {
+      
+      boolean isCommitRunning = tryCommit(iterator, transformer);
+      while (!isCommitRunning && iterator.hasPreviousCommit()) {
+         iterator.goToPreviousCommit();
+         nonRunning.addCommit(iterator.getTag(), "Buildfile does not exist.");
          if (ExecutorCreator.hasBuildfile(folders, transformer)) {
             isCommitRunning = tryCommit(iterator, transformer);
-            if (!isCommitRunning) {
-               iterator.goToPreviousCommit();
-            }
-         } else {
-            nonRunning.addCommit(iterator.getTag(), "Buildfile does not exist.");
-            iterator.goToPreviousCommit();
          }
       }
       return isCommitRunning;
