@@ -21,7 +21,7 @@ import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.CommitKeeper;
-import de.dagere.peass.dependency.reader.FirstRunningCommitFinder;
+import de.dagere.peass.dependency.reader.RunningCommitFinder;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -90,7 +90,7 @@ public class ContinuousExecutor {
    private String getLatestRunnableCommit(final MeasurementConfig measurementConfig, final EnvironmentVariables env, String userDefinedCommitOld) {
       File nonRunningCommitFile = new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "notRunnable.json");
       CommitKeeper commitKeeper = new CommitKeeper(nonRunningCommitFile);
-      FirstRunningCommitFinder latestRunningCommitFinder = new FirstRunningCommitFinder(folders, commitKeeper, iterator, measurementConfig.getExecutionConfig(), env);
+      RunningCommitFinder latestRunningCommitFinder = new RunningCommitFinder(folders, commitKeeper, iterator, measurementConfig.getExecutionConfig(), env);
       iterator.goToNamedCommit(userDefinedCommitOld);
       boolean foundRunningCommit = latestRunningCommitFinder.searchLatestRunningCommit();
       if (!foundRunningCommit) {

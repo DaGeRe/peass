@@ -30,7 +30,7 @@ public class TestFirstRunningCommitFinder {
          
          FakeCommitIterator iterator = new FakeCommitIterator(TestConstants.CURRENT_FOLDER, DUMMY_COMMITS);
          
-         FirstRunningCommitFinder commitFinder = createFinder(executorCreator, mockedExecutor, iterator);
+         RunningCommitFinder commitFinder = createFinder(executorCreator, mockedExecutor, iterator);
 
          boolean found = commitFinder.searchFirstRunningCommit();
          Assert.assertTrue(found);
@@ -51,7 +51,7 @@ public class TestFirstRunningCommitFinder {
          FakeCommitIterator iterator = new FakeCommitIterator(TestConstants.CURRENT_FOLDER, DUMMY_COMMITS);
          iterator.goToNamedCommit("000003");
          
-         FirstRunningCommitFinder commitFinder = createFinder(executorCreator, mockedExecutor, iterator);
+         RunningCommitFinder commitFinder = createFinder(executorCreator, mockedExecutor, iterator);
 
          boolean found = commitFinder.searchLatestRunningCommit();
          Assert.assertTrue(found);
@@ -72,7 +72,7 @@ public class TestFirstRunningCommitFinder {
          FakeCommitIterator iterator = new FakeCommitIterator(TestConstants.CURRENT_FOLDER, DUMMY_COMMITS);
          iterator.goToNamedCommit("000003");
          
-         FirstRunningCommitFinder commitFinder = createFinder(executorCreator, mockedExecutor, iterator);
+         RunningCommitFinder commitFinder = createFinder(executorCreator, mockedExecutor, iterator);
 
          boolean found = commitFinder.searchLatestRunningCommit();
          Assert.assertTrue(found);
@@ -81,13 +81,13 @@ public class TestFirstRunningCommitFinder {
       }
    }
 
-   private FirstRunningCommitFinder createFinder(MockedStatic<ExecutorCreator> executorCreator, TestExecutor mockedExecutor, FakeCommitIterator iterator) {
+   private RunningCommitFinder createFinder(MockedStatic<ExecutorCreator> executorCreator, TestExecutor mockedExecutor, FakeCommitIterator iterator) {
       executorCreator.when(() -> ExecutorCreator.hasBuildfile(Mockito.any(), Mockito.any())).thenReturn(true);
       executorCreator.when(() -> ExecutorCreator.createExecutor(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(mockedExecutor);
       
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       
-      FirstRunningCommitFinder commitFinder = new FirstRunningCommitFinder(folders, Mockito.mock(CommitKeeper.class), iterator, new ExecutionConfig(),
+      RunningCommitFinder commitFinder = new RunningCommitFinder(folders, Mockito.mock(CommitKeeper.class), iterator, new ExecutionConfig(),
             new EnvironmentVariables());
       return commitFinder;
    }

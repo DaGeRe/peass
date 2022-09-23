@@ -10,7 +10,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.FirstRunningCommitFinder;
+import de.dagere.peass.dependency.reader.RunningCommitFinder;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.vcs.CommitIterator;
 
@@ -20,12 +20,12 @@ public final class OneReader implements Runnable {
 
    private final String minimumCommit;
    private final CommitIterator reserveIterator;
-   final FirstRunningCommitFinder firstRunningVersionFinder;
+   final RunningCommitFinder firstRunningVersionFinder;
    private final DependencyReader reader;
    private final CommitComparatorInstance comparator;
 
    public OneReader(final String minimumCommit, final CommitIterator reserveIterator, final DependencyReader reader,
-         final FirstRunningCommitFinder firstRunningVersionFinder, CommitComparatorInstance comparator) {
+         final RunningCommitFinder firstRunningVersionFinder, CommitComparatorInstance comparator) {
       this.minimumCommit = minimumCommit;
       this.reserveIterator = reserveIterator;
       this.firstRunningVersionFinder = firstRunningVersionFinder;

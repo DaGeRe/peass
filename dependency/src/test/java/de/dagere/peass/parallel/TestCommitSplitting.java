@@ -28,7 +28,7 @@ import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.FirstRunningCommitFinder;
+import de.dagere.peass.dependency.reader.RunningCommitFinder;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.dependencytests.helper.FakeCommitIterator;
@@ -158,7 +158,7 @@ public class TestCommitSplitting {
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(null);
 
-      FirstRunningCommitFinder finder = new FirstRunningCommitFinder(null, null, null, null, null) {
+      RunningCommitFinder finder = new RunningCommitFinder(null, null, null, null, null) {
          @Override
          public boolean searchFirstRunningCommit() {
             return true;

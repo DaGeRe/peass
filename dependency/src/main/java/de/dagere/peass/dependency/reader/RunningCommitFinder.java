@@ -13,9 +13,9 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.CommitIterator;
 
-public class FirstRunningCommitFinder {
+public class RunningCommitFinder {
    
-   private static final Logger LOG = LogManager.getLogger(FirstRunningCommitFinder.class);
+   private static final Logger LOG = LogManager.getLogger(RunningCommitFinder.class);
 
    private final PeassFolders folders;
    private final CommitKeeper nonRunning;
@@ -23,7 +23,7 @@ public class FirstRunningCommitFinder {
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
-   public FirstRunningCommitFinder(final PeassFolders folders, final CommitKeeper nonRunning, final CommitIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public RunningCommitFinder(final PeassFolders folders, final CommitKeeper nonRunning, final CommitIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
       this.nonRunning = nonRunning;
       this.iterator = iterator;
