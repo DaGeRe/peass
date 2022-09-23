@@ -59,6 +59,27 @@ public class TestFirstRunningCommitFinder {
          Assert.assertEquals("000001", iterator.getTag());
       }
    }
+   
+   @Test
+   public void testLatestRunningCommitFinderSecondCommit() {
+      try (MockedStatic<ExecutorCreator> executorCreator = Mockito.mockStatic(ExecutorCreator.class)) {
+         TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
+         
+         Mockito.when(mockedExecutor.isCommitRunning("000001")).thenReturn(true);
+         Mockito.when(mockedExecutor.isCommitRunning("000002")).thenReturn(true);
+         Mockito.when(mockedExecutor.isCommitRunning("000003")).thenReturn(false);
+         
+         FakeCommitIterator iterator = new FakeCommitIterator(TestConstants.CURRENT_FOLDER, DUMMY_COMMITS);
+         iterator.goToNamedCommit("000003");
+         
+         FirstRunningCommitFinder commitFinder = createFinder(executorCreator, mockedExecutor, iterator);
+
+         boolean found = commitFinder.searchLatestRunningCommit();
+         Assert.assertTrue(found);
+         
+         Assert.assertEquals("000002", iterator.getTag());
+      }
+   }
 
    private FirstRunningCommitFinder createFinder(MockedStatic<ExecutorCreator> executorCreator, TestExecutor mockedExecutor, FakeCommitIterator iterator) {
       executorCreator.when(() -> ExecutorCreator.hasBuildfile(Mockito.any(), Mockito.any())).thenReturn(true);
