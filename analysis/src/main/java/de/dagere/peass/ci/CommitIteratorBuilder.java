@@ -20,14 +20,14 @@ import de.dagere.peass.vcs.GitUtils;
  * In case (2), the iterator will only be set if analyzing is necessary, i.e. if the *newest commit* and commit differ. Otherwise, it will be null.
  *
  */
-public class DependencyIteratorBuilder {
+public class CommitIteratorBuilder {
 
-   private static final Logger LOG = LogManager.getLogger(DependencyIteratorBuilder.class);
+   private static final Logger LOG = LogManager.getLogger(CommitIteratorBuilder.class);
 
    private final String commit, commitOld;
    private final CommitIteratorGit iterator;
 
-   public DependencyIteratorBuilder(final FixedCommitConfig commitConfig, final StaticTestSelection staticTestSelection, final PeassFolders folders) {
+   public CommitIteratorBuilder(final FixedCommitConfig commitConfig, final StaticTestSelection staticTestSelection, final PeassFolders folders) {
       commit = GitUtils.getName(commitConfig.getCommit() != null ? commitConfig.getCommit() : "HEAD", folders.getProjectFolder());
 
       String newestAnalyzedCommitName = staticTestSelection != null ? staticTestSelection.getNewestCommit() : null;

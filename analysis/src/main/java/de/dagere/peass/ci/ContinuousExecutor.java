@@ -70,7 +70,7 @@ public class ContinuousExecutor {
          dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       }
 
-      DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getFixedCommitConfig(), dependencies, folders);
+      CommitIteratorBuilder iteratorBuiler = new CommitIteratorBuilder(measurementConfig.getFixedCommitConfig(), dependencies, folders);
       iterator = iteratorBuiler.getIterator();
       commit = iteratorBuiler.getCommit();
       commitOld = iteratorBuiler.getCommitOld();
