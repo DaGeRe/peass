@@ -18,12 +18,12 @@ public class FirstRunningCommitFinder {
    private static final Logger LOG = LogManager.getLogger(FirstRunningCommitFinder.class);
 
    private final PeassFolders folders;
-   private final VersionKeeper nonRunning;
+   private final CommitKeeper nonRunning;
    private final CommitIterator iterator;
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
-   public FirstRunningCommitFinder(final PeassFolders folders, final VersionKeeper nonRunning, final CommitIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public FirstRunningCommitFinder(final PeassFolders folders, final CommitKeeper nonRunning, final CommitIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
       this.nonRunning = nonRunning;
       this.iterator = iterator;
@@ -44,7 +44,7 @@ public class FirstRunningCommitFinder {
          if (ExecutorCreator.hasBuildfile(folders, transformer)) {
             isVersionRunning = tryCommit(iterator, transformer);
          } else {
-            nonRunning.addVersion(iterator.getTag(), "Buildfile does not exist.");
+            nonRunning.addCommit(iterator.getTag(), "Buildfile does not exist.");
             iterator.goToNextCommit();
          }
       }
@@ -59,9 +59,9 @@ public class FirstRunningCommitFinder {
       if (!isCommitRunning) {
          LOG.debug("Buildfile does not exist / commit is not running {}", iterator.getTag());
          if (executor.doesBuildfileExist()) {
-            nonRunning.addVersion(iterator.getTag(), "Commit is not running.");
+            nonRunning.addCommit(iterator.getTag(), "Commit is not running.");
          } else {
-            nonRunning.addVersion(iterator.getTag(), "Buildfile does not exist.");
+            nonRunning.addCommit(iterator.getTag(), "Buildfile does not exist.");
          }
          iterator.goToNextCommit();
       }

@@ -33,7 +33,7 @@ import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.dependency.reader.CommitKeeper;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -151,7 +151,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
          final CommitIterator iterator = createIterator(config, previousVersion);
          ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
          reader = new DependencyReader(config.getDependencyConfig(), new PeassFolders(config.getProjectFolder()), 
-               resultsFolders, dependencies.getUrl(), iterator, new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), 
+               resultsFolders, dependencies.getUrl(), iterator, new CommitKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), 
                executionConfig, kiekerConfigMixin.getKiekerConfig(), new EnvironmentVariables());
          iterator.goTo0thCommit();
       } else if (vcs.equals(VersionControlSystem.SVN)) {

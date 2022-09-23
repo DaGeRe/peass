@@ -18,7 +18,7 @@ import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.dependency.reader.CommitKeeper;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -44,7 +44,7 @@ public class DependencyViewGeneratorTest {
          FakeFileIterator iteratorspied = mockIterator();
 
          DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
-               "", iteratorspied, new VersionKeeper(new File("/dev/null")), new ExecutionConfig(), new KiekerConfig(true), new EnvironmentVariables());
+               "", iteratorspied, new CommitKeeper(new File("/dev/null")), new ExecutionConfig(), new KiekerConfig(true), new EnvironmentVariables());
          reader.readInitialCommit();
          try {
             reader.readDependencies();

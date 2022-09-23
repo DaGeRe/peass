@@ -56,7 +56,7 @@ public class DependencyReader {
    protected final PeassFolders folders;
    protected CommitIterator iterator;
    protected String lastRunningVersion;
-   private final VersionKeeper skippedNoChange;
+   private final CommitKeeper skippedNoChange;
 
    private final KiekerConfig kiekerConfig;
    private final ExecutionConfig executionConfig;
@@ -76,7 +76,7 @@ public class DependencyReader {
       this.resultsFolders = resultsFolders;
       this.iterator = iterator;
       this.folders = folders;
-      this.skippedNoChange = new VersionKeeper(new File("/dev/null"));
+      this.skippedNoChange = new CommitKeeper(new File("/dev/null"));
       this.executionConfig = executionConfig;
       this.kiekerConfig = kiekerConfig;
       this.env = env;
@@ -107,7 +107,7 @@ public class DependencyReader {
     */
    public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
          final CommitIterator iterator,
-         final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
+         final CommitKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.testSelectionConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
       this.iterator = iterator;
@@ -221,7 +221,7 @@ public class DependencyReader {
          executionResult.addEmptyCommit(commit, null);
          coverageBasedSelection.addEmptyCommit(commit, null);
       }
-      skippedNoChange.addVersion(commit, "No Change at all");
+      skippedNoChange.addCommit(commit, "No Change at all");
    }
 
    private int analyseChanges(final String commit, final DependencyReadingInput input)

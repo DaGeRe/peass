@@ -29,7 +29,7 @@ import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.dependency.reader.CommitKeeper;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -132,7 +132,7 @@ public class ContinuousDependencyReader {
       try {
          StaticTestSelection dependencies;
 
-         final VersionKeeper noChanges = new VersionKeeper(
+         final CommitKeeper noChanges = new CommitKeeper(
                new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
 
          if (!resultsFolders.getStaticTestSelectionFile().exists()) {
@@ -170,7 +170,7 @@ public class ContinuousDependencyReader {
 
    private void doPartialRCS(final StaticTestSelection dependencies, final CommitIterator newIterator, CommitComparatorInstance comparator) {
       DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator,
-            new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
+            new CommitKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
       newIterator.goTo0thCommit();
 
       reader.readCompletedCommits(dependencies, comparator);
@@ -196,7 +196,7 @@ public class ContinuousDependencyReader {
 
    }
 
-   private StaticTestSelection fullyLoadDependencies(final String url, final CommitIterator iterator, final VersionKeeper nonChanges)
+   private StaticTestSelection fullyLoadDependencies(final String url, final CommitIterator iterator, final CommitKeeper nonChanges)
          throws Exception {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
          File logFile = resultsFolders.getRTSLogFile(iterator.getTag(), iterator.getPredecessor());
@@ -210,7 +210,7 @@ public class ContinuousDependencyReader {
       }
    }
 
-   private StaticTestSelection doFullyLoadDependencies(final String url, final CommitIterator iterator, final VersionKeeper nonChanges)
+   private StaticTestSelection doFullyLoadDependencies(final String url, final CommitIterator iterator, final CommitKeeper nonChanges)
          throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException, ParseException {
       final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, kiekerConfig, env);
       iterator.goToPreviousCommit();

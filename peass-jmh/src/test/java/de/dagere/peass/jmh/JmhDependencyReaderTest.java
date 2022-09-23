@@ -35,7 +35,7 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.dependency.reader.CommitKeeper;
 import de.dagere.peass.dependencytests.FakeGitUtil;
 import de.dagere.peass.dependencytests.TraceGettingIT;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
@@ -82,7 +82,7 @@ public class JmhDependencyReaderTest {
          jmhConfig.setTestExecutor("de.dagere.peass.dependency.jmh.JmhTestExecutor");
 
          DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
-               "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, kiekerConfig, new EnvironmentVariables());
+               "", iterator, new CommitKeeper(new File("/dev/null")), jmhConfig, kiekerConfig, new EnvironmentVariables());
          reader.readInitialCommit();
 
          checkInitialVersion(resultsFolders);

@@ -33,7 +33,7 @@ public class TestFirstRunningCommitFinder {
          
          PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
          FakeCommitIterator iterator = new FakeCommitIterator(TestConstants.CURRENT_FOLDER, dummyCommits);
-         FirstRunningCommitFinder commitFinder = new FirstRunningCommitFinder(folders, Mockito.mock(VersionKeeper.class), iterator, new ExecutionConfig(),
+         FirstRunningCommitFinder commitFinder = new FirstRunningCommitFinder(folders, Mockito.mock(CommitKeeper.class), iterator, new ExecutionConfig(),
                new EnvironmentVariables());
 
          boolean found = commitFinder.searchFirstRunningCommit();

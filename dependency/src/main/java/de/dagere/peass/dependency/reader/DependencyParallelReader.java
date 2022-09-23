@@ -28,8 +28,8 @@ public class DependencyParallelReader {
 
    private final TestSelectionConfig dependencyConfig;
    private final String url;
-   private final VersionKeeper nonRunning;
-   private final VersionKeeper nonChanges;
+   private final CommitKeeper nonRunning;
+   private final CommitKeeper nonChanges;
    private final CommitComparatorInstance comparator;
    private final PeassFolders folders;
    private final int sizePerThread;
@@ -58,8 +58,8 @@ public class DependencyParallelReader {
       }
       LOG.info("Writing to: {}", tempResultFolder.getAbsolutePath());
 
-      nonRunning = new VersionKeeper(new File(tempResultFolder, "nonRunning_" + project + ".json"));
-      nonChanges = new VersionKeeper(new File(tempResultFolder, "nonChanges_" + project + ".json"));
+      nonRunning = new CommitKeeper(new File(tempResultFolder, "nonRunning_" + project + ".json"));
+      nonChanges = new CommitKeeper(new File(tempResultFolder, "nonChanges_" + project + ".json"));
 
       sizePerThread = commits.getCommits().size() > 2 * dependencyConfig.getThreads() ? commits.getCommits().size() / dependencyConfig.getThreads() : 2;
       outFolders = commits.getCommits().size() > 2 * dependencyConfig.getThreads() ? new ResultsFolders[dependencyConfig.getThreads()] : new ResultsFolders[1];
