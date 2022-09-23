@@ -85,7 +85,7 @@ public abstract class CommitIterator {
 	public abstract boolean goTo0thCommit();
 
    public boolean goToNamedCommit(String name) {
-      while (getCommitName().equals(name) && hasNextCommit()) {
+      while (!getCommitName().equals(name) && hasNextCommit()) {
          goToNextCommit();
       }
       return getCommitName().equals(name);
