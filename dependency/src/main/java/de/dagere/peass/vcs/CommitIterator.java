@@ -84,6 +84,8 @@ public abstract class CommitIterator {
 	 */
 	public abstract boolean goTo0thCommit();
 
+	public abstract boolean goToNamedCommit(String name);
+	
    public abstract boolean isPredecessor(String lastRunningVersion);
 
    public abstract boolean goToPreviousCommit();

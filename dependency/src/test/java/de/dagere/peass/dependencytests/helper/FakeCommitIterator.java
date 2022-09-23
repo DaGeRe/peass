@@ -53,7 +53,8 @@ public class FakeCommitIterator extends CommitIterator {
    
    @Override
    public boolean goToPreviousCommit() {
-      throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
+      tag--;
+      return true;
    }
 
    @Override
@@ -79,5 +80,13 @@ public class FakeCommitIterator extends CommitIterator {
    @Override
    public List<String> getCommits() {
       return new LinkedList<>();
+   }
+
+   @Override
+   public boolean goToNamedCommit(String name) {
+      while (commits.get(tag).equals(name) && tag < commits.size()) {
+         goToNextCommit();
+      }
+      return commits.get(tag).equals(name);
    }
 }

@@ -143,4 +143,12 @@ public class FakeFileIterator extends CommitIterator {
    public List<String> getCommits() {
       return new LinkedList<>();
    }
+   
+   @Override
+   public boolean goToNamedCommit(String name) {
+      while (commits.get(tag).getName().equals(name) && tag < commits.size()) {
+         goToNextCommit();
+      }
+      return commits.get(tag).getName().equals(name);
+   }
 }
