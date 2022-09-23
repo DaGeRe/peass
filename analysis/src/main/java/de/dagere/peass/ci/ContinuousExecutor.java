@@ -85,6 +85,8 @@ public class ContinuousExecutor {
 
       commitOld = getLatestRunnableCommit(measurementConfig, env, userDefinedCommitOld);
       measurementConfig.getFixedCommitConfig().setCommitOld(commitOld);
+      
+      LOG.debug("Commit: {} Predecessor Commit: {}", commit, commitOld);
    }
 
    private String getLatestRunnableCommit(final MeasurementConfig measurementConfig, final EnvironmentVariables env, String userDefinedCommitOld) {

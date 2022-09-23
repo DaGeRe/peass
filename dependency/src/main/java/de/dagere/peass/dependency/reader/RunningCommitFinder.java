@@ -70,9 +70,8 @@ public class RunningCommitFinder {
    }
 
    private boolean tryCommit(final CommitIterator iterator, final TestTransformer testTransformer) {
-      boolean isCommitRunning;
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
-      isCommitRunning = executor.isCommitRunning(iterator.getCommitName());
+      boolean isCommitRunning = executor.isCommitRunning(iterator.getCommitName());
 
       if (!isCommitRunning) {
          LOG.debug("Buildfile does not exist / commit is not running {}", iterator.getCommitName());
