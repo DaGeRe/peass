@@ -37,13 +37,13 @@ public class FirstRunningCommitFinder {
     */
    public boolean searchFirstRunningCommit() {
       goToCommit(iterator);
-      boolean isVersionRunning = false;
+      boolean isCommitRunning = false;
       // The local test transformer enables testing whether a version runs without full configuration
       TestTransformer transformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, new KiekerConfig(false));
-      while (!isVersionRunning && iterator.hasNextCommit()) {
+      while (!isCommitRunning && iterator.hasNextCommit()) {
          if (ExecutorCreator.hasBuildfile(folders, transformer)) {
-            isVersionRunning = tryCommit(iterator, transformer);
-            if (!isVersionRunning) {
+            isCommitRunning = tryCommit(iterator, transformer);
+            if (!isCommitRunning) {
                iterator.goToNextCommit();
             }
          } else {
@@ -51,17 +51,17 @@ public class FirstRunningCommitFinder {
             iterator.goToNextCommit();
          }
       }
-      return isVersionRunning;
+      return isCommitRunning;
    }
    
    public boolean searchLatestRunningCommit() {
-      boolean isVersionRunning = false;
+      boolean isCommitRunning = false;
       // The local test transformer enables testing whether a version runs without full configuration
       TestTransformer transformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, new KiekerConfig(false));
-      while (!isVersionRunning && iterator.hasNextCommit()) {
+      while (!isCommitRunning && iterator.hasNextCommit()) {
          if (ExecutorCreator.hasBuildfile(folders, transformer)) {
-            isVersionRunning = tryCommit(iterator, transformer);
-            if (!isVersionRunning) {
+            isCommitRunning = tryCommit(iterator, transformer);
+            if (!isCommitRunning) {
                iterator.goToPreviousCommit();
             }
          } else {
@@ -69,7 +69,7 @@ public class FirstRunningCommitFinder {
             iterator.goToPreviousCommit();
          }
       }
-      return isVersionRunning;
+      return isCommitRunning;
    }
 
    private boolean tryCommit(final CommitIterator iterator, final TestTransformer testTransformer) {
