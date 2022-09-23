@@ -34,7 +34,7 @@ public class TestDependencyIteratorBuilder {
          
          CommitIteratorGit iterator = new CommitIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
          Assert.assertEquals(2, iterator.getSize());
-         Assert.assertEquals(VERSION_2, iterator.getTag());
+         Assert.assertEquals(VERSION_2, iterator.getCommitName());
          Assert.assertEquals(SIMPLE_PREDECESSOR, iterator.getPredecessor());
       }
    }
@@ -110,7 +110,7 @@ public class TestDependencyIteratorBuilder {
 
          CommitIteratorGit iterator = new CommitIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
          Assert.assertEquals(2, iterator.getSize());
-         Assert.assertEquals(VERSION_2, iterator.getTag());
+         Assert.assertEquals(VERSION_2, iterator.getCommitName());
          Assert.assertEquals(LAST_RUNNING_VERSION, iterator.getPredecessor());
       }
    }
@@ -127,7 +127,7 @@ public class TestDependencyIteratorBuilder {
 
          CommitIteratorGit iterator = new CommitIteratorBuilder(config, null, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
          Assert.assertEquals(2, iterator.getSize());
-         Assert.assertEquals(VERSION_2, iterator.getTag());
+         Assert.assertEquals(VERSION_2, iterator.getCommitName());
          Assert.assertEquals(SIMPLE_PREDECESSOR, iterator.getPredecessor());
       }
    }

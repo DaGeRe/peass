@@ -52,7 +52,7 @@ public abstract class CommitIterator {
 	 * 
 	 * @return current tag
 	 */
-	public abstract String getTag();
+	public abstract String getCommitName();
 	
 	/**
 	 * Returns the predecessor tag
@@ -85,10 +85,10 @@ public abstract class CommitIterator {
 	public abstract boolean goTo0thCommit();
 
    public boolean goToNamedCommit(String name) {
-      while (getTag().equals(name) && hasNextCommit()) {
+      while (getCommitName().equals(name) && hasNextCommit()) {
          goToNextCommit();
       }
-      return getTag().equals(name);
+      return getCommitName().equals(name);
    }
 	
    public abstract boolean isPredecessor(String lastRunningVersion);

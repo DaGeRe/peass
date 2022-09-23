@@ -35,7 +35,7 @@ public class TestFirstRunningCommitFinder {
          boolean found = commitFinder.searchFirstRunningCommit();
          Assert.assertTrue(found);
          
-         Assert.assertEquals("000002", iterator.getTag());
+         Assert.assertEquals("000002", iterator.getCommitName());
       }
    }
    
@@ -56,7 +56,7 @@ public class TestFirstRunningCommitFinder {
          boolean found = commitFinder.searchLatestRunningCommit();
          Assert.assertTrue(found);
          
-         Assert.assertEquals("000001", iterator.getTag());
+         Assert.assertEquals("000001", iterator.getCommitName());
       }
    }
    
@@ -77,7 +77,7 @@ public class TestFirstRunningCommitFinder {
          boolean found = commitFinder.searchLatestRunningCommit();
          Assert.assertTrue(found);
          
-         Assert.assertEquals("000002", iterator.getTag());
+         Assert.assertEquals("000002", iterator.getCommitName());
       }
    }
    
@@ -98,7 +98,7 @@ public class TestFirstRunningCommitFinder {
          boolean found = commitFinder.searchLatestRunningCommit();
          Assert.assertTrue(found);
          
-         Assert.assertEquals("000003", iterator.getTag());
+         Assert.assertEquals("000003", iterator.getCommitName());
       }
    }
 

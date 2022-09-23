@@ -71,7 +71,7 @@ public class FakeFileIterator extends CommitIterator {
    }
 
    @Override
-   public String getTag() {
+   public String getCommitName() {
       return "00000" + (commitIndex + tagDiff);
    }
 

@@ -105,7 +105,7 @@ public class CommitIteratorGit extends CommitIterator {
    }
    
    @Override
-   public String getTag() {
+   public String getCommitName() {
       return commits.get(commitIndex);
    }
    

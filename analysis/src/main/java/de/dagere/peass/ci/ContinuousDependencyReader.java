@@ -157,7 +157,7 @@ public class ContinuousDependencyReader {
 
    private void executePartialRTS(final StaticTestSelection dependencies, final CommitIterator newIterator, CommitComparatorInstance comparator) throws FileNotFoundException {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
-         File logFile = resultsFolders.getRTSLogFile(newIterator.getTag(), newIterator.getPredecessor());
+         File logFile = resultsFolders.getRTSLogFile(newIterator.getCommitName(), newIterator.getPredecessor());
          LOG.info("Executing regression test selection update - Log goes to {}", logFile.getAbsolutePath());
          try (LogRedirector director = new LogRedirector(logFile)) {
             doPartialRCS(dependencies, newIterator, comparator);
@@ -199,7 +199,7 @@ public class ContinuousDependencyReader {
    private StaticTestSelection fullyLoadDependencies(final String url, final CommitIterator iterator, final CommitKeeper nonChanges)
          throws Exception {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
-         File logFile = resultsFolders.getRTSLogFile(iterator.getTag(), iterator.getPredecessor());
+         File logFile = resultsFolders.getRTSLogFile(iterator.getCommitName(), iterator.getPredecessor());
          LOG.info("Executing regression test selection - Log goes to {}", logFile.getAbsolutePath());
 
          try (LogRedirector director = new LogRedirector(logFile)) {
@@ -233,14 +233,14 @@ public class ContinuousDependencyReader {
    private boolean checkCommitRunning(CommitIterator iterator) {
       TestTransformer temporaryTransformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, kiekerConfig);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, temporaryTransformer, env);
-      boolean isVersionRunning = executor.isCommitRunning(iterator.getTag());
+      boolean isVersionRunning = executor.isCommitRunning(iterator.getCommitName());
       return isVersionRunning;
    }
 
    private void createFailedSelection(final CommitIterator iterator) throws IOException, StreamWriteException, DatabindException {
       LOG.debug("Predecessor commit is not running, skipping execution");
       StaticTestSelection initialVersionFailed = new StaticTestSelection();
-      initialVersionFailed.getInitialcommit().setCommit(iterator.getTag());
+      initialVersionFailed.getInitialcommit().setCommit(iterator.getCommitName());
       initialVersionFailed.getInitialcommit().setRunning(false);
       Constants.OBJECTMAPPER.writeValue(resultsFolders.getStaticTestSelectionFile(), initialVersionFailed);
    }

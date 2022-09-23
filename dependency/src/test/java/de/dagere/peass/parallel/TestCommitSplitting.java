@@ -56,7 +56,7 @@ public class TestCommitSplitting {
       public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException {
          dependencyManager = new DependencyManager(folders, new ExecutionConfig(60), new KiekerConfig(true), new EnvironmentVariables());
          dependencyResult.setInitialcommit(new InitialCommit());
-         dependencyResult.getInitialcommit().setCommit(iterator.getTag());
+         dependencyResult.getInitialcommit().setCommit(iterator.getCommitName());
          return true;
       }
 
@@ -64,10 +64,10 @@ public class TestCommitSplitting {
 
       @Override
       public void readVersion() throws IOException, FileNotFoundException {
-         System.out.println(nonRunning + " " + iterator.getTag() + " " + nonRunning.contains(iterator.getTag()));
-         if (!nonRunning.contains(iterator.getTag())) {
-            dependencyResult.getCommits().put(iterator.getTag(), null);
-            System.out.println("Reading: " + iterator.getTag());
+         System.out.println(nonRunning + " " + iterator.getCommitName() + " " + nonRunning.contains(iterator.getCommitName()));
+         if (!nonRunning.contains(iterator.getCommitName())) {
+            dependencyResult.getCommits().put(iterator.getCommitName(), null);
+            System.out.println("Reading: " + iterator.getCommitName());
          }
       }
    }

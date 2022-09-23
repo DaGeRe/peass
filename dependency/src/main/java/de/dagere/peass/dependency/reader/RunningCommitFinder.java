@@ -47,7 +47,7 @@ public class RunningCommitFinder {
                iterator.goToNextCommit();
             }
          } else {
-            nonRunning.addCommit(iterator.getTag(), "Buildfile does not exist.");
+            nonRunning.addCommit(iterator.getCommitName(), "Buildfile does not exist.");
             iterator.goToNextCommit();
          }
       }
@@ -61,7 +61,7 @@ public class RunningCommitFinder {
       boolean isCommitRunning = tryCommit(iterator, transformer);
       while (!isCommitRunning && iterator.hasPreviousCommit()) {
          iterator.goToPreviousCommit();
-         nonRunning.addCommit(iterator.getTag(), "Buildfile does not exist.");
+         nonRunning.addCommit(iterator.getCommitName(), "Buildfile does not exist.");
          if (ExecutorCreator.hasBuildfile(folders, transformer)) {
             isCommitRunning = tryCommit(iterator, transformer);
          }
@@ -72,14 +72,14 @@ public class RunningCommitFinder {
    private boolean tryCommit(final CommitIterator iterator, final TestTransformer testTransformer) {
       boolean isCommitRunning;
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
-      isCommitRunning = executor.isCommitRunning(iterator.getTag());
+      isCommitRunning = executor.isCommitRunning(iterator.getCommitName());
 
       if (!isCommitRunning) {
-         LOG.debug("Buildfile does not exist / commit is not running {}", iterator.getTag());
+         LOG.debug("Buildfile does not exist / commit is not running {}", iterator.getCommitName());
          if (executor.doesBuildfileExist()) {
-            nonRunning.addCommit(iterator.getTag(), "Commit is not running.");
+            nonRunning.addCommit(iterator.getCommitName(), "Commit is not running.");
          } else {
-            nonRunning.addCommit(iterator.getTag(), "Buildfile does not exist.");
+            nonRunning.addCommit(iterator.getCommitName(), "Buildfile does not exist.");
          }
       }
       return isCommitRunning;
@@ -93,7 +93,7 @@ public class RunningCommitFinder {
       if (!successGettingCommit) {
          throw new RuntimeException("Repository does not contain usable commit - maybe path has changed?");
       } else {
-         LOG.info("Found first commit: " + iterator.getTag());
+         LOG.info("Found first commit: " + iterator.getCommitName());
       }
    }
 }

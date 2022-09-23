@@ -134,7 +134,7 @@ public class DependencyReader {
          sizeRecorder.setPrunedSize(dependencyManager.getDependencyMap().size());
 
          changeManager.saveOldClasses();
-         lastRunningVersion = iterator.getTag();
+         lastRunningVersion = iterator.getCommitName();
          while (iterator.hasNextCommit()) {
             iterator.goToNextCommit();
             readVersion();
@@ -164,7 +164,7 @@ public class DependencyReader {
 
       dependencyManager.getExecutor().deleteTemporaryFiles();
       TooBigLogCleaner.cleanXMLFolder(folders);
-      TooBigLogCleaner.cleanTooBigLogs(folders, iterator.getTag());
+      TooBigLogCleaner.cleanTooBigLogs(folders, iterator.getCommitName());
    }
 
    /**
@@ -184,9 +184,9 @@ public class DependencyReader {
     * @throws ParseException
     */
    public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException {
-      final String commit = iterator.getTag();
+      final String commit = iterator.getCommitName();
       if (!testSelectionConfig.isSkipProcessSuccessRuns()) {
-         if (!dependencyManager.getExecutor().isCommitRunning(iterator.getTag())) {
+         if (!dependencyManager.getExecutor().isCommitRunning(iterator.getCommitName())) {
             documentFailure(commit);
             return 0;
          }
@@ -196,7 +196,7 @@ public class DependencyReader {
 
       final DependencyReadingInput input = new DependencyReadingInput(changeManager.getChanges(lastRunningVersion), lastRunningVersion);
       changeManager.saveOldClasses();
-      lastRunningVersion = iterator.getTag();
+      lastRunningVersion = iterator.getCommitName();
 
       if (executionConfig.isCreateDetailDebugFiles()) {
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "initialdependencies_" + commit + ".json"), dependencyManager.getDependencyMap());
@@ -281,7 +281,7 @@ public class DependencyReader {
       InitialCommitReader initialVersionReader = new InitialCommitReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialCommit()) {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
-         lastRunningVersion = iterator.getTag();
+         lastRunningVersion = iterator.getCommitName();
 
          if (testSelectionConfig.isGenerateTraces()) {
             generateInitialViews();
@@ -295,11 +295,11 @@ public class DependencyReader {
 
    private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, InterruptedException {
       TestSet initialTests = dependencyResult.getInitialcommit().getInitialTests();
-      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), traceFileMapping, kiekerConfig, testSelectionConfig);
+      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getCommitName(), traceFileMapping, kiekerConfig, testSelectionConfig);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
 
-      executionResult.getCommits().put(iterator.getTag(), new TestSet());
-      coverageBasedSelection.getCommits().put(iterator.getTag(), new TestSet());
+      executionResult.getCommits().put(iterator.getCommitName(), new TestSet());
+      coverageBasedSelection.getCommits().put(iterator.getCommitName(), new TestSet());
    }
 
    public void readCompletedCommits(final StaticTestSelection initialdependencies, CommitComparatorInstance comparator) {
@@ -313,7 +313,7 @@ public class DependencyReader {
       InitialCommitReader initialVersionReader = new InitialCommitReader(initialdependencies, dependencyManager, iterator);
       initialVersionReader.readCompletedVersions(comparator);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
-      lastRunningVersion = iterator.getTag();
+      lastRunningVersion = iterator.getCommitName();
    }
 
    public StaticTestSelection getDependencies() {

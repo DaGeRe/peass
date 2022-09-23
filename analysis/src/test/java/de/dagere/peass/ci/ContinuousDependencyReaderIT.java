@@ -58,7 +58,7 @@ public class ContinuousDependencyReaderIT {
       iterator.goToNextCommit();
 
       ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setEndcommit(iterator.getTag());
+      executionConfig.setEndcommit(iterator.getCommitName());
       executionConfig.setStartcommit(iterator.getPredecessor());
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),

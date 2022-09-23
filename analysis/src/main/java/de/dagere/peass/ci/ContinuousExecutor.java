@@ -96,7 +96,7 @@ public class ContinuousExecutor {
       if (!foundRunningCommit) {
          throw new RuntimeException("No running predecessor commit before " + userDefinedCommitOld + " was found; measurement not possible");
       }
-      String latestRunnableCommit = iterator.getTag();
+      String latestRunnableCommit = iterator.getCommitName();
       return latestRunnableCommit;
    }
 
