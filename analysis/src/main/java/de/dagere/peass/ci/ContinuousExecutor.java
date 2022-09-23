@@ -20,6 +20,8 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.dependency.reader.CommitKeeper;
+import de.dagere.peass.dependency.reader.FirstRunningCommitFinder;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -73,13 +75,29 @@ public class ContinuousExecutor {
       CommitIteratorBuilder iteratorBuiler = new CommitIteratorBuilder(measurementConfig.getFixedCommitConfig(), dependencies, folders);
       iterator = iteratorBuiler.getIterator();
       commit = iteratorBuiler.getCommit();
-      commitOld = iteratorBuiler.getCommitOld();
+      String userDefinedCommitOld = iteratorBuiler.getCommitOld();
       measurementConfig.getFixedCommitConfig().setCommit(commit);
-      measurementConfig.getFixedCommitConfig().setCommitOld(commitOld);
-      LOG.debug("Commit: {} Predecessor Commit: {}", commit, commitOld);
+      
+      LOG.debug("Commit: {} Predecessor Commit: {}", commit, userDefinedCommitOld);
 
       List<String> commits = GitUtils.getCommits(projectFolderLocal, false, true);
       comparator = new CommitComparatorInstance(commits);
+
+      commitOld = getLatestRunnableCommit(measurementConfig, env, userDefinedCommitOld);
+      measurementConfig.getFixedCommitConfig().setCommitOld(commitOld);
+   }
+
+   private String getLatestRunnableCommit(final MeasurementConfig measurementConfig, final EnvironmentVariables env, String userDefinedCommitOld) {
+      File nonRunningCommitFile = new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "notRunnable.json");
+      CommitKeeper commitKeeper = new CommitKeeper(nonRunningCommitFile);
+      FirstRunningCommitFinder latestRunningCommitFinder = new FirstRunningCommitFinder(folders, commitKeeper, iterator, measurementConfig.getExecutionConfig(), env);
+      iterator.goToNamedCommit(userDefinedCommitOld);
+      boolean foundRunningCommit = latestRunningCommitFinder.searchLatestRunningCommit();
+      if (!foundRunningCommit) {
+         throw new RuntimeException("No running predecessor commit before " + userDefinedCommitOld + " was found; measurement not possible");
+      }
+      String latestRunnableCommit = iterator.getTag();
+      return latestRunnableCommit;
    }
 
    private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
