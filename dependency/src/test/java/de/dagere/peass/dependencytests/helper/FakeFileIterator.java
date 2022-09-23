@@ -141,12 +141,4 @@ public class FakeFileIterator extends CommitIterator {
    public List<String> getCommits() {
       return new LinkedList<>();
    }
-   
-   @Override
-   public boolean goToNamedCommit(String name) {
-      while (commits.get(commitIndex).getName().equals(name) && commitIndex < commits.size()) {
-         goToNextCommit();
-      }
-      return commits.get(commitIndex).getName().equals(name);
-   }
 }

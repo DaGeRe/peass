@@ -84,7 +84,12 @@ public abstract class CommitIterator {
 	 */
 	public abstract boolean goTo0thCommit();
 
-	public abstract boolean goToNamedCommit(String name);
+   public boolean goToNamedCommit(String name) {
+      while (getTag().equals(name) && hasNextCommit()) {
+         goToNextCommit();
+      }
+      return getTag().equals(name);
+   }
 	
    public abstract boolean isPredecessor(String lastRunningVersion);
 

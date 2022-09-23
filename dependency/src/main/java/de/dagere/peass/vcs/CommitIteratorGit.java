@@ -150,13 +150,4 @@ public class CommitIteratorGit extends CommitIterator {
    public List<String> getCommits() {
       return commits;
    }
-   
-   @Override
-   public boolean goToNamedCommit(String name) {
-      while (commits.get(commitIndex).equals(name) && commitIndex < commits.size()) {
-         goToNextCommit();
-      }
-      return commits.get(commitIndex).equals(name);
-   }
-
 }

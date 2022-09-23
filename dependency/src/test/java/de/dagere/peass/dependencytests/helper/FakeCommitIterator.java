@@ -79,12 +79,4 @@ public class FakeCommitIterator extends CommitIterator {
    public List<String> getCommits() {
       return new LinkedList<>();
    }
-
-   @Override
-   public boolean goToNamedCommit(String name) {
-      while (!commits.get(commitIndex).equals(name) && commitIndex < commits.size()) {
-         goToNextCommit();
-      }
-      return commits.get(commitIndex).equals(name);
-   }
 }
