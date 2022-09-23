@@ -44,8 +44,8 @@ public class MavenPomUtil {
 
    public static final String COMPILER_PLUGIN_VERSION = "3.10.1";
 
-   public static final String JUPITER_VERSION = "5.8.2";
-   public static final String LOG4J_VERSION = "2.18.0";
+   public static final String JUPITER_VERSION = "5.9.0";
+   public static final String LOG4J_VERSION = "2.19.0";
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
 
