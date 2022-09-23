@@ -35,15 +35,15 @@ public class CommitIteratorGit extends CommitIterator {
 
    private static final Logger LOG = LogManager.getLogger(CommitIteratorGit.class);
 
-   private final List<String> entries;
+   private final List<String> commits;
    private final String previous;
    private final int previousIndex;
 
    public CommitIteratorGit(final File projectFolder) {
       super(projectFolder);
       previous = GitUtils.getName("HEAD~1", projectFolder);
-      entries = GitUtils.getCommits(projectFolder, false);
-      previousIndex = entries.indexOf(previous);
+      commits = GitUtils.getCommits(projectFolder, false);
+      previousIndex = commits.indexOf(previous);
    }
    
    /**
@@ -55,7 +55,7 @@ public class CommitIteratorGit extends CommitIterator {
     */
    public CommitIteratorGit(final File projectFolder, final List<String> entries, final String previousCommit) {
       super(projectFolder);
-      this.entries = entries;
+      this.commits = entries;
       this.previous = previousCommit;
       int index = -1;
       if (previousCommit != null) {
@@ -69,29 +69,29 @@ public class CommitIteratorGit extends CommitIterator {
          }
       }
       previousIndex = index;
-      tagid = previousIndex + 1;
+      commitIndex = previousIndex + 1;
    }
 
    @Override
    public boolean goToFirstCommit() {
-      tagid = 0;
-      GitUtils.goToCommit(entries.get(0), projectFolder);
+      commitIndex = 0;
+      GitUtils.goToCommit(commits.get(0), projectFolder);
       return true;
    }
 
    @Override
    public boolean goToNextCommit() {
-      tagid++;
-      final String nextTag = entries.get(tagid);
+      commitIndex++;
+      final String nextTag = commits.get(commitIndex);
       GitUtils.goToCommit(nextTag, projectFolder);
       return true;
    }
 
    @Override
    public boolean goToPreviousCommit() {
-      if (tagid > 0) {
-         tagid--;
-         final String nextTag = entries.get(tagid);
+      if (commitIndex > 0) {
+         commitIndex--;
+         final String nextTag = commits.get(commitIndex);
          GitUtils.goToCommit(nextTag, projectFolder);
          return true;
       } else {
@@ -101,12 +101,12 @@ public class CommitIteratorGit extends CommitIterator {
 
    @Override
    public boolean hasNextCommit() {
-      return tagid + 1 < entries.size();
+      return commitIndex + 1 < commits.size();
    }
    
    @Override
    public String getTag() {
-      return entries.get(tagid);
+      return commits.get(commitIndex);
    }
    
    @Override
@@ -116,19 +116,19 @@ public class CommitIteratorGit extends CommitIterator {
 
    @Override
    public int getSize() {
-      return entries.size();
+      return commits.size();
    }
    
    @Override
    public int getRemainingSize() {
-      return entries.size() - tagid;
+      return commits.size() - commitIndex;
    }
 
    @Override
    public boolean goTo0thCommit() {
       if (previousIndex != -1) {
          GitUtils.goToCommit(previous, projectFolder);
-         tagid = previousIndex;
+         commitIndex = previousIndex;
          return true;
       } else {
          return false;
@@ -137,7 +137,7 @@ public class CommitIteratorGit extends CommitIterator {
 
    @Override
    public boolean isPredecessor(final String lastRunningVersion) {
-      return entries.get(tagid - 1).equals(lastRunningVersion);
+      return commits.get(commitIndex - 1).equals(lastRunningVersion);
    }
    
    @Override
@@ -148,15 +148,15 @@ public class CommitIteratorGit extends CommitIterator {
    
    @Override
    public List<String> getCommits() {
-      return entries;
+      return commits;
    }
    
    @Override
    public boolean goToNamedCommit(String name) {
-      while (entries.get(tagid).equals(name) && tagid < entries.size()) {
+      while (commits.get(commitIndex).equals(name) && commitIndex < commits.size()) {
          goToNextCommit();
       }
-      return entries.get(tagid).equals(name);
+      return commits.get(commitIndex).equals(name);
    }
 
 }

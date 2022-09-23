@@ -29,29 +29,29 @@ public class FakeCommitIterator extends CommitIterator {
 
    @Override
    public String getTag() {
-      return commits.get(tagid);
+      return commits.get(commitIndex);
    }
 
    @Override
    public boolean hasNextCommit() {
-      return tagid < commits.size() - 1 ;
+      return commitIndex < commits.size() - 1 ;
    }
    
    @Override
    public boolean goToNextCommit() {
-      tagid++;
+      commitIndex++;
       return true;
    }
 
    @Override
    public boolean goToFirstCommit() {
-      tagid = 0;
+      commitIndex = 0;
       return true;
    }
    
    @Override
    public boolean goToPreviousCommit() {
-      tagid--;
+      commitIndex--;
       return true;
    }
 
@@ -82,9 +82,9 @@ public class FakeCommitIterator extends CommitIterator {
 
    @Override
    public boolean goToNamedCommit(String name) {
-      while (!commits.get(tagid).equals(name) && tagid < commits.size()) {
+      while (!commits.get(commitIndex).equals(name) && commitIndex < commits.size()) {
          goToNextCommit();
       }
-      return commits.get(tagid).equals(name);
+      return commits.get(commitIndex).equals(name);
    }
 }

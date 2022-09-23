@@ -30,7 +30,7 @@ import de.dagere.peass.dependency.analysis.data.CommitDiff;
 public abstract class CommitIterator {
 
 	protected final File projectFolder;
-	protected int tagid = 0;
+	protected int commitIndex = 0;
 
 	public CommitIterator(final File projectFolder) {
 		this.projectFolder = projectFolder;
@@ -95,7 +95,7 @@ public abstract class CommitIterator {
    public abstract List<String> getCommits();
 
    public boolean hasPreviousCommit() {
-      return tagid > 0;
+      return commitIndex > 0;
    }
 
 }

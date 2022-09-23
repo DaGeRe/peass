@@ -72,32 +72,32 @@ public class FakeFileIterator extends CommitIterator {
 
    @Override
    public String getTag() {
-      return "00000" + (tagid + tagDiff);
+      return "00000" + (commitIndex + tagDiff);
    }
 
    @Override
    public boolean hasNextCommit() {
-      return tagid + tagDiff < commits.size();
+      return commitIndex + tagDiff < commits.size();
    }
    
    @Override
    public boolean goToNextCommit() {
-      LOG.debug("Loading commit: " + tagid);
-      tagid++;
-      return loadVersionFiles(tagid - 1);
+      LOG.debug("Loading commit: " + commitIndex);
+      commitIndex++;
+      return loadVersionFiles(commitIndex - 1);
    }
 
    @Override
    public boolean goToFirstCommit() {
-      tagid = 1;
+      commitIndex = 1;
       return loadVersionFiles(0);
    }
 
    @Override
    public boolean goToPreviousCommit() {
-      if (tagid > 1) {
-         tagid--;
-         return loadVersionFiles(tagid - 1);
+      if (commitIndex > 1) {
+         commitIndex--;
+         return loadVersionFiles(commitIndex - 1);
       } else {
          return false;
       }
@@ -118,13 +118,13 @@ public class FakeFileIterator extends CommitIterator {
 
    @Override
    public boolean goTo0thCommit() {
-      tagid = -1;
+      commitIndex = -1;
       return loadVersionFiles(0);
    }
 
    @Override
    public boolean isPredecessor(final String lastRunningVersion) {
-      return lastRunningVersion.equals("00000" + (tagid - 1 + tagDiff));
+      return lastRunningVersion.equals("00000" + (commitIndex - 1 + tagDiff));
    }
 
    @Override
@@ -144,9 +144,9 @@ public class FakeFileIterator extends CommitIterator {
    
    @Override
    public boolean goToNamedCommit(String name) {
-      while (commits.get(tagid).getName().equals(name) && tagid < commits.size()) {
+      while (commits.get(commitIndex).getName().equals(name) && commitIndex < commits.size()) {
          goToNextCommit();
       }
-      return commits.get(tagid).getName().equals(name);
+      return commits.get(commitIndex).getName().equals(name);
    }
 }
