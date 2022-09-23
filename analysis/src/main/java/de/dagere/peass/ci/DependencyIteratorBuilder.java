@@ -27,25 +27,25 @@ public class DependencyIteratorBuilder {
    private final String commit, commitOld;
    private final CommitIteratorGit iterator;
 
-   public DependencyIteratorBuilder(final FixedCommitConfig executionConfig, final StaticTestSelection dependencies, final PeassFolders folders) {
-      commit = GitUtils.getName(executionConfig.getCommit() != null ? executionConfig.getCommit() : "HEAD", folders.getProjectFolder());
+   public DependencyIteratorBuilder(final FixedCommitConfig commitConfig, final StaticTestSelection staticTestSelection, final PeassFolders folders) {
+      commit = GitUtils.getName(commitConfig.getCommit() != null ? commitConfig.getCommit() : "HEAD", folders.getProjectFolder());
 
-      String newestAnalyzedCommitName = dependencies != null ? dependencies.getNewestCommit() : null;
+      String newestAnalyzedCommitName = staticTestSelection != null ? staticTestSelection.getNewestCommit() : null;
 
-      String oldCommit = getOldCommit(executionConfig, newestAnalyzedCommitName, folders, dependencies);
+      String oldCommit = getOldCommit(commitConfig, newestAnalyzedCommitName, folders, staticTestSelection);
 
       if (commit.equals(newestAnalyzedCommitName)) {
          LOG.info("Commit {} is equal to newest commit, not executing RTS", commit);
          iterator = null;
-         commitOld = dependencies.getCommits().get(newestAnalyzedCommitName).getPredecessor();
+         commitOld = staticTestSelection.getCommits().get(newestAnalyzedCommitName).getPredecessor();
       } else if (oldCommit.equals(commit)) {
          LOG.error("Commit {} is equal to predecessing commit {}, some error occured - not executing RTS", commit, oldCommit);
          iterator = null;
-         commitOld = dependencies.getNewestRunningCommit();
+         commitOld = staticTestSelection.getNewestRunningCommit();
       } else {
-         if (dependencies != null &&
-               dependencies.getCommits().get(newestAnalyzedCommitName) != null &&
-               !dependencies.getCommits().get(newestAnalyzedCommitName).isRunning()) {
+         if (staticTestSelection != null &&
+               staticTestSelection.getCommits().get(newestAnalyzedCommitName) != null &&
+               !staticTestSelection.getCommits().get(newestAnalyzedCommitName).isRunning()) {
             commitOld = newestAnalyzedCommitName;
             iterator = null;
          } else {
