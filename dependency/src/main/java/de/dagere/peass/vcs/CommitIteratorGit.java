@@ -105,11 +105,6 @@ public class CommitIteratorGit extends CommitIterator {
    }
    
    @Override
-   public boolean hasPreviousCommit() {
-      return tagid > 0;
-   }
-
-   @Override
    public String getTag() {
       return entries.get(tagid);
    }

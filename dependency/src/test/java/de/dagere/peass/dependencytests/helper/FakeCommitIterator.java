@@ -38,11 +38,6 @@ public class FakeCommitIterator extends CommitIterator {
    }
    
    @Override
-   public boolean hasPreviousCommit() {
-      return tagid > 0;
-   }
-
-   @Override
    public boolean goToNextCommit() {
       tagid++;
       return true;

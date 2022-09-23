@@ -81,11 +81,6 @@ public class FakeFileIterator extends CommitIterator {
    }
    
    @Override
-   public boolean hasPreviousCommit() {
-      return tagid > 0;
-   }
-
-   @Override
    public boolean goToNextCommit() {
       LOG.debug("Loading commit: " + tagid);
       tagid++;
