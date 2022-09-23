@@ -13,9 +13,9 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.CommitIterator;
 
-public class FirstRunningVersionFinder {
+public class FirstRunningCommitFinder {
    
-   private static final Logger LOG = LogManager.getLogger(FirstRunningVersionFinder.class);
+   private static final Logger LOG = LogManager.getLogger(FirstRunningCommitFinder.class);
 
    private final PeassFolders folders;
    private final VersionKeeper nonRunning;
@@ -23,7 +23,7 @@ public class FirstRunningVersionFinder {
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
-   public FirstRunningVersionFinder(final PeassFolders folders, final VersionKeeper nonRunning, final CommitIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public FirstRunningCommitFinder(final PeassFolders folders, final VersionKeeper nonRunning, final CommitIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
       this.nonRunning = nonRunning;
       this.iterator = iterator;
@@ -52,20 +52,20 @@ public class FirstRunningVersionFinder {
    }
 
    private boolean tryCommit(final CommitIterator iterator, final TestTransformer testTransformer) {
-      boolean isVersionRunning;
+      boolean isCommitRunning;
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
-      isVersionRunning = executor.isCommitRunning(iterator.getTag());
+      isCommitRunning = executor.isCommitRunning(iterator.getTag());
 
-      if (!isVersionRunning) {
-         LOG.debug("Buildfile does not exist / version is not running {}", iterator.getTag());
+      if (!isCommitRunning) {
+         LOG.debug("Buildfile does not exist / commit is not running {}", iterator.getTag());
          if (executor.doesBuildfileExist()) {
-            nonRunning.addVersion(iterator.getTag(), "Version is not running.");
+            nonRunning.addVersion(iterator.getTag(), "Commit is not running.");
          } else {
             nonRunning.addVersion(iterator.getTag(), "Buildfile does not exist.");
          }
          iterator.goToNextCommit();
       }
-      return isVersionRunning;
+      return isCommitRunning;
    }
 
    private void goToCommit(final CommitIterator iterator) {
