@@ -15,7 +15,6 @@ import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
@@ -111,7 +110,7 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   boolean updateExecutions(final TestCase testcase, final int vmid) {
+   boolean updateExecutions(final TestMethodCall testcase, final int vmid) {
       boolean shouldBreak = false;
       final VMResult commitOldResult = getLastResult(configuration.getFixedCommitConfig().getCommitOld(), testcase, vmid);
       final VMResult commitNewResult = getLastResult(configuration.getFixedCommitConfig().getCommit(), testcase, vmid);
@@ -164,7 +163,7 @@ public class DependencyTester implements KiekerResultHandler {
       return shouldBreak;
    }
 
-   public VMResult getLastResult(final String version, final TestCase testcase, final int vmid) {
+   public VMResult getLastResult(final String version, final TestMethodCall testcase, final int vmid) {
       final File resultFile = getCurrentOrganizer().getResultFile(testcase, vmid, version);
       if (resultFile.exists()) {
          final Kopemedata data = JSONDataLoader.loadData(resultFile);
@@ -278,7 +277,7 @@ public class DependencyTester implements KiekerResultHandler {
       configuration.getFixedCommitConfig().setCommitOld(commitOld);
    }
 
-   protected boolean checkIsDecidable(final TestCase testcase, final int vmid) {
+   protected boolean checkIsDecidable(final TestMethodCall testcase, final int vmid) {
       return false;
    }
 

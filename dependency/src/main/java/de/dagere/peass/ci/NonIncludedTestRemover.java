@@ -36,7 +36,7 @@ public class NonIncludedTestRemover {
 
    private static void removeTestsWithoutMethod(final ExecutionConfig executionConfig, final Iterator<Entry<TestClazzCall, Set<String>>> testcaseIterator,
          final Entry<TestClazzCall, Set<String>> testcase) {
-      TestCase test = new TestCase(testcase.getKey().getClazz());
+      TestClazzCall test = testcase.getKey();
       if (!isTestIncluded(test, executionConfig)) {
          testcaseIterator.remove();
       }
@@ -45,8 +45,9 @@ public class NonIncludedTestRemover {
    private static void removeTestsWithMethod(final ExecutionConfig executionConfig, final Iterator<Entry<TestClazzCall, Set<String>>> testcaseIterator,
          final Entry<TestClazzCall, Set<String>> testcase) {
       for (Iterator<String> methodIterator = testcase.getValue().iterator(); methodIterator.hasNext();) {
-         String method = methodIterator.next();
-         if (!isTestIncluded(new TestMethodCall(testcase.getKey().getClazz(), method), executionConfig)) {
+         String methodAndParams = methodIterator.next();
+         TestMethodCall test = getTestMethodCall(testcase, methodAndParams);
+         if (!isTestIncluded(test, executionConfig)) {
             methodIterator.remove();
          }
       }
@@ -55,22 +56,22 @@ public class NonIncludedTestRemover {
       }
    }
 
-   public static void removeNotIncluded(final Set<TestCase> tests, final ExecutionConfig executionConfig) {
-      if (executionConfig.getIncludes().size() > 0 || executionConfig.getExcludes().size() > 0) {
-         for (Iterator<TestCase> it = tests.iterator(); it.hasNext();) {
-            TestCase test = it.next();
-            boolean isIncluded = isTestIncluded(test, executionConfig);
-            if (!isIncluded) {
-               LOG.info("Excluding non-included test {}", test);
-               it.remove();
-            }
-         }
+   private static TestMethodCall getTestMethodCall(final Entry<TestClazzCall, Set<String>> testcase, String methodAndParams) {
+      String method, params;
+      if (methodAndParams.contains("(")) {
+         method = methodAndParams.substring(0, methodAndParams.indexOf("("));
+         params = methodAndParams.substring(methodAndParams.indexOf("(") + 1, methodAndParams.length() - 1);
+      } else {
+         method = methodAndParams;
+         params = "";
       }
+      TestMethodCall test = new TestMethodCall(testcase.getKey().getClazz(), method, testcase.getKey().getModule(), params);
+      return test;
    }
-   
-   public static void removeNotIncludedMethods(final Set<TestMethodCall> tests, final ExecutionConfig executionConfig) {
+
+   public static void removeNotIncluded(final Set<? extends TestCase> tests, final ExecutionConfig executionConfig) {
       if (executionConfig.getIncludes().size() > 0 || executionConfig.getExcludes().size() > 0) {
-         for (Iterator<TestMethodCall> it = tests.iterator(); it.hasNext();) {
+         for (Iterator<? extends TestCase> it = tests.iterator(); it.hasNext();) {
             TestCase test = it.next();
             boolean isIncluded = isTestIncluded(test, executionConfig);
             if (!isIncluded) {
@@ -81,7 +82,20 @@ public class NonIncludedTestRemover {
       }
    }
 
-   public static boolean isTestClassIncluded(final TestCase test, final ExecutionConfig config) {
+   public static void removeNotIncludedMethods(final Set<TestMethodCall> tests, final ExecutionConfig executionConfig) {
+      if (executionConfig.getIncludes().size() > 0 || executionConfig.getExcludes().size() > 0) {
+         for (Iterator<TestMethodCall> it = tests.iterator(); it.hasNext();) {
+            TestMethodCall test = it.next();
+            boolean isIncluded = isTestIncluded(test, executionConfig);
+            if (!isIncluded) {
+               LOG.info("Excluding non-included test {}", test);
+               it.remove();
+            }
+         }
+      }
+   }
+
+   public static boolean isTestClassIncluded(final TestClazzCall test, final ExecutionConfig config) {
       List<String> includes = config.getIncludes();
       boolean isIncluded;
       if (includes.size() != 0) {

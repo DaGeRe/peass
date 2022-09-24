@@ -12,6 +12,8 @@ import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class ResultsFolders {
 
+   public static final String RCA_MAPPING_FILE_NAME = "rcaMapping.json";
+
    private static final Logger LOG = LogManager.getLogger(ResultsFolders.class);
 
    public static final String MEASUREMENT_PREFIX = "measurement_";
@@ -65,6 +67,10 @@ public class ResultsFolders {
 
    public File getChangeFile() {
       return new File(resultFolder, "changes.json");
+   }
+   
+   public File getRCAMappingFile() {
+      return new File(resultFolder, RCA_MAPPING_FILE_NAME);
    }
 
    public File getRtsLogFolder() {

@@ -65,41 +65,39 @@ public class FakeFileIterator extends CommitIterator {
       this.tagDiff = tagDiff;
    }
 
-   private int tag = 0;
-
    @Override
    public int getSize() {
       return commits.size();
    }
 
    @Override
-   public String getTag() {
-      return "00000" + (tag + tagDiff);
+   public String getCommitName() {
+      return "00000" + (commitIndex + tagDiff);
    }
 
    @Override
    public boolean hasNextCommit() {
-      return tag + tagDiff < commits.size();
+      return commitIndex + tagDiff < commits.size();
    }
-
+   
    @Override
    public boolean goToNextCommit() {
-      LOG.debug("Loading commit: " + tag);
-      tag++;
-      return loadVersionFiles(tag - 1);
+      LOG.debug("Loading commit: " + commitIndex);
+      commitIndex++;
+      return loadVersionFiles(commitIndex - 1);
    }
 
    @Override
    public boolean goToFirstCommit() {
-      tag = 1;
+      commitIndex = 1;
       return loadVersionFiles(0);
    }
 
    @Override
    public boolean goToPreviousCommit() {
-      if (tag > 1) {
-         tag--;
-         return loadVersionFiles(tag - 1);
+      if (commitIndex > 1) {
+         commitIndex--;
+         return loadVersionFiles(commitIndex - 1);
       } else {
          return false;
       }
@@ -120,13 +118,13 @@ public class FakeFileIterator extends CommitIterator {
 
    @Override
    public boolean goTo0thCommit() {
-      tag = -1;
+      commitIndex = -1;
       return loadVersionFiles(0);
    }
 
    @Override
    public boolean isPredecessor(final String lastRunningVersion) {
-      return lastRunningVersion.equals("00000" + (tag - 1 + tagDiff));
+      return lastRunningVersion.equals("00000" + (commitIndex - 1 + tagDiff));
    }
 
    @Override

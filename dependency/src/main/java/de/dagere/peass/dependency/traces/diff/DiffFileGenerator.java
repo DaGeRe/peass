@@ -60,7 +60,11 @@ public class DiffFileGenerator {
 
             final boolean isDifferent;
             if (unixDiffAvailable) {
-               isDifferent = DiffUtilUnix.isDifferentDiff(oldFile, newFile);
+               File oldFileUnzipped = eventuallUnzip(oldFile);
+               File newFileUnzipped = eventuallUnzip(newFile);
+               isDifferent = DiffUtilUnix.isDifferentDiff(oldFileUnzipped, newFileUnzipped);
+               
+               eventuallDeleteUnzipped(oldFile, newFile, oldFileUnzipped, newFileUnzipped);
             } else {
                isDifferent = DiffUtilJava.isDifferentDiff(oldFile, newFile);
             }
@@ -79,6 +83,25 @@ public class DiffFileGenerator {
          LOG.info("Traces not existing: {}", testcase);
          return false;
       }
+   }
+
+   private void eventuallDeleteUnzipped(File oldFile, File newFile, File oldFileUnzipped, File newFileUnzipped) {
+      if (oldFile.getName().endsWith(TraceFileManager.ZIP_ENDING)) {
+         oldFileUnzipped.delete();
+      }
+      if (newFile.getName().endsWith(TraceFileManager.ZIP_ENDING)) {
+         newFileUnzipped.delete();
+      }
+   }
+
+   private File eventuallUnzip(File oldFile) {
+      File oldFileUnzipped;
+      if (oldFile.getName().endsWith(TraceFileManager.ZIP_ENDING)) {
+         oldFileUnzipped = TraceFileUtil.unzip(oldFile);
+      } else {
+         oldFileUnzipped = oldFile;
+      }
+      return oldFileUnzipped;
    }
 
    /**

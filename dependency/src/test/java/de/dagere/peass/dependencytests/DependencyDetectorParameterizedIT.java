@@ -16,12 +16,11 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.CommitIterator;
 
@@ -41,7 +40,7 @@ public class DependencyDetectorParameterizedIT {
    }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       final ChangeManager changeManager = changeManagerWithParameter();
 
       final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(NORMAL_CHANGE));
@@ -54,7 +53,7 @@ public class DependencyDetectorParameterizedIT {
 
       Assert.assertEquals(3, reader.getDependencies().getInitialcommit().getInitialDependencies().size());
       TestSet selectedTest = firstVersion.getChangedClazzes().get(new ChangedEntity("defaultpackage.NormalDependency#onlyCalledWithOne"));
-      Assert.assertEquals(new TestCase("TestMe#testMe(JUNIT_PARAMETERIZED-2)"), selectedTest.getTests().iterator().next());
+      Assert.assertEquals(TestMethodCall.createFromString("TestMe#testMe(JUNIT_PARAMETERIZED-2)"), selectedTest.getTestMethods().iterator().next());
    }
 
    public static ChangeManager changeManagerWithParameter() {

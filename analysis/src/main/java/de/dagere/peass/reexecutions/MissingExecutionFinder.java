@@ -17,9 +17,9 @@ import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.helper.read.TestcaseData;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.measurement.utils.CreateScriptStarter;
 
@@ -93,12 +93,12 @@ public class MissingExecutionFinder {
 
    private void removeSlurmExecutions(final File folder) {
       ChangeReader reader = new ChangeReader(folder.getName(), tests);
-      reader.readFile(folder);
+      reader.readFolder(folder);
       for (Entry<String, TestcaseData> entry : reader.getAllData().getData().entrySet()) {
          String version = entry.getKey();
          TestSet versionsTests = tests.getCommits().get(version);
          LOG.debug("Removing from: {}", version);
-         for (TestCase test : entry.getValue().getTestcaseData().keySet()) {
+         for (TestMethodCall test : entry.getValue().getTestcaseData().keySet()) {
             removeTestFromTestSet(test.getClazz(), test.getMethod(), versionsTests);
          }
       }

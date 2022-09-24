@@ -2,7 +2,7 @@ package de.dagere.peass.dependency.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +17,6 @@ import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
@@ -68,8 +67,8 @@ public class StaticChangeHandler {
             for (ChangedEntity change : changedEntry.getChanges()) {
                File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
                TestClazzCall potentialTest = new TestClazzCall(change.getClazz(), change.getModule());
-               List<TestMethodCall> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
-               for (TestCase added : addedTests) {
+               Set<TestMethodCall> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
+               for (TestMethodCall added : addedTests) {
                   if (NonIncludedTestRemover.isTestIncluded(added, executionConfig)) {
                      if (dependencyManager.getTestTransformer() instanceof JUnitTestTransformer) {
                         JUnitTestTransformer testTransformer = (JUnitTestTransformer) dependencyManager.getTestTransformer();

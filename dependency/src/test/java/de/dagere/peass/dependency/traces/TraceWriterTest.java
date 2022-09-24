@@ -10,7 +10,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.TestSelectionConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.requitur.ReducedTraceElement;

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class TestCaseTest {
@@ -17,7 +16,7 @@ public class TestCaseTest {
       File dataFile = new File("src/test/resources/testcaseTest/ExampleTest_test(JUNIT_PARAMETERIZED-0).json");
       Kopemedata kopemedata = JSONDataLoader.loadData(dataFile);
       
-      TestCase test = new TestMethodCall(kopemedata);
+      TestMethodCall test = new TestMethodCall(kopemedata);
       
       Assert.assertEquals(test.getMethod(), "test");
       Assert.assertEquals(test.getParams(), "JUNIT_PARAMETERIZED-0");

@@ -20,7 +20,7 @@ public class TestTestcaseSerialization {
    public void testSerialization() throws JsonProcessingException {
       CoverageSelectionInfo info = new CoverageSelectionInfo();
       CoverageSelectionCommit version = new CoverageSelectionCommit();
-      TestCase test = new TestCase("ClazzA", "methodA2", "moduleA", "int,String");
+      TestMethodCall test = new TestMethodCall("ClazzA", "methodA2", "moduleA", "int,String");
       TraceCallSummary traceCallSummary = new TraceCallSummary();
       traceCallSummary.addCall("app" + ChangedEntity.MODULE_SEPARATOR + "ClazzB" + ChangedEntity.METHOD_SEPARATOR + "methodB(double)");
       traceCallSummary.setTestcase(test);
@@ -32,7 +32,7 @@ public class TestTestcaseSerialization {
       System.out.println(serialized);
       
       CoverageSelectionInfo deserialized = Constants.OBJECTMAPPER.readValue(serialized, CoverageSelectionInfo.class);
-      TestCase deserializedTest = deserialized.getVersions().get("000001").getTestcases().keySet().iterator().next();
+      TestMethodCall deserializedTest = deserialized.getVersions().get("000001").getTestcases().keySet().iterator().next();
       Assert.assertEquals("ClazzA", deserializedTest.getClazz());
       Assert.assertEquals("methodA2", deserializedTest.getMethod());
       Assert.assertEquals("moduleA", deserializedTest.getModule());
@@ -43,7 +43,7 @@ public class TestTestcaseSerialization {
    public void testNoParamSerialization() throws JsonProcessingException {
       CoverageSelectionInfo info = new CoverageSelectionInfo();
       CoverageSelectionCommit version = new CoverageSelectionCommit();
-      TestCase test = new TestMethodCall("ClazzA", "methodA2", "moduleA");
+      TestMethodCall test = new TestMethodCall("ClazzA", "methodA2", "moduleA");
       TraceCallSummary traceCallSummary = new TraceCallSummary();
       traceCallSummary.addCall("app" + ChangedEntity.MODULE_SEPARATOR + "ClazzB" + ChangedEntity.METHOD_SEPARATOR + "methodB");
       traceCallSummary.setTestcase(test);
@@ -55,7 +55,7 @@ public class TestTestcaseSerialization {
       System.out.println(serialized);
       
       CoverageSelectionInfo deserialized = Constants.OBJECTMAPPER.readValue(serialized, CoverageSelectionInfo.class);
-      TestCase deserializedTest = deserialized.getVersions().get("000001").getTestcases().keySet().iterator().next();
+      TestMethodCall deserializedTest = deserialized.getVersions().get("000001").getTestcases().keySet().iterator().next();
       Assert.assertEquals("ClazzA", deserializedTest.getClazz());
       Assert.assertEquals("methodA2", deserializedTest.getMethod());
       Assert.assertEquals("moduleA", deserializedTest.getModule());
@@ -64,7 +64,7 @@ public class TestTestcaseSerialization {
    
    @Test
    public void testCreation() {
-      TestCase test = new TestMethodCall("ClazzA", "methodA(A,B,C)", "moduleA");
+      TestMethodCall test = new TestMethodCall("ClazzA", "methodA(A,B,C)", "moduleA");
       Assert.assertEquals("ClazzA", test.getClazz());
       Assert.assertEquals("methodA", test.getMethod());
       Assert.assertEquals("moduleA", test.getModule());
@@ -74,11 +74,11 @@ public class TestTestcaseSerialization {
    @Test
    public void testError() {
       Assertions.assertThrows(RuntimeException.class, () ->{
-         TestCase test = new TestCase("ClazzA", "methodA(A,B,C)", "moduleA", null);
+         TestCase test = new TestMethodCall("ClazzA", "methodA(A,B,C)", "moduleA", null);
       });
       
       Assertions.assertThrows(RuntimeException.class, () ->{
-         TestCase test = new TestCase("ClazzA#methodA", null, "moduleA", null);
+         TestCase test = new TestMethodCall("ClazzA#methodA", null, "moduleA", null);
       });
    }
 }

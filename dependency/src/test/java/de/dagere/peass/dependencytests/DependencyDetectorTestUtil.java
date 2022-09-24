@@ -21,13 +21,12 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -99,13 +98,13 @@ public class DependencyDetectorTestUtil {
    public static void checkChange(final DependencyReader reader, final String change, final String changedTest, final String version, final String testMethod) {
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), change, version);
       System.out.println(testMe);
-      final TestCase testcase = testMe.getTests().iterator().next();
+      final TestMethodCall testcase = testMe.getTestMethods().iterator().next();
       Assert.assertEquals(changedTest, testcase.getClazz());
       Assert.assertEquals(testMethod, testcase.getMethod());
    }
 
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final CommitIterator fakeIterator)
-         throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+         throws IOException, InterruptedException, XmlPullParserException, ParseException {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
@@ -119,7 +118,7 @@ public class DependencyDetectorTestUtil {
 
          reader.analyseVersion(changeManager);
          return reader;
-      } catch (IOException | InterruptedException | XmlPullParserException | ParseException | ViewNotFoundException e) {
+      } catch (IOException | InterruptedException | XmlPullParserException | ParseException e) {
          throw new RuntimeException(e);
       }
    }

@@ -15,7 +15,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CauseTester;
@@ -94,7 +93,7 @@ public class CauseSearcherCompleteTest {
    }
 
    private Set<ChangedEntity> getChanges(final CallTreeNode rootPredecessor, final CallTreeNode rootVersion)
-         throws InterruptedException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
+         throws InterruptedException, IOException, XmlPullParserException, AnalysisConfigurationException {
       final File folder = new File("target/test/");
       folder.mkdir();
 

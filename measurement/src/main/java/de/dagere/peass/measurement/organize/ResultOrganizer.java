@@ -21,7 +21,6 @@ import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
@@ -153,7 +152,7 @@ public class ResultOrganizer {
 
       for (VMResult result : timeDataCollector.getResults()) {
          String paramString = ParamNameHelper.paramsToString(result.getParameters());
-         TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
+         TestMethodCall concreteTestcase = new TestMethodCall(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
 
          final File destFile = folders.getResultFile(concreteTestcase, vmid, commit, mainCommit);
          destFile.getParentFile().mkdirs();
@@ -188,7 +187,7 @@ public class ResultOrganizer {
    public void saveSummaryFile(final String commit, final DatacollectorResult timeDataCollector, final File oneResultFile) {
       for (VMResult result : timeDataCollector.getResults()) {
          String paramString = ParamNameHelper.paramsToString(result.getParameters());
-         TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
+         TestMethodCall concreteTestcase = new TestMethodCall(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
 
          final File summaryResultFile = folders.getSummaryFile(concreteTestcase);
          MultipleVMTestUtil.saveSummaryData(summaryResultFile, oneResultFile, result, concreteTestcase, commit, currentChunkStart, timeDataCollector.getName());
@@ -212,7 +211,7 @@ public class ResultOrganizer {
       return compressor;
    }
 
-   public File getResultFile(final TestCase testcase, final int vmid, final String commit) {
+   public File getResultFile(final TestMethodCall testcase, final int vmid, final String commit) {
       return folders.getResultFile(testcase, vmid, commit, mainCommit);
    }
 
@@ -220,7 +219,7 @@ public class ResultOrganizer {
       return saveAll;
    }
 
-   public TestCase getTest() {
+   public TestMethodCall getTest() {
       return testcase;
    }
 

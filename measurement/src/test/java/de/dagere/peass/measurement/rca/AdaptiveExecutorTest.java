@@ -21,7 +21,6 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -73,7 +72,7 @@ public class AdaptiveExecutorTest {
    }
 
    @Test
-   public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);
@@ -94,7 +93,7 @@ public class AdaptiveExecutorTest {
    }
 
    @Test
-   public void testConstructorExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   public void testConstructorExecution() throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);

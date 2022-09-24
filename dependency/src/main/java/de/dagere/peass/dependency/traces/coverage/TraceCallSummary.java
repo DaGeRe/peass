@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 /**
  * Information of a trace how often each method has been called for JSON serialization
@@ -19,7 +19,7 @@ public class TraceCallSummary {
 
    private int overallScore;
    private boolean selected;
-   private TestCase testcase;
+   private TestMethodCall testcase;
    private Map<String, Integer> callCounts = new HashMap<>();
    private Set<String> selectedChanges = new HashSet<>();
 
@@ -31,11 +31,11 @@ public class TraceCallSummary {
       this.selected = selected;
    }
 
-   public TestCase getTestcase() {
+   public TestMethodCall getTestcase() {
       return testcase;
    }
 
-   public void setTestcase(final TestCase testcase) {
+   public void setTestcase(final TestMethodCall testcase) {
       this.testcase = testcase;
    }
 

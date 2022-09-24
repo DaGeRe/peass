@@ -13,17 +13,17 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.CommitIterator;
 
-public class FirstRunningVersionFinder {
+public class RunningCommitFinder {
    
-   private static final Logger LOG = LogManager.getLogger(FirstRunningVersionFinder.class);
+   private static final Logger LOG = LogManager.getLogger(RunningCommitFinder.class);
 
    private final PeassFolders folders;
-   private final VersionKeeper nonRunning;
+   private final CommitKeeper nonRunning;
    private final CommitIterator iterator;
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
-   public FirstRunningVersionFinder(final PeassFolders folders, final VersionKeeper nonRunning, final CommitIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public RunningCommitFinder(final PeassFolders folders, final CommitKeeper nonRunning, final CommitIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
       this.nonRunning = nonRunning;
       this.iterator = iterator;
@@ -37,38 +37,54 @@ public class FirstRunningVersionFinder {
     */
    public boolean searchFirstRunningCommit() {
       goToCommit(iterator);
-      boolean isVersionRunning = false;
+      boolean isCommitRunning = false;
       // The local test transformer enables testing whether a version runs without full configuration
       TestTransformer transformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, new KiekerConfig(false));
-      while (!isVersionRunning && iterator.hasNextCommit()) {
+      while (!isCommitRunning && iterator.hasNextCommit()) {
          if (ExecutorCreator.hasBuildfile(folders, transformer)) {
-            isVersionRunning = tryCommit(iterator, transformer);
+            isCommitRunning = tryCommit(iterator, transformer);
+            if (!isCommitRunning) {
+               iterator.goToNextCommit();
+            }
          } else {
-            nonRunning.addVersion(iterator.getTag(), "Buildfile does not exist.");
+            nonRunning.addCommit(iterator.getCommitName(), "Buildfile does not exist.");
             iterator.goToNextCommit();
          }
       }
-      return isVersionRunning;
+      return isCommitRunning;
+   }
+   
+   public boolean searchLatestRunningCommit() {
+      // The local test transformer enables testing whether a version runs without full configuration
+      TestTransformer transformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, new KiekerConfig(false));
+      
+      boolean isCommitRunning = tryCommit(iterator, transformer);
+      while (!isCommitRunning && iterator.hasPreviousCommit()) {
+         iterator.goToPreviousCommit();
+         nonRunning.addCommit(iterator.getCommitName(), "Buildfile does not exist.");
+         if (ExecutorCreator.hasBuildfile(folders, transformer)) {
+            isCommitRunning = tryCommit(iterator, transformer);
+         }
+      }
+      return isCommitRunning;
    }
 
    private boolean tryCommit(final CommitIterator iterator, final TestTransformer testTransformer) {
-      boolean isVersionRunning;
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
-      isVersionRunning = executor.isCommitRunning(iterator.getTag());
+      boolean isCommitRunning = executor.isCommitRunning(iterator.getCommitName());
 
-      if (!isVersionRunning) {
-         LOG.debug("Buildfile does not exist / version is not running {}", iterator.getTag());
+      if (!isCommitRunning) {
+         LOG.debug("Buildfile does not exist / commit is not running {}", iterator.getCommitName());
          if (executor.doesBuildfileExist()) {
-            nonRunning.addVersion(iterator.getTag(), "Version is not running.");
+            nonRunning.addCommit(iterator.getCommitName(), "Commit is not running.");
          } else {
-            nonRunning.addVersion(iterator.getTag(), "Buildfile does not exist.");
+            nonRunning.addCommit(iterator.getCommitName(), "Buildfile does not exist.");
          }
-         iterator.goToNextCommit();
       }
-      return isVersionRunning;
+      return isCommitRunning;
    }
 
-   private void goToCommit(final CommitIterator iterator) {
+   public void goToCommit(final CommitIterator iterator) {
       boolean successGettingCommit = iterator.goToFirstCommit();
       while (!successGettingCommit && iterator.hasNextCommit()) {
          successGettingCommit = iterator.goToNextCommit();
@@ -76,7 +92,7 @@ public class FirstRunningVersionFinder {
       if (!successGettingCommit) {
          throw new RuntimeException("Repository does not contain usable commit - maybe path has changed?");
       } else {
-         LOG.info("Found first commit: " + iterator.getTag());
+         LOG.info("Found first commit: " + iterator.getCommitName());
       }
    }
 }

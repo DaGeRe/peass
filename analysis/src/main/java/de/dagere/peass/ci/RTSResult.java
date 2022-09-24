@@ -25,11 +25,11 @@ public class RTSResult implements Serializable {
       return isRunning;
    }
    
-   public String getVersionOld() {
+   public String getCommitOld() {
       return commitOld;
    }
 
-   public void setVersionOld(final String commitOld) {
+   public void setCommitOld(final String commitOld) {
       this.commitOld = commitOld;
    }
 

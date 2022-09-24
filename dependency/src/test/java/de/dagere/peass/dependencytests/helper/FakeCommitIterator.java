@@ -22,38 +22,37 @@ public class FakeCommitIterator extends CommitIterator {
       this.commits = commits;
    }
 
-   private int tag = 0;
-
    @Override
    public int getSize() {
       return commits.size();
    }
 
    @Override
-   public String getTag() {
-      return commits.get(tag);
+   public String getCommitName() {
+      return commits.get(commitIndex);
    }
 
    @Override
    public boolean hasNextCommit() {
-      return tag < commits.size() - 1 ;
+      return commitIndex < commits.size() - 1 ;
    }
-
+   
    @Override
    public boolean goToNextCommit() {
-      tag++;
+      commitIndex++;
       return true;
    }
 
    @Override
    public boolean goToFirstCommit() {
-      tag = 0;
+      commitIndex = 0;
       return true;
    }
    
    @Override
    public boolean goToPreviousCommit() {
-      throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
+      commitIndex--;
+      return true;
    }
 
    @Override

@@ -1,0 +1,92 @@
+{
+  "clazz" : "com.example.android_example.ExampleUnitTest",
+  "methods" : [ {
+    "method" : "test_TestMe",
+    "datacollectorResults" : [ {
+      "name" : "de.dagere.kopeme.datacollection.TimeDataCollectorNoGC",
+      "chunks" : [ {
+        "chunkStartTime" : 1612275404423,
+        "results" : [ {
+          "value" : 16116.666666666666,
+          "deviation" : 4218.89005940346,
+          "min" : 13440.0,
+          "max" : 20980.0,
+          "warmup" : 5,
+          "iterations" : 3,
+          "repetitions" : 10,
+          "commit" : "fd79b2039667c09167c721b2823425629fad6d11",
+          "vmRunConfiguration" : { },
+          "date" : 1612275411637,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 819043.6666666666,
+          "deviation" : 64045.618377320185,
+          "min" : 781927.0,
+          "max" : 892997.0,
+          "warmup" : 5,
+          "iterations" : 3,
+          "repetitions" : 10,
+          "commit" : "946e4318267b56838aa35da0a2a4e5c0528bfe04",
+          "vmRunConfiguration" : { },
+          "date" : 1612275419613,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 14520.0,
+          "deviation" : 1295.723735986958,
+          "min" : 13590.0,
+          "max" : 16000.0,
+          "warmup" : 5,
+          "iterations" : 3,
+          "repetitions" : 10,
+          "commit" : "fd79b2039667c09167c721b2823425629fad6d11",
+          "vmRunConfiguration" : { },
+          "date" : 1612275427700,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 928396.6666666666,
+          "deviation" : 112595.43720921081,
+          "min" : 800616.0,
+          "max" : 1013067.0,
+          "warmup" : 5,
+          "iterations" : 3,
+          "repetitions" : 10,
+          "commit" : "946e4318267b56838aa35da0a2a4e5c0528bfe04",
+          "vmRunConfiguration" : { },
+          "date" : 1612275435343,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 14626.333333333334,
+          "deviation" : 2221.450051955554,
+          "min" : 13270.0,
+          "max" : 17190.0,
+          "warmup" : 5,
+          "iterations" : 3,
+          "repetitions" : 10,
+          "commit" : "fd79b2039667c09167c721b2823425629fad6d11",
+          "vmRunConfiguration" : { },
+          "date" : 1612275443091,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 799103.3333333334,
+          "deviation" : 14978.410474190288,
+          "min" : 781857.0,
+          "max" : 808856.0,
+          "warmup" : 5,
+          "iterations" : 3,
+          "repetitions" : 10,
+          "commit" : "946e4318267b56838aa35da0a2a4e5c0528bfe04",
+          "vmRunConfiguration" : { },
+          "date" : 1612275451546,
+          "failure" : true,
+          "error" : true
+        } ]
+      } ],
+      "results" : [ ]
+    } ]
+  } ]
+}

@@ -33,23 +33,23 @@ public class LevelDifferentNodeDeterminer extends DifferentNodeDeterminer {
       }
    }
 
-   private void findMeasurable(final CallTreeNode currentPredecessorNode, final CallTreeNode currentVersionNode) {
-      if (currentPredecessorNode != null && currentVersionNode != null) {
-         if (!TreeUtil.childrenEqual(currentPredecessorNode, currentVersionNode)) {
-            final int matched = TreeUtil.findChildMapping(currentPredecessorNode, currentVersionNode);
+   private void findMeasurable(final CallTreeNode currentPredecessorNode, final CallTreeNode currentCommitNode) {
+      if (currentPredecessorNode != null && currentCommitNode != null) {
+         if (!TreeUtil.childrenEqual(currentPredecessorNode, currentCommitNode)) {
+            final int matched = TreeUtil.findChildMapping(currentPredecessorNode, currentCommitNode);
             if (matched > 0) {
                measurePredecessor.add(currentPredecessorNode);
                // needToMeasureCurrent.add(currentVersionNode);
             } else {
                treeStructureDifferentNodes.add(currentPredecessorNode);
-               treeStructureDifferentNodes.add(currentVersionNode);
+               treeStructureDifferentNodes.add(currentCommitNode);
             }
          } else {
             measurePredecessor.add(currentPredecessorNode);
             // needToMeasureCurrent.add(currentVersionNode);
          }
       } else {
-         LOG.info("No child node left: {} {}", currentPredecessorNode, currentVersionNode);
+         LOG.info("No child node left: {} {}", currentPredecessorNode, currentCommitNode);
       }
    }
 

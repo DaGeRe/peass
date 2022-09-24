@@ -10,9 +10,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
+import de.dagere.peass.dependency.reader.RunningCommitFinder;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.vcs.CommitIterator;
 
 public final class OneReader implements Runnable {
@@ -21,12 +20,12 @@ public final class OneReader implements Runnable {
 
    private final String minimumCommit;
    private final CommitIterator reserveIterator;
-   final FirstRunningVersionFinder firstRunningVersionFinder;
+   final RunningCommitFinder firstRunningVersionFinder;
    private final DependencyReader reader;
    private final CommitComparatorInstance comparator;
 
    public OneReader(final String minimumCommit, final CommitIterator reserveIterator, final DependencyReader reader,
-         final FirstRunningVersionFinder firstRunningVersionFinder, CommitComparatorInstance comparator) {
+         final RunningCommitFinder firstRunningVersionFinder, CommitComparatorInstance comparator) {
       this.minimumCommit = minimumCommit;
       this.reserveIterator = reserveIterator;
       this.firstRunningVersionFinder = firstRunningVersionFinder;
@@ -54,12 +53,12 @@ public final class OneReader implements Runnable {
       }
    }
 
-   private void readRemaining(final DependencyReader reader) throws FileNotFoundException, IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
+   private void readRemaining(final DependencyReader reader) throws FileNotFoundException, IOException, XmlPullParserException, InterruptedException, ParseException {
       String newest = reader.getDependencies().getNewestCommit();
       reader.setIterator(reserveIterator);
       while (reserveIterator.hasNextCommit() && comparator.isBefore(newest, minimumCommit)) {
          reserveIterator.goToNextCommit();
-         LOG.debug("Remaining: {} This: {}", reserveIterator.getTag(), this);
+         LOG.debug("Remaining: {} This: {}", reserveIterator.getCommitName(), this);
          reader.readVersion();
          newest = reader.getDependencies().getNewestCommit();
       }

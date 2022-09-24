@@ -22,6 +22,7 @@ import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -73,7 +74,7 @@ public class TestContinuousExecutor {
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
 
       String changedTestClass = changes.getCommitChanges(NEWER_VERSION).getTestcaseChanges().keySet().iterator().next();
-      TestCase tc = new TestCase(changedTestClass);
+      TestCase tc = new TestClazzCall(changedTestClass);
       Assert.assertEquals("de.test.CalleeTest", tc.getClazz());
    }
 
@@ -83,7 +84,7 @@ public class TestContinuousExecutor {
          @Override
          public File answer(final InvocationOnMock invocation) throws Throwable {
 
-            File measurementFolder = new File(fullPeassFolder, executor.getLatestVersion() + "_" + executor.getVersionOld());
+            File measurementFolder = new File(fullPeassFolder, executor.getLatestCommit() + "_" + executor.getCommitOld());
             measurementFolder.mkdirs();
 
             File measurementRawData = new File("src/test/resources/continuousExecutorTest");

@@ -118,5 +118,24 @@ public class TestBuildGradleExclusions {
       MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("systemProperty")));
       
    }
+   
+   @Test
+   public void testAnboxEditing() throws IOException {
+      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "build.gradle");
+
+      final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
+      
+      mockedTransformer.getConfig().getExecutionConfig().setUseAnbox(true);
+      
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
+
+      final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+
+      System.out.println(gradleFileContents);
+      
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("androidTestImplementation 'androidx.test:rules:1.4.0'"));
+      
+   }
 
 }

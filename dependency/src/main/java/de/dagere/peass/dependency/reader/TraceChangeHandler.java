@@ -18,10 +18,10 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
@@ -58,10 +58,10 @@ public class TraceChangeHandler {
       }
    }
 
-   private TestSet getTestsToRun(final CommitStaticSelection newVersionStaticSelection, ModuleClassMapping mapping) throws IOException, JsonGenerationException, JsonMappingException {
-      final TestSet testsToRun = newVersionStaticSelection.getTests() ; // contains only the tests that need to be run -> could be changeTestMap.values() und dann
+   private TestSet getTestsToRun(final CommitStaticSelection newCommitStaticSelection, ModuleClassMapping mapping) throws IOException, JsonGenerationException, JsonMappingException {
+      final TestSet testsToRun = newCommitStaticSelection.getTests() ; // contains only the tests that need to be run -> could be changeTestMap.values() und dann
                                                                                       // umwandeln
-      addAddedTests(newVersionStaticSelection, testsToRun);
+      addAddedTests(newCommitStaticSelection, testsToRun);
       
       Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + commit + ".json"), testsToRun.entrySet());
 
@@ -73,8 +73,8 @@ public class TraceChangeHandler {
       return testsToRun;
    }
 
-   public void addAddedTests(final CommitStaticSelection newVersionInfo, final TestSet testsToRun) {
-      for (final ChangedEntity testName : newVersionInfo.getChangedClazzes().keySet()) {
+   public void addAddedTests(final CommitStaticSelection newCommitInfo, final TestSet testsToRun) {
+      for (final ChangedEntity testName : newCommitInfo.getChangedClazzes().keySet()) {
          ChangedEntity simplyClazz = testName.getSourceContainingClazz();
          TestClazzCall potentialTest = new TestClazzCall(simplyClazz.getClazz(), testName.getModule());
          if (NonIncludedTestRemover.isTestClassIncluded(potentialTest, executionConfig)) {
@@ -84,17 +84,22 @@ public class TraceChangeHandler {
    }
 
    private void analyzeTests(final CommitStaticSelection newCommitInfo, final TestSet testsToRun, ModuleClassMapping mapping)
-         throws IOException, XmlPullParserException, InterruptedException, JsonGenerationException, JsonMappingException {
+         throws IOException, XmlPullParserException {
       
       dependencyManager.runTraceTests(testsToRun, commit);
 
       handleDependencyChanges(newCommitInfo, testsToRun, mapping);
+      
+      if (dependencyManager.getIgnoredTests().getTestMethods().size() > 0) {
+         newCommitInfo.setIgnoredAffectedTests(dependencyManager.getIgnoredTests());
+      }
+      
    }
 
    private void handleDependencyChanges(final CommitStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)
-         throws IOException, XmlPullParserException, JsonGenerationException, JsonMappingException {
+         throws IOException, XmlPullParserException {
       final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, mapping);
-      final Map<ChangedEntity, Set<TestCase>> addedTestcases = testExistenceChanges.getAddedTests();
+      final Map<ChangedEntity, Set<TestMethodCall>> addedTestcases = testExistenceChanges.getAddedTests();
 
       if (DETAIL_DEBUG) {
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "add_" + commit + ".json"), addedTestcases);

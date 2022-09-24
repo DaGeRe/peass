@@ -31,7 +31,6 @@ import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -52,6 +51,7 @@ public class KiekerResultManager {
    protected final TestExecutor executor;
    protected final PeassFolders folders;
    protected final TestTransformer testTransformer;
+   private TestSet ignoredTests;
 
    public KiekerResultManager(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.folders = folders;
@@ -74,21 +74,32 @@ public class KiekerResultManager {
    public ModuleClassMapping getModuleClassMapping() {
       return new ModuleClassMapping(executor);
    }
+   
+   public TestSet getIgnoredTests() {
+      return ignoredTests;
+   }
 
-   public void runTraceTests(final TestSet testsToUpdate, final String version) throws IOException, XmlPullParserException, InterruptedException {
+   public void runTraceTests(final TestSet testsToUpdate, final String commit) {
       truncateKiekerResults();
       // TODO Verschieben
       
       LOG.debug("Executing dependency update test, results folder: {}", folders.getTempMeasurementFolder());
       ModuleClassMapping mapping = new ModuleClassMapping(executor);
-      final TestSet tests = testTransformer.buildTestMethodSet(testsToUpdate, mapping);
-      executeKoPeMeKiekerRun(tests, version, folders.getDependencyLogFolder());
+      final RunnableTestInformation tests = testTransformer.buildTestMethodSet(testsToUpdate, mapping);
+      executeKoPeMeKiekerRun(tests.getTestsToUpdate(), commit, folders.getDependencyLogFolder());
+      ignoredTests = tests.getIgnoredTests();
    }
 
    private void truncateKiekerResults() {
       LOG.debug("Truncating: {}", folders.getTempMeasurementFolder().getAbsolutePath());
       try {
          FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
+         
+         // Workaround: do delete temporary tomcat output folders, so peass-ant "knows" when to re-instrument all classes
+         File outputFolder = new File(folders.getProjectFolder(), "output");
+         if (folders.getProjectName().equals("tomcat") && outputFolder.exists()) {
+        	 FileUtils.deleteDirectory(outputFolder);
+         }
       } catch (final IOException e) {
          e.printStackTrace();
          if (folders.getTempMeasurementFolder().exists()) {
@@ -109,17 +120,17 @@ public class KiekerResultManager {
     * @throws XmlPullParserException
     * @throws InterruptedException
     */
-   public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String version, final File logFolder) {
-      final File logVersionFolder = new File(logFolder, version);
-      if (!logVersionFolder.exists()) {
-         logVersionFolder.mkdir();
+   public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String commit, final File logFolder) {
+      final File commitLogFolder = new File(logFolder, commit);
+      if (!commitLogFolder.exists()) {
+         commitLogFolder.mkdir();
       }
 
-      executor.prepareKoPeMeExecution(new File(logVersionFolder, "clean.txt"));
+      executor.prepareKoPeMeExecution(new File(commitLogFolder, "clean.txt"));
       for (final TestMethodCall testcase : testsToUpdate.getTestMethods()) {
-         executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInSeconds());
+         executor.executeTest(testcase, commitLogFolder, testTransformer.getConfig().getTimeoutInSeconds());
       }
-      cleanAboveSize(logVersionFolder, 100, "txt");
+      cleanAboveSize(commitLogFolder, 100, "txt");
 
       LOG.debug("KoPeMe-Kieker-Run finished");
 

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -13,10 +14,14 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.changes.ChangeReader;
+import de.dagere.peass.analysis.changes.ProjectChanges;
+import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.dependency.reader.CommitKeeper;
+import de.dagere.peass.dependency.reader.RunningCommitFinder;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -67,30 +72,47 @@ public class ContinuousExecutor {
          dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       }
 
-      DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getFixedCommitConfig(), dependencies, folders);
+      CommitIteratorBuilder iteratorBuiler = new CommitIteratorBuilder(measurementConfig.getFixedCommitConfig(), dependencies, folders);
       iterator = iteratorBuiler.getIterator();
       commit = iteratorBuiler.getCommit();
-      commitOld = iteratorBuiler.getCommitOld();
+      String userDefinedCommitOld = iteratorBuiler.getCommitOld();
       measurementConfig.getFixedCommitConfig().setCommit(commit);
-      measurementConfig.getFixedCommitConfig().setCommitOld(commitOld);
-      LOG.debug("Commit: {} Predecessor Commit: {}", commit, commitOld);
+
+      LOG.debug("Commit: {} Predecessor Commit: {}", commit, userDefinedCommitOld);
 
       List<String> commits = GitUtils.getCommits(projectFolderLocal, false, true);
       comparator = new CommitComparatorInstance(commits);
+
+      commitOld = getLatestRunnableCommit(measurementConfig, env, userDefinedCommitOld);
+      measurementConfig.getFixedCommitConfig().setCommitOld(commitOld);
+      
+      LOG.debug("Commit: {} Predecessor Commit: {}", commit, commitOld);
+   }
+
+   private String getLatestRunnableCommit(final MeasurementConfig measurementConfig, final EnvironmentVariables env, String userDefinedCommitOld) {
+      if (iterator != null) {
+         File nonRunningCommitFile = new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "notRunnable.json");
+         CommitKeeper commitKeeper = new CommitKeeper(nonRunningCommitFile);
+         RunningCommitFinder latestRunningCommitFinder = new RunningCommitFinder(folders, commitKeeper, iterator, measurementConfig.getExecutionConfig(), env);
+         iterator.goToNamedCommit(userDefinedCommitOld);
+         boolean foundRunningCommit = latestRunningCommitFinder.searchLatestRunningCommit();
+         if (!foundRunningCommit) {
+            throw new RuntimeException("No running predecessor commit before " + userDefinedCommitOld + " was found; measurement not possible");
+         }
+         String latestRunnableCommit = iterator.getCommitName();
+         return latestRunnableCommit;
+      } else {
+         return userDefinedCommitOld;
+      }
    }
 
    private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
-      if (!localFolder.exists() || !projectFolderLocal.exists()) {
-         ContinuousFolderUtil.cloneProject(projectFolder, localFolder, measurementConfig.getExecutionConfig().getGitCryptKey());
-         if (!projectFolderLocal.exists()) {
-            throw new RuntimeException("Was not able to clone project to " + projectFolderLocal.getAbsolutePath() + " (folder not existing)");
-         }
-      } else {
-         LOG.debug("Going to commit {} on existing folder", measurementConfig.getFixedCommitConfig().getCommit());
-         GitUtils.reset(projectFolderLocal);
-         GitUtils.clean(projectFolderLocal);
-         GitUtils.pull(projectFolderLocal);
-         GitUtils.goToTag(measurementConfig.getFixedCommitConfig().getCommit(), projectFolderLocal);
+      if (projectFolderLocal.exists()) {
+         FileUtils.deleteDirectory(projectFolderLocal);
+      }
+      ContinuousFolderUtil.copyProject(projectFolder, localFolder);
+      if (!projectFolderLocal.exists()) {
+         throw new RuntimeException("Was not able to clone project to " + projectFolderLocal.getAbsolutePath() + " (folder not existing)");
       }
    }
 
@@ -119,7 +141,7 @@ public class ContinuousExecutor {
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), measurementConfig.getKiekerConfig(),
             folders, resultsFolders, env);
       final RTSResult tests = dependencyReader.getTests(iterator, url, commit, measurementConfig);
-      tests.setVersionOld(commitOld);
+      tests.setCommitOld(commitOld);
 
       SourceReader sourceReader = new SourceReader(measurementConfig.getExecutionConfig(), commit, commitOld, resultsFolders, folders);
       sourceReader.readMethodSources(tests.getTests());
@@ -138,11 +160,17 @@ public class ContinuousExecutor {
    private void analyzeMeasurements(final File measurementFolder)
          throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       StaticTestSelection selectedTests = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
-      ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests);
-      changeReader.readFile(measurementFolder.getParentFile());
+
+      ProjectChanges changes = resultsFolders.getChangeFile().exists() ? Constants.OBJECTMAPPER.readValue(resultsFolders.getChangeFile(), ProjectChanges.class)
+            : new ProjectChanges(comparator);
+      ProjectStatistics statistics = resultsFolders.getStatisticsFile().exists() ? Constants.OBJECTMAPPER.readValue(resultsFolders.getStatisticsFile(), ProjectStatistics.class)
+            : new ProjectStatistics(comparator);
+
+      ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests, measurementConfig.getStatisticsConfig(), changes, statistics);
+      changeReader.readFolder(measurementFolder.getParentFile());
    }
 
-   public String getLatestVersion() {
+   public String getLatestCommit() {
       return commit;
    }
 
@@ -150,7 +178,7 @@ public class ContinuousExecutor {
       return folders;
    }
 
-   public String getVersionOld() {
+   public String getCommitOld() {
       LOG.debug("Version old: {}", commitOld);
       return commitOld;
    }

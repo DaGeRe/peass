@@ -6,8 +6,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.rules.TestRule;
 
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -16,14 +19,18 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.expr.ThisExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.Type;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 
 public class JUnit4Helper {
 
@@ -38,11 +45,42 @@ public class JUnit4Helper {
       final ClassOrInterfaceDeclaration clazz = ParseUtil.getClasses(unit).get(0);
 
       JUnit4Helper.addKoPeMeRuleIfNecessary(clazz);
+      
+      if (config.getExecutionConfig().isUseAnbox()) {
+         addAnboxRule(unit, clazz);
+      }
 
       List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit4TestMethods(clazz);
       new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
 
       BeforeAfterTransformer.transformBeforeAfter(clazz, config.getExecutionConfig());
+   }
+
+   private static void addAnboxRule(final CompilationUnit unit, final ClassOrInterfaceDeclaration clazz) {
+      final NodeList<Expression> arguments = new NodeList<>();
+      arguments.add(new ThisExpr());
+      
+      MethodCallExpr methodCallExpr = new MethodCallExpr("GrantPermissionRule.grant");
+      methodCallExpr.addArgument(new NameExpr("Manifest.permission.WRITE_EXTERNAL_STORAGE"));
+      
+      Type type = StaticJavaParser.parseType("GrantPermissionRule");
+      
+      FieldDeclaration fieldDeclaration = new FieldDeclaration();
+      
+      VariableDeclarator variable = new VariableDeclarator(type, "mRuntimePermissionRule");
+      fieldDeclaration.getVariables().add(variable);
+      fieldDeclaration.setModifiers(Modifier.createModifierList(Keyword.PUBLIC, Keyword.STATIC));
+      clazz.getMembers().add(0, fieldDeclaration);
+      
+      fieldDeclaration.getVariables().iterator().next().setInitializer(methodCallExpr);
+      
+      final NormalAnnotationExpr annotation = new NormalAnnotationExpr();
+      annotation.setName("ClassRule");
+      fieldDeclaration.getAnnotations().add(annotation);
+      
+      unit.getImports().add(new ImportDeclaration("org.junit.ClassRule", false, false));
+      unit.getImports().add(new ImportDeclaration("android.Manifest", false, false));
+      unit.getImports().add(new ImportDeclaration("androidx.test.rule.GrantPermissionRule", false, false));
    }
 
    public static void addKoPeMeRuleIfNecessary(final ClassOrInterfaceDeclaration clazz) {
@@ -103,7 +141,8 @@ public class JUnit4Helper {
    public static void addRule(final ClassOrInterfaceDeclaration clazz) {
       final NodeList<Expression> arguments = new NodeList<>();
       arguments.add(new ThisExpr());
-      final Expression initializer = new ObjectCreationExpr(null, new ClassOrInterfaceType("KoPeMeRule"), arguments);
+      ClassOrInterfaceType kopemeRuleType = JavaParserProvider.getJavaparser().get().parseClassOrInterfaceType("KoPeMeRule").getResult().get();
+      final Expression initializer = new ObjectCreationExpr(null, kopemeRuleType, arguments);
       final FieldDeclaration fieldDeclaration = clazz.addFieldWithInitializer(TestRule.class, "kopemeRule", initializer, Modifier.publicModifier().getKeyword());
       final NormalAnnotationExpr annotation = new NormalAnnotationExpr();
       annotation.setName("Rule");

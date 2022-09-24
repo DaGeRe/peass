@@ -7,7 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -47,7 +46,7 @@ public class OnceRunner {
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
       } else {
-         GitUtils.goToTag(commit, folders.getProjectFolder());
+         GitUtils.goToCommit(commit, folders.getProjectFolder());
       }
 
       final File vmidFolder = initVMFolder(commit, vmid, logFolder);

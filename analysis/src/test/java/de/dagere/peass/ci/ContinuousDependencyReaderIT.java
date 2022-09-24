@@ -20,7 +20,6 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -59,7 +58,7 @@ public class ContinuousDependencyReaderIT {
       iterator.goToNextCommit();
 
       ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setEndcommit(iterator.getTag());
+      executionConfig.setEndcommit(iterator.getCommitName());
       executionConfig.setStartcommit(iterator.getPredecessor());
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
@@ -78,7 +77,7 @@ public class ContinuousDependencyReaderIT {
    @Test
    public void testAnotherVersion() throws Exception {
       final String prevTag = builder.getTags().get(builder.getTags().size() - 1);
-      GitUtils.goToTag(prevTag, TestConstants.CURRENT_FOLDER);
+      GitUtils.goToCommit(prevTag, TestConstants.CURRENT_FOLDER);
 
       String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/basic_state"), "test 2");
 
@@ -104,7 +103,7 @@ public class ContinuousDependencyReaderIT {
    @Test
    public void testEmptyVersion() throws Exception {
       final String prevTag = builder.getTags().get(builder.getTags().size() - 1);
-      GitUtils.goToTag(prevTag, TestConstants.CURRENT_FOLDER);
+      GitUtils.goToCommit(prevTag, TestConstants.CURRENT_FOLDER);
 
       String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/only_comment_change"), "test 2");
 
@@ -128,7 +127,7 @@ public class ContinuousDependencyReaderIT {
 
       MatcherAssert.assertThat(dependencies.getCommits().get(newestVersion), Matchers.notNullValue());
       final TestSet testSet = getTestset(dependencies, newestVersion);
-      Assert.assertEquals(new TestCase("defaultpackage.TestMe#testMe"), testSet.getTests().toArray()[0]);
+      Assert.assertEquals(new TestMethodCall("defaultpackage.TestMe", "testMe"), testSet.getTestMethods().toArray()[0]);
    }
 
    private static TestSet getTestset(final StaticTestSelection dependencies, final String newestVersion) {

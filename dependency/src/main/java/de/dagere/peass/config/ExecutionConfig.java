@@ -36,6 +36,7 @@ public class ExecutionConfig implements Serializable {
     * Timeout in milliseconds, default 5 minutes
     */
    private long timeout = 5 * 60 * 1000;
+   private String cleanGoal;
    private String testGoal;
    private List<String> includes = new LinkedList<>();
    private List<String> excludes = new LinkedList<>();
@@ -65,6 +66,9 @@ public class ExecutionConfig implements Serializable {
    private String testTransformer = DEFAULT_TEST_TRANSFORMER;
    private String testExecutor = DEFAULT_TEST_EXECUTOR;
    private String gitCryptKey;
+   private boolean useAnbox = false;
+
+   private List<String> increaseVariableValues = new LinkedList<>();
 
    private String properties;
 
@@ -87,6 +91,7 @@ public class ExecutionConfig implements Serializable {
    public ExecutionConfig(final ExecutionConfig other) {
       this.timeout = other.getTimeout();
       this.testGoal = other.getTestGoal();
+      this.cleanGoal = other.getCleanGoal();
       this.includes = other.getIncludes();
       this.excludes = other.getExcludes();
       this.includeByRule = other.getIncludeByRule();
@@ -112,6 +117,10 @@ public class ExecutionConfig implements Serializable {
 
       this.clazzFolders = other.clazzFolders;
       this.testClazzFolders = other.testClazzFolders;
+      
+      this.useAnbox = other.useAnbox;
+
+      this.increaseVariableValues = other.getIncreaseVariableValues();
    }
 
    public ExecutionConfig(final long timeoutInMinutes) {
@@ -149,6 +158,15 @@ public class ExecutionConfig implements Serializable {
       return timeout;
    }
 
+   @JsonInclude(Include.NON_NULL)
+   public String getCleanGoal() {
+      return cleanGoal;
+   }
+   
+   public void setCleanGoal(String cleanGoal) {
+      this.cleanGoal = cleanGoal;
+   }
+   
    @JsonInclude(Include.NON_NULL)
    public String getTestGoal() {
       return testGoal;
@@ -399,6 +417,24 @@ public class ExecutionConfig implements Serializable {
       allFolders.addAll(clazzFolders);
       allFolders.addAll(testClazzFolders);
       return allFolders;
+   }
+
+   public boolean isUseAnbox() {
+      return useAnbox;
+   }
+
+   @JsonInclude(value = JsonInclude.Include.NON_DEFAULT)
+   public void setUseAnbox(boolean useAnbox) {
+      this.useAnbox = useAnbox;
+   }
+
+   @JsonInclude(Include.NON_EMPTY)
+   public List<String> getIncreaseVariableValues() {
+      return increaseVariableValues;
+   }
+
+   public void setIncreaseVariableValues(final List<String> increaseVariableValues) {
+      this.increaseVariableValues = increaseVariableValues;
    }
 
    /**

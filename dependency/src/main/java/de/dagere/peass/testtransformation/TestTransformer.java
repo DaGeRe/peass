@@ -2,8 +2,10 @@ package de.dagere.peass.testtransformation;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.RunnableTestInformation;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
@@ -29,7 +31,7 @@ public interface TestTransformer {
     */
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules);
 
-   public TestSet buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping mapping);
+   public RunnableTestInformation buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping mapping);
 
    public void determineVersions(final List<File> modules);
 
@@ -41,6 +43,6 @@ public interface TestTransformer {
 
    public boolean isIgnoreEOIs();
 
-   public List<TestMethodCall> getTestMethodNames(File module, TestClazzCall entity);
+   public Set<TestMethodCall> getTestMethodNames(File module, TestClazzCall entity);
 
 }

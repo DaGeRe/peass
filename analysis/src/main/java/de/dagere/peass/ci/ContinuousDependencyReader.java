@@ -29,11 +29,10 @@ import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.dependency.reader.CommitKeeper;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -133,7 +132,7 @@ public class ContinuousDependencyReader {
       try {
          StaticTestSelection dependencies;
 
-         final VersionKeeper noChanges = new VersionKeeper(
+         final CommitKeeper noChanges = new CommitKeeper(
                new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
 
          if (!resultsFolders.getStaticTestSelectionFile().exists()) {
@@ -158,7 +157,7 @@ public class ContinuousDependencyReader {
 
    private void executePartialRTS(final StaticTestSelection dependencies, final CommitIterator newIterator, CommitComparatorInstance comparator) throws FileNotFoundException {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
-         File logFile = resultsFolders.getRTSLogFile(newIterator.getTag(), newIterator.getPredecessor());
+         File logFile = resultsFolders.getRTSLogFile(newIterator.getCommitName(), newIterator.getPredecessor());
          LOG.info("Executing regression test selection update - Log goes to {}", logFile.getAbsolutePath());
          try (LogRedirector director = new LogRedirector(logFile)) {
             doPartialRCS(dependencies, newIterator, comparator);
@@ -171,7 +170,7 @@ public class ContinuousDependencyReader {
 
    private void doPartialRCS(final StaticTestSelection dependencies, final CommitIterator newIterator, CommitComparatorInstance comparator) {
       DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator,
-            new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
+            new CommitKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
       newIterator.goTo0thCommit();
 
       reader.readCompletedCommits(dependencies, comparator);
@@ -197,10 +196,10 @@ public class ContinuousDependencyReader {
 
    }
 
-   private StaticTestSelection fullyLoadDependencies(final String url, final CommitIterator iterator, final VersionKeeper nonChanges)
+   private StaticTestSelection fullyLoadDependencies(final String url, final CommitIterator iterator, final CommitKeeper nonChanges)
          throws Exception {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
-         File logFile = resultsFolders.getRTSLogFile(iterator.getTag(), iterator.getPredecessor());
+         File logFile = resultsFolders.getRTSLogFile(iterator.getCommitName(), iterator.getPredecessor());
          LOG.info("Executing regression test selection - Log goes to {}", logFile.getAbsolutePath());
 
          try (LogRedirector director = new LogRedirector(logFile)) {
@@ -211,8 +210,8 @@ public class ContinuousDependencyReader {
       }
    }
 
-   private StaticTestSelection doFullyLoadDependencies(final String url, final CommitIterator iterator, final VersionKeeper nonChanges)
-         throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException, ParseException, ViewNotFoundException {
+   private StaticTestSelection doFullyLoadDependencies(final String url, final CommitIterator iterator, final CommitKeeper nonChanges)
+         throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException, ParseException {
       final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, kiekerConfig, env);
       iterator.goToPreviousCommit();
 
@@ -234,14 +233,14 @@ public class ContinuousDependencyReader {
    private boolean checkCommitRunning(CommitIterator iterator) {
       TestTransformer temporaryTransformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, kiekerConfig);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, temporaryTransformer, env);
-      boolean isVersionRunning = executor.isCommitRunning(iterator.getTag());
+      boolean isVersionRunning = executor.isCommitRunning(iterator.getCommitName());
       return isVersionRunning;
    }
 
    private void createFailedSelection(final CommitIterator iterator) throws IOException, StreamWriteException, DatabindException {
       LOG.debug("Predecessor commit is not running, skipping execution");
       StaticTestSelection initialVersionFailed = new StaticTestSelection();
-      initialVersionFailed.getInitialcommit().setCommit(iterator.getTag());
+      initialVersionFailed.getInitialcommit().setCommit(iterator.getCommitName());
       initialVersionFailed.getInitialcommit().setRunning(false);
       Constants.OBJECTMAPPER.writeValue(resultsFolders.getStaticTestSelectionFile(), initialVersionFailed);
    }

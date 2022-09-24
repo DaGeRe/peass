@@ -34,6 +34,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -56,10 +57,11 @@ public class DependencyReaderUtil {
          LOG.debug("Remove: {}", removedTest);
          for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
             final TestSet testSet = dependency.getValue();
-            if (removedTest.getMethod().length() > 0) {
+            if (removedTest instanceof TestMethodCall) {
                for (final Entry<TestClazzCall, Set<String>> testcase : testSet.getTestcases().entrySet()) {
                   if (testcase.getKey().getClazz().equals(removedTest.getClazz())) {
-                     testcase.getValue().remove(removedTest.getMethod());
+                     String method = ((TestMethodCall) removedTest).getMethod();
+                     testcase.getValue().remove(method);
                   }
                }
             } else {
@@ -78,8 +80,8 @@ public class DependencyReaderUtil {
       }
    }
 
-   static void addNewTestcases(final CommitStaticSelection newVersionInfo, final Map<ChangedEntity, Set<TestCase>> newTestcases) {
-      for (final Map.Entry<ChangedEntity, Set<TestCase>> newTestcase : newTestcases.entrySet()) {
+   static void addNewTestcases(final CommitStaticSelection newVersionInfo, final Map<ChangedEntity, Set<TestMethodCall>> newTestcases) {
+      for (final Map.Entry<ChangedEntity, Set<TestMethodCall>> newTestcase : newTestcases.entrySet()) {
          final ChangedEntity changedClazz = newTestcase.getKey();
          TestSet testsetForChange = null;
          for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
@@ -92,7 +94,7 @@ public class DependencyReaderUtil {
             testsetForChange = new TestSet();
             newVersionInfo.getChangedClazzes().put(changedClazz, testsetForChange);
          }
-         for (final TestCase testcase : newTestcase.getValue()) {
+         for (final TestMethodCall testcase : newTestcase.getValue()) {
             testsetForChange.addTest(testcase.onlyClazz(), testcase.getMethod());
          }
       }
@@ -127,7 +129,7 @@ public class DependencyReaderUtil {
          if (!contained) {
             final TestSet tests = new TestSet();
             if (changeTestMap.getChanges().containsKey(underminedChange)) {
-               for (final TestCase testClass : changeTestMap.getChanges().get(underminedChange)) {
+               for (final TestMethodCall testClass : changeTestMap.getChanges().get(underminedChange)) {
                   tests.addTest(testClass);
                }
             }
@@ -140,14 +142,10 @@ public class DependencyReaderUtil {
       for (ChangedEntity underminedChange : changedClassName.getUniqueChanges()) {
          final TestSet tests = new TestSet();
          ChangedEntity realChange = underminedChange.onlyClazz();
-         Set<TestCase> testEntities = changeTestMap.getTests(realChange);
+         Set<TestMethodCall> testEntities = changeTestMap.getTests(realChange);
          if (testEntities != null) {
-            for (final TestCase testcase : testEntities) {
-               if (testcase.getMethod() != null) {
-                  tests.addTest(testcase);
-               } else {
-                  throw new RuntimeException("Testcase without method detected: " + testcase + " Dependency: " + tests);
-               }
+            for (final TestMethodCall testcase : testEntities) {
+               tests.addTest(testcase);
             }
          }
          if (version.getChangedClazzes().containsKey(realChange)) {
@@ -166,7 +164,8 @@ public class DependencyReaderUtil {
       }
    }
 
-   public static StaticTestSelection mergeDependencies(final StaticTestSelection staticTestSelection1, final StaticTestSelection staticTestSelection2, CommitComparatorInstance comparator) {
+   public static StaticTestSelection mergeDependencies(final StaticTestSelection staticTestSelection1, final StaticTestSelection staticTestSelection2,
+         CommitComparatorInstance comparator) {
       final StaticTestSelection merged;
       final StaticTestSelection newer;
       if (comparator.isBefore(staticTestSelection1.getInitialcommit().getCommit(), staticTestSelection2.getInitialcommit().getCommit())) {

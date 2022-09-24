@@ -18,7 +18,7 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.rca.kiekerReading.KiekerDurationReader;
 
@@ -32,7 +32,7 @@ public class DirectKiekerMeasurementTransformer {
       this.folders = folders;
    }
 
-   public void transform(TestCase test) {
+   public void transform(TestMethodCall test) {
       List<File> tempClazzFolder = folders.findTempClazzFolder(test);
       if (tempClazzFolder.size() > 0) {
          File tempFile = new File(tempClazzFolder.get(0), test.getMethod() + ".json");
@@ -74,7 +74,7 @@ public class DirectKiekerMeasurementTransformer {
       testMethod.getDatacollectorResults().add(datacollector);
    }
 
-   private List<MeasuredValue> readKiekerData(TestCase test) {
+   private List<MeasuredValue> readKiekerData(TestMethodCall test) {
       File[] kiekerData = folders.getTempDir().listFiles((FileFilter) new WildcardFileFilter("kieker-*-KoPeMe"));
       if (kiekerData.length != 1) {
          throw new RuntimeException("Expected exactly one Kieker results folder to exist - error occured!");

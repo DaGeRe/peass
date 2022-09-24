@@ -19,8 +19,11 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 public class TestMethodCall extends TestCase {
    private static final long serialVersionUID = 1734045509685228003L;
 
+   protected final String method;
+   protected final String params;
+
    public TestMethodCall(final Kopemedata data) {
-      super(data.getClazz().contains(ChangedEntity.MODULE_SEPARATOR)
+      this(data.getClazz().contains(ChangedEntity.MODULE_SEPARATOR)
             ? data.getClazz().substring(data.getClazz().indexOf(ChangedEntity.MODULE_SEPARATOR) + 1, data.getClazz().length())
             : data.getClazz(),
             data.getMethods().get(0).getMethod(),
@@ -29,21 +32,27 @@ public class TestMethodCall extends TestCase {
    }
 
    public TestMethodCall(final String clazz, final String method, final String module) {
-      super(clazz,
+      this(clazz,
             ((method != null && method.indexOf('(') != -1) ? method.substring(0, method.indexOf('(')) : method),
             module,
             ((method != null && method.indexOf('(') != -1) ? method.substring(method.indexOf('(') + 1, method.length() - 1) : null));
    }
 
    public TestMethodCall(final String clazz, final String method) {
-      super(clazz, method, "", null);
+      this(clazz, method, "", null);
    }
 
    public TestMethodCall(@JsonProperty("clazz") final String clazz,
          @JsonProperty("method") final String method,
          @JsonProperty("module") final String module,
          @JsonProperty("params") final String params) {
-      super(clazz, method, module, params);
+      super(clazz, module);
+      this.method = method;
+      this.params = params;
+
+      if (method != null && (method.contains("(") || method.contains(")"))) {
+         throw new RuntimeException("Method must not contain paranthesis: " + method);
+      }
    }
 
    public String getMethod() {
@@ -57,6 +66,82 @@ public class TestMethodCall extends TestCase {
       } else {
          return method + "(" + params + ")";
       }
+   }
+
+   public String getParams() {
+      return params;
+   }
+
+   @Override
+   public boolean equals(final Object obj) {
+      if (this == obj) {
+         return true;
+      }
+      if (obj == null) {
+         return false;
+      }
+      final TestMethodCall other = (TestMethodCall) obj;
+      if (clazz == null) {
+         if (other.getClazz() != null) {
+            return false;
+         }
+      } else if (!clazz.equals(other.getClazz())) {
+         final String shortClazz = clazz.substring(clazz.lastIndexOf('.') + 1);
+         final String shortClazzOther = other.getClazz().substring(other.getClazz().lastIndexOf('.') + 1);
+         if (!shortClazz.equals(shortClazzOther)) { // Dirty Hack - better transfer clazz-info always
+            return false;
+         }
+      }
+      if (method == null) {
+         if (other.method != null) {
+            return false;
+         }
+      } else if (!method.equals(other.method)) {
+         return false;
+      }
+      if (params == null) {
+         if (other.params != null) {
+            return false;
+         }
+      } else if (!params.equals(other.params)) {
+         return false;
+      }
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((clazz == null) ? 0 : clazz.hashCode());
+      result = prime * result + ((method == null) ? 0 : method.hashCode());
+      return result;
+   }
+
+   @JsonIgnore
+   public String getExecutable() {
+      return clazz + "#" + method;
+   }
+
+   @Override
+   public String toString() {
+      String result;
+      if (module != null && !"".equals(module)) {
+         result = module + ChangedEntity.MODULE_SEPARATOR + clazz;
+      } else {
+         result = clazz;
+      }
+      if (method != null) {
+         result += ChangedEntity.METHOD_SEPARATOR + method;
+      }
+      if (params != null) {
+         result += "(" + params + ")";
+      }
+      return result;
+   }
+
+   public ChangedEntity toEntity() {
+      return new ChangedEntity(clazz, module, method);
    }
 
    public static String getParamsFromResult(DatacollectorResult datacollector) {

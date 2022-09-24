@@ -39,6 +39,7 @@ import org.junit.jupiter.api.io.TempDir;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
@@ -211,6 +212,44 @@ public class TestTransformation {
       tt.transformTests();
 
       Assert.assertFalse(FileUtils.contentEquals(old, testFile));
+   }
+
+   @Test
+   public void testJUnit4AnboxTransformation() throws IOException {
+      final File oldFile = new File(RESOURCE_FOLDER, "TestMeAndroid.java");
+      final File testFile = new File(SOURCE_FOLDER, "TestMeAndroid.java");
+      FileUtils.copyFile(oldFile, testFile);
+
+      MeasurementConfig config = new MeasurementConfig(2);
+      config.getExecutionConfig().setUseAnbox(true);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, config);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
+      tt.transformTests();
+
+      final CompilationUnit cu = JavaParserProvider.parse(testFile);
+
+      final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMeAndroid").get();
+      Assert.assertNotNull(clazz);
+      
+      System.out.println(clazz);
+      
+      final AnnotationExpr annotation = clazz.getAnnotation(0);
+      Assert.assertNotNull(annotation);
+      Assert.assertEquals("@RunWith(AndroidJUnit4.class)", annotation.toString());
+
+      final List<MethodDeclaration> methodsByName = clazz.getMethodsByName("testMethod1");
+      MatcherAssert.assertThat(methodsByName, Matchers.hasSize(1));
+
+      final MethodDeclaration testMethod = methodsByName.get(0);
+
+      final AnnotationExpr performanceTestAnnotation = testMethod.getAnnotationByName("PerformanceTest").get();
+      Assert.assertNotNull(performanceTestAnnotation);
+
+      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("repetitions"));
+      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), Matchers.not(TestTransformation.hasAnnotation("warmupExecutions")));
+
+      FieldDeclaration declaration = clazz.getFieldByName("mRuntimePermissionRule").get();
+      Assert.assertNotNull(declaration);
    }
 
    @After

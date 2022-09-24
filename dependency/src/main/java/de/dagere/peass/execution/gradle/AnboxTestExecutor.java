@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.utils.CommandConcatenator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -31,7 +31,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    }
 
    private void compileSources() {
-      String wrapper = new File(folders.getProjectFolder(), env.fetchGradleCall()).getAbsolutePath();
+      String wrapper = new File(folders.getProjectFolder(), EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
 
       ProcessBuilder builder = new ProcessBuilder(wrapper, "installDebug", "installDebugAndroidTest");
       builder.directory(folders.getProjectFolder());
@@ -48,7 +48,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    /**
     * Executes the Gradle process; since gradle is run inside the module folder, different parameters than for the maven execution are required
     */
-   private Process buildGradleProcess(final File moduleFolder, final File logFile, TestCase test)
+   private Process buildGradleProcess(final File moduleFolder, final File logFile, TestMethodCall test)
          throws IOException, XmlPullParserException, InterruptedException {
 
       String[] anboxOriginals = new String[] { "adb", "shell", "am", "instrument", "-w", "-e", "class" };
@@ -69,7 +69,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
     * @param testname Name of the test that should be run
     */
    @Override
-   protected void runTest(final File moduleFolder, final File logFile, TestCase test, final String testname, final long timeout) {
+   protected void runTest(final File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout) {
       try {
          final Process process = buildGradleProcess(moduleFolder, logFile, test);
          execute(testname, timeout, process);

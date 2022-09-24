@@ -89,7 +89,7 @@ public class CommitDiff {
                   addChange(currentFileName, containedPath, indexOf);
                }
             } else {
-               LOG.info("Did not find matching class folder for file {}", containedPath);
+               LOG.info("Did not find matching class folder for file {}", currentFileName);
             }
 
          }
@@ -103,7 +103,7 @@ public class CommitDiff {
          final String modulePath = currentFileName.substring(0, indexOf - 1);
          final File moduleFile = new File(projectFolder, modulePath);
          if (modules.contains(moduleFile)) {
-            LOG.debug("Create new changedentitty: " + classPath + " " + modulePath);
+            LOG.trace("Create new changedentitty: {} {}", classPath, modulePath);
             final ChangedEntity changedEntity = new ChangedEntity(classPath, modulePath);
             if (!changedEntity.getJavaClazzName().contains(File.separator)) {
                changedClasses.add(changedEntity);

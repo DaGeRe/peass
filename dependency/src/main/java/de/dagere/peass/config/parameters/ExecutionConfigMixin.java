@@ -42,6 +42,9 @@ public class ExecutionConfigMixin {
          + "If you want to use test<VariantName> for Android, please specify a goal (i.e. task name) here."
          + "If you want to run integration tests in maven e.g. by calling failsafe, also specify it here. ")
    protected String testGoal;
+   
+   @Option(names = { "-cleanGoal", "--cleanGoal" }, description = "Clean goal that is called before the test execution *in Gradle*; defaults to cleanTest.")
+   protected String cleanGoal;
 
    @Option(names = { "-pl", "--pl" }, description = "Projectlist (-pl) argument for maven (e.g. :submodule) - only the submodule and its dependencies are analyzed (using -am)")
    protected String pl;
@@ -56,7 +59,7 @@ public class ExecutionConfigMixin {
    public String testTransformer;
 
    @Option(names = { "-gitCryptKey", "--gitCryptKey" }, description = "If repository uses git-crypt, you should provide location of git-crypt-keyfile)")
-   protected String gitCryptKey = System.getenv("GIT_CRYPT_KEY");;
+   protected String gitCryptKey = System.getenv("GIT_CRYPT_KEY");
 
    @Option(names = { "-useTieredCompilation", "--useTieredCompilation" }, description = "Activate -XX:-TieredCompilation for all measured processes")
    protected boolean useTieredCompilation = false;
@@ -98,6 +101,14 @@ public class ExecutionConfigMixin {
    @Option(names = { "-properties", "--properties" }, description = "Sets the properties that should be passed to the test (e.g. \"-Dmy.var=5\")")
    public String properties;
 
+   @Option(names = { "-useAnbox",
+         "--useAnbox" }, description = "Activates usage of Anbox measurement features (currently experimental)")
+   protected boolean useAnbox = false;
+
+   @Option(names = { "-increaseVariableValues",
+         "--increaseVariableValues" }, split = ";", description = "List of variables and values to be modified (default: empty). Example: \"package.Clazz.variable:value;otherPackage.otherClazz.otherVariable:otherValue\"")
+   protected String[] increaseVariableValues;
+
    public long getTimeout() {
       return timeout;
    }
@@ -136,6 +147,14 @@ public class ExecutionConfigMixin {
 
    public String getTestGoal() {
       return testGoal;
+   }
+   
+   public void setCleanGoal(String cleanGoal) {
+      this.cleanGoal = cleanGoal;
+   }
+   
+   public String getCleanGoal() {
+      return cleanGoal;
    }
 
    public String getStartcommit() {
@@ -297,6 +316,22 @@ public class ExecutionConfigMixin {
    public void setProperties(final String properties) {
       this.properties = properties;
    }
+   
+   public boolean isUseAnbox() {
+      return useAnbox;
+   }
+   
+   public void setUseAnbox(boolean useAnbox) {
+      this.useAnbox = useAnbox;
+   }
+
+   public String[] getIncreaseVariableValues() {
+      return increaseVariableValues;
+   }
+
+   public void setIncreaseVariableValues(final String[] increaseVariableValues) {
+      this.increaseVariableValues = increaseVariableValues;
+   }
 
    public ExecutionConfig getExecutionConfig() {
       ExecutionConfig config = new ExecutionConfig(timeout);
@@ -304,6 +339,7 @@ public class ExecutionConfigMixin {
       config.setStartcommit(getStartcommit());
       config.setEndcommit(getEndcommit());
       config.setTestGoal(getTestGoal());
+      config.setCleanGoal(getCleanGoal());
 
       if (getIncludes() != null) {
          for (String include : getIncludes()) {
@@ -373,6 +409,14 @@ public class ExecutionConfigMixin {
 
       if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
          throw new RuntimeException("executeBeforeClassInMeasurement may only be activated if onlyMeasureWorkload is deactivated!");
+      }
+
+      config.setUseAnbox(useAnbox);
+
+      if (getIncreaseVariableValues() != null) {
+         for (String variable : getIncreaseVariableValues()) {
+            config.getIncreaseVariableValues().add(variable);
+         }
       }
 
       return config;

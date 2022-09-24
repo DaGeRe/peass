@@ -2,7 +2,6 @@ package de.dagere.peass.jmh;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -23,19 +22,17 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
-import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.config.TestSelectionConfig;
+import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
-import de.dagere.peass.dependency.analysis.data.CommitDiff;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialCallList;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.VersionKeeper;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.dependency.reader.CommitKeeper;
 import de.dagere.peass.dependencytests.FakeGitUtil;
 import de.dagere.peass.dependencytests.TraceGettingIT;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
@@ -54,8 +51,7 @@ public class JmhDependencyReaderMultiParamTest {
    }
 
    @Test
-   public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException,
-         InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       try (MockedStatic<GitUtils> gitUtilsMock = Mockito.mockStatic(GitUtils.class)) {
          FakeGitUtil.prepareGitUtils(gitUtilsMock);
          FakeFileIterator iterator = mockIterator();
@@ -69,7 +65,7 @@ public class JmhDependencyReaderMultiParamTest {
          jmhConfig.setTestExecutor("de.dagere.peass.dependency.jmh.JmhTestExecutor");
 
          DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
-               "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new KiekerConfig(true), new EnvironmentVariables());
+               "", iterator, new CommitKeeper(new File("/dev/null")), jmhConfig, new KiekerConfig(true), new EnvironmentVariables());
          reader.readInitialCommit();
 
          checkInitialVersion(resultsFolders);
@@ -84,7 +80,7 @@ public class JmhDependencyReaderMultiParamTest {
       ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
       TestMethodCall changedBenchmark = new TestMethodCall("de.dagere.peass.ExampleBenchmark", "testMethod");
       TestSet versionTestSet = data.getCommits().get("000002");
-      MatcherAssert.assertThat(versionTestSet.getTests(), Matchers.contains(changedBenchmark));
+      MatcherAssert.assertThat(versionTestSet.getTestMethods(), Matchers.contains(changedBenchmark));
    }
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {

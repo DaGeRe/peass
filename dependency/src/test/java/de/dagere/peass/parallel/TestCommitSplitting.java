@@ -28,7 +28,7 @@ import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
+import de.dagere.peass.dependency.reader.RunningCommitFinder;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.dependencytests.helper.FakeCommitIterator;
@@ -56,7 +56,7 @@ public class TestCommitSplitting {
       public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException {
          dependencyManager = new DependencyManager(folders, new ExecutionConfig(60), new KiekerConfig(true), new EnvironmentVariables());
          dependencyResult.setInitialcommit(new InitialCommit());
-         dependencyResult.getInitialcommit().setCommit(iterator.getTag());
+         dependencyResult.getInitialcommit().setCommit(iterator.getCommitName());
          return true;
       }
 
@@ -64,10 +64,10 @@ public class TestCommitSplitting {
 
       @Override
       public void readVersion() throws IOException, FileNotFoundException {
-         System.out.println(nonRunning + " " + iterator.getTag() + " " + nonRunning.contains(iterator.getTag()));
-         if (!nonRunning.contains(iterator.getTag())) {
-            dependencyResult.getCommits().put(iterator.getTag(), null);
-            System.out.println("Reading: " + iterator.getTag());
+         System.out.println(nonRunning + " " + iterator.getCommitName() + " " + nonRunning.contains(iterator.getCommitName()));
+         if (!nonRunning.contains(iterator.getCommitName())) {
+            dependencyResult.getCommits().put(iterator.getCommitName(), null);
+            System.out.println("Reading: " + iterator.getCommitName());
          }
       }
    }
@@ -158,7 +158,7 @@ public class TestCommitSplitting {
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(null);
 
-      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(null, null, null, null, null) {
+      RunningCommitFinder finder = new RunningCommitFinder(null, null, null, null, null) {
          @Override
          public boolean searchFirstRunningCommit() {
             return true;

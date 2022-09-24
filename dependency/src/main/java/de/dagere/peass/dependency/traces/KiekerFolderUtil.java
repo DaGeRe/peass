@@ -46,7 +46,7 @@ public class KiekerFolderUtil {
       }
    }
 
-   public static File getKiekerTraceFolder(final File kiekerResultFolder, final TestCase testcase) {
+   public static File getKiekerTraceFolder(final File kiekerResultFolder, final TestMethodCall testcase) {
       File methodResult = new File(kiekerResultFolder, testcase.getMethodWithParams());
       LOG.debug("Searching in: {}", methodResult);
       if (methodResult.exists() && methodResult.isDirectory()) {

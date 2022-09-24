@@ -13,7 +13,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.utils.ProjectModules;
@@ -30,24 +29,24 @@ public class TestIgnoredMethodTransformation {
    public void testJUnit4Ignore() throws IOException {
       TestSet tests = executeTransformation("TestMeIgnored.java", testFolder);
 
-      MatcherAssert.assertThat(tests.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("TestMeIgnored", "testMe1"))));
-      MatcherAssert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestMethodCall("TestMeIgnored", "testMe2")));
+      MatcherAssert.assertThat(tests.getTestMethods(), Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("TestMeIgnored", "testMe1"))));
+      MatcherAssert.assertThat(tests.getTestMethods(), IsIterableContaining.hasItem(new TestMethodCall("TestMeIgnored", "testMe2")));
    }
 
    @Test
    public void testJUnit5Disabled() throws IOException {
       TestSet tests = executeTransformation("TestMeDisabled.java", testFolder);
 
-      MatcherAssert.assertThat(tests.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("TestMeDisabled", "testMe1"))));
-      MatcherAssert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestMethodCall("TestMeDisabled", "testMe2")));
+      MatcherAssert.assertThat(tests.getTestMethods(), Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("TestMeDisabled", "testMe1"))));
+      MatcherAssert.assertThat(tests.getTestMethods(), IsIterableContaining.hasItem(new TestMethodCall("TestMeDisabled", "testMe2")));
    }
 
    @Test
    public void testJUnit5KoPeMeIgnore() throws IOException {
       TestSet tests = executeTransformation("TestMeKoPeMeIgnore.java", testFolder);
 
-      MatcherAssert.assertThat(tests.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("TestMeKoPeMeIgnore", "testMe1"))));
-      MatcherAssert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestMethodCall("TestMeKoPeMeIgnore", "testMe2")));
+      MatcherAssert.assertThat(tests.getTestMethods(), Matchers.not(IsIterableContaining.hasItem(new TestMethodCall("TestMeKoPeMeIgnore", "testMe1"))));
+      MatcherAssert.assertThat(tests.getTestMethods(), IsIterableContaining.hasItem(new TestMethodCall("TestMeKoPeMeIgnore", "testMe2")));
    }
 
    public static TestSet executeTransformation(final String currentClassName, final File testFolder) throws IOException {

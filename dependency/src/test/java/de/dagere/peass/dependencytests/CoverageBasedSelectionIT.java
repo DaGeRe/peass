@@ -17,10 +17,9 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.CommitIterator;
 import de.dagere.peass.vcs.GitUtils;
@@ -36,7 +35,7 @@ public class CoverageBasedSelectionIT {
    }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       try (MockedStatic<GitUtils> staticMock = Mockito.mockStatic(GitUtils.class)) {
          final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
@@ -48,11 +47,11 @@ public class CoverageBasedSelectionIT {
          System.out.println(reader.getDependencies());
 
          DependencyDetectorTestUtil.checkChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1, "testFirst");
-         
+
          System.out.println(reader.getCoverageBasedSelection());
-         
+
          TestSet tests = reader.getCoverageBasedSelection().getCommits().get(DependencyTestConstants.VERSION_1);
-         MatcherAssert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestCase("defaultpackage.TestMe#testSecond")));
+         MatcherAssert.assertThat(tests.getTestMethods(), IsIterableContaining.hasItem(new TestMethodCall("defaultpackage.TestMe", "testSecond")));
       }
    }
 

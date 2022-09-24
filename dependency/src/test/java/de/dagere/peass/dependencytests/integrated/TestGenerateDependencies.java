@@ -1,7 +1,6 @@
 package de.dagere.peass.dependencytests.integrated;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -21,8 +20,7 @@ import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.reader.VersionKeeper;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.dependency.reader.CommitKeeper;
 import de.dagere.peass.dependencytests.DependencyDetectorTestUtil;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.dependencytests.TraceGettingIT;
@@ -37,12 +35,12 @@ public class TestGenerateDependencies {
    private static final Logger LOG = LogManager.getLogger(TestGenerateDependencies.class);
 
    @Test
-   public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
 
       final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(TraceGettingIT.REPETITION));
       ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, "", iterator, CommitKeeper.INSTANCE, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
 
       final boolean success = reader.readInitialCommit();
       Assert.assertTrue(success);

@@ -48,18 +48,18 @@ public class InitialCommitReader {
    }
    
    public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException {
-      if (!dependencyManager.initialyGetTraces(iterator.getTag())) {
+      if (!dependencyManager.initialyGetTraces(iterator.getCommitName())) {
          return false;
       }
-      final InitialCommit initialversion = createInitialVersion();
-      dependencyResult.setInitialcommit(initialversion);
+      final InitialCommit initialcommit = createInitialCommit();
+      dependencyResult.setInitialcommit(initialcommit);
       return true;
    }
 
-   private InitialCommit createInitialVersion() {
+   private InitialCommit createInitialCommit() {
       int jdkversion = dependencyManager.getExecutor().getJDKVersion();
       final InitialCommit initialversion = new InitialCommit();
-      initialversion.setCommit(iterator.getTag());
+      initialversion.setCommit(iterator.getCommitName());
       initialversion.setJdk(jdkversion);
       LOG.debug("Starting writing: {}", dependencyMap.getDependencyMap().size());
       for (final Entry<TestMethodCall, CalledMethods> dependencyEntry : dependencyMap.getDependencyMap().entrySet()) {
@@ -82,13 +82,13 @@ public class InitialCommitReader {
       fillInitialTestDependencies();
       checkCorrectness();
 
-      final InitialCommit initialversion = createInitialVersion();
+      final InitialCommit initialversion = createInitialCommit();
       dependencyResult.setInitialcommit(initialversion);
 
       if (dependencyResult.getCommits().size() > 0) {
          for (final Map.Entry<String, CommitStaticSelection> version : dependencyResult.getCommits().entrySet()) {
             String tag = version.getKey();
-            String startTag = iterator.getTag();
+            String startTag = iterator.getCommitName();
             if (comparator.isBefore(tag, startTag) || tag.equals(startTag)) {
                addVersionTestDependencies(version.getValue());
             }

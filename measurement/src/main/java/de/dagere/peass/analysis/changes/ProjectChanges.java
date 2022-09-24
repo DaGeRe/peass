@@ -98,7 +98,7 @@ public class ProjectChanges implements Serializable {
          final long vms) {
       final Changes changeList = getCommitChanges(commit);
       final String viewName = "view_" + commit + "/diffs/" + testCase.getShortClazz() + "#" + testCase.getMethod() + ".txt";
-      LOG.trace("Adding change: " + testCase);
+      LOG.debug("Adding change: {} to {}", testCase, commit);
       changeList.addChange(testCase, viewName, oldTime, diffPercent, tvalue, vms);
 
       changeCount++;

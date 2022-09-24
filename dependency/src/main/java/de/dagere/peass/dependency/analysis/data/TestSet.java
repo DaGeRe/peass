@@ -57,21 +57,21 @@ public class TestSet {
    }
 
    public TestSet(final String testcase) {
-      addTest(new TestCase(testcase));
+      addTest(TestMethodCall.createFromString(testcase));
    }
 
-   public TestSet(final TestCase testcase) {
+   public TestSet(final TestMethodCall testcase) {
       addTest(testcase);
    }
 
    public TestSet(final List<String> testcases) {
       for (String testcase : testcases) {
-         addTest(new TestCase(testcase));
+         addTest(TestMethodCall.createFromString(testcase));
       }
    }
 
    @JsonIgnore
-   public void addTest(final TestCase testcase) {
+   public void addTest(final TestMethodCall testcase) {
       final TestClazzCall entity = new TestClazzCall(testcase.getClazz(), testcase.getModule());
       addTest(entity, testcase.getMethodWithParams());
    }
@@ -197,9 +197,6 @@ public class TestSet {
 
    @JsonIgnore
    public void removeTest(final TestClazzCall testClassName, final String testMethodName) {
-      if (testClassName.getMethod() != null && testClassName.getMethod() != "") {
-         throw new RuntimeException("Testset class removal should only be done with empty method of ChangedEntity!");
-      }
       final Set<String> testMethods = testcases.get(testClassName);
       if (testMethods != null) {
          removeMethod(testClassName, testMethodName, testMethods);

@@ -107,8 +107,8 @@ public class TestDependencies {
       return dependencyMap.size();
    }
 
-   public Map<TestCase, Map<ChangedEntity, Set<String>>> getCopiedDependencies() {
-      final Map<TestCase, Map<ChangedEntity, Set<String>>> copy = new HashMap<>();
+   public Map<TestMethodCall, Map<ChangedEntity, Set<String>>> getCopiedDependencies() {
+      final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> copy = new HashMap<>();
       for (final Map.Entry<TestMethodCall, CalledMethods> entry : dependencyMap.entrySet()) {
          final Map<ChangedEntity, Set<String>> dependencies = new HashMap<>();
          for (final Map.Entry<ChangedEntity, Set<String>> testcase : entry.getValue().getCalledMethods().entrySet()) {
@@ -137,7 +137,7 @@ public class TestDependencies {
    public ChangeTestMapping getChangeTestMap(final Map<ChangedEntity, ClazzChangeData> changes) {
       final ChangeTestMapping changeTestMap = new ChangeTestMapping();
       for (final Entry<TestMethodCall, CalledMethods> dependencyEntry : dependencyMap.entrySet()) {
-         final TestCase currentTestcase = dependencyEntry.getKey();
+         final TestMethodCall currentTestcase = dependencyEntry.getKey();
          final CalledMethods currentTestDependencies = dependencyEntry.getValue();
          for (ClazzChangeData changedEntry : changes.values()) {
             for (ChangedEntity change : changedEntry.getChanges()) {
@@ -149,14 +149,14 @@ public class TestDependencies {
             }
          }
       }
-      for (final Map.Entry<ChangedEntity, Set<TestCase>> element : changeTestMap.getChanges().entrySet()) {
+      for (final Map.Entry<ChangedEntity, Set<TestMethodCall>> element : changeTestMap.getChanges().entrySet()) {
          LOG.debug("Change: {} Calling: {} {}", element.getKey(), element.getValue().size(), element.getValue());
       }
 
       return changeTestMap;
    }
 
-   private void addCall(final ChangeTestMapping changeTestMap, final TestCase currentTestcase, final CalledMethods currentTestDependencies,
+   private void addCall(final ChangeTestMapping changeTestMap, final TestMethodCall currentTestcase, final CalledMethods currentTestDependencies,
          final ClazzChangeData changedEntry, final ChangedEntity change, final ChangedEntity changedClass) {
       boolean clazzLevelChange = !changedEntry.isOnlyMethodChange();
       if (clazzLevelChange) {

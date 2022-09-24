@@ -3,16 +3,16 @@ package de.dagere.peass.analysis.helper.read;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class TestcaseData {
-   Map<TestCase, FolderValues> testcaseData = new LinkedHashMap<>();
+   Map<TestMethodCall, FolderValues> testcaseData = new LinkedHashMap<>();
 
-   public Map<TestCase, FolderValues> getTestcaseData() {
+   public Map<TestMethodCall, FolderValues> getTestcaseData() {
       return testcaseData;
    }
 
-   public void setTestcaseData(final Map<TestCase, FolderValues> testcaseData) {
+   public void setTestcaseData(final Map<TestMethodCall, FolderValues> testcaseData) {
       this.testcaseData = testcaseData;
    }
 }

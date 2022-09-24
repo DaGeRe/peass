@@ -30,7 +30,7 @@ import de.dagere.peass.dependency.analysis.data.CommitDiff;
 public abstract class CommitIterator {
 
 	protected final File projectFolder;
-	protected int tagid = 0;
+	protected int commitIndex = 0;
 
 	public CommitIterator(final File projectFolder) {
 		this.projectFolder = projectFolder;
@@ -52,7 +52,7 @@ public abstract class CommitIterator {
 	 * 
 	 * @return current tag
 	 */
-	public abstract String getTag();
+	public abstract String getCommitName();
 	
 	/**
 	 * Returns the predecessor tag
@@ -84,6 +84,14 @@ public abstract class CommitIterator {
 	 */
 	public abstract boolean goTo0thCommit();
 
+   public boolean goToNamedCommit(String name) {
+      goToFirstCommit();
+      while (!getCommitName().equals(name) && hasNextCommit()) {
+         goToNextCommit();
+      }
+      return getCommitName().equals(name);
+   }
+	
    public abstract boolean isPredecessor(String lastRunningVersion);
 
    public abstract boolean goToPreviousCommit();
@@ -91,5 +99,9 @@ public abstract class CommitIterator {
    public abstract CommitDiff getChangedClasses(File projectFolder, List<File> genericModules, String lastVersion, ExecutionConfig config);
 
    public abstract List<String> getCommits();
+
+   public boolean hasPreviousCommit() {
+      return commitIndex > 0;
+   }
 
 }

@@ -84,8 +84,8 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
       final Map<String, CommitStaticSelection> versions = dependencies.getCommits();
 
       final int startTestCound = dependencies.getInitialcommit().getInitialDependencies().size();
-      final List<TestCase> currentContainedTests = new LinkedList<>();
-      for (final TestCase dependency : dependencies.getInitialcommit().getInitialDependencies().keySet()) {
+      final List<TestMethodCall> currentContainedTests = new LinkedList<>();
+      for (final TestMethodCall dependency : dependencies.getInitialcommit().getInitialDependencies().keySet()) {
          currentContainedTests.add(dependency);
       }
 
@@ -118,7 +118,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
          }
          int currentTraceChangedTests = 0;
          if (changedTests != null) {
-            for (final TestCase currentIterationTest : currentContainedTests) {
+            for (final TestMethodCall currentIterationTest : currentContainedTests) {
                if (changedTests.commitContainsTest(version.getKey(), currentIterationTest)) {
                   currentTraceChangedTests++;
                }

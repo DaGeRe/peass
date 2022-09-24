@@ -64,7 +64,7 @@ public abstract class TestExecutor {
 
    public abstract void executeTest(final TestMethodCall test, final File logFolder, long timeout);
 
-   protected File getCleanLogFile(final File logFolder, final TestCase test) {
+   protected File getCleanLogFile(final File logFolder, final TestMethodCall test) {
       File clazzLogFolder = getClazzLogFolder(logFolder, test);
       final File logFile = new File(clazzLogFolder, "clean" + File.separator + test.getMethodWithParams() + ".txt");
       if (!logFile.getParentFile().exists()) {

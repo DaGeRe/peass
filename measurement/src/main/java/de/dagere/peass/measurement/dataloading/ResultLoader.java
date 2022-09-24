@@ -15,7 +15,7 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 
 
@@ -32,7 +32,7 @@ public class ResultLoader {
       this.config = config;
    }
 
-   public void loadData(PeassFolders folders, final TestCase testcase, final long currentChunkStart)  {
+   public void loadData(PeassFolders folders, final TestMethodCall testcase, final long currentChunkStart)  {
       final File kopemeFile = folders.getSummaryFile(testcase);
       final Kopemedata data = JSONDataLoader.loadData(kopemeFile);
       if (data.getMethods().size() > 0) {

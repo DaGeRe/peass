@@ -13,7 +13,6 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.deserializer.TestMethodCallKeyDeserializer;
-import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class InitialCommit {
@@ -90,7 +89,7 @@ public class InitialCommit {
    @JsonIgnore
    public TestSet getInitialTests() {
       TestSet initialTests = new TestSet();
-      for (TestCase testEntity : initialDependencies.keySet()) {
+      for (TestMethodCall testEntity : initialDependencies.keySet()) {
          initialTests.addTest(testEntity);
       }
       return initialTests;

@@ -57,7 +57,7 @@ public class CoverageSelectionExecutor {
 
    private List<TraceCallSummary> getSummaries(TestSet dynamicallySelected) throws IOException, StreamReadException, DatabindException {
       List<TraceCallSummary> summaries = new LinkedList<>();
-      for (TestCase testcase : dynamicallySelected.getTests()) {
+      for (TestCase testcase : dynamicallySelected.getTestMethods()) {
          List<File> traceFiles = mapping.getTestcaseMap(testcase);
          if (traceFiles != null && traceFiles.size() > 1) {
             

@@ -4,7 +4,6 @@ import java.io.PrintStream;
 import java.util.Set;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.folders.ResultsFolders;
@@ -48,6 +47,10 @@ public class RunCommandWriter {
          createSingleMethodCommand(commitIndex, commit, testcaseName);
       }
    }
+   
+   public MeasurementConfig getConfig() {
+      return config;
+   }
 
    public void createSingleMethodCommand(final int commitIndex, final String commit, final String testcaseName) {
       goal.println("./peass measure "
@@ -56,7 +59,7 @@ public class RunCommandWriter {
             + "-iterations " + config.getIterations() + " "
             + "-repetitions " + config.getRepetitions() + " "
             + "-vms " + config.getVms() + " "
-            + "-timeout " + config.getTimeoutInSeconds() + " "
+            + "-timeout " + config.getTimeoutInSeconds() / 60 + " "
             + "-measurementStrategy " + config.getMeasurementStrategy() + " "
             + (config.getExecutionConfig().isExcludeLog4jToSlf4j() ? "-excludeLog4jToSlf4j " : "")
             + (config.getExecutionConfig().isExcludeLog4jSlf4jImpl() ? "-excludeLog4jSlf4jImpl " : "")

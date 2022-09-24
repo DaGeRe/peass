@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.jmh.JmhTestTransformer;
@@ -25,10 +24,10 @@ public class TestBenchmarkChangeDetection {
       
       ModuleClassMapping mapping = Mockito.mock(ModuleClassMapping.class);
       Mockito.when(mapping.getModules()).thenReturn(Arrays.asList(new File[] {JmhTestConstants.BASIC_VERSION}));
-      TestSet changedTests = jmhTransformer.buildTestMethodSet(originalTests, mapping);
-      Assert.assertEquals(changedTests.getTests().size(), 1);
+      TestSet changedTests = jmhTransformer.buildTestMethodSet(originalTests, mapping).getTestsToUpdate();
+      Assert.assertEquals(changedTests.getTestMethods().size(), 1);
       
-      TestCase test = changedTests.getTests().iterator().next();
+      TestMethodCall test = changedTests.getTestMethods().iterator().next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmark#testMethod", test.getExecutable());
    }
 }

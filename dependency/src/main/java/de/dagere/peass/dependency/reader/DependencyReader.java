@@ -26,7 +26,6 @@ import de.dagere.peass.dependency.traces.coverage.CoverageSelectionExecutor;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependency.traces.diff.DiffFileGenerator;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -57,7 +56,7 @@ public class DependencyReader {
    protected final PeassFolders folders;
    protected CommitIterator iterator;
    protected String lastRunningVersion;
-   private final VersionKeeper skippedNoChange;
+   private final CommitKeeper skippedNoChange;
 
    private final KiekerConfig kiekerConfig;
    private final ExecutionConfig executionConfig;
@@ -77,7 +76,7 @@ public class DependencyReader {
       this.resultsFolders = resultsFolders;
       this.iterator = iterator;
       this.folders = folders;
-      this.skippedNoChange = new VersionKeeper(new File("/dev/null"));
+      this.skippedNoChange = new CommitKeeper(new File("/dev/null"));
       this.executionConfig = executionConfig;
       this.kiekerConfig = kiekerConfig;
       this.env = env;
@@ -108,7 +107,7 @@ public class DependencyReader {
     */
    public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
          final CommitIterator iterator,
-         final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
+         final CommitKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.testSelectionConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
       this.iterator = iterator;
@@ -135,7 +134,7 @@ public class DependencyReader {
          sizeRecorder.setPrunedSize(dependencyManager.getDependencyMap().size());
 
          changeManager.saveOldClasses();
-         lastRunningVersion = iterator.getTag();
+         lastRunningVersion = iterator.getCommitName();
          while (iterator.hasNextCommit()) {
             iterator.goToNextCommit();
             readVersion();
@@ -143,13 +142,13 @@ public class DependencyReader {
 
          LOG.debug("Finished dependency-reading");
          return true;
-      } catch (IOException | XmlPullParserException | InterruptedException | ParseException | ViewNotFoundException e) {
+      } catch (IOException | XmlPullParserException | InterruptedException | ParseException e) {
          e.printStackTrace();
          return false;
       }
    }
 
-   public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
+   public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException {
       final int tests = analyseVersion(changeManager);
       GitCommitWriter.writeCurrentCommits(folders, iterator.getCommits(), resultsFolders);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
@@ -165,7 +164,7 @@ public class DependencyReader {
 
       dependencyManager.getExecutor().deleteTemporaryFiles();
       TooBigLogCleaner.cleanXMLFolder(folders);
-      TooBigLogCleaner.cleanTooBigLogs(folders, iterator.getTag());
+      TooBigLogCleaner.cleanTooBigLogs(folders, iterator.getCommitName());
    }
 
    /**
@@ -184,10 +183,10 @@ public class DependencyReader {
     * @throws ViewNotFoundException
     * @throws ParseException
     */
-   public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
-      final String commit = iterator.getTag();
+   public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException {
+      final String commit = iterator.getCommitName();
       if (!testSelectionConfig.isSkipProcessSuccessRuns()) {
-         if (!dependencyManager.getExecutor().isCommitRunning(iterator.getTag())) {
+         if (!dependencyManager.getExecutor().isCommitRunning(iterator.getCommitName())) {
             documentFailure(commit);
             return 0;
          }
@@ -197,7 +196,7 @@ public class DependencyReader {
 
       final DependencyReadingInput input = new DependencyReadingInput(changeManager.getChanges(lastRunningVersion), lastRunningVersion);
       changeManager.saveOldClasses();
-      lastRunningVersion = iterator.getTag();
+      lastRunningVersion = iterator.getCommitName();
 
       if (executionConfig.isCreateDetailDebugFiles()) {
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "initialdependencies_" + commit + ".json"), dependencyManager.getDependencyMap());
@@ -222,11 +221,11 @@ public class DependencyReader {
          executionResult.addEmptyCommit(commit, null);
          coverageBasedSelection.addEmptyCommit(commit, null);
       }
-      skippedNoChange.addVersion(commit, "No Change at all");
+      skippedNoChange.addCommit(commit, "No Change at all");
    }
 
    private int analyseChanges(final String commit, final DependencyReadingInput input)
-         throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
+         throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException {
       final CommitStaticSelection newCommitInfo = staticChangeHandler.handleStaticAnalysisChanges(commit, input, dependencyManager.getModuleClassMapping());
 
       if (!testSelectionConfig.isDoNotUpdateDependencies()) {
@@ -275,14 +274,14 @@ public class DependencyReader {
       dependencyResult.getCommits().put(commit, newCommitInfo);
    }
 
-   public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       InitialCommitReader initialVersionReader = new InitialCommitReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialCommit()) {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
-         lastRunningVersion = iterator.getTag();
+         lastRunningVersion = iterator.getCommitName();
 
          if (testSelectionConfig.isGenerateTraces()) {
             generateInitialViews();
@@ -294,13 +293,13 @@ public class DependencyReader {
       }
    }
 
-   private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, ViewNotFoundException, InterruptedException {
+   private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, InterruptedException {
       TestSet initialTests = dependencyResult.getInitialcommit().getInitialTests();
-      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), traceFileMapping, kiekerConfig, testSelectionConfig);
+      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getCommitName(), traceFileMapping, kiekerConfig, testSelectionConfig);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
 
-      executionResult.getCommits().put(iterator.getTag(), new TestSet());
-      coverageBasedSelection.getCommits().put(iterator.getTag(), new TestSet());
+      executionResult.getCommits().put(iterator.getCommitName(), new TestSet());
+      coverageBasedSelection.getCommits().put(iterator.getCommitName(), new TestSet());
    }
 
    public void readCompletedCommits(final StaticTestSelection initialdependencies, CommitComparatorInstance comparator) {
@@ -314,7 +313,7 @@ public class DependencyReader {
       InitialCommitReader initialVersionReader = new InitialCommitReader(initialdependencies, dependencyManager, iterator);
       initialVersionReader.readCompletedVersions(comparator);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
-      lastRunningVersion = iterator.getTag();
+      lastRunningVersion = iterator.getCommitName();
    }
 
    public StaticTestSelection getDependencies() {

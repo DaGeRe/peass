@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -69,7 +68,7 @@ public class AdaptiveTester extends DependencyTester {
    }
 
    @Override
-   public boolean checkIsDecidable(final TestCase testcase, final int vmid) {
+   public boolean checkIsDecidable(final TestMethodCall testcase, final int vmid) {
       final boolean savelyDecidable;
       if (configuration.isEarlyStop()) {
          final ResultLoader loader = new ResultLoader(configuration);

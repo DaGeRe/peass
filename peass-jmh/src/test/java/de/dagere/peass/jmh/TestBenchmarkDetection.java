@@ -14,8 +14,8 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.jmh.JmhTestTransformer;
 import de.dagere.peass.execution.utils.ProjectModules;
 
@@ -33,8 +33,8 @@ public class TestBenchmarkDetection {
       TestSet tests = jmhTransformer.findModuleTests(new ModuleClassMapping(JmhTestConstants.BASIC_VERSION, modules, new ExecutionConfig()), null,
             modules);
 
-      Assert.assertEquals(tests.getTests().size(), 1);
-      TestCase test = tests.getTests().iterator().next();
+      Assert.assertEquals(tests.getTestMethods().size(), 1);
+      TestMethodCall test = tests.getTestMethods().iterator().next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmark#testMethod", test.getExecutable());
    }
 
@@ -45,8 +45,8 @@ public class TestBenchmarkDetection {
       TestSet tests = jmhTransformer.findModuleTests(new ModuleClassMapping(JmhTestConstants.INNER_CLASS_VERSION, modules, new ExecutionConfig()), null,
             modules);
 
-      Assert.assertEquals(tests.getTests().size(), 1);
-      TestCase test = tests.getTests().iterator().next();
+      Assert.assertEquals(tests.getTestMethods().size(), 1);
+      TestMethodCall test = tests.getTestMethods().iterator().next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmark#testMethod", test.getExecutable());
    }
 
@@ -57,11 +57,11 @@ public class TestBenchmarkDetection {
             new File(JmhTestConstants.MULTIMODULE_VERSION, "using-module") }));
       ModuleClassMapping mapping = new ModuleClassMapping(JmhTestConstants.MULTIMODULE_VERSION, modules, new ExecutionConfig());
       TestSet tests = jmhTransformer.findModuleTests(mapping, null, modules);
-      Iterator<TestCase> iterator = tests.getTests().iterator();
-      TestCase test = iterator.next();
+      Iterator<TestMethodCall> iterator = tests.getTestMethods().iterator();
+      TestMethodCall test = iterator.next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmarkBasic#testMethod", test.getExecutable());
 
-      TestCase testUsing = iterator.next();
+      TestMethodCall testUsing = iterator.next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmarkUsing#testMethod", testUsing.getExecutable());
    }
 }

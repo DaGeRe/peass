@@ -16,7 +16,6 @@ import org.mockito.Mockito;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -130,7 +129,7 @@ public class AdaptiveTesterTest {
       final PeassFolders folders = Mockito.mock(PeassFolders.class);
       Mockito.when(folders.getProjectFolder()).thenReturn(folder.newFolder("test"));
       Mockito.when(folders.getProgressFile()).thenReturn(folder.newFile("progress"));
-      Mockito.when(folders.getResultFile(Mockito.any(TestCase.class), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+      Mockito.when(folders.getResultFile(Mockito.any(TestMethodCall.class), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
             .thenAnswer((index) -> {
                return new File(folder.getRoot(), "log" + index);
             });

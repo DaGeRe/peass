@@ -9,7 +9,6 @@ import de.dagere.kopeme.kieker.record.DurationRecord;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.KiekerReaderConfiguration;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.TreeStage;

@@ -107,19 +107,10 @@ public final class GitUtils {
    }
 
    private static void clone(final File projectFolderDest, final File projectFolderSource, final String gitCryptKey) throws InterruptedException, IOException {
-      final String clonedProject = projectFolderSource.getAbsolutePath();
-      final String goalFolder = projectFolderDest.getName();
       if (projectFolderDest.exists()) {
          throw new RuntimeException("Can not clone to existing folder: " + projectFolderDest.getAbsolutePath());
       }
-      final ProcessBuilder builder = new ProcessBuilder("git", "clone", "file://" + clonedProject, goalFolder);
-      builder.directory(projectFolderDest.getParentFile());
-      StreamGobbler.showFullProcess(builder.start());
-
-      if (gitCryptKey != null) {
-         unlockWithGitCrypt(projectFolderDest, gitCryptKey);
-      }
-
+      FileUtils.copyDirectory(projectFolderSource, projectFolderDest);
    }
 
    /**
@@ -393,18 +384,18 @@ public final class GitUtils {
    /**
     * Lets the project go to the given state by resetting it to revert potential changes and by checking out the given commit.
     * 
-    * @param tag
+    * @param commit
     * @param projectFolder
     */
-   public static void goToTag(final String tag, final File projectFolder) {
+   public static void goToCommit(final String commit, final File projectFolder) {
       try {
          synchronized (projectFolder) {
-            LOG.debug("Going to tag {} folder: {}", tag, projectFolder.getAbsolutePath());
+            LOG.debug("Going to commit {} folder: {}", commit, projectFolder.getAbsolutePath());
             reset(projectFolder);
 
             clean(projectFolder);
 
-            int worked = checkout(tag, projectFolder);
+            int worked = checkout(commit, projectFolder);
 
             if (worked != 0) {
                LOG.info("Return value was !=0 - fetching");
@@ -413,7 +404,7 @@ public final class GitUtils {
                pFetch.waitFor();
                System.out.println(outFetch);
 
-               int secondCheckoutWorked = checkout(tag, projectFolder);
+               int secondCheckoutWorked = checkout(commit, projectFolder);
 
                if (secondCheckoutWorked != 0) {
                   LOG.error("Second checkout did not work - an old commit is probably analyzed");

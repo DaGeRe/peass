@@ -18,7 +18,7 @@ import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class JmhBenchmarkConverter {
 
@@ -29,7 +29,7 @@ public class JmhBenchmarkConverter {
    private final DatacollectorResult timeCollector;
    private final MeasurementConfig measurementConfig;
 
-   public JmhBenchmarkConverter(final TestCase testcase, final File clazzResultFolder, final MeasurementConfig measurementConfig) {
+   public JmhBenchmarkConverter(final TestMethodCall testcase, final File clazzResultFolder, final MeasurementConfig measurementConfig) {
       this.measurementConfig = measurementConfig;
       File koPeMeFileTry = new File(clazzResultFolder, testcase.getMethod() + ".json");
 

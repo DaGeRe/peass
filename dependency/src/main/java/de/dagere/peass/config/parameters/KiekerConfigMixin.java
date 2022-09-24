@@ -25,6 +25,10 @@ public class KiekerConfigMixin {
                + "instead of summing them up after the execution). Is automatically disabled for regression test selection.")
    public boolean notUseAggregation = false;
 
+   @Option(names = { "-measureAdded",
+         "--measureAdded" }, description = "Measure call tree nodes that have been added or removed in one commit (might lead to less accuracy of measurements)")
+   public boolean measureAdded = false;
+
    @Option(names = { "-useExtraction", "--useExtraction" }, description = "Extract methods when using source instrumentation")
    public boolean useExtraction = false;
 
@@ -48,7 +52,7 @@ public class KiekerConfigMixin {
    @Option(names = { "-skipDefaultConstructor",
          "--skipDefaultConstructor" }, description = "Deactivates creation of the default constructor (required if Lombok is used)")
    protected boolean skipDefaultConstructor = false;
-   
+
    @Option(names = { "-kiekerWaitTime", "--kiekerWaitTime" }, description = "Time that KoPeMe should wait until Kieker writing is finshed in seconds (default: 10)")
    protected int kiekerWaitTime = KiekerConfig.DEFAULT_KIEKER_WAIT_TIME;
 
@@ -70,6 +74,10 @@ public class KiekerConfigMixin {
 
    public boolean isNotUseAggregation() {
       return notUseAggregation;
+   }
+   
+   public boolean isMeasureAdded() {
+      return measureAdded;
    }
 
    public boolean isUseExtraction() {
@@ -109,6 +117,7 @@ public class KiekerConfigMixin {
       kiekerConfig.setUseCircularQueue(useCircularQueue);
       kiekerConfig.setUseSelectiveInstrumentation(!notUseSelectiveInstrumentation);
       kiekerConfig.setUseAggregation(!notUseAggregation);
+      kiekerConfig.setMeasureAdded(measureAdded);
       kiekerConfig.setExtractMethod(useExtraction);
       kiekerConfig.setAdaptiveInstrumentation(enableAdaptiveInstrumentation);
       kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);

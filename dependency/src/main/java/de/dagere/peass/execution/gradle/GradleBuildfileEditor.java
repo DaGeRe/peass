@@ -113,11 +113,17 @@ public class GradleBuildfileEditor {
             }
             visitor.addLine(visitor.getDependencyLine() - 1, dependencyGradle);
          }
+         if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()) {
+            visitor.addLine(visitor.getDependencyLine() - 1, "   androidTestImplementation 'androidx.test:rules:1.4.0'");
+         }
       } else {
          visitor.getLines().add("dependencies { ");
          for (RequiredDependency dependency : RequiredDependency.getAll(versions)) {
             final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
             visitor.getLines().add(dependencyGradle);
+         }
+         if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()) {
+            visitor.getLines().add("   androidTestImplementation 'androidx.test:rules:1.4.0'");
          }
          visitor.getLines().add("}");
       }

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 
 /**
@@ -65,7 +66,7 @@ public class ExecutionData extends SelectedTests {
    }
 
    @JsonIgnore
-   public void addCall(final String commit, final TestCase testcase) {
+   public void addCall(final String commit, final TestMethodCall testcase) {
       TestSet executes = commits.get(commit);
       if (executes == null) {
          executes = new TestSet();
@@ -75,7 +76,7 @@ public class ExecutionData extends SelectedTests {
    }
 
    @JsonIgnore
-   public boolean commitContainsTest(final String commit, final TestCase currentIterationTest) {
+   public boolean commitContainsTest(final String commit, final TestMethodCall currentIterationTest) {
       final TestSet clazzExecutions = commits.get(commit);
       if (clazzExecutions != null) {
          for (final Entry<TestClazzCall, Set<String>> clazz : clazzExecutions.entrySet()) {
@@ -110,7 +111,7 @@ public class ExecutionData extends SelectedTests {
    public int getAllExecutions() {
          int count2 = 0;
          for (final Entry<String, TestSet> entry : getCommits().entrySet()) {
-            count2 += entry.getValue().getTests().size();
+            count2 += entry.getValue().getTestMethods().size();
          }
          return count2;
    }

@@ -11,8 +11,8 @@ import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 /**
@@ -22,7 +22,7 @@ import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
  *
  */
 public class Changes implements Serializable {
-   
+
    private static final long serialVersionUID = -7339774896217980704L;
 
    private Map<String, List<Change>> testcaseChanges = new TreeMap<>();
@@ -34,12 +34,12 @@ public class Changes implements Serializable {
    public void setTestcaseChanges(final Map<String, List<Change>> testcaseChanges) {
       this.testcaseChanges = testcaseChanges;
    }
-   
+
    @JsonIgnore
-   public Map<TestCase, List<Change>> getTestcaseObjectChanges(){
-      Map<TestCase, List<Change>> resultChanges = new LinkedHashMap<>();
+   public Map<TestClazzCall, List<Change>> getTestcaseObjectChanges() {
+      Map<TestClazzCall, List<Change>> resultChanges = new LinkedHashMap<>();
       for (Entry<String, List<Change>> testcaseEntry : testcaseChanges.entrySet()) {
-         TestCase test = new TestCase(testcaseEntry.getKey());
+         TestClazzCall test = TestClazzCall.createFromString(testcaseEntry.getKey());
          resultChanges.put(test, testcaseEntry.getValue());
       }
       return resultChanges;
@@ -91,6 +91,15 @@ public class Changes implements Serializable {
          currentChanges = new LinkedList<>();
          testcaseChanges.put(testclazz, currentChanges);
       }
+      for (Change existingChange : currentChanges) {
+         if (existingChange.getMethodWithParams().equals(change.getMethodWithParams())) {
+            if (existingChange.getTvalue() * change.getTvalue() < 0) {
+               throw new RuntimeException("Test method was measured twice: " + existingChange.getMethodWithParams()
+                     + " and t-value sign was differing: " + existingChange.getTvalue() + " vs " + change.getTvalue());
+            }
+         }
+      }
+
       currentChanges.add(change);
 
       currentChanges.sort(new Comparator<Change>() {
@@ -108,7 +117,8 @@ public class Changes implements Serializable {
          String clazzname = testclazz.getKey();
          for (Change method : testclazz.getValue()) {
             String methodName = method.getMethod();
-            result.addTest(new TestMethodCall(clazzname, methodName));
+            TestMethodCall testcase = TestMethodCall.createFromClassString(clazzname, methodName);
+            result.addTest(testcase);
          }
       }
       return result;

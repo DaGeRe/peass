@@ -1,0 +1,110 @@
+{
+  "clazz" : "de.dagere.peass.ExampleTest",
+  "methods" : [ {
+    "method" : "test",
+    "datacollectorResults" : [ {
+      "name" : "de.dagere.kopeme.datacollection.TimeDataCollectorNoGC",
+      "chunks" : [ {
+        "chunkStartTime" : 1645289231833,
+        "results" : [ {
+          "value" : 2193345.5,
+          "deviation" : 134774.8146439089,
+          "min" : 2126944.0,
+          "max" : 2467302.0,
+          "warmup" : 0,
+          "iterations" : 6,
+          "repetitions" : 2,
+          "commit" : "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "date" : 1645289239368,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 2197973.5,
+          "deviation" : 179277.0791080109,
+          "min" : 2120794.0,
+          "max" : 2563861.0,
+          "warmup" : 0,
+          "iterations" : 6,
+          "repetitions" : 2,
+          "commit" : "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "date" : 1645289247079,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 2180234.0,
+          "deviation" : 143336.12822034786,
+          "min" : 2096615.0,
+          "max" : 2471562.0,
+          "warmup" : 0,
+          "iterations" : 6,
+          "repetitions" : 2,
+          "commit" : "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "date" : 1645289255034,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 2201503.666666667,
+          "deviation" : 175893.03423918376,
+          "min" : 2120975.0,
+          "max" : 2560181.0,
+          "warmup" : 0,
+          "iterations" : 6,
+          "repetitions" : 2,
+          "commit" : "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "date" : 1645289261705,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 2203025.3333333335,
+          "deviation" : 190102.4333349436,
+          "min" : 2121195.0,
+          "max" : 2590961.0,
+          "warmup" : 0,
+          "iterations" : 6,
+          "repetitions" : 2,
+          "commit" : "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "date" : 1645289269309,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 2233811.6666666665,
+          "deviation" : 262397.9023823679,
+          "min" : 2107455.0,
+          "max" : 2768699.0,
+          "warmup" : 0,
+          "iterations" : 6,
+          "repetitions" : 2,
+          "commit" : "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "date" : 1645289276013,
+          "failure" : true,
+          "error" : true
+        } ]
+      } ],
+      "results" : [ ]
+    } ]
+  } ]
+}

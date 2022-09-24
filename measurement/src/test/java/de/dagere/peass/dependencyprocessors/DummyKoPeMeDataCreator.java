@@ -11,11 +11,11 @@ import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.VMResult;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class DummyKoPeMeDataCreator {
    
-   public static void initDummyTestfile(final File methodFolder, final int iterations, final TestCase testcase)  {
+   public static void initDummyTestfile(final File methodFolder, final int iterations, final TestMethodCall testcase)  {
       JSONDataStorer storer = new JSONDataStorer(methodFolder, testcase.getClazz(), testcase.getMethod());
 
       final VMResult result = new VMResult();

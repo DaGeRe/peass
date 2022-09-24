@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.changes.ProjectChanges;
+import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.ResultsFolders;
@@ -26,7 +27,7 @@ public class TestChangeReader {
    @Test
    public void testBasicUsage() throws  JsonProcessingException {
       ChangeReader reader = new ChangeReader("android-example-correct", new ExecutionData());
-      ProjectChanges changes = reader.readFile(TestAnalyseFullData.REGULAR_DATA_FOLDER.getParentFile());
+      ProjectChanges changes = reader.readFolder(TestAnalyseFullData.REGULAR_DATA_FOLDER.getParentFile());
 
       System.out.println(Constants.OBJECTMAPPER.writeValueAsString(changes));
 
@@ -41,7 +42,7 @@ public class TestChangeReader {
    @Test
    public void testParameterizedUsage() throws  JsonProcessingException {
       ChangeReader reader = new ChangeReader("demo-parameterized", new ExecutionData());
-      ProjectChanges changes = reader.readFile(TestAnalyseFullData.PARAM_DATA_FOLDER);
+      ProjectChanges changes = reader.readFolder(TestAnalyseFullData.PARAM_DATA_FOLDER);
 
       System.out.println(Constants.OBJECTMAPPER.writeValueAsString(changes));
 
@@ -56,8 +57,8 @@ public class TestChangeReader {
       StaticTestSelection staticTestSelection = Constants.OBJECTMAPPER.readValue(staticTestSelectionFile, StaticTestSelection.class);
 
       ResultsFolders resultsFolders = new ResultsFolders(new File("target/temp"), "temp");
-      ChangeReader reader = new ChangeReader(resultsFolders, staticTestSelection);
-      reader.readFile(measurementsFolder);
+      ChangeReader reader = new ChangeReader(resultsFolders, staticTestSelection, new StatisticsConfig());
+      reader.readFolder(measurementsFolder);
 
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(resultsFolders.getChangeFile(), ProjectChanges.class);
       Assert.assertNull(changes.getCommitChanges().get("fdf011a5f9a15826771b19cdd6795b247b0bc3e4"));

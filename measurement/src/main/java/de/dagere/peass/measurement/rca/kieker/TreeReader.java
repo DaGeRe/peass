@@ -5,7 +5,6 @@ import java.io.File;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
@@ -54,7 +53,7 @@ public class TreeReader extends KiekerResultManager {
       return root;
    }
 
-   private void executeMeasurements(final TestCase testcase, final String commit) {
+   private void executeMeasurements(final TestMethodCall testcase, final String commit) {
       executor.loadClasses();
       executeKoPeMeKiekerRun(new TestSet(testcase), commit, folders.getTreeLogFolder());
    }

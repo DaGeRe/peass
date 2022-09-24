@@ -211,7 +211,7 @@ public class PeassFolders {
       return measurementsFolder;
    }
 
-   public File getSummaryFile(final TestCase testcase) {
+   public File getSummaryFile(final TestMethodCall testcase) {
       final String shortClazzName = testcase.getShortClazz();
       final File fullResultFile;
       if (testcase.getParams() != null) {
@@ -246,20 +246,20 @@ public class PeassFolders {
       return compareVersionFolder;
    }
 
-   public File getResultFile(final TestCase testcase, final int vmid, final String commit, final String mainVersion) {
+   public File getResultFile(final TestMethodCall testcase, final int vmid, final String commit, final String mainVersion) {
       final File compareVersionFolder = getFullResultFolder(testcase, mainVersion, commit);
       String xmlFileName = getXMLFileName(testcase, commit, vmid);
       final File destFile = new File(compareVersionFolder, xmlFileName);
       return destFile;
    }
 
-   public static String getRelativeFullResultPath(final TestCase testcase, final String mainCommit, final String commit, final int vmid) {
+   public static String getRelativeFullResultPath(final TestMethodCall testcase, final String mainCommit, final String commit, final int vmid) {
       String filename = getXMLFileName(testcase, commit, vmid);
       String start = testcase.getClazz() + File.separator + mainCommit + File.separator + commit + File.separator + filename;
       return start;
    }
 
-   private static String getXMLFileName(final TestCase testcase, final String commit, final int vmid) {
+   private static String getXMLFileName(final TestMethodCall testcase, final String commit, final int vmid) {
       String filename;
       if (testcase.getParams() != null) {
          filename = testcase.getMethod() + "(" + testcase.getParams() + ")_" + vmid + "_" + commit + ".json";

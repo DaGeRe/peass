@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.processutils.ProcessSuccessTester;
@@ -89,17 +89,24 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       }
    }
 
+   protected String getCleanGoal() {
+      String cleanGoal;
+      ExecutionConfig executionConfig = testTransformer.getConfig().getExecutionConfig();
+      cleanGoal = executionConfig.getCleanGoal() != null ? executionConfig.getCleanGoal() : "cleanTest";
+      return cleanGoal;
+   }
+
    /**
     * Executes the Gradle process; since gradle is run inside the module folder, different parameters than for the maven execution are required
     */
-   private Process buildGradleProcess(final File moduleFolder, final File logFile, TestCase test, final String... commandLineAddition)
-         throws IOException, XmlPullParserException, InterruptedException {
+   private Process buildGradleProcess(final File moduleFolder, final File logFile, TestMethodCall test, final String... commandLineAddition)
+         throws IOException, XmlPullParserException {
       final String testGoal = getTestGoal();
       String wrapper = new File(folders.getProjectFolder(), EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
       String[] originals = new String[] { wrapper,
             "--init-script", new File(gradleHome, "init.gradle").getAbsolutePath(),
             "--no-daemon",
-            "cleanTest", testGoal };
+            getCleanGoal(), testGoal };
       LOG.debug("Redirecting to null: {}", testTransformer.getConfig().getExecutionConfig().isRedirectToNull());
       if (!testTransformer.getConfig().getExecutionConfig().isRedirectToNull()) {
          originals = CommandConcatenator.concatenateCommandArrays(originals, new String[] { "--info" });
@@ -144,11 +151,11 @@ public class GradleTestExecutor extends KoPeMeExecutor {
     * @param testname Name of the test that should be run
     */
    @Override
-   protected void runTest(final File moduleFolder, final File logFile, TestCase test, final String testname, final long timeout) {
+   protected void runTest(final File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout) {
       try {
          final Process process = buildGradleProcess(moduleFolder, logFile, test, "--tests", testname);
          execute(testname, timeout, process);
-      } catch (final InterruptedException | IOException | XmlPullParserException e) {
+      } catch (final IOException | XmlPullParserException e) {
          e.printStackTrace();
       }
    }

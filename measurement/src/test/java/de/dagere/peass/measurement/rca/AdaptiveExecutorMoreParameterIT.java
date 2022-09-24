@@ -21,7 +21,6 @@ import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -60,7 +59,7 @@ public class AdaptiveExecutorMoreParameterIT {
    }
 
    private void testSuccessfull()
-         throws IOException, InterruptedException, FileNotFoundException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
+         throws IOException, InterruptedException, FileNotFoundException, XmlPullParserException, AnalysisConfigurationException {
       LOG.debug("Executor: {}", executor);
       final Set<CallTreeNode> included = new HashSet<>();
       final String kiekerPattern = "public void defaultpackage.NormalDependency.child1(int[],double,java.lang.String)";
@@ -80,7 +79,7 @@ public class AdaptiveExecutorMoreParameterIT {
    }
 
    @Test
-   public void testFullMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   public void testFullMethodExecution() throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);
@@ -92,7 +91,7 @@ public class AdaptiveExecutorMoreParameterIT {
    }
 
    @Test
-   public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);

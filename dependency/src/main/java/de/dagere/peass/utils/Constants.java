@@ -10,9 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.deserializer.TestMethodCallKeyDeserializer;
-import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class Constants {
@@ -66,8 +64,6 @@ public class Constants {
       statisticsModule.addSerializer(SummaryStatistics.class, new SummaryStatisticsSerializer());
       statisticsModule.addDeserializer(StatisticalSummary.class, new SummaryStatisticsDeserializer());
       
-      SimpleModule keyDeserializer = new SimpleModule().addKeyDeserializer(TestCase.class, new TestcaseKeyDeserializer());
-      Constants.OBJECTMAPPER.registerModules(keyDeserializer);
       SimpleModule methodDeserializer = new SimpleModule().addKeyDeserializer(TestMethodCall.class, new TestMethodCallKeyDeserializer());
       Constants.OBJECTMAPPER.registerModules(methodDeserializer);
       

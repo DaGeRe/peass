@@ -15,7 +15,6 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
@@ -68,7 +67,7 @@ public class NonIncludedByRule {
       boolean anyParentExcluded = false;
       boolean anyParentIncluded = false;
 
-      TestCase parentTest = getParentTest(unit, mapping);
+      TestClazzCall parentTest = getParentTest(unit, mapping);
       while (parentTest != null) {
          CompilationUnit parentUnit = getUnit(parentTest, transformer, executionConfig);
          if (parentUnit == null) {
@@ -90,15 +89,19 @@ public class NonIncludedByRule {
       return parentInfo;
    }
 
-   private static TestCase getParentTest(CompilationUnit unit, ModuleClassMapping mapping) {
+   private static TestClazzCall getParentTest(CompilationUnit unit, ModuleClassMapping mapping) {
       for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
          if (clazz.getExtendedTypes().size() == 1) {
             String extendType = clazz.getExtendedTypes(0).getNameAsString();
             String fqn = FQNDeterminer.getParameterFQN(unit, extendType);
             String module = mapping.getModuleOfClass(fqn);
-            ChangedEntity entity = new ChangedEntity(fqn, module);
-            TestCase parentTest = new TestCase(entity);
-            return parentTest;
+            
+            // Parent tests outside of the currently examined project are not considered, since we do not have the source code
+            if (module != null) {
+               TestClazzCall parentTest = new TestClazzCall(fqn, module);
+               return parentTest;
+            }
+            
          }
       }
       return null;

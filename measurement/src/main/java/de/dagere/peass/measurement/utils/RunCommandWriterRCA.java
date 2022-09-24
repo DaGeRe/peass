@@ -15,11 +15,6 @@ public class RunCommandWriterRCA extends RunCommandWriter {
 
    @Override
    public void createSingleMethodCommand(final int versionIndex, final String commit, final String testcaseName) {
-      createSingleMethodCommand(versionIndex, commit, testcaseName, 1000, 10000, 10000, 100);
-   }
-
-   public void createSingleMethodCommand(final int versionIndex, final String commit, final String testcaseName, final int warmup, final int iterations, final int repetitions,
-         final int vms) {
       long timeoutInMinutes = config.getTimeoutInSeconds() / 60;
       goal.println("./peass searchcause "
             + "-rcaStrategy " + RCAStrategy.UNTIL_SOURCE_CHANGE + " "
@@ -27,8 +22,8 @@ public class RunCommandWriterRCA extends RunCommandWriter {
             + "-test " + testcaseName + " "
             + "-warmup " + config.getWarmup() + " "
             + "-iterations " + config.getIterations() + " "
-            + "-repetitions " + repetitions + " "
-            + "-vms " + vms + " "
+            + "-repetitions " + config.getRepetitions() + " "
+            + "-vms " + config.getVms() + " "
             + "-timeout " + timeoutInMinutes + " "
             + "-type1error 0.2 "
             + "-type2error 0.1 "
