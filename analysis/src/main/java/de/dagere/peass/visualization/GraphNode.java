@@ -41,7 +41,9 @@ public class GraphNode extends BasicNode {
 
    public GraphNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
       super(call, kiekerPattern, otherKiekerPattern);
-      key = KiekerPatternConverter.getKey(kiekerPattern);
+      if (!CauseSearchData.ADDED.equals(kiekerPattern)) {
+         key = KiekerPatternConverter.getKey(kiekerPattern);
+      }
       if (!otherKiekerPattern.equals(CauseSearchData.ADDED)) {
          otherKey = KiekerPatternConverter.getKey(otherKiekerPattern);
       }
