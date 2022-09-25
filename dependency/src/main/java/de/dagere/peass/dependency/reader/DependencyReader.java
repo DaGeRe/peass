@@ -310,8 +310,8 @@ public class DependencyReader {
       dependencyResult.setCommits(initialdependencies.getCommits());
       dependencyResult.setInitialcommit(initialdependencies.getInitialcommit());
 
-      InitialCommitReader initialVersionReader = new InitialCommitReader(initialdependencies, dependencyManager, iterator);
-      initialVersionReader.readCompletedVersions(comparator);
+      InitialCommitReader initialCommitReader = new InitialCommitReader(initialdependencies, dependencyManager, iterator);
+      initialCommitReader.readCompletedCommits(comparator);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
       lastRunningVersion = iterator.getCommitName();
    }

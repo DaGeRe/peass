@@ -78,7 +78,7 @@ public class InitialCommitReader {
       return initialversion;
    }
    
-   public void readCompletedVersions(CommitComparatorInstance comparator) {
+   public void readCompletedCommits(CommitComparatorInstance comparator) {
       fillInitialTestDependencies();
       checkCorrectness();
 
