@@ -51,11 +51,11 @@ public class DependencyReaderUtil {
 
    private static final Logger LOG = LogManager.getLogger(DependencyReaderUtil.class);
 
-   static void removeDeletedTestcases(final CommitStaticSelection newVersionInfo, final TestExistenceChanges testExistenceChanges) {
+   static void removeDeletedTestcases(final CommitStaticSelection newCommitSelection, final TestExistenceChanges testExistenceChanges) {
       LOG.debug("Removed Tests: {}", testExistenceChanges.getRemovedTests());
       for (final TestCase removedTest : testExistenceChanges.getRemovedTests()) {
          LOG.debug("Remove: {}", removedTest);
-         for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
+         for (final Entry<ChangedEntity, TestSet> dependency : newCommitSelection.getChangedClazzes().entrySet()) {
             final TestSet testSet = dependency.getValue();
             if (removedTest instanceof TestMethodCall) {
                for (final Entry<TestClazzCall, Set<String>> testcase : testSet.getTestcases().entrySet()) {
@@ -101,18 +101,18 @@ public class DependencyReaderUtil {
    }
 
    static CommitStaticSelection createCommitFromChangeMap(final Map<ChangedEntity, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
-      final CommitStaticSelection newVersionInfo = new CommitStaticSelection();
-      newVersionInfo.setRunning(true);
+      final CommitStaticSelection newCommitSelection = new CommitStaticSelection();
+      newCommitSelection.setRunning(true);
       LOG.debug("Beginning to write");
       for (final Map.Entry<ChangedEntity, ClazzChangeData> changedClassName : changedClassNames.entrySet()) {
          ClazzChangeData changedClazzInsideFile = changedClassName.getValue();
          if (!changedClazzInsideFile.isOnlyMethodChange()) { // class changed as a whole
-            handleWholeClassChange(changeTestMap, newVersionInfo, changedClazzInsideFile);
+            handleWholeClassChange(changeTestMap, newCommitSelection, changedClazzInsideFile);
          } else {
-            handleMethodChange(changeTestMap, newVersionInfo, changedClazzInsideFile);
+            handleMethodChange(changeTestMap, newCommitSelection, changedClazzInsideFile);
          }
       }
-      return newVersionInfo;
+      return newCommitSelection;
 
    }
 
@@ -194,10 +194,6 @@ public class DependencyReaderUtil {
          return merged;
       }
 
-      // if (mergeVersion == null) {
-      // LOG.error("Version {} was newer than newest version of old dependencies - merging not possible", firstOtherVersion);
-      // return null;
-      // }
       LOG.debug("Removable: " + removableCommits.size());
       for (final String commit : removableCommits) {
          LOG.debug("Removing: {}", commit);
