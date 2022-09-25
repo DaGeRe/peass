@@ -179,7 +179,7 @@ public class ContinuousExecutor {
    }
 
    public String getCommitOld() {
-      LOG.debug("Version old: {}", commitOld);
+      LOG.debug("Commit old: {}", commitOld);
       return commitOld;
    }
 
