@@ -2,6 +2,7 @@ package de.dagere.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -73,7 +74,6 @@ public class ContinuousExecutor {
       }
 
       CommitIteratorBuilder iteratorBuiler = new CommitIteratorBuilder(measurementConfig.getFixedCommitConfig(), dependencies, folders);
-      iterator = iteratorBuiler.getIterator();
       commit = iteratorBuiler.getCommit();
       String userDefinedCommitOld = iteratorBuiler.getCommitOld();
       measurementConfig.getFixedCommitConfig().setCommit(commit);
@@ -85,6 +85,8 @@ public class ContinuousExecutor {
 
       commitOld = getLatestRunnableCommit(measurementConfig, env, userDefinedCommitOld);
       measurementConfig.getFixedCommitConfig().setCommitOld(commitOld);
+      
+      iterator = new CommitIteratorGit(projectFolderLocal, Arrays.asList(new String[] {commit, commitOld}), commitOld);
       
       LOG.debug("Commit: {} Predecessor Commit: {}", commit, commitOld);
    }

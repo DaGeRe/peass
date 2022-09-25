@@ -32,10 +32,9 @@ public class TestDependencyIteratorBuilder {
 
          StaticTestSelection dependencies = buildVersionDependencies(LAST_RUNNING_VERSION);
          
-         CommitIteratorGit iterator = new CommitIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
-         Assert.assertEquals(2, iterator.getSize());
-         Assert.assertEquals(VERSION_2, iterator.getCommitName());
-         Assert.assertEquals(SIMPLE_PREDECESSOR, iterator.getPredecessor());
+         CommitIteratorBuilder iterator = new CommitIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER));
+         Assert.assertEquals(VERSION_2, iterator.getCommit());
+         Assert.assertEquals(SIMPLE_PREDECESSOR, iterator.getCommitOld());
       }
    }
    
@@ -51,8 +50,6 @@ public class TestDependencyIteratorBuilder {
          StaticTestSelection dependencies = buildVersionDependencies();
          
          CommitIteratorBuilder builder = new CommitIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER));
-         CommitIteratorGit iterator = builder.getIterator();
-         Assert.assertNull(iterator);
          Assert.assertEquals(VERSION_2, builder.getCommit());
          Assert.assertEquals(null, builder.getCommitOld());
       }
@@ -71,8 +68,6 @@ public class TestDependencyIteratorBuilder {
          dependencies.getCommits().get(SIMPLE_PREDECESSOR).setRunning(false);
          
          CommitIteratorBuilder builder = new CommitIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER));
-         CommitIteratorGit iterator = builder.getIterator();
-         Assert.assertNull(iterator);
          Assert.assertEquals(VERSION_2, builder.getCommit());
          Assert.assertEquals(SIMPLE_PREDECESSOR, builder.getCommitOld());
       }
@@ -90,8 +85,6 @@ public class TestDependencyIteratorBuilder {
          StaticTestSelection dependencies = buildVersionDependencies(SIMPLE_PREDECESSOR, VERSION_2);
          
          CommitIteratorBuilder builder = new CommitIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER));
-         CommitIteratorGit iterator = builder.getIterator();
-         Assert.assertNull(iterator);
          Assert.assertEquals(VERSION_2, builder.getCommit());
          Assert.assertEquals(SIMPLE_PREDECESSOR, builder.getCommitOld());
       }
@@ -108,10 +101,9 @@ public class TestDependencyIteratorBuilder {
          
          StaticTestSelection dependencies = buildVersionDependencies(LAST_RUNNING_VERSION);
 
-         CommitIteratorGit iterator = new CommitIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
-         Assert.assertEquals(2, iterator.getSize());
-         Assert.assertEquals(VERSION_2, iterator.getCommitName());
-         Assert.assertEquals(LAST_RUNNING_VERSION, iterator.getPredecessor());
+         CommitIteratorBuilder iterator = new CommitIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER));
+         Assert.assertEquals(VERSION_2, iterator.getCommit());
+         Assert.assertEquals(LAST_RUNNING_VERSION, iterator.getCommitOld());
       }
    }
 
@@ -125,10 +117,9 @@ public class TestDependencyIteratorBuilder {
          config.setCommitOld(null);
          config.setCommit("HEAD");
 
-         CommitIteratorGit iterator = new CommitIteratorBuilder(config, null, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
-         Assert.assertEquals(2, iterator.getSize());
-         Assert.assertEquals(VERSION_2, iterator.getCommitName());
-         Assert.assertEquals(SIMPLE_PREDECESSOR, iterator.getPredecessor());
+         CommitIteratorBuilder iterator = new CommitIteratorBuilder(config, null, new PeassFolders(TEMPORARY_FOLDER));
+         Assert.assertEquals(VERSION_2, iterator.getCommit());
+         Assert.assertEquals(SIMPLE_PREDECESSOR, iterator.getCommitOld());
       }
    }
    

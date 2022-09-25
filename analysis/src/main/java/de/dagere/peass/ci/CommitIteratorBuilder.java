@@ -25,7 +25,6 @@ public class CommitIteratorBuilder {
    private static final Logger LOG = LogManager.getLogger(CommitIteratorBuilder.class);
 
    private final String commit, commitOld;
-   private final CommitIteratorGit iterator;
 
    public CommitIteratorBuilder(final FixedCommitConfig commitConfig, final StaticTestSelection staticTestSelection, final PeassFolders folders) {
       commit = GitUtils.getName(commitConfig.getCommit() != null ? commitConfig.getCommit() : "HEAD", folders.getProjectFolder());
@@ -36,25 +35,18 @@ public class CommitIteratorBuilder {
 
       if (commit.equals(newestAnalyzedCommitName)) {
          LOG.info("Commit {} is equal to newest commit, not executing RTS", commit);
-         iterator = null;
          commitOld = staticTestSelection.getCommits().get(newestAnalyzedCommitName).getPredecessor();
       } else if (oldCommit.equals(commit)) {
          LOG.error("Commit {} is equal to predecessing commit {}, some error occured - not executing RTS", commit, oldCommit);
-         iterator = null;
          commitOld = staticTestSelection.getNewestRunningCommit();
       } else {
          if (staticTestSelection != null &&
                staticTestSelection.getCommits().get(newestAnalyzedCommitName) != null &&
                !staticTestSelection.getCommits().get(newestAnalyzedCommitName).isRunning()) {
             commitOld = newestAnalyzedCommitName;
-            iterator = null;
          } else {
             GitCommit currentCommit = new GitCommit(commit, "", "", "");
-            List<String> commits = new LinkedList<>();
-            commits.add(oldCommit);
-            commits.add(commit);
             LOG.info("Analyzing {} - {}", oldCommit, currentCommit);
-            iterator = new CommitIteratorGit(folders.getProjectFolder(), commits, oldCommit);
             commitOld = oldCommit;
          }
       }
@@ -83,9 +75,4 @@ public class CommitIteratorBuilder {
    public String getCommitOld() {
       return commitOld;
    }
-
-   public CommitIteratorGit getIterator() {
-      return iterator;
-   }
-
 }
