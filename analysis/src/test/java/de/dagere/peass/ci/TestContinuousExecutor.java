@@ -37,7 +37,8 @@ import net.lingala.zip4j.exception.ZipException;
 
 public class TestContinuousExecutor {
 
-   private static final String NEWER_VERSION = "a23e385264c31def8dcda86c3cf64faa698c62d8";
+   private static final String COMMIT_OLD = "33ce17c04b5218c25c40137d4d09f40fbb3e4f0f";
+   private static final String COMMIT_CURRENT = "a23e385264c31def8dcda86c3cf64faa698c62d8";
    private static final File fullPeassFolder = new File(DependencyTestConstants.CURRENT.getParentFile(), DependencyTestConstants.CURRENT.getName() + PeassFolders.PEASS_FULL_POSTFIX);
 
    @Before
@@ -60,6 +61,8 @@ public class TestContinuousExecutor {
       MeasurementConfig measurementConfig = new MeasurementConfig(2);
       ContinuousExecutor executor = new ContinuousExecutor(DependencyTestConstants.CURRENT, measurementConfig, dependencyConfig, new EnvironmentVariables());
 
+      Assert.assertEquals(COMMIT_CURRENT, executor.getIterator().getCommitName());
+      
       ContinuousExecutor spied = Mockito.spy(executor);
       mockRegressionTestSelection(spied);
       mockMeasurement(executor, spied);
@@ -73,7 +76,7 @@ public class TestContinuousExecutor {
       File changeFile = new File(fullPeassFolder, "changes.json");
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
 
-      String changedTestClass = changes.getCommitChanges(NEWER_VERSION).getTestcaseChanges().keySet().iterator().next();
+      String changedTestClass = changes.getCommitChanges(COMMIT_CURRENT).getTestcaseChanges().keySet().iterator().next();
       TestCase tc = new TestClazzCall(changedTestClass);
       Assert.assertEquals("de.test.CalleeTest", tc.getClazz());
    }
@@ -105,8 +108,8 @@ public class TestContinuousExecutor {
          public RTSResult answer(InvocationOnMock invocation) throws Throwable {
             File staticTestSelectionFile = new File(fullPeassFolder, "staticTestSelection_current.json");
             StaticTestSelection staticSelection = new StaticTestSelection();
-            staticSelection.getInitialcommit().setCommit("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f");
-            staticSelection.getCommits().put(NEWER_VERSION, new CommitStaticSelection());
+            staticSelection.getInitialcommit().setCommit(COMMIT_OLD);
+            staticSelection.getCommits().put(COMMIT_CURRENT, new CommitStaticSelection());
             Constants.OBJECTMAPPER.writeValue(staticTestSelectionFile, staticSelection);
             return mockedResult;
          }
@@ -119,7 +122,7 @@ public class TestContinuousExecutor {
    private void initRepo() throws ZipException {
       ZipFile file = new ZipFile(new File("src/test/resources/simple-test-1.zip"));
       file.extractAll(DependencyTestConstants.CURRENT.getAbsolutePath());
-      VersionComparator.setVersions(Arrays.asList(new String[] { "33ce17c04b5218c25c40137d4d09f40fbb3e4f0f", NEWER_VERSION }));
+      VersionComparator.setVersions(Arrays.asList(new String[] { COMMIT_OLD, COMMIT_CURRENT }));
    }
 
    public void buildRepo() throws InterruptedException, IOException {
