@@ -32,11 +32,11 @@ public class TestHTMLWriter {
       HTMLWriter writer = new HTMLWriter(rootNode, data, TestConstants.CURRENT_FOLDER, null, kopemeConvertedData);
       writer.writeHTML();
       
-      File htmlFile = new File(TestConstants.CURRENT_FOLDER, "1/Test_test.html");
+      File htmlFile = new File(TestConstants.CURRENT_FOLDER, "1/Test/test.html");
       Assert.assertTrue(htmlFile.exists());
-      File dashboardFile = new File(TestConstants.CURRENT_FOLDER, "1/Test_test_dashboard.html");
+      File dashboardFile = new File(TestConstants.CURRENT_FOLDER, "1/Test/test_dashboard.html");
       Assert.assertTrue(dashboardFile.exists());
-      File jsFile = new File(TestConstants.CURRENT_FOLDER, "1/Test_test.js");
+      File jsFile = new File(TestConstants.CURRENT_FOLDER, "1/Test/test.js");
       Assert.assertTrue(jsFile.exists());
    }
    
@@ -53,11 +53,11 @@ public class TestHTMLWriter {
       HTMLWriter writer = new HTMLWriter(rootNode, data, TestConstants.CURRENT_FOLDER, null, kopemeConvertedData);
       writer.writeHTML();
       
-      File htmlFile = new File(TestConstants.CURRENT_FOLDER, "1/Test_test(int).html");
+      File htmlFile = new File(TestConstants.CURRENT_FOLDER, "1/Test/test(int).html");
       Assert.assertTrue(htmlFile.exists());
-      File dashboardFile = new File(TestConstants.CURRENT_FOLDER, "1/Test_test(int)_dashboard.html");
+      File dashboardFile = new File(TestConstants.CURRENT_FOLDER, "1/Test/test(int)_dashboard.html");
       Assert.assertTrue(dashboardFile.exists());
-      File jsFile = new File(TestConstants.CURRENT_FOLDER, "1/Test_test(int).js");
+      File jsFile = new File(TestConstants.CURRENT_FOLDER, "1/Test/test(int).js");
       Assert.assertTrue(jsFile.exists());
    }
 }
