@@ -15,7 +15,7 @@ import de.dagere.peass.vcs.CommitUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 
-public class OnlyMerge implements Callable<Void>{
+public class OnlyMergeStaticTestSelection implements Callable<Void>{
    
    @Mixin
    private TestSelectionConfigMixin config;
@@ -25,7 +25,7 @@ public class OnlyMerge implements Callable<Void>{
    
    public static void main(final String[] args) {
       try {
-         final CommandLine commandLine = new CommandLine(new OnlyMerge());
+         final CommandLine commandLine = new CommandLine(new OnlyMergeStaticTestSelection());
          commandLine.execute(args);
       } catch (final Throwable t) {
          t.printStackTrace();
