@@ -177,17 +177,17 @@ public class DependencyReaderUtil {
       }
       LOG.debug("Merging: {}", merged.getCommits().size());
 
-      final List<String> removableVersion = new LinkedList<>();
-      String mergeVersion = null;
+      final List<String> removableCommits = new LinkedList<>();
+      String commitInBoth = null;
       final Iterator<String> iterator = newer.getCommits().keySet().iterator();
       if (iterator.hasNext()) {
-         final String firstOtherVersion = iterator.next();
-         for (final String version : merged.getCommits().keySet()) {
-            if (merged == null && version.equals(firstOtherVersion) || comparator.isBefore(firstOtherVersion, version)) {
-               mergeVersion = version;
+         final String firstOtherCommit = iterator.next();
+         for (final String commit : merged.getCommits().keySet()) {
+            if (merged == null && commit.equals(firstOtherCommit) || comparator.isBefore(firstOtherCommit, commit)) {
+               commitInBoth = commit;
             }
-            if (mergeVersion != null) {
-               removableVersion.add(version);
+            if (commitInBoth != null) {
+               removableCommits.add(commit);
             }
          }
       } else {
@@ -198,16 +198,16 @@ public class DependencyReaderUtil {
       // LOG.error("Version {} was newer than newest version of old dependencies - merging not possible", firstOtherVersion);
       // return null;
       // }
-      LOG.debug("Removable: " + removableVersion.size());
-      for (final String version : removableVersion) {
-         LOG.debug("Removing: {}", version);
-         merged.getCommits().remove(version);
+      LOG.debug("Removable: " + removableCommits.size());
+      for (final String commit : removableCommits) {
+         LOG.debug("Removing: {}", commit);
+         merged.getCommits().remove(commit);
       }
       int add = 0;
-      for (final Map.Entry<String, CommitStaticSelection> newerVersion : newer.getCommits().entrySet()) {
-         LOG.debug("Add: {}", newerVersion.getKey());
+      for (final Map.Entry<String, CommitStaticSelection> newerCommit : newer.getCommits().entrySet()) {
+         LOG.debug("Add: {}", newerCommit.getKey());
          add++;
-         merged.getCommits().put(newerVersion.getKey(), newerVersion.getValue());
+         merged.getCommits().put(newerCommit.getKey(), newerCommit.getValue());
       }
       LOG.debug("Added: {} Size: {}", add, merged.getCommits().size());
       return merged;
