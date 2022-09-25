@@ -82,13 +82,14 @@ public class InitialCommitReader {
       fillInitialTestDependencies();
       checkCorrectness();
 
-      final InitialCommit initialversion = createInitialCommit();
-      dependencyResult.setInitialcommit(initialversion);
+      final InitialCommit initialcommit = createInitialCommit();
+      dependencyResult.setInitialcommit(initialcommit);
 
       if (dependencyResult.getCommits().size() > 0) {
          String startCommitName = iterator.getCommitName();
          for (final Map.Entry<String, CommitStaticSelection> commit : dependencyResult.getCommits().entrySet()) {
             String commitName = commit.getKey();
+            LOG.debug("Adding {}", commitName);
             if (comparator.isBefore(commitName, startCommitName) || commitName.equals(startCommitName)) {
                addCommitTestDependencies(commit.getValue());
             }
