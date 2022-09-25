@@ -23,6 +23,7 @@ import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
@@ -59,7 +60,9 @@ public class TestContinuousMeasurementExecutor {
 
          mockExecutorCreation();
 
-         final PeassFolders folders = new PeassFolders(new File(parentFile, "project"));
+         File projectFolder = new File(parentFile, "project");
+         projectFolder.mkdirs();
+         final PeassFolders folders = new PeassFolders(projectFolder);
 
          MeasurementConfig measurementConfig = createMeasurementConfig();
          ContinuousMeasurementExecutor cme = new ContinuousMeasurementExecutor(folders, measurementConfig, new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
@@ -93,10 +96,10 @@ public class TestContinuousMeasurementExecutor {
       // This only checks that the iterations are correctly after the end; in theory, we could also check whether the reduction for TEST2 and TEST4 work correctly
       Assert.assertEquals(finalConfig.getIterations(), ITERATIONS);
 
-      File resultFileTest1 = new File(measurementResultFolder, "de.dagere.peass.TestClazzA/000001/000001/test1_4_000001.xml");
+      File resultFileTest1 = new File(measurementResultFolder, "de.dagere.peass.TestClazzA/000001/000001/test1_4_000001.json");
       Assert.assertTrue(resultFileTest1.exists());
 
-      File resultFileTest3 = new File(measurementResultFolder, "de.dagere.peass.TestClazzB/000001/000001/test4_4_000001.xml");
+      File resultFileTest3 = new File(measurementResultFolder, "de.dagere.peass.TestClazzB/000001/000001/test4_4_000001.json");
       Assert.assertTrue(resultFileTest3.exists());
    }
 
@@ -108,6 +111,9 @@ public class TestContinuousMeasurementExecutor {
       measurementConfig.setCallSyncBetweenVMs(false);
       measurementConfig.setWaitTimeBetweenVMs(0);
       measurementConfig.getExecutionConfig().setRedirectSubprocessOutputToFile(false);
+      
+      // Measurement needs to be done sequential, since static mocking only works in the same Thread
+      measurementConfig.setMeasurementStrategy(MeasurementStrategy.SEQUENTIAL);
       return measurementConfig;
    }
 
