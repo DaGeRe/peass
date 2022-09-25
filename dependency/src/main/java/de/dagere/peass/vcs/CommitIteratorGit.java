@@ -50,20 +50,20 @@ public class CommitIteratorGit extends CommitIterator {
     * Initializes the iterator with a project, which is changed when the iterator moves, a list of commits and the previous commit for starting.
     * 
     * @param projectFolder Folder, where versions should be checked out
-    * @param entries List of commits
+    * @param commits List of commits
     * @param previousCommit Previous commit before start (NO_BEFORE, if it is the first one)
     */
-   public CommitIteratorGit(final File projectFolder, final List<String> entries, final String previousCommit) {
+   public CommitIteratorGit(final File projectFolder, final List<String> commits, final String previousCommit) {
       super(projectFolder);
-      this.commits = entries;
+      this.commits = commits;
       this.previous = previousCommit;
       int index = -1;
       if (previousCommit != null) {
-         for (int i = 0; i < entries.size(); i++) {
-            String testedTag = entries.get(i);
-            LOG.debug("Trying " + testedTag);
-            if (testedTag.equals(previousCommit)) {
-               LOG.debug("{} equals {}, setting start index to {}", testedTag, previousCommit, i);
+         for (int i = 0; i < commits.size(); i++) {
+            String testedCommit = commits.get(i);
+            LOG.debug("Trying " + testedCommit);
+            if (testedCommit.equals(previousCommit)) {
+               LOG.debug("{} equals {}, setting start index to {}", testedCommit, previousCommit, i);
                index = i;
             }
          }
