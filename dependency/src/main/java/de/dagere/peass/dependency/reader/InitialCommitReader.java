@@ -86,11 +86,11 @@ public class InitialCommitReader {
       dependencyResult.setInitialcommit(initialversion);
 
       if (dependencyResult.getCommits().size() > 0) {
-         for (final Map.Entry<String, CommitStaticSelection> version : dependencyResult.getCommits().entrySet()) {
-            String tag = version.getKey();
-            String startTag = iterator.getCommitName();
-            if (comparator.isBefore(tag, startTag) || tag.equals(startTag)) {
-               addCommitTestDependencies(version.getValue());
+         String startCommitName = iterator.getCommitName();
+         for (final Map.Entry<String, CommitStaticSelection> commit : dependencyResult.getCommits().entrySet()) {
+            String commitName = commit.getKey();
+            if (comparator.isBefore(commitName, startCommitName) || commitName.equals(startCommitName)) {
+               addCommitTestDependencies(commit.getValue());
             }
          }
       }
