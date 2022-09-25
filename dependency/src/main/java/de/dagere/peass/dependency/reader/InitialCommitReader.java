@@ -90,7 +90,7 @@ public class InitialCommitReader {
             String tag = version.getKey();
             String startTag = iterator.getCommitName();
             if (comparator.isBefore(tag, startTag) || tag.equals(startTag)) {
-               addVersionTestDependencies(version.getValue());
+               addCommitTestDependencies(version.getValue());
             }
          }
       }
@@ -99,8 +99,8 @@ public class InitialCommitReader {
       LOG.debug("Analyzing {} commits", iterator.getRemainingSize());
    }
 
-   private void addVersionTestDependencies(final CommitStaticSelection version) {
-      for (final Entry<ChangedEntity, TestSet> dependency : version.getChangedClazzes().entrySet()) {
+   private void addCommitTestDependencies(final CommitStaticSelection commitStaticSelection) {
+      for (final Entry<ChangedEntity, TestSet> dependency : commitStaticSelection.getChangedClazzes().entrySet()) {
          final ChangedEntity callee = dependency.getKey();
          for (final Entry<TestClazzCall, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
             for (final String testMethod : testcase.getValue()) {
