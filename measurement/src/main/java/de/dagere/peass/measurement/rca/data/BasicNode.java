@@ -37,7 +37,7 @@ public abstract class BasicNode {
          this.otherKiekerPattern = otherKiekerPattern;
       }
 
-      if (kiekerPattern != null && !kiekerPattern.contains(this.call.replace("#", "."))) {
+      if (kiekerPattern != null && !CauseSearchData.ADDED.equals(kiekerPattern) && !kiekerPattern.contains(this.call.replace("#", "."))) {
          throw new RuntimeException("Pattern " + kiekerPattern + " must contain " + this.call.replace("#", "."));
       }
       if (kiekerPattern != null && kiekerPattern.contains("<init>") && !kiekerPattern.contains("new")) {
