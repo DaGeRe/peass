@@ -27,7 +27,7 @@ public class TestMerging {
       for (String commit : comparator.getCommits().subList(5, 10)) {
          deps2.getCommits().put(commit, null);
       }
-      StaticTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2, comparator);
+      StaticTestSelection merged = DependencyReaderUtil.mergeStaticSelection(deps1, deps2, comparator);
       Assert.assertEquals(9, merged.getCommits().size());
    }
 
@@ -46,7 +46,7 @@ public class TestMerging {
       for (String commit : comparator.getCommits().subList(8, 10)) {
          deps2.getCommits().put(commit, null);
       }
-      StaticTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2, comparator);
+      StaticTestSelection merged = DependencyReaderUtil.mergeStaticSelection(deps1, deps2, comparator);
       Assert.assertEquals(9, merged.getCommits().size());
    }
 
@@ -72,7 +72,7 @@ public class TestMerging {
       deps2.getInitialcommit().setCommit("G");
       deps2.getCommits().put("E", null);
       deps2.getCommits().put("F", null);
-      StaticTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2, comparator);
+      StaticTestSelection merged = DependencyReaderUtil.mergeStaticSelection(deps1, deps2, comparator);
       System.out.println(merged.getCommits().keySet());
       Assert.assertEquals(5, merged.getCommits().size());
    }

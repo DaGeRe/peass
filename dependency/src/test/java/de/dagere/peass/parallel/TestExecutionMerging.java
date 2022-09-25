@@ -14,7 +14,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
+import de.dagere.peass.dependency.parallel.PartialSelectionResultsMerger;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
@@ -27,7 +27,7 @@ public class TestExecutionMerging {
       ExecutionData ex2 = createExecutionData(1);
       ExecutionData ex3 = createExecutionData(2);
 
-      ExecutionData merged = PartialDependenciesMerger.mergeExecutiondata(Arrays.asList(new ExecutionData[] { ex1, ex2, ex3 }));
+      ExecutionData merged = PartialSelectionResultsMerger.mergeExecutiondata(Arrays.asList(new ExecutionData[] { ex1, ex2, ex3 }));
       
       checkMergedResult(merged);
    }
@@ -44,7 +44,7 @@ public class TestExecutionMerging {
       }
       
       ResultsFolders out = new ResultsFolders(new File("target"), "mytest");
-      ExecutionData merged = PartialDependenciesMerger.mergeExecutions(out, folders);
+      ExecutionData merged = PartialSelectionResultsMerger.mergeExecutions(out, folders);
       
       checkMergedResult(merged);
    }

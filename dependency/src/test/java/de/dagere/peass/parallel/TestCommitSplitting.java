@@ -24,7 +24,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.parallel.OneReader;
-import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
+import de.dagere.peass.dependency.parallel.PartialSelectionResultsMerger;
 import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
@@ -88,7 +88,7 @@ public class TestCommitSplitting {
                readUntilMax(comparator.getCommits(), dependencies, chunk, chunk * size, max);
             }
 
-            StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies, comparator);
+            StaticTestSelection merged = PartialSelectionResultsMerger.mergeDependencies(dependencies, comparator);
 
             System.out.println(merged.getCommits().keySet() + " " + merged.getCommits().size());
             Assert.assertEquals("Error in " + DummyReader.nonRunning, 7, merged.getCommits().size());
@@ -98,7 +98,7 @@ public class TestCommitSplitting {
    
    @Test
    public void testEmptyMerging() {
-      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(new LinkedList<>(), new CommitComparatorInstance(new LinkedList<>()));
+      StaticTestSelection merged = PartialSelectionResultsMerger.mergeDependencies(new LinkedList<>(), new CommitComparatorInstance(new LinkedList<>()));
       Assert.assertEquals(0, merged.getCommits().size());
    }
 
@@ -115,7 +115,7 @@ public class TestCommitSplitting {
          readUntilMax(comparator.getCommits(), dependencies, chunk, chunk * size, max);
       }
 
-      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies, comparator);
+      StaticTestSelection merged = PartialSelectionResultsMerger.mergeDependencies(dependencies, comparator);
 
       System.out.println(merged.getCommits().keySet());
       Assert.assertEquals(7, merged.getCommits().size());
@@ -130,7 +130,7 @@ public class TestCommitSplitting {
       readUntilMax(comparator.getCommits(), dependencies, 1, 6, 8);
       readUntilMax(comparator.getCommits(), dependencies, 2, 7, 10);
 
-      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies, comparator);
+      StaticTestSelection merged = PartialSelectionResultsMerger.mergeDependencies(dependencies, comparator);
 
       System.out.println(merged.getCommits().keySet());
       Assert.assertEquals(7, merged.getCommits().size());

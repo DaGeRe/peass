@@ -9,7 +9,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
-import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
+import de.dagere.peass.dependency.parallel.PartialSelectionResultsMerger;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.vcs.CommitUtil;
 import picocli.CommandLine;
@@ -39,7 +39,7 @@ public class OnlyMergeStaticTestSelection implements Callable<Void>{
       
       final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("staticTestSelection_*.json"));
       CommitComparatorInstance instance = new CommitComparatorInstance(commits);
-      PartialDependenciesMerger.mergeVersions(new File(config.getResultBaseFolder(), "merged.json"), files, instance);
+      PartialSelectionResultsMerger.mergePartFiles(new File(config.getResultBaseFolder(), "merged.json"), files, instance);
       return null;
    }
 }

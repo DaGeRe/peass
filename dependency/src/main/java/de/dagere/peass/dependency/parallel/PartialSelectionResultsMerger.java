@@ -21,15 +21,15 @@ import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 
-public class PartialDependenciesMerger {
+public class PartialSelectionResultsMerger {
 
    private static final Logger LOG = LogManager.getLogger(DependencyParallelReader.class);
 
-   private PartialDependenciesMerger() {
+   private PartialSelectionResultsMerger() {
 
    }
 
-   public static StaticTestSelection mergeVersions(final File out, final File[] partFiles, CommitComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
+   public static StaticTestSelection mergePartFiles(final File out, final File[] partFiles, CommitComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
       final List<StaticTestSelection> staticTestSelection = readStaticTestSelection(partFiles);
       StaticTestSelection merged = mergeDependencies(staticTestSelection, comparator);
 
@@ -37,12 +37,12 @@ public class PartialDependenciesMerger {
       return merged;
    }
 
-   public static void mergeVersions(final File out, final ResultsFolders[] partFolders, CommitComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
+   public static void mergeSelectionResults(final File out, final ResultsFolders[] partFolders, CommitComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
       File[] partFiles = new File[partFolders.length];
       for (int i = 0; i < partFolders.length; i++) {
          partFiles[i] = partFolders[i].getStaticTestSelectionFile();
       }
-      mergeVersions(out, partFiles, comparator);
+      mergePartFiles(out, partFiles, comparator);
    }
 
    static List<StaticTestSelection> readStaticTestSelection(final File[] partFiles) {
@@ -50,8 +50,8 @@ public class PartialDependenciesMerger {
       for (int i = 0; i < partFiles.length; i++) {
          try {
             LOG.debug("Reading: {}", partFiles[i]);
-            final StaticTestSelection currentDependencies = Constants.OBJECTMAPPER.readValue(partFiles[i], StaticTestSelection.class);
-            staticTestSelection.add(currentDependencies);
+            final StaticTestSelection currentStaticSelection = Constants.OBJECTMAPPER.readValue(partFiles[i], StaticTestSelection.class);
+            staticTestSelection.add(currentStaticSelection);
             LOG.debug("Size: {}", staticTestSelection.get(staticTestSelection.size() - 1).getCommits().size());
          } catch (final IOException e) {
             e.printStackTrace();
@@ -78,7 +78,7 @@ public class PartialDependenciesMerger {
                final StaticTestSelection newMergedSelection = staticTestSelections.get(i);
                LOG.debug("Merge: {} Vals: {}", i, newMergedSelection.getCommitNames());
                if (newMergedSelection != null) {
-                  merged = DependencyReaderUtil.mergeDependencies(merged, newMergedSelection, comparator);
+                  merged = DependencyReaderUtil.mergeStaticSelection(merged, newMergedSelection, comparator);
                }
             }
          }

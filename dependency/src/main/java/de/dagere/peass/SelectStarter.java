@@ -18,7 +18,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
-import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
+import de.dagere.peass.dependency.parallel.PartialSelectionResultsMerger;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
@@ -86,13 +86,13 @@ public class SelectStarter implements Callable<Void>{
       ResultsFolders mergedFolders = new ResultsFolders(config.getResultBaseFolder(), project);
       
       final File out = mergedFolders.getStaticTestSelectionFile();
-      PartialDependenciesMerger.mergeVersions(out, outFiles, comparator);
+      PartialSelectionResultsMerger.mergeSelectionResults(out, outFiles, comparator);
 
       final PeassFolders folders = new PeassFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
       FileUtils.moveDirectory(folders.getTempProjectFolder(), dependencyTempFiles);
 
-      ExecutionData executionData = PartialDependenciesMerger.mergeExecutions(mergedFolders, outFiles);
+      ExecutionData executionData = PartialSelectionResultsMerger.mergeExecutions(mergedFolders, outFiles);
       
       mergeViews(outFiles, mergedFolders);
       

@@ -164,7 +164,7 @@ public class DependencyReaderUtil {
       }
    }
 
-   public static StaticTestSelection mergeDependencies(final StaticTestSelection staticTestSelection1, final StaticTestSelection staticTestSelection2,
+   public static StaticTestSelection mergeStaticSelection(final StaticTestSelection staticTestSelection1, final StaticTestSelection staticTestSelection2,
          CommitComparatorInstance comparator) {
       final StaticTestSelection merged;
       final StaticTestSelection newer;
