@@ -100,17 +100,20 @@ public class InitialCommitReader {
    }
 
    private void addCommitTestDependencies(final CommitStaticSelection commitStaticSelection) {
-      for (final Entry<ChangedEntity, TestSet> dependency : commitStaticSelection.getChangedClazzes().entrySet()) {
-         final ChangedEntity callee = dependency.getKey();
-         for (final Entry<TestClazzCall, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
-            for (final String testMethod : testcase.getValue()) {
-               final Map<ChangedEntity, Set<String>> calledClasses = new HashMap<>();
-               final Set<String> methods = new HashSet<>();
-               methods.add(callee.getMethod());
-               calledClasses.put(new ChangedEntity(callee.getClazz(), callee.getModule()), methods);
-               final TestCase testClazz = testcase.getKey();
-               TestMethodCall test = new TestMethodCall(testClazz.getClazz(), testMethod, testClazz.getModule());
-               dependencyManager.addDependencies(test, calledClasses);
+      // changedClazzes will be null if the commit has no changes
+      if (commitStaticSelection.getChangedClazzes() != null) {
+         for (final Entry<ChangedEntity, TestSet> dependency : commitStaticSelection.getChangedClazzes().entrySet()) {
+            final ChangedEntity callee = dependency.getKey();
+            for (final Entry<TestClazzCall, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
+               for (final String testMethod : testcase.getValue()) {
+                  final Map<ChangedEntity, Set<String>> calledClasses = new HashMap<>();
+                  final Set<String> methods = new HashSet<>();
+                  methods.add(callee.getMethod());
+                  calledClasses.put(new ChangedEntity(callee.getClazz(), callee.getModule()), methods);
+                  final TestCase testClazz = testcase.getKey();
+                  TestMethodCall test = new TestMethodCall(testClazz.getClazz(), testMethod, testClazz.getModule());
+                  dependencyManager.addDependencies(test, calledClasses);
+               }
             }
          }
       }
