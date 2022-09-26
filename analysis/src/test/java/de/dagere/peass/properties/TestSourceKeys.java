@@ -1,5 +1,7 @@
 package de.dagere.peass.properties;
 
+import java.io.File;
+
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +14,7 @@ public class TestSourceKeys {
    public void testParameterConversion() {
       String testPattern = "public de.peass.TestResult de.peass.mypackage.Clazz.doSomething(int,String,java.io.File)";
       String result = KiekerPatternConverter.getFileNameStart(testPattern);
-      Assert.assertEquals(result, "de.peass.mypackage.Clazz/doSomething_int_String_File");
+      Assert.assertEquals(result, "de.peass.mypackage.Clazz" + File.separator + "doSomething_int_String_File");
    }
    
    @Test
