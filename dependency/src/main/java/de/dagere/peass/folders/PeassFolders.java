@@ -52,8 +52,8 @@ public class PeassFolders {
       return peassFolder;
    }
 
-   public PeassFolders(final File folder, final String name) {
-      this.projectName = name;
+   public PeassFolders(final File folder, final String projectName) {
+      this.projectName = projectName;
       if (!folder.getName().endsWith(PEASS_POSTFIX)) {
          projectFolder = folder;
          peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + PEASS_POSTFIX);
