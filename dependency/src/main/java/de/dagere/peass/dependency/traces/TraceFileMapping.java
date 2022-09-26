@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class TraceFileMapping {
    private final Map<String, List<File>> mapping = new HashMap<>();
 
-   public void addTraceFile(final TestCase test, final File traceFile) {
+   public void addTraceFile(final TestMethodCall test, final File traceFile) {
       List<File> testTraceFiles = mapping.get(test.toString());
       if (testTraceFiles == null) {
          testTraceFiles = new LinkedList<>();

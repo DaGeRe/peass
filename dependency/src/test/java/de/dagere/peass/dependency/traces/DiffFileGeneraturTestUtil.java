@@ -12,10 +12,10 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class DiffFileGeneraturTestUtil {
-   public static TraceFileMapping generateFiles(File rawFileFolder, TestCase test, String ending, boolean writeExpanded, boolean change) throws IOException {
+   public static TraceFileMapping generateFiles(File rawFileFolder, TestMethodCall test, String ending, boolean writeExpanded, boolean change) throws IOException {
       TraceFileMapping mapping = writeBasicFiles(rawFileFolder, test, ending, change);
 
       String[] variants;
@@ -45,7 +45,7 @@ public class DiffFileGeneraturTestUtil {
       }
    }
 
-   private static TraceFileMapping writeBasicFiles(File rawFileFolder, TestCase test, String ending, boolean change) throws IOException {
+   private static TraceFileMapping writeBasicFiles(File rawFileFolder, TestMethodCall test, String ending, boolean change) throws IOException {
       TraceFileMapping mapping = new TraceFileMapping();
 
       File version1trace = new File(rawFileFolder, "version1" + ending);
