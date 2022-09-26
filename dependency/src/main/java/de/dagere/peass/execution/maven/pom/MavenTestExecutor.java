@@ -127,6 +127,8 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    public void executeTest(final TestMethodCall test, final File logFolder, final long timeout) {
       final File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
       runMethod(logFolder, test, moduleFolder, timeout);
+      
+      cleanAboveSize(logFolder, "txt");
    }
 
    /**

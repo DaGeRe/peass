@@ -130,26 +130,8 @@ public class KiekerResultManager {
       for (final TestMethodCall testcase : testsToUpdate.getTestMethods()) {
          executor.executeTest(testcase, commitLogFolder, testTransformer.getConfig().getTimeoutInSeconds());
       }
-      cleanAboveSize(commitLogFolder, 100, "txt");
-
       LOG.debug("KoPeMe-Kieker-Run finished");
 
-   }
-
-   /**
-    * Deletes files which are bigger than sizeInMb Mb, since they pollute the disc space and will not be analyzable
-    * 
-    * @param folderToClean
-    */
-   protected void cleanAboveSize(final File folderToClean, final int sizeInMb, final String ending) {
-      for (final File file : FileUtils.listFiles(folderToClean, new WildcardFileFilter("*." + ending), TrueFileFilter.INSTANCE)) {
-         final long size = file.length() / (1024 * 1024);
-         LOG.debug("File: {} Size: {} MB", file, size);
-         if (size > sizeInMb) {
-            LOG.debug("Deleting file.");
-            file.delete();
-         }
-      }
    }
 
    protected void cleanFolderAboveSize(final File folderToClean, final long sizeInMb) {

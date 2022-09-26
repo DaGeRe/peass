@@ -29,6 +29,7 @@ public class MeasurementConfig implements Serializable {
 
    private boolean callSyncBetweenVMs = true;
    private int waitTimeBetweenVMs = 1000;
+   private int logSizeInMb = 100;
 
    private final KiekerConfig kiekerConfig;
 
@@ -268,6 +269,14 @@ public class MeasurementConfig implements Serializable {
 
    public void setWaitTimeBetweenVMs(final int waitTimeBetweenVMs) {
       this.waitTimeBetweenVMs = waitTimeBetweenVMs;
+   }
+   
+   public int getLogSizeInMb() {
+      return logSizeInMb;
+   }
+   
+   public void setLogSizeInMb(int logSizeInMb) {
+      this.logSizeInMb = logSizeInMb;
    }
 
    /**

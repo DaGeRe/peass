@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,6 +65,22 @@ public abstract class TestExecutor {
 
    public abstract void executeTest(final TestMethodCall test, final File logFolder, long timeout);
 
+   /**
+    * Deletes files which are bigger than sizeInMb Mb, since they pollute the disc space and will not be analyzable
+    * 
+    * @param folderToClean
+    */
+   public void cleanAboveSize(final File folderToClean, final String ending) {
+      for (final File file : FileUtils.listFiles(folderToClean, new WildcardFileFilter("*." + ending), TrueFileFilter.INSTANCE)) {
+         final long size = file.length() / (1024 * 1024);
+         LOG.debug("File: {} Size: {} MB", file, size);
+         if (size > testTransformer.getConfig().getLogSizeInMb()) {
+            LOG.debug("Deleting file.");
+            file.delete();
+         }
+      }
+   }
+   
    protected File getCleanLogFile(final File logFolder, final TestMethodCall test) {
       File clazzLogFolder = getClazzLogFolder(logFolder, test);
       final File logFile = new File(clazzLogFolder, "clean" + File.separator + test.getMethodWithParams() + ".txt");

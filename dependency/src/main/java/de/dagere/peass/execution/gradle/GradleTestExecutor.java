@@ -142,6 +142,8 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       final File module = new File(folders.getProjectFolder(), test.getModule());
       cleanLastTest(module);
       runMethod(logFolder, test, module, timeout);
+      
+      cleanAboveSize(logFolder, "txt");
    }
 
    /**
