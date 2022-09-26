@@ -5,7 +5,7 @@
   <artifactId>peass-parent</artifactId>
   <packaging>pom</packaging>
   <version>0.3.1-SNAPSHOT</version>
-  <name>PeASS - Parent</name>
+  <name>Peass - Parent</name>
   <description>Tool for Analysing the Performance Changes in a Project</description>
   <url>https://github.com/DaGeRe/peass/</url>
 
