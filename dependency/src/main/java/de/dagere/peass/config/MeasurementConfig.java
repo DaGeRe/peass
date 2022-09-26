@@ -29,7 +29,7 @@ public class MeasurementConfig implements Serializable {
 
    private boolean callSyncBetweenVMs = true;
    private int waitTimeBetweenVMs = 1000;
-   private int logSizeInMb = 100;
+   private int maxLogSizeInMb = 100;
 
    private final KiekerConfig kiekerConfig;
 
@@ -79,6 +79,7 @@ public class MeasurementConfig implements Serializable {
       setIterations(mixin.getIterations());
       setWarmup(mixin.getWarmup());
       setRepetitions(mixin.getRepetitions());
+      setMaxLogSizeInMb(mixin.getMaxLogSizeInMb());
       setUseGC(mixin.isUseGC());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
       this.directlyMeasureKieker = mixin.isDirectlyMeasureKieker();
@@ -128,6 +129,7 @@ public class MeasurementConfig implements Serializable {
       this.saveAll = other.saveAll;
       this.waitTimeBetweenVMs = other.waitTimeBetweenVMs;
       this.directlyMeasureKieker = other.directlyMeasureKieker;
+      this.maxLogSizeInMb = other.maxLogSizeInMb;
    }
 
    public FixedCommitConfig getFixedCommitConfig() {
@@ -271,12 +273,12 @@ public class MeasurementConfig implements Serializable {
       this.waitTimeBetweenVMs = waitTimeBetweenVMs;
    }
    
-   public int getLogSizeInMb() {
-      return logSizeInMb;
+   public int getMaxLogSizeInMb() {
+      return maxLogSizeInMb;
    }
    
-   public void setLogSizeInMb(int logSizeInMb) {
-      this.logSizeInMb = logSizeInMb;
+   public void setMaxLogSizeInMb(int logSizeInMb) {
+      this.maxLogSizeInMb = logSizeInMb;
    }
 
    /**

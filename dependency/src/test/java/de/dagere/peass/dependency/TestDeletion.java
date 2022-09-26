@@ -49,7 +49,7 @@ public class TestDeletion {
    private TestExecutor createExecutor(int logSizeInMb) {
       JUnitTestTransformer transformer = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfig config = new MeasurementConfig(2);
-      config.setLogSizeInMb(logSizeInMb);
+      config.setMaxLogSizeInMb(logSizeInMb);
       Mockito.when(transformer.getConfig()).thenReturn(config);
       
       TestExecutor executor = new MavenTestExecutor(new PeassFolders(TestConstants.CURRENT_FOLDER), transformer, new EnvironmentVariables());

@@ -74,7 +74,7 @@ public abstract class TestExecutor {
       for (final File file : FileUtils.listFiles(folderToClean, new WildcardFileFilter("*." + ending), TrueFileFilter.INSTANCE)) {
          final long size = file.length() / (1024 * 1024);
          LOG.debug("File: {} Size: {} MB", file, size);
-         if (size > testTransformer.getConfig().getLogSizeInMb()) {
+         if (size > testTransformer.getConfig().getMaxLogSizeInMb()) {
             LOG.debug("Deleting file.");
             file.delete();
          }
