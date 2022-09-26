@@ -35,8 +35,6 @@ public class TestDeletion {
       executor.cleanAboveSize(TestConstants.CURRENT_PEASS, "txt");
       Assert.assertFalse(file.exists());
    }
-
-   
    
    @Test
    public void testFileNoDeletion() throws IOException {

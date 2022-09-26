@@ -131,7 +131,6 @@ public class KiekerResultManager {
          executor.executeTest(testcase, commitLogFolder, testTransformer.getConfig().getTimeoutInSeconds());
       }
       LOG.debug("KoPeMe-Kieker-Run finished");
-
    }
 
    protected void cleanFolderAboveSize(final File folderToClean, final long sizeInMb) {

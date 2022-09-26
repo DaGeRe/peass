@@ -8,6 +8,7 @@ public class MeasurementConfigurationMixin {
    public static final int DEFAULT_VMS = 30;
    public static final int DEFAULT_ITERATIONS = 5;
    public static final int DEFAULT_WARMUP = 5;
+   public static final int DEFAULT_MAX_LOGSIZE_IN_MB = 100;
    public static final int DEFAULT_REPETITIONS = 1000000;
    public static final long DEFAULT_TIMEOUT = 5L;
 
@@ -19,13 +20,16 @@ public class MeasurementConfigurationMixin {
 
    @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
    int warmup = DEFAULT_WARMUP;
-
+   
    @Option(names = { "-repetitions", "--repetitions" }, description = "Number of repetitions (executions of the workload inside of one iteration)")
    int repetitions = DEFAULT_REPETITIONS;
 
    @Option(names = { "-processTimeout",
          "--processTimeout" }, description = "Timeout that the overall measurement process has - if one VM measurement takes so long that this timeout will be hit, the overall process is stopped (only recommended for calibration runs)")
    protected long processTimeout = DEFAULT_TIMEOUT;
+   
+   @Option(names = { "-maxLogSizeInMb", "--maxLogSizeInMb" }, description = "Maximum log size in MB")
+   int maxLogSizeInMb = DEFAULT_MAX_LOGSIZE_IN_MB;
 
    @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
    int duration = 0;
@@ -106,6 +110,14 @@ public class MeasurementConfigurationMixin {
 
    public void setRepetitions(final int repetitions) {
       this.repetitions = repetitions;
+   }
+   
+   public void setMaxLogSizeInMb(int maxLogSizeInMb) {
+      this.maxLogSizeInMb = maxLogSizeInMb;
+   }
+   
+   public int getMaxLogSizeInMb() {
+      return maxLogSizeInMb;
    }
 
    public void setUseKieker(final boolean useKieker) {
