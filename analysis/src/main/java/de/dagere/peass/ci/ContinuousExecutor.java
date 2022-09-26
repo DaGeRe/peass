@@ -85,9 +85,13 @@ public class ContinuousExecutor {
 
       commitOld = getLatestRunnableCommit(measurementConfig, env, userDefinedCommitOld);
       measurementConfig.getFixedCommitConfig().setCommitOld(commitOld);
-      
-      iterator = new CommitIteratorGit(projectFolderLocal, Arrays.asList(new String[] {commitOld, commit}), commitOld);
-      
+
+      if (!iteratorBuiler.isLatestCommitWasAnalyzed()) {
+         iterator = new CommitIteratorGit(projectFolderLocal, Arrays.asList(new String[] { commitOld, commit }), commitOld);
+      } else {
+         iterator = null;
+      }
+
       LOG.debug("Commit: {} Predecessor Commit: {}", commit, commitOld);
    }
 
@@ -107,11 +111,11 @@ public class ContinuousExecutor {
          return userDefinedCommitOld;
       }
    }
-   
+
    public CommitIteratorGit getIterator() {
       return iterator;
    }
-   
+
    private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
       if (projectFolderLocal.exists()) {
          FileUtils.deleteDirectory(projectFolderLocal);

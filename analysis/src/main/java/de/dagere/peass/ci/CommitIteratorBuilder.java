@@ -1,15 +1,11 @@
 package de.dagere.peass.ci;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.vcs.CommitIteratorGit;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 
@@ -25,6 +21,7 @@ public class CommitIteratorBuilder {
    private static final Logger LOG = LogManager.getLogger(CommitIteratorBuilder.class);
 
    private final String commit, commitOld;
+   private boolean latestCommitWasAnalyzed = false;
 
    public CommitIteratorBuilder(final FixedCommitConfig commitConfig, final StaticTestSelection staticTestSelection, final PeassFolders folders) {
       commit = GitUtils.getName(commitConfig.getCommit() != null ? commitConfig.getCommit() : "HEAD", folders.getProjectFolder());
@@ -36,6 +33,7 @@ public class CommitIteratorBuilder {
       if (commit.equals(newestAnalyzedCommitName)) {
          LOG.info("Commit {} is equal to newest commit, not executing RTS", commit);
          commitOld = staticTestSelection.getCommits().get(newestAnalyzedCommitName).getPredecessor();
+         latestCommitWasAnalyzed = true;
       } else if (oldCommit.equals(commit)) {
          LOG.error("Commit {} is equal to predecessing commit {}, some error occured - not executing RTS", commit, oldCommit);
          commitOld = staticTestSelection.getNewestRunningCommit();
@@ -74,5 +72,9 @@ public class CommitIteratorBuilder {
 
    public String getCommitOld() {
       return commitOld;
+   }
+   
+   public boolean isLatestCommitWasAnalyzed() {
+      return latestCommitWasAnalyzed;
    }
 }
