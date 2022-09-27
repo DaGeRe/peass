@@ -153,8 +153,10 @@ public class ContinuousExecutor {
       final RTSResult tests = dependencyReader.getTests(iterator, url, commit, measurementConfig);
       tests.setCommitOld(commitOld);
 
-      SourceReader sourceReader = new SourceReader(measurementConfig.getExecutionConfig(), commit, commitOld, resultsFolders, folders);
-      sourceReader.readMethodSources(tests.getTests());
+      if (iterator != null) {
+         SourceReader sourceReader = new SourceReader(measurementConfig.getExecutionConfig(), commit, commitOld, resultsFolders, folders);
+         sourceReader.readMethodSources(tests.getTests());
+      }
 
       return tests;
    }
