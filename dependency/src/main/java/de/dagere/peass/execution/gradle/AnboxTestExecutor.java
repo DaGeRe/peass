@@ -42,14 +42,12 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
-      
    }
 
    /**
     * Executes the Gradle process; since gradle is run inside the module folder, different parameters than for the maven execution are required
     */
-   private Process buildGradleProcess(final File moduleFolder, final File logFile, TestMethodCall test)
-         throws IOException, XmlPullParserException, InterruptedException {
+   private Process buildGradleProcess(final File moduleFolder, final File logFile, TestMethodCall test) {
 
       String[] anboxOriginals = new String[] { "adb", "shell", "am", "instrument", "-w", "-e", "class" };
 
@@ -70,12 +68,8 @@ public class AnboxTestExecutor extends GradleTestExecutor {
     */
    @Override
    protected void runTest(final File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout) {
-      try {
-         final Process process = buildGradleProcess(moduleFolder, logFile, test);
-         execute(testname, timeout, process);
-      } catch (final InterruptedException | IOException | XmlPullParserException e) {
-         e.printStackTrace();
-      }
+      final Process process = buildGradleProcess(moduleFolder, logFile, test);
+      execute(testname, timeout, process);
    }
 
 }
