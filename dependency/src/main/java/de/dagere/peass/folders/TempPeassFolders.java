@@ -6,8 +6,8 @@ public class TempPeassFolders extends PeassFolders {
 
    private final VMExecutionLogFolders parentLogFolders;
    
-   public TempPeassFolders(final File folder, final String name, final VMExecutionLogFolders parentLogFolders) {
-      super(folder, name);
+   public TempPeassFolders(final File folder, final String projectName, final VMExecutionLogFolders parentLogFolders) {
+      super(folder, projectName);
       this.parentLogFolders = parentLogFolders;
    }
    
