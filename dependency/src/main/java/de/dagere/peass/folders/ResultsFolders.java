@@ -21,6 +21,7 @@ public class ResultsFolders {
    public static final String TRACE_SELECTION_PREFIX = "traceTestSelection_";
 
    private final File resultFolder;
+
    private final String projectName;
 
    public ResultsFolders(final File resultFolder, final String projectName) {
@@ -214,5 +215,9 @@ public class ResultsFolders {
 
    public String getProjectName() {
       return projectName;
+   }
+
+   public File getResultFolder() {
+      return resultFolder;
    }
 }
