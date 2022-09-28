@@ -45,6 +45,25 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    }
 
    /**
+    * Executes the adb pull command. 
+    * Copies measurementsTemp folder from emulator to the temporary project folder.
+    */
+    public static void adbPull(File peassFolder) {
+      String adb = EnvironmentVariables.fetchAdbCall();
+      String androidTempResultFolder = "/storage/emulated/0/Documents/measurementsTemp";
+
+      ProcessBuilder builder = new ProcessBuilder(adb, "pull", androidTempResultFolder, ".");
+      builder.directory(peassFolder);
+      LOG.debug("ADB: Pulling {} to {}", androidTempResultFolder, peassFolder);
+      try {
+         Process process = builder.start();
+         StreamGobbler.showFullProcess(process);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
+
+   /**
     * Executes the Gradle process; since gradle is run inside the module folder, different parameters than for the maven execution are required
     */
    private Process buildGradleProcess(final File moduleFolder, final File logFile, TestMethodCall test) {
@@ -52,7 +71,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       String[] anboxOriginals = new String[] { "adb", "shell", "am", "instrument", "-w", "-e", "class" };
 
       final String[] vars = CommandConcatenator.concatenateCommandArrays(anboxOriginals,
-            new String[] { test.getExecutable(), test.getPackage() + "/androidx.test.runner.AndroidJUnitRunner" });
+            new String[] { test.getExecutable(), test.getPackage() + ".test" + "/androidx.test.runner.AndroidJUnitRunner" });
       ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
       processBuilderHelper.parseParams(test.getParams());
 

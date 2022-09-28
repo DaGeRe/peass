@@ -1,5 +1,6 @@
 package de.dagere.peass.execution.utils;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
@@ -62,6 +63,12 @@ public class EnvironmentVariables implements Serializable {
          gradleCall = "gradlew.bat";
       }
       return gradleCall;
+   }
+
+   public static String fetchAdbCall() {
+      String adbCall;
+      adbCall = new File(System.getenv("ANDROID_SDK_ROOT"), "platform-tools/adb").getAbsolutePath();
+      return adbCall;
    }
 
    public static boolean isWindows() {
