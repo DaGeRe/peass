@@ -54,7 +54,6 @@ import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.execution.gradle.AnboxTestExecutor;
 
 /**
  * Runs tests with kieker and reads the dependencies of tests for each version
@@ -113,10 +112,6 @@ public class DependencyManager extends KiekerResultManager {
          return false;
       }
       runTraceTests(tests, version);
-      
-      if (this.getTestTransformer().getConfig().getExecutionConfig().isUseAnbox()) {
-         AnboxTestExecutor.adbPull(folders.getPeassFolder());
-      }
 
       if (folders.getTempMeasurementFolder().exists()) {
          return readInitialResultFiles(mapping);

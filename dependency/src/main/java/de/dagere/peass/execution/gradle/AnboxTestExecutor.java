@@ -48,13 +48,13 @@ public class AnboxTestExecutor extends GradleTestExecutor {
     * Executes the adb pull command. 
     * Copies measurementsTemp folder from emulator to the temporary project folder.
     */
-    public static void adbPull(File peassFolder) {
+    private void adbPull() {
       String adb = EnvironmentVariables.fetchAdbCall();
-      String androidTempResultFolder = "/storage/emulated/0/Documents/measurementsTemp";
+      String androidTempResultFolder = "/storage/emulated/0/Documents/measurementsTemp"; // temporary solution
 
       ProcessBuilder builder = new ProcessBuilder(adb, "pull", androidTempResultFolder, ".");
-      builder.directory(peassFolder);
-      LOG.debug("ADB: Pulling {} to {}", androidTempResultFolder, peassFolder);
+      builder.directory(folders.getPeassFolder());
+      LOG.debug("ADB: Pulling {} to {}", androidTempResultFolder, folders.getPeassFolder());
       try {
          Process process = builder.start();
          StreamGobbler.showFullProcess(process);
@@ -89,6 +89,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    protected void runTest(final File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout) {
       final Process process = buildGradleProcess(moduleFolder, logFile, test);
       execute(testname, timeout, process);
+      adbPull();
    }
 
 }
