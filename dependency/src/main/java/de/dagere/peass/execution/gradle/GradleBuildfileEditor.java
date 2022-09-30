@@ -102,19 +102,32 @@ public class GradleBuildfileEditor {
    private void addDependencies(final GradleBuildfileVisitor visitor) {
       JUnitVersions versions = testTransformer.getJUnitVersions();
       boolean isExcludeLog4j = testTransformer.getConfig().getExecutionConfig().isExcludeLog4jSlf4jImpl();
+      boolean isAnbox = testTransformer.getConfig().getExecutionConfig().isUseAnbox();
+      final String peass = " // Added dynamically by Peass.";
       if (visitor.getDependencyLine() != -1) {
          for (RequiredDependency dependency : RequiredDependency.getAll(versions)) {
             final String dependencyGradle;
             if (isExcludeLog4j && dependency.getMavenDependency().getArtifactId().contains("kopeme")) {
                String excludeString = "{ exclude group: '" + MavenPomUtil.LOG4J_GROUPID + "', module: '" + MavenPomUtil.LOG4J_SLF4J_IMPL_ARTIFACTID + "' }";
                dependencyGradle = "implementation ('" + dependency.getGradleDependency() + "') " + excludeString;
+            } else if (isAnbox && dependency.getGradleDependency().contains("kopeme")) {
+               String[] excludes = {
+                  "    implementation ('" + dependency.getGradleDependency() + "') {" + peass,
+                  "        exclude group: '"+ "net.kieker-monitoring" + "', module: '" + "kieker'" + peass,
+                  "        exclude group: '"+ "org.hamcrest" + "', module: '" + "hamcrest'" + peass, 
+                  "        exclude group: '"+ "org.aspectj" + "', module: '" + "aspectjrt'" + peass, 
+                  "        exclude group: '"+ "org.apache.logging.log4j" + "', module: '" + "log4j-core'" + peass, 
+                  "    }" + peass,
+               };
+               dependencyGradle = String.join("\n", excludes);
             } else {
                dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
             }
+
             visitor.addLine(visitor.getDependencyLine() - 1, dependencyGradle);
          }
          if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()) {
-            visitor.addLine(visitor.getDependencyLine() - 1, "   androidTestImplementation 'androidx.test:rules:1.4.0'");
+            visitor.addLine(visitor.getDependencyLine() - 1, "    androidTestImplementation 'androidx.test:rules:1.4.0'");
          }
       } else {
          visitor.getLines().add("dependencies { ");
