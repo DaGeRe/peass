@@ -33,6 +33,7 @@ import de.dagere.peass.config.ExecutionConfig;
 public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
    private static final Logger LOG = LogManager.getLogger(GradleBuildfileVisitor.class);
+   private static final String ADDEDBYPEASS = " // Added dynamically by Peass.";
 
    private int offset = 0;
    private int dependencyLine = -1;
@@ -300,7 +301,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       System.out.println("Adding: " + lineIndex + " " + textForAdding);
       System.out.println("integrationtest: " + integrationTestSystemPropertiesLine);
 
-      gradleFileContents.add(lineIndex, textForAdding);
+      gradleFileContents.add(lineIndex, textForAdding + ADDEDBYPEASS);
       if (lineIndex < dependencyLine && dependencyLine != -1) {
          dependencyLine++;
       }
