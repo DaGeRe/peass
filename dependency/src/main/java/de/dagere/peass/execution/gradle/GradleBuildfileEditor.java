@@ -123,7 +123,6 @@ public class GradleBuildfileEditor {
             } else {
                dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
             }
-
             visitor.addLine(visitor.getDependencyLine() - 1, dependencyGradle);
          }
          if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()) {
