@@ -107,6 +107,9 @@ public class GradleBuildfileEditor {
       if (visitor.getDependencyLine() != -1) {
          for (RequiredDependency dependency : RequiredDependency.getAll(versions)) {
             final String dependencyGradle;
+            // TODO Find a solution to include the case for isExcludeLog4j and isAnbox.
+            // In the future there could be a case where isExcludeLog4j and isAnbox is used.
+            // Right now it's only isExcludeLog4j or isAnbox.
             if (isExcludeLog4j && dependency.getMavenDependency().getArtifactId().contains("kopeme")) {
                String excludeString = "{ exclude group: '" + MavenPomUtil.LOG4J_GROUPID + "', module: '" + MavenPomUtil.LOG4J_SLF4J_IMPL_ARTIFACTID + "' }";
                dependencyGradle = "implementation ('" + dependency.getGradleDependency() + "') " + excludeString;
