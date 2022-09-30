@@ -121,7 +121,10 @@ public class GradleBuildfileEditor {
                   "        exclude group: '"+ "org.apache.logging.log4j" + "', module: '" + "log4j-core'", 
                   "    }",
                };
-               dependencyGradle = String.join("\n", excludes);
+               for (String line : excludes) {
+                  visitor.addLine(visitor.getDependencyLine() - 1, line);
+               }
+               continue;
             } else {
                dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
             }
