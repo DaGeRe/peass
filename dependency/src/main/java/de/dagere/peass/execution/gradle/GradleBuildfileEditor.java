@@ -103,7 +103,6 @@ public class GradleBuildfileEditor {
       JUnitVersions versions = testTransformer.getJUnitVersions();
       boolean isExcludeLog4j = testTransformer.getConfig().getExecutionConfig().isExcludeLog4jSlf4jImpl();
       boolean isAnbox = testTransformer.getConfig().getExecutionConfig().isUseAnbox();
-      final String peass = " // Added dynamically by Peass.";
       if (visitor.getDependencyLine() != -1) {
          for (RequiredDependency dependency : RequiredDependency.getAll(versions)) {
             final String dependencyGradle;
@@ -115,12 +114,12 @@ public class GradleBuildfileEditor {
                dependencyGradle = "implementation ('" + dependency.getGradleDependency() + "') " + excludeString;
             } else if (isAnbox && dependency.getGradleDependency().contains("kopeme")) {
                String[] excludes = {
-                  "    implementation ('" + dependency.getGradleDependency() + "') {" + peass,
-                  "        exclude group: '"+ "net.kieker-monitoring" + "', module: '" + "kieker'" + peass,
-                  "        exclude group: '"+ "org.hamcrest" + "', module: '" + "hamcrest'" + peass, 
-                  "        exclude group: '"+ "org.aspectj" + "', module: '" + "aspectjrt'" + peass, 
-                  "        exclude group: '"+ "org.apache.logging.log4j" + "', module: '" + "log4j-core'" + peass, 
-                  "    }" + peass,
+                  "    implementation ('" + dependency.getGradleDependency() + "') {",
+                  "        exclude group: '"+ "net.kieker-monitoring" + "', module: '" + "kieker'",
+                  "        exclude group: '"+ "org.hamcrest" + "', module: '" + "hamcrest'", 
+                  "        exclude group: '"+ "org.aspectj" + "', module: '" + "aspectjrt'", 
+                  "        exclude group: '"+ "org.apache.logging.log4j" + "', module: '" + "log4j-core'", 
+                  "    }",
                };
                dependencyGradle = String.join("\n", excludes);
             } else {
