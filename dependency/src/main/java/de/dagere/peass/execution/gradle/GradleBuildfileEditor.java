@@ -107,6 +107,7 @@ public class GradleBuildfileEditor {
          } else {
             visitor.addLine(visitor.getDefaultConfigLine() - 1, "        multiDexEnabled = true");
          }
+         addAndroidPackagingOptions(visitor);
       }
 
       GradleParseUtil.removeExclusions(visitor);
@@ -114,6 +115,29 @@ public class GradleBuildfileEditor {
       addDependencies(visitor);
 
       addKiekerLine(tempFolder, visitor, taskAnalyzer);
+   }
+   private void addAndroidPackagingOptions(final GradleBuildfileVisitor visitor) {
+      String[] excludeFiles = {
+         "'META-INF/DEPENDENCIES'",
+         "'META-INF/LICENSE.md'",
+         "'META-INF/NOTICE.md'",
+         "'META-INF/jing-copying.html'",
+         "'META-INF/LICENSE-notice.md'",
+      };
+      if (visitor.getAndroidPackagingOptions() != -1) {
+         addExcludeFiles(visitor, excludeFiles);
+      } else {
+         visitor.addLine(visitor.getAndroidLine() - 1, "    android.packagingOptions {");
+         addExcludeFiles(visitor, excludeFiles);
+         visitor.addLine(visitor.getAndroidLine() - 1, "    }");
+      }
+   }
+
+   private void addExcludeFiles(final GradleBuildfileVisitor visitor, String[] excludeFiles){
+      for (String file : excludeFiles) {
+         String packagingOption = "        exclude " + file;
+         visitor.addLine(visitor.getAndroidLine() - 1, packagingOption);
+      }
    }
 
    private void addDependencies(final GradleBuildfileVisitor visitor) {

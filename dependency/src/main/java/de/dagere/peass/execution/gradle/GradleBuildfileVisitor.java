@@ -52,6 +52,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private int minSdkVersion = -1;
    private int targetSdkVersion = -1;
    private int multiDexEnabled = -1;
+   private int androidPackagingOptions = -1;
    private int allConfigurationsLine = -1;
    private MethodCallExpression configurations = null;
 
@@ -115,6 +116,8 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             targetSdkVersion = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("multiDexEnabled")) {
             multiDexEnabled = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("android.packagingOptions")) {
+            androidPackagingOptions = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("task")) {
             parseNewTask(call);
          } else if (call.getMethodAsString().equals("register")) {
@@ -308,6 +311,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       return multiDexEnabled;
    }
    
+   public int getAndroidPackagingOptions() {
+      return androidPackagingOptions;
+   }
+
    public boolean isSubprojectJava() {
       return subprojectJava;
    }
@@ -383,6 +390,9 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       }
       if (lineIndex < multiDexEnabled && multiDexEnabled != -1) {
          multiDexEnabled++;
+      }
+      if (lineIndex < androidPackagingOptions && androidPackagingOptions != -1) {
+         androidPackagingOptions++;
       }
       if (lineIndex < allConfigurationsLine && allConfigurationsLine != -1) {
          allConfigurationsLine++;
