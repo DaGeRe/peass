@@ -92,6 +92,23 @@ public class GradleBuildfileEditor {
          LOG.info("Did not find spring boot");
       }
 
+      if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()){
+         if (visitor.getCompileSdkVersion() != -1) {
+            GradleParseUtil.updateCompileSdkVersion(visitor);
+         }
+         if (visitor.getMinSdkVersion() != -1) {
+            GradleParseUtil.updateMinSdkVersion(visitor);
+         }
+         if (visitor.getTargetSdkVersion() != -1) {
+            GradleParseUtil.updateTargetSdkVersion(visitor);
+         }
+         if (visitor.getMultiDexEnabled() != -1) {
+            GradleParseUtil.updateMultiDexEnabled(visitor);
+         } else {
+            visitor.addLine(visitor.getDefaultConfigLine() - 1, "        multiDexEnabled = true");
+         }
+      }
+
       GradleParseUtil.removeExclusions(visitor);
 
       addDependencies(visitor);

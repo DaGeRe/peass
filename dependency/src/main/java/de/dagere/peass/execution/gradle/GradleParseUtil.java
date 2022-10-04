@@ -101,6 +101,26 @@ public class GradleParseUtil {
       }
    }
 
+   public static void updateCompileSdkVersion(final GradleBuildfileVisitor visitor) {
+      final int lineIndex = visitor.getCompileSdkVersion() - 1;
+      visitor.getLines().set(lineIndex, "    compileSdkVersion " + "29");
+   }
+
+   public static void updateMinSdkVersion(final GradleBuildfileVisitor visitor) {
+      final int lineIndex = visitor.getMinSdkVersion() - 1;
+      visitor.getLines().set(lineIndex, "        minSdkVersion " + "26");
+   }
+
+   public static void updateTargetSdkVersion(final GradleBuildfileVisitor visitor) {
+      final int lineIndex = visitor.getTargetSdkVersion() - 1;
+      visitor.getLines().set(lineIndex, "        targetSdkVersion " + "29");
+   }
+
+   public static void updateMultiDexEnabled(final GradleBuildfileVisitor visitor) {
+      final int lineIndex = visitor.getMultiDexEnabled() - 1;
+      visitor.getLines().set(lineIndex, "        multiDexEnabled =" + "true");
+   }
+
    public static void addJUnitVersionSpringBoot(final GradleBuildfileVisitor visitor) {
       visitor.getLines().add("ext['junit-jupiter.version']='" + MavenPomUtil.JUPITER_VERSION + "'");
    }
