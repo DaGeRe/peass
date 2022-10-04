@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,9 +17,13 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 
+import static de.dagere.peass.execution.gradle.GradleBuildfileVisitor.*;
+
 public class GradleParseUtil {
 
    private static final Logger LOG = LogManager.getLogger(GradleParseUtil.class);
+   private static final String JUPITER_EXECUTION_CONFIG_CONCURRENT = "  systemProperty   'junit.jupiter.execution.parallel.mode.default' :'SAME_THREAD'";
+   private static final String JUPITER_EXECUTION_CONFIG_MODE_DEFAULT = "  systemProperty   'junit.jupiter.execution.parallel.mode.default' :'false'";
 
    public static void writeInitGradle(final File init) {
       if (!init.exists()) {
@@ -59,7 +64,7 @@ public class GradleParseUtil {
       }
       return visitor;
    }
-   
+
    public static void removeExclusions(final GradleBuildfileVisitor visitor) {
       for (Integer lineNumber : visitor.getExcludeLines()) {
          visitor.clearLine(lineNumber);
@@ -104,4 +109,27 @@ public class GradleParseUtil {
    public static void addJUnitVersionSpringBoot(final GradleBuildfileVisitor visitor) {
       visitor.getLines().add("ext['junit-jupiter.version']='" + MavenPomUtil.JUPITER_VERSION + "'");
    }
+
+   public static void updateExecutionMode(GradleBuildfileVisitor visitor) {
+
+      for (Map.Entry<String, Integer> entry : visitor.getTestExecutionProperties().entrySet()) {
+         updateExecutionProperties(visitor, entry);
+      }
+
+      for (Map.Entry<String, Integer> entry : visitor.getIntegrationtestExecutionProperties().entrySet()) {
+         updateExecutionProperties(visitor, entry);
+      }
+   }
+
+   private static void updateExecutionProperties(GradleBuildfileVisitor visitor, Map.Entry<String, Integer> entry) {
+      int value = entry.getValue();
+      if (entry.getKey().equals(JUPITER_EXECUTION_CONFIG)) {
+         visitor.clearLine(value);
+         visitor.addLine(value, JUPITER_EXECUTION_CONFIG_MODE_DEFAULT);
+      } else if (entry.getKey().equals(JUPITER_EXECUTION_CONFIG_DEFAULT)) {
+         visitor.clearLine(value);
+         visitor.addLine(value, JUPITER_EXECUTION_CONFIG_CONCURRENT);
+      }
+   }
+
 }

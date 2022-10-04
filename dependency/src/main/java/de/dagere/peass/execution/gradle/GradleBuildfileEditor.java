@@ -96,6 +96,10 @@ public class GradleBuildfileEditor {
 
       addDependencies(visitor);
 
+      if (visitor.getTestSystemPropertiesLine() != -1 || visitor.getIntegrationTestSystemPropertiesLine() != -1) {
+         GradleParseUtil.updateExecutionMode(visitor);
+      }
+
       addKiekerLine(tempFolder, visitor, taskAnalyzer);
    }
 
