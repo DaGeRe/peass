@@ -19,6 +19,7 @@ import org.codehaus.groovy.ast.builder.AstBuilder;
 import org.codehaus.groovy.ast.expr.*;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.ReturnStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 
 import de.dagere.peass.config.ExecutionConfig;
@@ -86,15 +87,13 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             testLine = call.getLastLineNumber() + offset;
             if (call.getArguments() instanceof ArgumentListExpression) {
                ArgumentListExpression arguments = (ArgumentListExpression) call.getArguments();
-               int propertiesLine = parseTaskWithPotentialSystemProperties(arguments, testExecutionProperties);
-               testSystemPropertiesLine = propertiesLine;
+               testSystemPropertiesLine = parseTaskWithPotentialSystemProperties(arguments, testExecutionProperties);
             }
          } else if (call.getMethodAsString().equals("integrationTest")) {
             testLine = call.getLastLineNumber() + offset;
             if (call.getArguments() instanceof ArgumentListExpression) {
                ArgumentListExpression arguments = (ArgumentListExpression) call.getArguments();
-               int propertiesLine = parseTaskWithPotentialSystemProperties(arguments, integrationtestExecutionProperties);
-               integrationTestSystemPropertiesLine = propertiesLine;
+               integrationTestSystemPropertiesLine = parseTaskWithPotentialSystemProperties(arguments, integrationtestExecutionProperties);
             }
          } else if (call.getMethodAsString().equals("android")) {
             androidLine = call.getLastLineNumber() + offset;
@@ -132,31 +131,17 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             ClosureExpression closure = (ClosureExpression) argument;
             BlockStatement blockStatement = (BlockStatement) closure.getCode();
             for (Statement statement : blockStatement.getStatements()) {
-               if (statement instanceof ExpressionStatement) {
-                  ExpressionStatement potentialSystemProperties = (ExpressionStatement) statement;
-                  if (potentialSystemProperties.getExpression() instanceof MethodCallExpression) {
-                     MethodCallExpression methodCallExpression = (MethodCallExpression) potentialSystemProperties.getExpression();
-
-                     if (methodCallExpression.getMethodAsString().equals("systemProperties")) {
-                        // TODO The following implementation would be better to assure usability with non-standard format (instead of manipulating string lines)
-                        // since I currently did not find a reliable way for reserialization, I leave it this way
-                        ArgumentListExpression propertiesArguments = (ArgumentListExpression) methodCallExpression.getArguments();
-                        MapExpression map = (MapExpression) propertiesArguments.getExpression(0);
-                        if (executionProperties != null) {
-                           for (MapEntryExpression expression : map.getMapEntryExpressions()) {
-                              String key = expression.getKeyExpression().getText();
-                              String value = expression.getValueExpression().getText();
-                              propertiesLine = expression.getLineNumber();
-                              if (key.startsWith(JUPITER_EXECUTION_CONFIG_DEFAULT) && value.contains("concurrent")) {
-                                 executionProperties.put(JUPITER_EXECUTION_CONFIG_DEFAULT, expression.getLineNumber());
-                              }
-                              if (key.startsWith(JUPITER_EXECUTION_CONFIG) && value.contains("true")) {
-                                 executionProperties.put(JUPITER_EXECUTION_CONFIG, expression.getLineNumber());
-                              }
-                           }
-                        }
-                     }
+               ExpressionStatement potentialSystemProperties = null;
+               if (statement instanceof ReturnStatement) {
+                  Expression expression = ((ReturnStatement) statement).getExpression();
+                  if (expression.getText().contains("systemProperties") || expression.getText().contains("systemProperty")) {
+                     potentialSystemProperties = new ExpressionStatement(((ReturnStatement) statement).getExpression());
                   }
+               } else if (statement instanceof ExpressionStatement) {
+                  potentialSystemProperties = (ExpressionStatement) statement;
+               }
+               if (potentialSystemProperties != null && potentialSystemProperties.getExpression() instanceof MethodCallExpression) {
+                  propertiesLine = getPropertiesLine(executionProperties, propertiesLine, potentialSystemProperties);
                }
             }
          } else {
@@ -172,6 +157,40 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
       }
       return propertiesLine;
+   }
+
+   private static int getPropertiesLine(Map<String, Integer> executionProperties, int propertiesLine, ExpressionStatement potentialSystemProperties) {
+      MethodCallExpression methodCallExpression = (MethodCallExpression) potentialSystemProperties.getExpression();
+      String method = methodCallExpression.getMethodAsString();
+      ArgumentListExpression propertiesArguments = (ArgumentListExpression) methodCallExpression.getArguments();
+      if (method.equals("systemProperties")) {
+         MapExpression map = (MapExpression) propertiesArguments.getExpression(0);
+         if (executionProperties != null) {
+            for (MapEntryExpression expression : map.getMapEntryExpressions()) {
+               String key = expression.getKeyExpression().getText();
+               String value = expression.getValueExpression().getText();
+               propertiesLine = expression.getLineNumber();
+               addExecutionProperties(executionProperties, expression.getLineNumber(), key, value);
+            }
+         }
+      } else if (method.equals("systemProperty")) {
+         if (executionProperties != null) {
+            propertiesLine = propertiesArguments.getExpression(0).getLineNumber();
+            String key = propertiesArguments.getExpression(0).getText();
+            String value = propertiesArguments.getExpression(1).getText();
+            addExecutionProperties(executionProperties, propertiesLine, key, value);
+         }
+      }
+      return propertiesLine;
+   }
+
+   private static void addExecutionProperties(Map<String, Integer> executionProperties, int line, String key, String value) {
+      if (key.startsWith(JUPITER_EXECUTION_CONFIG_DEFAULT) && value.contains("concurrent")) {
+         executionProperties.put(JUPITER_EXECUTION_CONFIG_DEFAULT, line);
+      }
+      if (key.startsWith(JUPITER_EXECUTION_CONFIG) && value.contains("true")) {
+         executionProperties.put(JUPITER_EXECUTION_CONFIG, line);
+      }
    }
 
    private void parseExcludes(final MethodCallExpression call) {
