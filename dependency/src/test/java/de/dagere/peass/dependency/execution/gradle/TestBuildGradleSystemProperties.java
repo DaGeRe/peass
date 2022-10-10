@@ -13,7 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -37,9 +36,8 @@ public class TestBuildGradleSystemProperties {
       TestUtil.deleteContents(TestBuildGradle.CURRENT);
    }
 
-   @Disabled
    @Test
-   public void testEditSystemPropertiesUnittest() throws IOException {
+   public void testEditSystemProperties() throws IOException {
       final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "buildSystemProperties.gradle");
 
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
@@ -50,8 +48,7 @@ public class TestBuildGradleSystemProperties {
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
       System.out.println(gradleFileContents);
 
-      MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("systemProperty")));
-      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'junit.jupiter.execution.parallel.mode.default'        :'SAME_THREAD'"));
-
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'junit.jupiter.execution.parallel.mode.default'             , 'SAME_THREAD'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'junit.jupiter.execution.parallel.mode.default'             , 'false'"));
    }
 }

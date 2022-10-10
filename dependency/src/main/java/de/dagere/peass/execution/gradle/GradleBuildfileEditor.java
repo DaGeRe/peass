@@ -96,6 +96,10 @@ public class GradleBuildfileEditor {
 
       addDependencies(visitor);
 
+      if (visitor.getTestSystemPropertiesLine() != -1 || visitor.getIntegrationTestSystemPropertiesLine() != -1) {
+         GradleParseUtil.updateExecutionMode(visitor);
+      }
+
       addKiekerLine(tempFolder, visitor, taskAnalyzer);
    }
 
@@ -178,7 +182,7 @@ public class GradleBuildfileEditor {
             visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
-               visitor.addLine(visitor.getIntegrationTestSystemPropertiesLine(), "  '" + entry.getKey() + "'             : '" + entry.getValue() + "',");
+               visitor.addLine(visitor.getIntegrationTestSystemPropertiesLine(), "  systemProperty   '" + entry.getKey() + "'             , '" + entry.getValue() + "'");
             }
             if (argLineBuilder.getJVMArgs() != null) {
                visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
@@ -196,7 +200,7 @@ public class GradleBuildfileEditor {
             visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
-               visitor.addLine(visitor.getTestSystemPropertiesLine(), "  '" + entry.getKey() + "'             : '" + entry.getValue() + "',");
+               visitor.addLine(visitor.getTestSystemPropertiesLine(), "  systemProperty   '" + entry.getKey() + "'             , '" + entry.getValue() + "'");
             }
             if (argLineBuilder.getJVMArgs() != null) {
                visitor.addLine(visitor.getTestLine(), argLineBuilder.getJVMArgs());
