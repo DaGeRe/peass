@@ -22,8 +22,8 @@ import static de.dagere.peass.execution.gradle.GradleBuildfileVisitor.*;
 public class GradleParseUtil {
 
    private static final Logger LOG = LogManager.getLogger(GradleParseUtil.class);
-   private static final String JUPITER_EXECUTION_CONFIG_CONCURRENT = "  systemProperty   'junit.jupiter.execution.parallel.mode.default' :'SAME_THREAD'";
-   private static final String JUPITER_EXECUTION_CONFIG_MODE_DEFAULT = "  systemProperty   'junit.jupiter.execution.parallel.mode.default' :'false'";
+   private static final String JUPITER_EXECUTION_CONFIG_CONCURRENT = "  systemProperty   'junit.jupiter.execution.parallel.mode.default'             , 'SAME_THREAD'";
+   private static final String JUPITER_EXECUTION_CONFIG_MODE_DEFAULT = "  systemProperty   'junit.jupiter.execution.parallel.mode.default'             , 'false'";
 
    public static void writeInitGradle(final File init) {
       if (!init.exists()) {
