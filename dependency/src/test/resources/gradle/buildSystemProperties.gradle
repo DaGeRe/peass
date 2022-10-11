@@ -21,13 +21,14 @@ configurations {
 
 test {
     systemProperty  'junit.jupiter.execution.parallel.mode.default'        ,'concurrent'
-    systemProperty  'junit.jupiter.execution.parallel.enabled', true
     maxHeapSize = "6g"
 }
 
 task integrationTest(type: Test) {
-    systemProperty  'junit.jupiter.execution.parallel.mode.default'        ,'concurrent'
-    systemProperty  'junit.jupiter.execution.parallel.enabled', true
+    systemProperties([
+             'junit.jupiter.execution.parallel.enabled': true  ,
+    ])
+
     useJUnitPlatform()
     maxHeapSize = "6g"
     group = 'verification'
