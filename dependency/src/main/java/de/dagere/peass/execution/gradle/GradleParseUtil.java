@@ -22,8 +22,11 @@ import static de.dagere.peass.execution.gradle.GradleBuildfileVisitor.*;
 public class GradleParseUtil {
 
    private static final Logger LOG = LogManager.getLogger(GradleParseUtil.class);
-   private static final String JUPITER_EXECUTION_CONFIG_CONCURRENT = "  systemProperty   'junit.jupiter.execution.parallel.mode.default'             , 'SAME_THREAD'";
-   private static final String JUPITER_EXECUTION_CONFIG_MODE_DEFAULT = "  systemProperty   'junit.jupiter.execution.parallel.mode.default'             , 'false'";
+   private static final String JUPITER_EXECUTION_CONFIG_CONCURRENT = "junit.jupiter.execution.parallel.mode.default";
+   private static final String JUPITER_EXECUTION_CONFIG_CONCURRENT_VALUE = "SAME_THREAD";
+
+   private static final String JUPITER_EXECUTION_CONFIG_MODE = "junit.jupiter.execution.parallel.enabled";
+   private static final String JUPITER_EXECUTION_CONFIG_MODE_VALUE = "false";
 
    public static void writeInitGradle(final File init) {
       if (!init.exists()) {
@@ -113,23 +116,31 @@ public class GradleParseUtil {
    public static void updateExecutionMode(GradleBuildfileVisitor visitor) {
 
       for (Map.Entry<String, Integer> entry : visitor.getTestExecutionProperties().entrySet()) {
-         updateExecutionProperties(visitor, entry);
+         updateExecutionProperties(visitor, entry, visitor.hasTestSystemPropertiesBlock());
       }
 
       for (Map.Entry<String, Integer> entry : visitor.getIntegrationtestExecutionProperties().entrySet()) {
-         updateExecutionProperties(visitor, entry);
+         updateExecutionProperties(visitor, entry, visitor.hasIntegrationTestSystemPropertiesBlock());
       }
    }
 
-   private static void updateExecutionProperties(GradleBuildfileVisitor visitor, Map.Entry<String, Integer> entry) {
+   private static void updateExecutionProperties(GradleBuildfileVisitor visitor, Map.Entry<String, Integer> entry, boolean hasSystemPropertiesBlock) {
       int value = entry.getValue();
       if (entry.getKey().equals(JUPITER_EXECUTION_CONFIG)) {
          visitor.clearLine(value);
-         visitor.addLine(value, JUPITER_EXECUTION_CONFIG_MODE_DEFAULT);
+         visitor.addLine(value, createTextForAdding(JUPITER_EXECUTION_CONFIG_MODE, JUPITER_EXECUTION_CONFIG_MODE_VALUE, hasSystemPropertiesBlock));
       } else if (entry.getKey().equals(JUPITER_EXECUTION_CONFIG_DEFAULT)) {
          visitor.clearLine(value);
-         visitor.addLine(value, JUPITER_EXECUTION_CONFIG_CONCURRENT);
+         visitor.addLine(value, createTextForAdding(JUPITER_EXECUTION_CONFIG_CONCURRENT, JUPITER_EXECUTION_CONFIG_CONCURRENT_VALUE, hasSystemPropertiesBlock));
       }
+   }
+
+   public static String createTextForAdding(String key, String value, boolean hasSystemPropertiesBlock) {
+      String textProperty = hasSystemPropertiesBlock ? "'" : "  systemProperty   '";
+      String separator = hasSystemPropertiesBlock ? "'             : '" : "'             , '";
+      String lineSeparator = hasSystemPropertiesBlock ? "'," : "'";
+
+      return textProperty + key + separator + value + lineSeparator;
    }
 
 }

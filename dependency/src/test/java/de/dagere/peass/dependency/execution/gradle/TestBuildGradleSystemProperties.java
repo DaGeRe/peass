@@ -49,6 +49,6 @@ public class TestBuildGradleSystemProperties {
       System.out.println(gradleFileContents);
 
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'junit.jupiter.execution.parallel.mode.default'             , 'SAME_THREAD'"));
-      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'junit.jupiter.execution.parallel.mode.default'             , 'false'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'junit.jupiter.execution.parallel.enabled'             : 'false'"));
    }
 }
