@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.ast.ASTNode;
@@ -49,6 +50,8 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private List<Integer> excludeLines = new LinkedList<>();
    private boolean hasVersion = true;
    private boolean subprojectJava = false;
+   private MutableBoolean testSystemPropertiesBlock = new MutableBoolean(false);
+   private MutableBoolean integrationTestSystemPropertiesBlock= new MutableBoolean(false);
    private List<String> gradleFileContents;
    private Map<String, Integer> testExecutionProperties = new HashMap<>();
    private Map<String, Integer> integrationtestExecutionProperties = new HashMap<>();
@@ -87,13 +90,13 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             testLine = call.getLastLineNumber() + offset;
             if (call.getArguments() instanceof ArgumentListExpression) {
                ArgumentListExpression arguments = (ArgumentListExpression) call.getArguments();
-               testSystemPropertiesLine = parseTaskWithPotentialSystemProperties(arguments, testExecutionProperties);
+               testSystemPropertiesLine = parseTaskWithPotentialSystemProperties(arguments, testExecutionProperties , testSystemPropertiesBlock);
             }
          } else if (call.getMethodAsString().equals("integrationTest")) {
             testLine = call.getLastLineNumber() + offset;
             if (call.getArguments() instanceof ArgumentListExpression) {
                ArgumentListExpression arguments = (ArgumentListExpression) call.getArguments();
-               integrationTestSystemPropertiesLine = parseTaskWithPotentialSystemProperties(arguments, integrationtestExecutionProperties);
+               integrationTestSystemPropertiesLine = parseTaskWithPotentialSystemProperties(arguments, integrationtestExecutionProperties, integrationTestSystemPropertiesBlock);
             }
          } else if (call.getMethodAsString().equals("android")) {
             androidLine = call.getLastLineNumber() + offset;
@@ -124,7 +127,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       super.visitMethodCallExpression(call);
    }
 
-   private int parseTaskWithPotentialSystemProperties(ArgumentListExpression arguments, Map<String, Integer> executionProperties) {
+   private int parseTaskWithPotentialSystemProperties(ArgumentListExpression arguments, Map<String, Integer> executionProperties, MutableBoolean systemPropertiesBlock) {
       int propertiesLine = -1;
       for (Expression argument : arguments.getExpressions()) {
          if (argument instanceof ClosureExpression) {
@@ -141,7 +144,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
                   potentialSystemProperties = (ExpressionStatement) statement;
                }
                if (potentialSystemProperties != null && potentialSystemProperties.getExpression() instanceof MethodCallExpression) {
-                  propertiesLine = getPropertiesLine(executionProperties, propertiesLine, potentialSystemProperties);
+                  propertiesLine = getPropertiesLine(executionProperties, propertiesLine, potentialSystemProperties ,systemPropertiesBlock);
                }
             }
          } else {
@@ -150,7 +153,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 //               System.out.println(expression.getArguments());
                if (expression.getArguments() instanceof ArgumentListExpression) {
                   ArgumentListExpression innerArguments = (ArgumentListExpression) expression.getArguments();
-                  return parseTaskWithPotentialSystemProperties(innerArguments, null);
+                  return parseTaskWithPotentialSystemProperties(innerArguments, null, null);
                }
             }
          }
@@ -159,13 +162,14 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       return propertiesLine;
    }
 
-   private static int getPropertiesLine(Map<String, Integer> executionProperties, int propertiesLine, ExpressionStatement potentialSystemProperties) {
+   private int getPropertiesLine(Map<String, Integer> executionProperties, int propertiesLine, ExpressionStatement potentialSystemProperties, MutableBoolean systemPropertiesBlock) {
       MethodCallExpression methodCallExpression = (MethodCallExpression) potentialSystemProperties.getExpression();
       String method = methodCallExpression.getMethodAsString();
       ArgumentListExpression propertiesArguments = (ArgumentListExpression) methodCallExpression.getArguments();
       if (method.equals("systemProperties")) {
          MapExpression map = (MapExpression) propertiesArguments.getExpression(0);
          if (executionProperties != null) {
+            systemPropertiesBlock.setTrue();
             for (MapEntryExpression expression : map.getMapEntryExpressions()) {
                String key = expression.getKeyExpression().getText();
                String value = expression.getValueExpression().getText();
@@ -175,6 +179,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
          }
       } else if (method.equals("systemProperty")) {
          if (executionProperties != null) {
+            systemPropertiesBlock.setFalse();
             propertiesLine = propertiesArguments.getExpression(0).getLineNumber();
             String key = propertiesArguments.getExpression(0).getText();
             String value = propertiesArguments.getExpression(1).getText();
@@ -236,7 +241,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             }
          }
 
-         int propertiesLine = parseTaskWithPotentialSystemProperties(list, null);
+         int propertiesLine = parseTaskWithPotentialSystemProperties(list, null, null);
          integrationTestSystemPropertiesLine = propertiesLine;
       }
    }
@@ -328,6 +333,15 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
    public Map<String, Integer> getIntegrationtestExecutionProperties() {
       return integrationtestExecutionProperties;
+   }
+
+
+   public Boolean hasTestSystemPropertiesBlock() {
+      return testSystemPropertiesBlock.getValue();
+   }
+
+   public Boolean hasIntegrationTestSystemPropertiesBlock() {
+      return integrationTestSystemPropertiesBlock.getValue();
    }
 
    public void addLine(final int lineIndex, final String textForAdding) {

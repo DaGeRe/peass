@@ -1,5 +1,7 @@
 package de.dagere.peass.execution.gradle;
 
+import static de.dagere.peass.execution.gradle.GradleParseUtil.createTextForAdding;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -182,7 +184,8 @@ public class GradleBuildfileEditor {
             visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
-               visitor.addLine(visitor.getIntegrationTestSystemPropertiesLine(), "  systemProperty   '" + entry.getKey() + "'             , '" + entry.getValue() + "'");
+               visitor.addLine(visitor.getIntegrationTestSystemPropertiesLine(),
+                     createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasIntegrationTestSystemPropertiesBlock()));
             }
             if (argLineBuilder.getJVMArgs() != null) {
                visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
@@ -200,7 +203,7 @@ public class GradleBuildfileEditor {
             visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
-               visitor.addLine(visitor.getTestSystemPropertiesLine(), "  systemProperty   '" + entry.getKey() + "'             , '" + entry.getValue() + "'");
+               visitor.addLine(visitor.getTestSystemPropertiesLine(), createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasTestSystemPropertiesBlock()));
             }
             if (argLineBuilder.getJVMArgs() != null) {
                visitor.addLine(visitor.getTestLine(), argLineBuilder.getJVMArgs());
