@@ -1,6 +1,8 @@
 package de.dagere.peass.execution.gradle;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -142,7 +144,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       final File module = new File(folders.getProjectFolder(), test.getModule());
       cleanLastTest(module);
       runMethod(logFolder, test, module, timeout);
-      
+
       cleanAboveSize(logFolder, "txt");
    }
 
@@ -153,10 +155,12 @@ public class GradleTestExecutor extends KoPeMeExecutor {
     * @param testname Name of the test that should be run
     */
    @Override
-   protected void runTest(final File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout) {
+   protected void runTest(final File moduleFolder, final File methodLogFile, TestMethodCall test, final String testname, final long timeout) {
       try {
-         final Process process = buildGradleProcess(moduleFolder, logFile, test, "--tests", testname);
+         final Process process = buildGradleProcess(moduleFolder, methodLogFile, test, "--tests", testname);
          execute(testname, timeout, process);
+
+         GradleDaemonFileDeleter.deleteDaemonFile(methodLogFile);
       } catch (final IOException | XmlPullParserException e) {
          e.printStackTrace();
       }

@@ -1,0 +1,101 @@
+Initialized native services in: /home/reichelt/.gradle/native
+The client will now receive all logging from the daemon (pid: 66429). The daemon log file: target/temp.out.log
+Starting 5th build in daemon [uptime: 4 mins 37.012 secs, performance: 96%, non-heap usage: 22% of 268,4 MB]
+Using 8 worker leases.
+Starting Build
+Settings evaluated using settings file '/home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/settings.gradle'.
+Projects loaded. Root project using build file '/home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build.gradle'.
+Included projects: [root project 'basic_state']
+
+> Configure project :
+Evaluating root project 'basic_state' using build file '/home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build.gradle'.
+All projects evaluated.
+Selected primary task 'clean' from project :
+Selected primary task 'test' from project :
+Tasks to be executed: [task ':clean', task ':compileJava', task ':processResources', task ':classes', task ':compileTestJava', task ':processTestResources', task ':testClasses', task ':test']
+Tasks that were excluded: []
+:clean (Thread[Execution worker for ':',5,main]) started.
+
+> Task :clean
+Caching disabled for task ':clean' because:
+  Build cache is disabled
+Task ':clean' is not up-to-date because:
+  Task has not declared any outputs despite executing actions.
+:clean (Thread[Execution worker for ':',5,main]) completed. Took 0.005 secs.
+:compileJava (Thread[Execution worker for ':',5,main]) started.
+
+> Task :compileJava
+Caching disabled for task ':compileJava' because:
+  Build cache is disabled
+Task ':compileJava' is not up-to-date because:
+  Output property 'destinationDirectory' file /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/classes/java/main has been removed.
+  Output property 'destinationDirectory' file /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/classes/java/main/defaultpackage has been removed.
+  Output property 'destinationDirectory' file /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/classes/java/main/defaultpackage/NormalDependency.class has been removed.
+The input changes require a full rebuild for incremental task ':compileJava'.
+Full recompilation is required because no incremental change information is available. This is usually caused by clean builds or changing compiler arguments.
+Compiling with JDK Java compiler API.
+Created classpath snapshot for incremental compilation in 0.0 secs.
+:compileJava (Thread[Execution worker for ':',5,main]) completed. Took 0.023 secs.
+:processResources (Thread[Execution worker for ':',5,main]) started.
+
+> Task :processResources NO-SOURCE
+file or directory '/home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/src/main/resources', not found
+Skipping task ':processResources' as it has no source files and no previous output files.
+:processResources (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:classes (Thread[Execution worker for ':',5,main]) started.
+
+> Task :classes
+Skipping task ':classes' as it has no actions.
+:classes (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:compileTestJava (Thread[Execution worker for ':',5,main]) started.
+
+> Task :compileTestJava
+Caching disabled for task ':compileTestJava' because:
+  Build cache is disabled
+Task ':compileTestJava' is not up-to-date because:
+  Output property 'destinationDirectory' file /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/classes/java/test has been removed.
+  Output property 'destinationDirectory' file /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/classes/java/test/defaultpackage has been removed.
+  Output property 'destinationDirectory' file /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/classes/java/test/defaultpackage/TestMe.class has been removed.
+The input changes require a full rebuild for incremental task ':compileTestJava'.
+Full recompilation is required because no incremental change information is available. This is usually caused by clean builds or changing compiler arguments.
+Compiling with JDK Java compiler API.
+Created classpath snapshot for incremental compilation in 0.001 secs.
+:compileTestJava (Thread[Execution worker for ':',5,main]) completed. Took 0.026 secs.
+:processTestResources (Thread[Execution worker for ':',5,main]) started.
+
+> Task :processTestResources NO-SOURCE
+file or directory '/home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/src/test/resources', not found
+Skipping task ':processTestResources' as it has no source files and no previous output files.
+:processTestResources (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:testClasses (Thread[Execution worker for ':',5,main]) started.
+
+> Task :testClasses
+Skipping task ':testClasses' as it has no actions.
+:testClasses (Thread[Execution worker for ':',5,main]) completed. Took 0.0 secs.
+:test (Thread[Execution worker for ':' Thread 2,5,main]) started.
+Gradle Test Executor 5 started executing tests.
+Gradle Test Executor 5 finished executing tests.
+
+> Task :test
+Caching disabled for task ':test' because:
+  Build cache is disabled
+Task ':test' is not up-to-date because:
+  Output property 'binaryResultsDirectory' file /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/test-results/test/binary has been removed.
+  Output property 'binaryResultsDirectory' file /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/test-results/test/binary/output.bin has been removed.
+  Output property 'binaryResultsDirectory' file /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/test-results/test/binary/output.bin.idx has been removed.
+Starting process 'Gradle Test Executor 5'. Working directory: /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state Command: /usr/lib/jvm/java-8-openjdk-amd64/bin/java -Djava.security.manager=worker.org.gradle.process.internal.worker.child.BootstrapSecurityManager -Dorg.gradle.native=false -Xmx512m -Dfile.encoding=UTF-8 -Duser.country=DE -Duser.language=de -Duser.variant -ea -cp /home/reichelt/.gradle/caches/6.4.1/workerMain/gradle-worker.jar worker.org.gradle.process.internal.worker.GradleWorkerMain 'Gradle Test Executor 5'
+Successfully started process 'Gradle Test Executor 5'
+
+defaultpackage.TestMe > testMe STANDARD_OUT
+    Test1
+Finished generating test XML results (0.0 secs) into: /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/test-results/test
+Generating HTML test report...
+Finished generating test html results (0.001 secs) into: /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/src/test/resources/dependencyIT/gradle/basic_state/build/reports/tests/test
+:test (Thread[Execution worker for ':' Thread 2,5,main]) completed. Took 0.297 secs.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.4.1/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 702ms
+4 actionable tasks: 4 executed
