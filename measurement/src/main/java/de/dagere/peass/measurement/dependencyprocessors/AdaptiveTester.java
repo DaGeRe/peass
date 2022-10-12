@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
@@ -28,7 +27,7 @@ public class AdaptiveTester extends DependencyTester {
    }
 
    @Override
-   public void evaluate(final TestMethodCall testcase) throws IOException, InterruptedException, XmlPullParserException {
+   public void evaluate(final TestMethodCall testcase) throws IOException {
       initEvaluation(testcase);
 
       final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);

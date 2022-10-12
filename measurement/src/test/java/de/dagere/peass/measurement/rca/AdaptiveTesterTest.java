@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -33,14 +32,14 @@ public class AdaptiveTesterTest {
 
    private final TestMethodCall testcase = new TestMethodCall("Dummy", "dummyTest");
    private JUnitTestTransformer testGenerator = Mockito.mock(JUnitTestTransformer.class);
-   
+
    private ReductionManager reductionManagerSpy;
 
    @Rule
    public TemporaryFolder folder = new TemporaryFolder();
 
    @Test
-   public void testIterationUpdate() throws IOException, InterruptedException,  XmlPullParserException {
+   public void testIterationUpdate() throws IOException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<ExecutorCreator> mockedExecutor = Mockito.mockStatic(ExecutorCreator.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);
@@ -49,6 +48,7 @@ public class AdaptiveTesterTest {
          final int vms = 10;
          final MeasurementConfig config = new MeasurementConfig(vms, "A", "B");
          config.setIterations(1000);
+         config.setWaitTimeBetweenVMs(0);
 
          MeasurementConfig config2 = Mockito.spy(config);
          Mockito.when(testGenerator.getConfig()).thenReturn(config2);
@@ -99,10 +99,11 @@ public class AdaptiveTesterTest {
    }
 
    @Test
-   public void testSkipEarlyDecision() throws IOException, InterruptedException,  XmlPullParserException {
+   public void testSkipEarlyDecision() throws IOException {
       final MeasurementConfig config = new MeasurementConfig(100, "A", "B");
       config.setIterations(1000);
       config.setEarlyStop(false);
+      config.setWaitTimeBetweenVMs(0);
 
       MeasurementConfig config2 = Mockito.spy(config);
       Mockito.when(testGenerator.getConfig()).thenReturn(config2);
@@ -116,7 +117,7 @@ public class AdaptiveTesterTest {
       Assert.assertEquals(100, tester2.getFinishedVMs());
    }
 
-   private void createEarlyBreakData(final AdaptiveTester tester2)  {
+   private void createEarlyBreakData(final AdaptiveTester tester2) {
       for (int i = 0; i < 100; i++) {
          final VMResult result1 = new VMResult();
          result1.setValue(15);
@@ -130,7 +131,7 @@ public class AdaptiveTesterTest {
       }
    }
 
-   private AdaptiveTester prepareTester() throws IOException, InterruptedException,  XmlPullParserException {
+   private AdaptiveTester prepareTester() throws IOException {
       final PeassFolders folders = Mockito.mock(PeassFolders.class);
       Mockito.when(folders.getProjectFolder()).thenReturn(folder.newFolder("test"));
       Mockito.when(folders.getProgressFile()).thenReturn(folder.newFile("progress"));
@@ -142,19 +143,19 @@ public class AdaptiveTesterTest {
 
       AdaptiveTester tester = new AdaptiveTester(folders, testGenerator.getConfig(), new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
       AdaptiveTester tester2 = Mockito.spy(tester);
-      
+
       ReductionManager reductionManager = new ReductionManager(testGenerator.getConfig());
       reductionManagerSpy = Mockito.spy(reductionManager);
-      
+
       try {
          Field privateField = DependencyTester.class.getDeclaredField("reductionManager");
          privateField.setAccessible(true);
-         
+
          privateField.set(tester2, reductionManagerSpy);
       } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
          e.printStackTrace();
       }
-      
+
       Mockito.doNothing().when(tester2).runOneComparison(Mockito.any(File.class), Mockito.any(TestMethodCall.class), Mockito.anyInt());
       return tester2;
    }
