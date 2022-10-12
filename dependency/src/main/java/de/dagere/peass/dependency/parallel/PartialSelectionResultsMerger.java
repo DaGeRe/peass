@@ -110,7 +110,6 @@ public class PartialSelectionResultsMerger {
             if (resultFolder.getCoverageSelectionFile() != null && resultFolder.getCoverageSelectionFile().exists()) {
                coverageSelectionOutFiles.add(resultFolder.getCoverageSelectionFile());
             }
-
          }
       }
       ExecutionData mergedExecutions = mergeExecutionFiles(executionOutFiles);

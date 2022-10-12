@@ -55,7 +55,7 @@ public class CauseTester extends AdaptiveTester {
       includedNodes = prepareNodes(nodes);
       evaluate(causeConfig.getTestCase());
       if (!getCurrentOrganizer().isSuccess()) {
-         boolean shouldBreak = reduceExecutions(false, configuration.getIterations() / 2);
+         boolean shouldBreak = reductionManager.reduceExecutions(false, configuration.getIterations() / 2);
          configuration.setIterations(configuration.getIterations() / 2);
          if (shouldBreak) {
             throw new RuntimeException("Execution took too long, Iterations: " + configuration.getIterations()

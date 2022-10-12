@@ -8,9 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.kopemedata.Kopemedata;
-import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
@@ -24,6 +21,7 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.cleaning.Cleaner;
 import de.dagere.peass.measurement.dataloading.DataReader;
 import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
+import de.dagere.peass.measurement.dependencyprocessors.reductioninfos.ReductionManager;
 import de.dagere.peass.measurement.organize.FolderDeterminer;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
@@ -46,12 +44,14 @@ public class DependencyTester implements KiekerResultHandler {
    private ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
    private final CommitComparatorInstance comparator;
+   protected final ReductionManager reductionManager; 
 
    public DependencyTester(final PeassFolders folders, final MeasurementConfig measurementConfig, final EnvironmentVariables env, CommitComparatorInstance comparator) {
       this.folders = folders;
       this.configuration = measurementConfig;
       this.env = env;
       this.comparator = comparator;
+      reductionManager = new ReductionManager(measurementConfig);
    }
 
    /**
@@ -86,7 +86,7 @@ public class DependencyTester implements KiekerResultHandler {
 
          runOneComparison(logFolder, testcase, finishedVMs);
 
-         final boolean shouldBreak = updateExecutions(testcase, finishedVMs);
+         final boolean shouldBreak = reductionManager.updateExecutions(testcase, finishedVMs, getCurrentOrganizer());
          if (shouldBreak) {
             LOG.debug("Too less executions possible - finishing testing.");
             break;
@@ -107,71 +107,6 @@ public class DependencyTester implements KiekerResultHandler {
          Thread.sleep(configuration.getWaitTimeBetweenVMs());
       } catch (InterruptedException e) {
          throw new RuntimeException(e);
-      }
-   }
-
-   boolean updateExecutions(final TestMethodCall testcase, final int vmid) {
-      boolean shouldBreak = false;
-      final VMResult commitOldResult = getLastResult(configuration.getFixedCommitConfig().getCommitOld(), testcase, vmid);
-      final VMResult commitNewResult = getLastResult(configuration.getFixedCommitConfig().getCommit(), testcase, vmid);
-      if (vmid < 40) {
-         int reducedIterations = Math.min(shouldReduce(configuration.getFixedCommitConfig().getCommitOld(), commitOldResult),
-               shouldReduce(configuration.getFixedCommitConfig().getCommit(), commitNewResult));
-         if (reducedIterations != configuration.getIterations()) {
-            LOG.error("Should originally run {} iterations, but did not succeed - reducing to {}", configuration.getIterations(), reducedIterations);
-            // final int lessIterations = testTransformer.getConfig().getIterations() / 5;
-            shouldBreak = reduceExecutions(shouldBreak, reducedIterations);
-         }
-      }
-
-      return shouldBreak;
-   }
-
-   private int shouldReduce(final String commit, final VMResult result) {
-      final int reducedIterations;
-      if (result == null) {
-         reducedIterations = configuration.getIterations() / 2;
-         LOG.error("Measurement for {} is null", commit);
-      } else if (result.getIterations() < configuration.getIterations() || Double.isNaN(result.getValue())) {
-         LOG.error("Measurement executions: {}", result.getIterations());
-         final int minOfExecuted = (int) result.getIterations() - 2;
-         reducedIterations = Math.min(minOfExecuted, configuration.getIterations() / 2);
-         // 10E7 for at least 10 iterations means more than ~2.5 minutes per VM, which is ok
-         // } else if (result.getValue() > 10E7 && testTransformer.getConfig().getIterations() > 10) {
-         // reducedIterations = testTransformer.getConfig().getIterations() / 2;
-      } else {
-         reducedIterations = configuration.getIterations();
-      }
-      return reducedIterations;
-   }
-
-   protected boolean reduceExecutions(boolean shouldBreak, final int lessIterations) {
-      if (lessIterations > 3) {
-         LOG.info("Reducing iterations too: {}", lessIterations);
-         configuration.setIterations(lessIterations);
-         configuration.setWarmup(0);
-      } else {
-         if (configuration.getRepetitions() > 5) {
-            final int reducedRepetitions = configuration.getRepetitions() / 5;
-            LOG.debug("Reducing repetitions to " + reducedRepetitions);
-            configuration.setRepetitions(reducedRepetitions);
-         } else {
-            LOG.error("Cannot reduce iterations ({}) or repetitions ({}) anymore", configuration.getIterations(), configuration.getRepetitions());
-            shouldBreak = true;
-         }
-      }
-      return shouldBreak;
-   }
-
-   public VMResult getLastResult(final String version, final TestMethodCall testcase, final int vmid) {
-      final File resultFile = getCurrentOrganizer().getResultFile(testcase, vmid, version);
-      if (resultFile.exists()) {
-         final Kopemedata data = JSONDataLoader.loadData(resultFile);
-         final VMResult lastResult = data.getFirstResult();
-         return lastResult;
-      } else {
-         LOG.debug("Resultfile {} does not exist", resultFile);
-         return null;
       }
    }
 
@@ -287,5 +222,9 @@ public class DependencyTester implements KiekerResultHandler {
 
    public PeassFolders getFolders() {
       return folders;
+   }
+   
+   public ReductionManager getReductionManager() {
+      return reductionManager;
    }
 }

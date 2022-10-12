@@ -32,8 +32,8 @@ public class AdaptiveTester extends DependencyTester {
       initEvaluation(testcase);
 
       final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);
-      
-      try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())){
+
+      try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())) {
          evaluateWithAdaption(testcase, logFolder, writer);
       }
    }
@@ -51,14 +51,14 @@ public class AdaptiveTester extends DependencyTester {
             break;
          }
 
-         final boolean shouldBreak = updateExecutions(testcase, finishedVMs);
+         final boolean shouldBreak = reductionManager.updateExecutions(testcase, finishedVMs, getCurrentOrganizer());
          if (shouldBreak) {
             LOG.debug("Too few executions possible - finishing testing.");
             break;
          }
-         long durationInSeconds = (System.currentTimeMillis() - comparisonStart)/1000;
+         long durationInSeconds = (System.currentTimeMillis() - comparisonStart) / 1000;
          writer.write(durationInSeconds, finishedVMs);
-         
+
          betweenVMCooldown();
       }
    }

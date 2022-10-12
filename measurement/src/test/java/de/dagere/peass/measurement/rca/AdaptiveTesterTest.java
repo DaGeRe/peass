@@ -2,6 +2,7 @@ package de.dagere.peass.measurement.rca;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -22,6 +23,8 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dataloading.ResultLoader;
 import de.dagere.peass.measurement.dependencyprocessors.AdaptiveTester;
+import de.dagere.peass.measurement.dependencyprocessors.DependencyTester;
+import de.dagere.peass.measurement.dependencyprocessors.reductioninfos.ReductionManager;
 import de.dagere.peass.measurement.rca.helper.VCSTestUtils;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.vcs.VersionControlSystem;
@@ -30,6 +33,8 @@ public class AdaptiveTesterTest {
 
    private final TestMethodCall testcase = new TestMethodCall("Dummy", "dummyTest");
    private JUnitTestTransformer testGenerator = Mockito.mock(JUnitTestTransformer.class);
+   
+   private ReductionManager reductionManagerSpy;
 
    @Rule
    public TemporaryFolder folder = new TemporaryFolder();
@@ -37,7 +42,7 @@ public class AdaptiveTesterTest {
    @Test
    public void testIterationUpdate() throws IOException, InterruptedException,  XmlPullParserException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
-            MockedStatic<ExecutorCreator> mockedExecutor = Mockito.mockStatic(ExecutorCreator.class);) {
+            MockedStatic<ExecutorCreator> mockedExecutor = Mockito.mockStatic(ExecutorCreator.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);
          VCSTestUtils.mockExecutor(mockedExecutor);
 
@@ -55,12 +60,12 @@ public class AdaptiveTesterTest {
             final VMResult result1 = new VMResult();
             result1.setValue(15);
             result1.setIterations(40);
-            Mockito.doReturn(result1).when(tester2).getLastResult("A", testcase, i);
+            Mockito.doReturn(result1).when(reductionManagerSpy).getLastResult(Mockito.eq("A"), Mockito.eq(testcase), Mockito.eq(i), Mockito.any());
 
             final VMResult result2 = new VMResult();
             result2.setValue(17);
             result2.setIterations(40);
-            Mockito.doReturn(result2).when(tester2).getLastResult("B", testcase, i);
+            Mockito.doReturn(result2).when(reductionManagerSpy).getLastResult(Mockito.eq("B"), Mockito.eq(testcase), Mockito.eq(i), Mockito.any());
          }
 
          tester2.evaluate(testcase);
@@ -116,12 +121,12 @@ public class AdaptiveTesterTest {
          final VMResult result1 = new VMResult();
          result1.setValue(15);
          result1.setIterations(40);
-         Mockito.doReturn(result1).when(tester2).getLastResult("A", testcase, i);
+         Mockito.doReturn(result1).when(reductionManagerSpy).getLastResult(Mockito.eq("A"), Mockito.eq(testcase), Mockito.eq(i), Mockito.any());
 
          final VMResult result2 = new VMResult();
          result2.setValue(15);
          result2.setIterations(40);
-         Mockito.doReturn(result2).when(tester2).getLastResult("B", testcase, i);
+         Mockito.doReturn(result2).when(reductionManagerSpy).getLastResult(Mockito.eq("B"), Mockito.eq(testcase), Mockito.eq(i), Mockito.any());
       }
    }
 
@@ -137,6 +142,19 @@ public class AdaptiveTesterTest {
 
       AdaptiveTester tester = new AdaptiveTester(folders, testGenerator.getConfig(), new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
       AdaptiveTester tester2 = Mockito.spy(tester);
+      
+      ReductionManager reductionManager = new ReductionManager(testGenerator.getConfig());
+      reductionManagerSpy = Mockito.spy(reductionManager);
+      
+      try {
+         Field privateField = DependencyTester.class.getDeclaredField("reductionManager");
+         privateField.setAccessible(true);
+         
+         privateField.set(tester2, reductionManagerSpy);
+      } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+         e.printStackTrace();
+      }
+      
       Mockito.doNothing().when(tester2).runOneComparison(Mockito.any(File.class), Mockito.any(TestMethodCall.class), Mockito.anyInt());
       return tester2;
    }
