@@ -175,7 +175,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public boolean isCommitRunning(final String version) {
+   public boolean isCommitRunning(final String commit) {
       boolean isRunning = false;
       if (doesBuildfileExist()) {
          boolean isAndroid = false;
@@ -202,7 +202,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          }
 
          ProcessSuccessTester processSuccessTester = new ProcessSuccessTester(folders, testTransformer.getConfig(), env);
-         isRunning = processSuccessTester.testRunningSuccess(version, vars);
+         isRunning = processSuccessTester.testRunningSuccess(commit, vars);
       }
       return isRunning;
    }
