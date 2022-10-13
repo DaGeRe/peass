@@ -242,7 +242,9 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
          }
 
          int propertiesLine = parseTaskWithPotentialSystemProperties(list, null, null);
-         integrationTestSystemPropertiesLine = propertiesLine;
+         if (integrationTestSystemPropertiesLine == -1) {
+            integrationTestSystemPropertiesLine = propertiesLine;
+         }
       }
    }
 
