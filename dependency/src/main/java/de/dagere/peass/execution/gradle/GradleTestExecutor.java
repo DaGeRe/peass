@@ -206,7 +206,6 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          
          File cleanLogFile = folders.getDependencyLogSuccessRunFile(commit);
          GradleDaemonFileDeleter.deleteDaemonFile(cleanLogFile);
-         
       }
       return isRunning;
    }
