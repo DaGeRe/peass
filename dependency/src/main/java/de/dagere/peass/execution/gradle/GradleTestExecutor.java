@@ -203,6 +203,10 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
          ProcessSuccessTester processSuccessTester = new ProcessSuccessTester(folders, testTransformer.getConfig(), env);
          isRunning = processSuccessTester.testRunningSuccess(commit, vars);
+         
+         File cleanLogFile = folders.getDependencyLogSuccessRunFile(commit);
+         GradleDaemonFileDeleter.deleteDaemonFile(cleanLogFile);
+         
       }
       return isRunning;
    }
