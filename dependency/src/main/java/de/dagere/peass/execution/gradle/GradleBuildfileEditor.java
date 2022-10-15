@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -188,12 +189,21 @@ public class GradleBuildfileEditor {
                      createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasIntegrationTestSystemPropertiesBlock()));
             }
             if (argLineBuilder.getJVMArgs() != null) {
-               visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
+               if (visitor.getIntegrationTestJvmArgsLine() != -1) {
+                  String testJvmArgsText = "'" + visitor.getIntegrationTestJvmArgsText().substring(1, visitor.getIntegrationTestJvmArgsText().length() - 1) + "'";
+                  String adaptedText = argLineBuilder.getJVMArgs("," + testJvmArgsText);
+                  visitor.getLines().set(visitor.getIntegrationTestJvmArgsLine() - 1, adaptedText);
+               } else {
+                  visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
+               }
             }
          }
       } else if (taskAnalyzer.isIntegrationTest()) {
          visitor.getLines().add("integrationTest { " + argLineBuilder.buildArglineGradle(tempFolder) + "}");
       }
+      
+      System.out.println(StringUtils.join(visitor.getLines(), "\n"));
+      System.out.println("Test");
    }
 
    private void enhanceTestTask(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder,
@@ -203,10 +213,17 @@ public class GradleBuildfileEditor {
             visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
-               visitor.addLine(visitor.getTestSystemPropertiesLine(), createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasTestSystemPropertiesBlock()));
+               String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasTestSystemPropertiesBlock());
+               visitor.addLine(visitor.getTestSystemPropertiesLine(), addedText);
             }
             if (argLineBuilder.getJVMArgs() != null) {
-               visitor.addLine(visitor.getTestLine(), argLineBuilder.getJVMArgs());
+               if (visitor.getTestJvmArgsLine() != -1) {
+                  String testJvmArgsText = "'" + visitor.getTestJvmArgsText().substring(1, visitor.getTestJvmArgsText().length() - 1) + "'";
+                  String adaptedText = argLineBuilder.getJVMArgs("," + testJvmArgsText);
+                  visitor.getLines().set(visitor.getTestJvmArgsLine() - 1, adaptedText);
+               } else {
+                  visitor.addLine(visitor.getTestLine(), argLineBuilder.getJVMArgs());
+               }
             }
 
          }

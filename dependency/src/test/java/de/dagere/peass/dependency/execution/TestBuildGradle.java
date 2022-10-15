@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -38,7 +39,7 @@ public class TestBuildGradle {
       JUnitVersions junitVersions = new JUnitVersions();
       junitVersions.setJunit4(true);
       Mockito.when(mockedTransformer.getJUnitVersions()).thenReturn(junitVersions);
-      
+
       if (CURRENT.exists()) {
          FileUtils.cleanDirectory(CURRENT);
       }
@@ -75,7 +76,7 @@ public class TestBuildGradle {
       MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("exclude group: 'junit', module: 'junit'")));
       MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'")));
    }
-   
+
    @Test
    public void testExclusionRemovalFromDependencies() throws IOException {
       final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "build_with_exclusions2.gradle");
@@ -85,7 +86,28 @@ public class TestBuildGradle {
       MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("exclude group: 'junit', module: 'junit'")));
       MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'")));
    }
-   
+
+   @Test
+   public void testJVMArgs() throws IOException {
+      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "buildJVMArgs.gradle");
+
+      mockedTransformer.getConfig().getKiekerConfig().setOnlyOneCallRecording(true);
+
+      final String gradleFileContents = updateGradleFile(gradleFile);
+
+      int testIndex = gradleFileContents.indexOf("test {");
+      int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
+      
+      String testTask = gradleFileContents.substring(testIndex, integrationTestIndex);
+      Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
+      
+      String integrationTestTask = gradleFileContents.substring(integrationTestIndex);
+      
+      System.out.println(integrationTestTask);
+      
+      Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
+   }
+
    @Test
    public void testIntegrationtest() throws IOException {
       final File gradleFile = new File(TestGradleBuildfileVisitor.GRADLE_FOLDER, "build-integrationtest.gradle");
@@ -94,12 +116,12 @@ public class TestBuildGradle {
 
       String integrationTestStart = gradleFileContents.substring(gradleFileContents.indexOf("tasks.register('integrationTest', Test)"));
       String integrationTestTask = integrationTestStart.substring(0, integrationTestStart.indexOf('}'));
-      
+
       System.out.println(integrationTestTask);
-      
+
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("systemProperty \"kieker.monitoring.configuration\""));
    }
-   
+
    @Test
    public void testIntegrationtestVariant2() throws IOException {
       final File gradleFile = new File(TestGradleBuildfileVisitor.GRADLE_FOLDER, "build-integrationtest2.gradle");
@@ -108,13 +130,12 @@ public class TestBuildGradle {
 
       String integrationTestStart = gradleFileContents.substring(gradleFileContents.indexOf("task integrationTest(type: Test)"));
       String integrationTestTask = integrationTestStart.substring(0, integrationTestStart.indexOf('}'));
-      
+
       System.out.println(integrationTestTask);
-      
+
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("systemProperty \"kieker.monitoring.configuration\""));
    }
 
-   
    public void testUpdate(final File gradleFile, final boolean buildtools) throws IOException {
       final String gradleFileContents = updateGradleFile(gradleFile);
 

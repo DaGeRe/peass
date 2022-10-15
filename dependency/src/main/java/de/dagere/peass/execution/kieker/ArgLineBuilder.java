@@ -108,9 +108,9 @@ public class ArgLineBuilder {
          String configFilePath = modulePath.getAbsolutePath().replace('\\', '/') + MONITORING_PROPERTIES_PATH;
          properties.put(KIEKER_CONFIGURATION_PURE, configFilePath);
 
-         if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
-            properties.put("jvmArgs", "[\"" + KIEKER_ARG_LINE_GRADLE + "\"]");
-         }
+//         if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
+//            properties.put("jvmArgs", "[\"" + KIEKER_ARG_LINE_GRADLE + "\"]");
+//         }
 
       } else {
          String tempPathNoEscapes = tempFolder.getAbsolutePath().replace('\\', '/');
@@ -122,6 +122,14 @@ public class ArgLineBuilder {
    public String getJVMArgs() {
       if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
          return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"]";
+      } else {
+         return null;
+      }
+   }
+   
+   public String getJVMArgs(String addition) {
+      if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
+         return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\""+ addition + "]";
       } else {
          return null;
       }
