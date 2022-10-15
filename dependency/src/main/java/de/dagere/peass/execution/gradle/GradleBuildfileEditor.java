@@ -120,12 +120,12 @@ public class GradleBuildfileEditor {
                dependencyGradle = "implementation ('" + dependency.getGradleDependency() + "') " + excludeString;
             } else if (isAnbox && dependency.getGradleDependency().contains("kopeme")) {
                String[] excludes = {
-                  "    implementation ('" + dependency.getGradleDependency() + "') {",
-                  "        exclude group: '"+ "net.kieker-monitoring" + "', module: '" + "kieker'",
-                  "        exclude group: '"+ "org.hamcrest" + "', module: '" + "hamcrest'", 
-                  "        exclude group: '"+ "org.aspectj" + "', module: '" + "aspectjrt'", 
-                  "        exclude group: '"+ "org.apache.logging.log4j" + "', module: '" + "log4j-core'", 
-                  "    }",
+                     "    implementation ('" + dependency.getGradleDependency() + "') {",
+                     "        exclude group: '" + "net.kieker-monitoring" + "', module: '" + "kieker'",
+                     "        exclude group: '" + "org.hamcrest" + "', module: '" + "hamcrest'",
+                     "        exclude group: '" + "org.aspectj" + "', module: '" + "aspectjrt'",
+                     "        exclude group: '" + "org.apache.logging.log4j" + "', module: '" + "log4j-core'",
+                     "    }",
                };
                for (String line : excludes) {
                   visitor.addLine(visitor.getDependencyLine() - 1, line);
