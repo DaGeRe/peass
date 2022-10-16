@@ -82,7 +82,7 @@ public class ArgLineBuilder {
       return argline;
    }
 
-   public String buildArglineGradle(final File tempFolder) {
+   public String buildSystemPropertiesGradle(final File tempFolder) {
       // final String argline = buildGenericArgline(tempFolder, ":", "\",\"", KIEKER_ARG_LINE_GRADLE);
       if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
          String tempPathNoEscapes = tempFolder.getAbsolutePath().replace('\\', '/');

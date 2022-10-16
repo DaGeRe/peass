@@ -26,8 +26,8 @@ public class TestArgLineBuilder {
       String argLineMaven = builder.buildArglineMaven(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineMaven, Matchers.containsString("-javaagent"));
       
-      String argLineGradle = builder.buildArglineGradle(new File("/tmp/asd"));
-      MatcherAssert.assertThat(argLineGradle, Matchers.containsString("-javaagent"));
+      String argLineGradle = builder.buildSystemPropertiesGradle(new File("/tmp/asd"));
+//      MatcherAssert.assertThat(argLineGradle, Matchers.containsString("-javaagent"));
       MatcherAssert.assertThat(argLineGradle, Matchers.containsString("kieker.monitoring.configuration"));
    }
    
@@ -43,7 +43,7 @@ public class TestArgLineBuilder {
       String argLineMaven = builder.buildArglineMaven(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineMaven, Matchers.not(Matchers.containsString("-javaagent")));
       
-      String argLineGradle = builder.buildArglineGradle(new File("/tmp/asd"));
+      String argLineGradle = builder.buildSystemPropertiesGradle(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineGradle, Matchers.not(Matchers.containsString("-javaagent")));
    }
    

@@ -167,11 +167,11 @@ public class GradleBuildfileEditor {
    private void addArgLine(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, File tempFolder, GradleTaskAnalyzer taskAnalyzer) {
       if (visitor.getAndroidLine() != -1) {
          if (visitor.getUnitTestsAll() != -1) {
-            visitor.addLine(visitor.getUnitTestsAll() - 1, argLineBuilder.buildArglineGradle(tempFolder));
+            visitor.addLine(visitor.getUnitTestsAll() - 1, argLineBuilder.buildSystemPropertiesGradle(tempFolder));
          } else if (visitor.getTestOptionsAndroid() != -1) {
-            visitor.addLine(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + argLineBuilder.buildArglineGradle(tempFolder) + "}");
+            visitor.addLine(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + argLineBuilder.buildSystemPropertiesGradle(tempFolder) + "}");
          } else {
-            visitor.addLine(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + argLineBuilder.buildArglineGradle(tempFolder) + "} }");
+            visitor.addLine(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + argLineBuilder.buildSystemPropertiesGradle(tempFolder) + "} }");
          }
       } else {
          enhanceTestTask(visitor, argLineBuilder, tempFolder);
@@ -183,7 +183,7 @@ public class GradleBuildfileEditor {
          File tempFolder, GradleTaskAnalyzer taskAnalyzer) {
       if (visitor.getIntegrationTestLine() != -1) {
          if (visitor.getIntegrationTestTaskProperties().getPropertiesLine() == -1) {
-            visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
+            visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildSystemPropertiesGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
                String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.getIntegrationTestTaskProperties().isSystemPropertiesBlock());
@@ -193,7 +193,7 @@ public class GradleBuildfileEditor {
          TestTaskParser integrationTestTaskProperties = visitor.getIntegrationTestTaskProperties();
          adaptTask(visitor, argLineBuilder, integrationTestTaskProperties, visitor.getIntegrationTestLine() - 1);
       } else if (taskAnalyzer.isIntegrationTest()) {
-         visitor.getLines().add("integrationTest { " + argLineBuilder.buildArglineGradle(tempFolder) + "}");
+         visitor.getLines().add("integrationTest { " + argLineBuilder.buildSystemPropertiesGradle(tempFolder) + "}");
       }
    }
 
@@ -216,7 +216,7 @@ public class GradleBuildfileEditor {
          File tempFolder) {
       if (visitor.getTestLine() != -1) {
          if (visitor.getTestTaskProperties().getPropertiesLine() == -1) {
-            visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
+            visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.buildSystemPropertiesGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
                String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.getTestTaskProperties().isSystemPropertiesBlock());
@@ -227,7 +227,7 @@ public class GradleBuildfileEditor {
          adaptTask(visitor, argLineBuilder, testTaskProperties, visitor.getTestLine() - 1);
 
       } else {
-         visitor.getLines().add("test { " + argLineBuilder.buildArglineGradle(tempFolder) + "}");
+         visitor.getLines().add("test { " + argLineBuilder.buildSystemPropertiesGradle(tempFolder) + "}");
       }
    }
 }
