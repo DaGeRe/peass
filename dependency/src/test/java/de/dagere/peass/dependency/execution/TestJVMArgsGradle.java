@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -45,6 +46,29 @@ public class TestJVMArgsGradle {
       
       mockedTransformer.getConfig().getKiekerConfig().setOnlyOneCallRecording(true);
       mockedTransformer.getConfig().getExecutionConfig().setXmx("5g");
+   }
+   
+   @Ignore
+   @Test
+   public void testHeapsizeReplacement() throws IOException {
+      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "build.gradle");
+
+      final String gradleFileContents = updateGradleFile(gradleFile);
+
+      int testIndex = gradleFileContents.indexOf("test {");
+      int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
+      
+      String testTask = gradleFileContents.substring(testIndex, integrationTestIndex);
+      
+      System.out.println(gradleFileContents);
+      
+      Assert.assertEquals(1, StringUtils.countMatches(testTask, "maxHeapSize"));
+      MatcherAssert.assertThat(testTask, Matchers.containsString("maxHeapSize = \"5g\""));
+      
+      String integrationTestTask = gradleFileContents.substring(integrationTestIndex);
+      
+      Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
+      MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
    }
    
    @Test

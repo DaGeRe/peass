@@ -20,11 +20,14 @@ public class TestTaskParser {
    private int jvmArgsLine = -1;
    private String testJvmArgsText;
    private int propertiesLine = -1;
+   private int maxHeapSizeLine = -1;
+   private final Map<String, Integer> executionProperties;
 
    public TestTaskParser(ArgumentListExpression arguments, Map<String, Integer> executionProperties, MutableBoolean systemPropertiesBlock) {
+      this.executionProperties = executionProperties;
       parseTaskWithPotentialSystemProperties(arguments, executionProperties, systemPropertiesBlock);
    }
-   
+
    public void parseTaskWithPotentialSystemProperties(ArgumentListExpression arguments, Map<String, Integer> executionProperties, MutableBoolean systemPropertiesBlock) {
       for (Expression argument : arguments.getExpressions()) {
          if (argument instanceof ClosureExpression) {
@@ -40,12 +43,16 @@ public class TestTaskParser {
                      potentialSystemProperties = new ExpressionStatement(expression);
                   } else if (expressionText.contains("jvmArgs")) {
                      parseJvmArgs(expression);
+                  } else if (expressionText.contains("maxHeapSize")) {
+                     maxHeapSizeLine = expression.getLineNumber();
                   }
                } else if (statement instanceof ExpressionStatement) {
                   potentialSystemProperties = (ExpressionStatement) statement;
                   Expression expression = potentialSystemProperties.getExpression();
                   if (expression.getText().contains("jvmArgs")) {
                      parseJvmArgs(expression);
+                  } else if (expression.getText().contains("maxHeapSize")) {
+                     maxHeapSizeLine = expression.getLineNumber();
                   }
                }
                if (potentialSystemProperties != null && potentialSystemProperties.getExpression() instanceof MethodCallExpression) {
@@ -103,7 +110,7 @@ public class TestTaskParser {
       }
       return propertiesLine;
    }
-   
+
    private static void addExecutionProperties(Map<String, Integer> executionProperties, int line, String key, String value) {
       if (key.startsWith(GradleBuildfileVisitor.JUPITER_EXECUTION_CONFIG_DEFAULT) && value.contains("concurrent")) {
          executionProperties.put(GradleBuildfileVisitor.JUPITER_EXECUTION_CONFIG_DEFAULT, line);
@@ -113,10 +120,27 @@ public class TestTaskParser {
       }
    }
    
+   public void increaseLines(int addedLineIndex) {
+      if (addedLineIndex < jvmArgsLine && jvmArgsLine != -1) {
+         jvmArgsLine++;
+      }
+      
+      if (addedLineIndex < propertiesLine && propertiesLine != -1) {
+         propertiesLine++;
+         for (Map.Entry<String, Integer> entry : executionProperties.entrySet()) {
+            entry.setValue(entry.getValue() + 1);
+         }
+      }
+      
+      if (addedLineIndex < maxHeapSizeLine && maxHeapSizeLine != -1) {
+         maxHeapSizeLine++;
+      }
+   }
+
    public int getJvmArgsLine() {
       return jvmArgsLine;
    }
-   
+
    public String getTestJvmArgsText() {
       return testJvmArgsText;
    }
@@ -125,4 +149,7 @@ public class TestTaskParser {
       return propertiesLine;
    }
    
+   public int getMaxHeapSizeLine() {
+      return maxHeapSizeLine;
+   }
 }
