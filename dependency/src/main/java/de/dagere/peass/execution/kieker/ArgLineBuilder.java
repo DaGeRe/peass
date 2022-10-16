@@ -86,16 +86,13 @@ public class ArgLineBuilder {
       // final String argline = buildGenericArgline(tempFolder, ":", "\",\"", KIEKER_ARG_LINE_GRADLE);
       if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
          String tempPathNoEscapes = tempFolder.getAbsolutePath().replace('\\', '/');
-         String argLine = "  systemProperty \"" + TEMP_DIR_PURE + "\", \"" + tempPathNoEscapes + "\"" + System.lineSeparator();
+         String systemProperties = "  systemProperty \"" + TEMP_DIR_PURE + "\", \"" + tempPathNoEscapes + "\"" + System.lineSeparator();
          String configFilePath = modulePath.getAbsolutePath().replace('\\', '/') + MONITORING_PROPERTIES_PATH;
-         argLine += "  systemProperty \"" + KIEKER_CONFIGURATION_PURE + "\", \"" + configFilePath + "\"" + System.lineSeparator();
-//         if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
-//            argLine += getJVMArgs() + System.lineSeparator();
-//         }
+         systemProperties += "  systemProperty \"" + KIEKER_CONFIGURATION_PURE + "\", \"" + configFilePath + "\"" + System.lineSeparator();
 
-         LOG.debug("Created gradle argLine: {}", argLine);
+         LOG.debug("Created gradle properties: {}", systemProperties);
 
-         return argLine;
+         return systemProperties;
       } else {
          return "";
       }
@@ -109,11 +106,6 @@ public class ArgLineBuilder {
 
          String configFilePath = modulePath.getAbsolutePath().replace('\\', '/') + MONITORING_PROPERTIES_PATH;
          properties.put(KIEKER_CONFIGURATION_PURE, configFilePath);
-
-         // if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
-         // properties.put("jvmArgs", "[\"" + KIEKER_ARG_LINE_GRADLE + "\"]");
-         // }
-
       } else {
          String tempPathNoEscapes = tempFolder.getAbsolutePath().replace('\\', '/');
          properties.put(TEMP_DIR_PURE, tempPathNoEscapes);
