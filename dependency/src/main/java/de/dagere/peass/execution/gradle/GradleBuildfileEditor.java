@@ -201,9 +201,6 @@ public class GradleBuildfileEditor {
       } else if (taskAnalyzer.isIntegrationTest()) {
          visitor.getLines().add("integrationTest { " + argLineBuilder.buildArglineGradle(tempFolder) + "}");
       }
-      
-      System.out.println(StringUtils.join(visitor.getLines(), "\n"));
-      System.out.println("Test");
    }
 
    private void enhanceTestTask(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder,

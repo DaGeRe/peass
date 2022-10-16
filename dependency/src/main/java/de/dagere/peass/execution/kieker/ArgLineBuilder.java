@@ -3,6 +3,8 @@ package de.dagere.peass.execution.kieker;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -108,9 +110,9 @@ public class ArgLineBuilder {
          String configFilePath = modulePath.getAbsolutePath().replace('\\', '/') + MONITORING_PROPERTIES_PATH;
          properties.put(KIEKER_CONFIGURATION_PURE, configFilePath);
 
-//         if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
-//            properties.put("jvmArgs", "[\"" + KIEKER_ARG_LINE_GRADLE + "\"]");
-//         }
+         // if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
+         // properties.put("jvmArgs", "[\"" + KIEKER_ARG_LINE_GRADLE + "\"]");
+         // }
 
       } else {
          String tempPathNoEscapes = tempFolder.getAbsolutePath().replace('\\', '/');
@@ -127,11 +129,25 @@ public class ArgLineBuilder {
       }
    }
    
-   public String getJVMArgs(String addition) {
-      if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
-         return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\""+ addition + "]";
+   private static final Pattern XMX_PATTERN = Pattern.compile("-Xmx[0-9]*[m,g]");
+
+   public String getJVMArgs(String oldArgLine) {
+      
+      Matcher matcher = XMX_PATTERN.matcher(oldArgLine);
+      String changedArgLine;
+      if (matcher.find()) {
+         String xmxString = "-Xmx" + testTransformer.getConfig().getExecutionConfig().getXmx();
+         changedArgLine = matcher.replaceFirst(xmxString);
       } else {
-         return null;
+         changedArgLine = oldArgLine;
+      }
+
+      System.out.println(changedArgLine);
+
+      if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
+         return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"" + changedArgLine + "]";
+      } else {
+         return changedArgLine;
       }
    }
 }

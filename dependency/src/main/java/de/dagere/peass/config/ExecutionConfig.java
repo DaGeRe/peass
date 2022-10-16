@@ -67,6 +67,8 @@ public class ExecutionConfig implements Serializable {
    private String testExecutor = DEFAULT_TEST_EXECUTOR;
    private String gitCryptKey;
    private boolean useAnbox = false;
+   
+   private String xmx = null;
 
    private List<String> increaseVariableValues = new LinkedList<>();
 
@@ -119,6 +121,7 @@ public class ExecutionConfig implements Serializable {
       this.testClazzFolders = other.testClazzFolders;
       
       this.useAnbox = other.useAnbox;
+      this.xmx = other.xmx;
 
       this.increaseVariableValues = other.getIncreaseVariableValues();
    }
@@ -426,6 +429,15 @@ public class ExecutionConfig implements Serializable {
    @JsonInclude(value = JsonInclude.Include.NON_DEFAULT)
    public void setUseAnbox(boolean useAnbox) {
       this.useAnbox = useAnbox;
+   }
+   
+   public String getXmx() {
+      return xmx;
+   }
+   
+   @JsonInclude(value = JsonInclude.Include.NON_NULL)
+   public void setXmx(String xmx) {
+      this.xmx = xmx;
    }
 
    @JsonInclude(Include.NON_EMPTY)
