@@ -177,14 +177,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
    private void parseTaskDefinition(ArgumentListExpression arguments, Map<String, Integer> executionProperties, MutableBoolean systemPropertiesBlock) {
       TestTaskParser parser = new TestTaskParser(arguments, executionProperties, systemPropertiesBlock);
-      if (parser.getPropertiesLine() != -1) {
-         integrationTestTaskProperties = parser;
-//         integrationTestSystemPropertiesLine =  parser.getPropertiesLine();
-      }
-//      if (parser.getJvmArgsLine() != -1) {
-//         integrationTestJvmArgsLine = parser.getJvmArgsLine();
-//         integrationTestJvmArgsText = parser.getTestJvmArgsText();
-//      }
+      integrationTestTaskProperties = parser;
    }
 
    @Override

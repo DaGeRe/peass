@@ -89,9 +89,9 @@ public class ArgLineBuilder {
          String argLine = "  systemProperty \"" + TEMP_DIR_PURE + "\", \"" + tempPathNoEscapes + "\"" + System.lineSeparator();
          String configFilePath = modulePath.getAbsolutePath().replace('\\', '/') + MONITORING_PROPERTIES_PATH;
          argLine += "  systemProperty \"" + KIEKER_CONFIGURATION_PURE + "\", \"" + configFilePath + "\"" + System.lineSeparator();
-         if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
-            argLine += getJVMArgs() + System.lineSeparator();
-         }
+//         if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
+//            argLine += getJVMArgs() + System.lineSeparator();
+//         }
 
          LOG.debug("Created gradle argLine: {}", argLine);
 
