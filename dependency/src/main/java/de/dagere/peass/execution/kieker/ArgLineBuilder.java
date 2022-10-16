@@ -122,32 +122,41 @@ public class ArgLineBuilder {
    }
 
    public String getJVMArgs() {
+      String potentialXmxArgLine = getXmxArgLine("");
       if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
-         return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"]";
+         return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"," + potentialXmxArgLine + "]";
+      } else if (potentialXmxArgLine.length() > 0) {
+         return "  jvmArgs=[" + potentialXmxArgLine + "]";
       } else {
          return null;
       }
    }
-   
+
    private static final Pattern XMX_PATTERN = Pattern.compile("-Xmx[0-9]*[m,g]");
 
    public String getJVMArgs(String oldArgLine) {
-      
-      Matcher matcher = XMX_PATTERN.matcher(oldArgLine);
-      String changedArgLine;
-      if (matcher.find()) {
-         String xmxString = "-Xmx" + testTransformer.getConfig().getExecutionConfig().getXmx();
-         changedArgLine = matcher.replaceFirst(xmxString);
-      } else {
-         changedArgLine = oldArgLine;
-      }
-
-      System.out.println(changedArgLine);
+      String changedArgLine = getXmxArgLine(oldArgLine);
 
       if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
-         return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"" + changedArgLine + "]";
+         return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\", " + changedArgLine + "]";
       } else {
          return changedArgLine;
+      }
+   }
+
+   private String getXmxArgLine(String oldArgLine) {
+      if (testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
+         Matcher matcher = XMX_PATTERN.matcher(oldArgLine);
+         String changedArgLine;
+         if (matcher.find()) {
+            String xmxString = "-Xmx" + testTransformer.getConfig().getExecutionConfig().getXmx();
+            changedArgLine = matcher.replaceFirst(xmxString);
+         } else {
+            changedArgLine = "\"-Xmx" + testTransformer.getConfig().getExecutionConfig().getXmx()+"\"";
+         }
+         return changedArgLine;
+      } else {
+         return oldArgLine;
       }
    }
 }

@@ -42,14 +42,36 @@ public class TestJVMArgsGradle {
       if (CURRENT.exists()) {
          FileUtils.cleanDirectory(CURRENT);
       }
+      
+      mockedTransformer.getConfig().getKiekerConfig().setOnlyOneCallRecording(true);
+      mockedTransformer.getConfig().getExecutionConfig().setXmx("5g");
+   }
+   
+   @Test
+   public void testXmxSetting() throws IOException {
+      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "buildNoJVMArgs.gradle");
+
+      final String gradleFileContents = updateGradleFile(gradleFile);
+
+      int testIndex = gradleFileContents.indexOf("test {");
+      int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
+      
+      String testTask = gradleFileContents.substring(testIndex, integrationTestIndex);
+      
+      System.out.println(gradleFileContents);
+      
+      Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
+      MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g"));
+      
+      String integrationTestTask = gradleFileContents.substring(integrationTestIndex);
+      
+      Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
+      MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
    }
    
    @Test
    public void testXmxIncreaseGigabyte() throws IOException {
       final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "buildJVMArgs.gradle");
-
-      mockedTransformer.getConfig().getKiekerConfig().setOnlyOneCallRecording(true);
-      mockedTransformer.getConfig().getExecutionConfig().setXmx("5g");
 
       final String gradleFileContents = updateGradleFile(gradleFile);
 
@@ -61,8 +83,6 @@ public class TestJVMArgsGradle {
       MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g"));
       
       String integrationTestTask = gradleFileContents.substring(integrationTestIndex);
-      
-      System.out.println(integrationTestTask);
       
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
@@ -72,9 +92,6 @@ public class TestJVMArgsGradle {
    public void testXmxIncreaseMegabyte() throws IOException {
       final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "buildJVMArgsInMegabyte.gradle");
 
-      mockedTransformer.getConfig().getKiekerConfig().setOnlyOneCallRecording(true);
-      mockedTransformer.getConfig().getExecutionConfig().setXmx("5g");
-
       final String gradleFileContents = updateGradleFile(gradleFile);
 
       int testIndex = gradleFileContents.indexOf("test {");
@@ -85,8 +102,6 @@ public class TestJVMArgsGradle {
       MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g"));
       
       String integrationTestTask = gradleFileContents.substring(integrationTestIndex);
-      
-      System.out.println(integrationTestTask);
       
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));

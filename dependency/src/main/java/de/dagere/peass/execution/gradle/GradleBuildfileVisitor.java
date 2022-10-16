@@ -100,7 +100,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
                testJvmArgsText = parser.getTestJvmArgsText();
             }
          } else if (call.getMethodAsString().equals("integrationTest")) {
-            testLine = call.getLastLineNumber() + offset;
+            integrationTestLine = call.getLastLineNumber() + offset;
             if (call.getArguments() instanceof ArgumentListExpression) {
                ArgumentListExpression arguments = (ArgumentListExpression) call.getArguments();
                parseTaskDefinition(arguments, integrationtestExecutionProperties, integrationTestSystemPropertiesBlock);

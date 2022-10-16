@@ -191,10 +191,10 @@ public class GradleBuildfileEditor {
             if (argLineBuilder.getJVMArgs() != null) {
                if (visitor.getIntegrationTestJvmArgsLine() != -1) {
                   String testJvmArgsText = "'" + visitor.getIntegrationTestJvmArgsText().substring(1, visitor.getIntegrationTestJvmArgsText().length() - 1) + "'";
-                  String adaptedText = argLineBuilder.getJVMArgs("," + testJvmArgsText);
+                  String adaptedText = argLineBuilder.getJVMArgs(testJvmArgsText);
                   visitor.getLines().set(visitor.getIntegrationTestJvmArgsLine() - 1, adaptedText);
                } else {
-                  visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
+                  visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.getJVMArgs());
                }
             }
          }
@@ -216,10 +216,10 @@ public class GradleBuildfileEditor {
             if (argLineBuilder.getJVMArgs() != null) {
                if (visitor.getTestJvmArgsLine() != -1) {
                   String testJvmArgsText = "'" + visitor.getTestJvmArgsText().substring(1, visitor.getTestJvmArgsText().length() - 1) + "'";
-                  String adaptedText = argLineBuilder.getJVMArgs("," + testJvmArgsText);
+                  String adaptedText = argLineBuilder.getJVMArgs(testJvmArgsText);
                   visitor.getLines().set(visitor.getTestJvmArgsLine() - 1, adaptedText);
                } else {
-                  visitor.addLine(visitor.getTestLine(), argLineBuilder.getJVMArgs());
+                  visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.getJVMArgs());
                }
             }
 
