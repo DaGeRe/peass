@@ -188,17 +188,18 @@ public class GradleBuildfileEditor {
                String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasIntegrationTestSystemPropertiesBlock());
                visitor.addLine(visitor.getIntegrationTestSystemPropertiesLine(), addedText);
             }
+            TestTaskParser integrationTestTaskProperties = visitor.getIntegrationTestTaskProperties();
             if (argLineBuilder.getJVMArgs() != null) {
-               if (visitor.getIntegrationTestJvmArgsLine() != -1) {
-                  String testJvmArgsText = "'" + visitor.getIntegrationTestJvmArgsText().substring(1, visitor.getIntegrationTestJvmArgsText().length() - 1) + "'";
+               if (integrationTestTaskProperties.getJvmArgsLine() != -1) {
+                  String testJvmArgsText = "'" + integrationTestTaskProperties.getTestJvmArgsText().substring(1, integrationTestTaskProperties.getTestJvmArgsText().length() - 1) + "'";
                   String adaptedText = argLineBuilder.getJVMArgs(testJvmArgsText);
-                  visitor.getLines().set(visitor.getIntegrationTestJvmArgsLine() - 1, adaptedText);
+                  visitor.getLines().set(integrationTestTaskProperties.getJvmArgsLine() - 1, adaptedText);
                } else {
                   visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.getJVMArgs());
                }
             }
-            if (visitor.getIntegrationTestHeapSizeLine() != -1 && testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
-               visitor.getLines().set(visitor.getIntegrationTestHeapSizeLine() -1, "    maxHeapSize = \"" + testTransformer.getConfig().getExecutionConfig().getXmx() + "\"");
+            if (integrationTestTaskProperties.getMaxHeapSizeLine() != -1 && testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
+               visitor.getLines().set(integrationTestTaskProperties.getMaxHeapSizeLine() -1, "    maxHeapSize = \"" + testTransformer.getConfig().getExecutionConfig().getXmx() + "\"");
             }
          }
       } else if (taskAnalyzer.isIntegrationTest()) {
@@ -216,17 +217,18 @@ public class GradleBuildfileEditor {
                String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasTestSystemPropertiesBlock());
                visitor.addLine(visitor.getTestSystemPropertiesLine(), addedText);
             }
+            TestTaskParser testTaskProperties = visitor.getTestTaskProperties();
             if (argLineBuilder.getJVMArgs() != null) {
-               if (visitor.getTestJvmArgsLine() != -1) {
-                  String testJvmArgsText = "'" + visitor.getTestJvmArgsText().substring(1, visitor.getTestJvmArgsText().length() - 1) + "'";
+               if (testTaskProperties.getJvmArgsLine() != -1) {
+                  String testJvmArgsText = "'" + testTaskProperties.getTestJvmArgsText().substring(1, testTaskProperties.getTestJvmArgsText().length() - 1) + "'";
                   String adaptedText = argLineBuilder.getJVMArgs(testJvmArgsText);
-                  visitor.getLines().set(visitor.getTestJvmArgsLine() - 1, adaptedText);
+                  visitor.getLines().set(testTaskProperties.getJvmArgsLine() - 1, adaptedText);
                } else {
                   visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.getJVMArgs());
                }
             }
-            if (visitor.getTestHeapSizeLine() != -1 && testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
-               visitor.getLines().set(visitor.getTestHeapSizeLine() -1, "    maxHeapSize = \"" + testTransformer.getConfig().getExecutionConfig().getXmx() + "\"");
+            if (testTaskProperties.getMaxHeapSizeLine() != -1 && testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
+               visitor.getLines().set(testTaskProperties.getMaxHeapSizeLine() -1, "    maxHeapSize = \"" + testTransformer.getConfig().getExecutionConfig().getXmx() + "\"");
             }
          }
 

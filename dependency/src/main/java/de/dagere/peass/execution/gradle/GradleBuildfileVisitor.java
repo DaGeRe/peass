@@ -204,16 +204,8 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       return testLine;
    }
 
-   public int getTestJvmArgsLine() {
-      return testTaskProperties.getJvmArgsLine();
-   }
-
-   public String getTestJvmArgsText() {
-      return testTaskProperties.getTestJvmArgsText();
-   }
-   
-   public int getTestHeapSizeLine() {
-      return testTaskProperties.getMaxHeapSizeLine();
+   public TestTaskParser getTestTaskProperties() {
+      return testTaskProperties;
    }
 
    public int getAndroidLine() {
@@ -232,16 +224,8 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       return integrationTestLine;
    }
    
-   public int getIntegrationTestJvmArgsLine() {
-      return integrationTestTaskProperties.getJvmArgsLine();
-   }
-   
-   public String getIntegrationTestJvmArgsText() {
-      return integrationTestTaskProperties.getTestJvmArgsText();
-   }
-   
-   public int getIntegrationTestHeapSizeLine() {
-      return integrationTestTaskProperties.getMaxHeapSizeLine();
+   public TestTaskParser getIntegrationTestTaskProperties() {
+      return integrationTestTaskProperties;
    }
 
    public boolean isHasVersion() {
