@@ -11,12 +11,25 @@ public class GradleDaemonFileDeleter {
          reader.readLine();
          String daemonLine = reader.readLine();
          String daemonFileName = daemonLine.substring(daemonLine.lastIndexOf(" ") + 1);
-         File daemonFile = new File(daemonFileName);
-         if (daemonFile.exists()) {
-            daemonFile.delete();
-         }
+         deleteDaemonFileByName(daemonFileName);
       } catch (IOException e) {
          e.printStackTrace();
+      }
+   }
+
+   public static void deleteDaemonFile(String processOutput) {
+      String[] lines = processOutput.split("\n");
+      if (lines.length > 2) {
+         String daemonLine = lines[2];
+         String daemonFileName = daemonLine.substring(daemonLine.lastIndexOf(" ") + 1);
+         deleteDaemonFileByName(daemonFileName);
+      }
+   }
+   
+   private static void deleteDaemonFileByName(String daemonFileName) {
+      File daemonFile = new File(daemonFileName);
+      if (daemonFile.exists()) {
+         daemonFile.delete();
       }
    }
 }

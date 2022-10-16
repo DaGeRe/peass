@@ -47,6 +47,8 @@ public class GradleTaskAnalyzer {
       Process process = processBuilder.start();
       String processOutput = StreamGobbler.getFullProcess(process, true);
 
+      GradleDaemonFileDeleter.deleteDaemonFile(processOutput);
+      
       LOG.debug(processOutput);
 
       List<String> taskLines = Arrays.stream(processOutput.split("\n"))
