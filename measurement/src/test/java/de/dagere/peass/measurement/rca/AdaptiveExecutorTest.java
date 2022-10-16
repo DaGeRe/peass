@@ -33,9 +33,9 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class AdaptiveExecutorTest {
 
-   private static final String VERSION0 = "000001~1";
+   private static final String COMMIT0 = "000001~1";
 
-   private static final String VERSION1 = "000001";
+   private static final String COMMIT1 = "000001";
 
    private static final Logger LOG = LogManager.getLogger(AdaptiveExecutorTest.class);
 
@@ -59,7 +59,7 @@ public class AdaptiveExecutorTest {
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
 
-         config = new MeasurementConfig(2, VERSION1, VERSION0);
+         config = new MeasurementConfig(2, COMMIT1, COMMIT0);
          config.getKiekerConfig().setUseKieker(true);
          config.setIterations(2);
          config.setRepetitions(2);
@@ -85,10 +85,10 @@ public class AdaptiveExecutorTest {
 
          executor.getDurations(0);
 
-         Assert.assertEquals(2, nodeWithDuration.getStatistics(VERSION1).getN());
-         Assert.assertEquals(2, nodeWithDuration.getStatistics(VERSION0).getN());
-         Assert.assertEquals(4, nodeWithDuration.getCallCount(VERSION1));
-         Assert.assertEquals(4, nodeWithDuration.getCallCount(VERSION0));
+         Assert.assertEquals(2, nodeWithDuration.getStatistics(COMMIT1).getN());
+         Assert.assertEquals(2, nodeWithDuration.getStatistics(COMMIT0).getN());
+         Assert.assertEquals(4, nodeWithDuration.getCallCount(COMMIT1));
+         Assert.assertEquals(4, nodeWithDuration.getCallCount(COMMIT0));
       }
    }
 
@@ -106,8 +106,8 @@ public class AdaptiveExecutorTest {
 
          executor.getDurations(1);
 
-         Assert.assertEquals(2, nodeWithDuration.getStatistics(VERSION1).getN());
-         Assert.assertEquals(2, nodeWithDuration.getStatistics(VERSION0).getN());
+         Assert.assertEquals(2, nodeWithDuration.getStatistics(COMMIT1).getN());
+         Assert.assertEquals(2, nodeWithDuration.getStatistics(COMMIT0).getN());
       }
    }
    
