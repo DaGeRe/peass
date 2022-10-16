@@ -51,8 +51,6 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private boolean hasVersion = true;
    private boolean subprojectJava = false;
    private List<String> gradleFileContents;
-   private Map<String, Integer> testExecutionProperties = new HashMap<>();
-   private Map<String, Integer> integrationtestExecutionProperties = new HashMap<>();
 
    private final ExecutionConfig config;
 
@@ -88,13 +86,13 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             testLine = call.getLastLineNumber() + offset;
             if (call.getArguments() instanceof ArgumentListExpression) {
                ArgumentListExpression arguments = (ArgumentListExpression) call.getArguments();
-               testTaskProperties = new TestTaskParser(arguments, testExecutionProperties);
+               testTaskProperties = new TestTaskParser(arguments);
             }
          } else if (call.getMethodAsString().equals("integrationTest")) {
             integrationTestLine = call.getLastLineNumber() + offset;
             if (call.getArguments() instanceof ArgumentListExpression) {
                ArgumentListExpression arguments = (ArgumentListExpression) call.getArguments();
-               parseTaskDefinition(arguments, integrationtestExecutionProperties);
+               parseTaskDefinition(arguments);
             }
          } else if (call.getMethodAsString().equals("android")) {
             androidLine = call.getLastLineNumber() + offset;
@@ -155,7 +153,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             ConstantExpression expression = (ConstantExpression) first;
             if (expression.getValue().equals("integrationTest")) {
                integrationTestLine = call.getLastLineNumber() + offset;
-               parseTaskDefinition(arguments, null);
+               parseTaskDefinition(arguments);
             }
          }
          if (first instanceof MethodCallExpression) {
@@ -166,15 +164,15 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
                if (expression.getValue().equals("integrationTest")) {
                   integrationTestLine = call.getLastLineNumber() + offset;
                   
-                  parseTaskDefinition(arguments, null);
+                  parseTaskDefinition(arguments);
                }
             }
          }
       }
    }
 
-   private void parseTaskDefinition(ArgumentListExpression arguments, Map<String, Integer> executionProperties) {
-      TestTaskParser parser = new TestTaskParser(arguments, executionProperties);
+   private void parseTaskDefinition(ArgumentListExpression arguments) {
+      TestTaskParser parser = new TestTaskParser(arguments);
       integrationTestTaskProperties = parser;
    }
 
@@ -257,14 +255,6 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
    public int getAllConfigurationsLine() {
       return allConfigurationsLine;
-   }
-
-   public Map<String, Integer> getTestExecutionProperties() {
-      return testExecutionProperties;
-   }
-
-   public Map<String, Integer> getIntegrationtestExecutionProperties() {
-      return integrationtestExecutionProperties;
    }
 
    public void addLine(final int lineIndex, final String textForAdding) {

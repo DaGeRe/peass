@@ -1,5 +1,6 @@
 package de.dagere.peass.execution.gradle;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -22,14 +23,13 @@ public class TestTaskParser {
    private int propertiesLine = -1;
    private int maxHeapSizeLine = -1;
    private boolean systemPropertiesBlock = false;
-   private final Map<String, Integer> executionProperties;
+   private final Map<String, Integer> executionProperties = new LinkedHashMap<>();
 
-   public TestTaskParser(ArgumentListExpression arguments, Map<String, Integer> executionProperties) {
-      this.executionProperties = executionProperties;
-      parseTaskWithPotentialSystemProperties(arguments, executionProperties);
+   public TestTaskParser(ArgumentListExpression arguments) {
+      parseTaskWithPotentialSystemProperties(arguments);
    }
 
-   public void parseTaskWithPotentialSystemProperties(ArgumentListExpression arguments, Map<String, Integer> executionProperties) {
+   public void parseTaskWithPotentialSystemProperties(ArgumentListExpression arguments) {
       for (Expression argument : arguments.getExpressions()) {
          if (argument instanceof ClosureExpression) {
             ClosureExpression closure = (ClosureExpression) argument;
@@ -57,7 +57,7 @@ public class TestTaskParser {
                   }
                }
                if (potentialSystemProperties != null && potentialSystemProperties.getExpression() instanceof MethodCallExpression) {
-                  propertiesLine = getPropertiesLine(executionProperties, potentialSystemProperties);
+                  propertiesLine = getPropertiesLine(potentialSystemProperties);
                }
             }
          } else {
@@ -66,7 +66,7 @@ public class TestTaskParser {
                // System.out.println(expression.getArguments());
                if (expression.getArguments() instanceof ArgumentListExpression) {
                   ArgumentListExpression innerArguments = (ArgumentListExpression) expression.getArguments();
-                  parseTaskWithPotentialSystemProperties(innerArguments, null);
+                  parseTaskWithPotentialSystemProperties(innerArguments);
                }
             }
          }
@@ -83,7 +83,7 @@ public class TestTaskParser {
       }
    }
 
-   private int getPropertiesLine(Map<String, Integer> executionProperties, ExpressionStatement potentialSystemProperties) {
+   private int getPropertiesLine(ExpressionStatement potentialSystemProperties) {
       int propertiesLine = -1;
 
       MethodCallExpression methodCallExpression = (MethodCallExpression) potentialSystemProperties.getExpression();
@@ -156,5 +156,9 @@ public class TestTaskParser {
    
    public boolean isSystemPropertiesBlock() {
       return systemPropertiesBlock;
+   }
+   
+   public Map<String, Integer> getExecutionProperties() {
+      return executionProperties;
    }
 }
