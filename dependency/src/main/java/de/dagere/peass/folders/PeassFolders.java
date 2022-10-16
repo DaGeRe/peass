@@ -317,7 +317,10 @@ public class PeassFolders {
          reductionFolder.mkdirs();
       }
       File clazzFolder = new File(reductionFolder, testcase.getClazz());
-      return new File(clazzFolder, testcase.getMethodWithParams());
+      if (!clazzFolder.exists()) {
+         clazzFolder.mkdirs();
+      }
+      return new File(clazzFolder, testcase.getMethodWithParams() + ".json");
    }
 
 }

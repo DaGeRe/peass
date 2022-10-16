@@ -42,7 +42,8 @@ public class ReductionManager {
             shouldBreak = reduceExecutions(shouldBreak, reducedIterations);
             
             try {
-               Constants.OBJECTMAPPER.writeValue(organizer.getFolders().getReductionFile(testcase), commitCurrentResult);
+               File reductionFile = organizer.getFolders().getReductionFile(testcase);
+               Constants.OBJECTMAPPER.writeValue(reductionFile, commitCurrentResult);
             } catch (IOException e) {
                e.printStackTrace();
             }
