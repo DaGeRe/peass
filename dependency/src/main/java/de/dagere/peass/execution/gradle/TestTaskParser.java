@@ -21,14 +21,15 @@ public class TestTaskParser {
    private String testJvmArgsText;
    private int propertiesLine = -1;
    private int maxHeapSizeLine = -1;
+   private boolean systemPropertiesBlock = false;
    private final Map<String, Integer> executionProperties;
 
-   public TestTaskParser(ArgumentListExpression arguments, Map<String, Integer> executionProperties, MutableBoolean systemPropertiesBlock) {
+   public TestTaskParser(ArgumentListExpression arguments, Map<String, Integer> executionProperties) {
       this.executionProperties = executionProperties;
-      parseTaskWithPotentialSystemProperties(arguments, executionProperties, systemPropertiesBlock);
+      parseTaskWithPotentialSystemProperties(arguments, executionProperties);
    }
 
-   public void parseTaskWithPotentialSystemProperties(ArgumentListExpression arguments, Map<String, Integer> executionProperties, MutableBoolean systemPropertiesBlock) {
+   public void parseTaskWithPotentialSystemProperties(ArgumentListExpression arguments, Map<String, Integer> executionProperties) {
       for (Expression argument : arguments.getExpressions()) {
          if (argument instanceof ClosureExpression) {
             ClosureExpression closure = (ClosureExpression) argument;
@@ -56,7 +57,7 @@ public class TestTaskParser {
                   }
                }
                if (potentialSystemProperties != null && potentialSystemProperties.getExpression() instanceof MethodCallExpression) {
-                  propertiesLine = getPropertiesLine(executionProperties, potentialSystemProperties, systemPropertiesBlock);
+                  propertiesLine = getPropertiesLine(executionProperties, potentialSystemProperties);
                }
             }
          } else {
@@ -65,7 +66,7 @@ public class TestTaskParser {
                // System.out.println(expression.getArguments());
                if (expression.getArguments() instanceof ArgumentListExpression) {
                   ArgumentListExpression innerArguments = (ArgumentListExpression) expression.getArguments();
-                  parseTaskWithPotentialSystemProperties(innerArguments, null, null);
+                  parseTaskWithPotentialSystemProperties(innerArguments, null);
                }
             }
          }
@@ -82,7 +83,7 @@ public class TestTaskParser {
       }
    }
 
-   private int getPropertiesLine(Map<String, Integer> executionProperties, ExpressionStatement potentialSystemProperties, MutableBoolean systemPropertiesBlock) {
+   private int getPropertiesLine(Map<String, Integer> executionProperties, ExpressionStatement potentialSystemProperties) {
       int propertiesLine = -1;
 
       MethodCallExpression methodCallExpression = (MethodCallExpression) potentialSystemProperties.getExpression();
@@ -91,7 +92,7 @@ public class TestTaskParser {
       if (method.equals("systemProperties")) {
          MapExpression map = (MapExpression) propertiesArguments.getExpression(0);
          if (executionProperties != null) {
-            systemPropertiesBlock.setTrue();
+            systemPropertiesBlock = true;
             for (MapEntryExpression expression : map.getMapEntryExpressions()) {
                String key = expression.getKeyExpression().getText();
                String value = expression.getValueExpression().getText();
@@ -101,7 +102,7 @@ public class TestTaskParser {
          }
       } else if (method.equals("systemProperty")) {
          if (executionProperties != null) {
-            systemPropertiesBlock.setFalse();
+            systemPropertiesBlock = false;
             propertiesLine = propertiesArguments.getExpression(0).getLineNumber();
             String key = propertiesArguments.getExpression(0).getText();
             String value = propertiesArguments.getExpression(1).getText();
@@ -151,5 +152,9 @@ public class TestTaskParser {
    
    public int getMaxHeapSizeLine() {
       return maxHeapSizeLine;
+   }
+   
+   public boolean isSystemPropertiesBlock() {
+      return systemPropertiesBlock;
    }
 }

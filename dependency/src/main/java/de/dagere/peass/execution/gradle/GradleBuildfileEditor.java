@@ -185,7 +185,7 @@ public class GradleBuildfileEditor {
             visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
-               String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasIntegrationTestSystemPropertiesBlock());
+               String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.getIntegrationTestTaskProperties().isSystemPropertiesBlock());
                visitor.addLine(visitor.getIntegrationTestTaskProperties().getPropertiesLine(), addedText);
             }
          }
@@ -218,7 +218,7 @@ public class GradleBuildfileEditor {
             visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
-               String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasTestSystemPropertiesBlock());
+               String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.getTestTaskProperties().isSystemPropertiesBlock());
                visitor.addLine(visitor.getTestTaskProperties().getPropertiesLine(), addedText);
             }
          }

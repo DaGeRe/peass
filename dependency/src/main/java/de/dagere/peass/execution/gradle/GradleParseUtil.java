@@ -116,11 +116,11 @@ public class GradleParseUtil {
    public static void updateExecutionMode(GradleBuildfileVisitor visitor) {
 
       for (Map.Entry<String, Integer> entry : visitor.getTestExecutionProperties().entrySet()) {
-         updateExecutionProperties(visitor, entry, visitor.hasTestSystemPropertiesBlock());
+         updateExecutionProperties(visitor, entry, visitor.getTestTaskProperties().isSystemPropertiesBlock());
       }
 
       for (Map.Entry<String, Integer> entry : visitor.getIntegrationtestExecutionProperties().entrySet()) {
-         updateExecutionProperties(visitor, entry, visitor.hasIntegrationTestSystemPropertiesBlock());
+         updateExecutionProperties(visitor, entry, visitor.getIntegrationTestTaskProperties().isSystemPropertiesBlock());
       }
    }
 
