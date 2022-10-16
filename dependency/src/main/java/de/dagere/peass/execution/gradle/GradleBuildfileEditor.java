@@ -99,7 +99,8 @@ public class GradleBuildfileEditor {
 
       addDependencies(visitor);
 
-      if (visitor.getTestTaskProperties().getPropertiesLine() != -1 || visitor.getIntegrationTestTaskProperties().getPropertiesLine() != -1) {
+      if ((visitor.getTestTaskProperties() != null && visitor.getTestTaskProperties().getPropertiesLine() != -1) 
+            || (visitor.getIntegrationTestTaskProperties() != null && visitor.getIntegrationTestTaskProperties().getPropertiesLine() != -1)) {
          GradleParseUtil.updateExecutionMode(visitor);
       }
 
