@@ -311,4 +311,13 @@ public class PeassFolders {
       return projectName;
    }
 
+   public File getReductionFile(TestMethodCall testcase) {
+      File reductionFolder = new File(peassFolder, "reductions");
+      if (!reductionFolder.exists()) {
+         reductionFolder.mkdirs();
+      }
+      File clazzFolder = new File(reductionFolder, testcase.getClazz());
+      return new File(clazzFolder, testcase.getMethodWithParams());
+   }
+
 }

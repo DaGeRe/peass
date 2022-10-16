@@ -1,6 +1,7 @@
 package de.dagere.peass.measurement.dependencyprocessors.reductioninfos;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +12,7 @@ import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
+import de.dagere.peass.utils.Constants;
 
 public class ReductionManager {
 
@@ -38,6 +40,12 @@ public class ReductionManager {
             LOG.error("Should originally run {} iterations, but did not succeed - reducing to {}", measurementConfig.getIterations(), reducedIterations);
             // final int lessIterations = testTransformer.getConfig().getIterations() / 5;
             shouldBreak = reduceExecutions(shouldBreak, reducedIterations);
+            
+            try {
+               Constants.OBJECTMAPPER.writeValue(organizer.getFolders().getReductionFile(testcase), commitCurrentResult);
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
          }
       }
 

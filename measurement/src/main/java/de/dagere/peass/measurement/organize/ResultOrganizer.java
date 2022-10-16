@@ -214,6 +214,10 @@ public class ResultOrganizer {
    public File getResultFile(final TestMethodCall testcase, final int vmid, final String commit) {
       return folders.getResultFile(testcase, vmid, commit, mainCommit);
    }
+   
+   public PeassFolders getFolders() {
+      return folders;
+   }
 
    public boolean isSaveAll() {
       return saveAll;
