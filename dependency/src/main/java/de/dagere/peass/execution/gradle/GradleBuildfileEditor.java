@@ -185,8 +185,8 @@ public class GradleBuildfileEditor {
             visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
-               visitor.addLine(visitor.getIntegrationTestSystemPropertiesLine(),
-                     createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasIntegrationTestSystemPropertiesBlock()));
+               String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasIntegrationTestSystemPropertiesBlock());
+               visitor.addLine(visitor.getIntegrationTestSystemPropertiesLine(), addedText);
             }
             if (argLineBuilder.getJVMArgs() != null) {
                if (visitor.getIntegrationTestJvmArgsLine() != -1) {
@@ -222,7 +222,6 @@ public class GradleBuildfileEditor {
                   visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.getJVMArgs());
                }
             }
-
          }
 
       } else {
