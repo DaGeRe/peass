@@ -48,7 +48,6 @@ public class TestJVMArgsGradle {
       mockedTransformer.getConfig().getExecutionConfig().setXmx("5g");
    }
    
-   @Ignore
    @Test
    public void testHeapsizeReplacement() throws IOException {
       final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "build.gradle");
@@ -68,7 +67,7 @@ public class TestJVMArgsGradle {
       String integrationTestTask = gradleFileContents.substring(integrationTestIndex);
       
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
-      MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
+      MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("maxHeapSize = \"5g\""));
    }
    
    @Test

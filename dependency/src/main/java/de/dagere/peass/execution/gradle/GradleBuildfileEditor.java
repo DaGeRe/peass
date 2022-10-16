@@ -197,6 +197,9 @@ public class GradleBuildfileEditor {
                   visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.getJVMArgs());
                }
             }
+            if (visitor.getIntegrationTestHeapSizeLine() != -1 && testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
+               visitor.getLines().set(visitor.getIntegrationTestHeapSizeLine() -1, "    maxHeapSize = \"" + testTransformer.getConfig().getExecutionConfig().getXmx() + "\"");
+            }
          }
       } else if (taskAnalyzer.isIntegrationTest()) {
          visitor.getLines().add("integrationTest { " + argLineBuilder.buildArglineGradle(tempFolder) + "}");
@@ -221,6 +224,9 @@ public class GradleBuildfileEditor {
                } else {
                   visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.getJVMArgs());
                }
+            }
+            if (visitor.getTestHeapSizeLine() != -1 && testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
+               visitor.getLines().set(visitor.getTestHeapSizeLine() -1, "    maxHeapSize = \"" + testTransformer.getConfig().getExecutionConfig().getXmx() + "\"");
             }
          }
 

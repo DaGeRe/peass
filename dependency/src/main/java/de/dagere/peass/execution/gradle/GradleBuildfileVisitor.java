@@ -211,6 +211,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    public String getTestJvmArgsText() {
       return testTaskProperties.getTestJvmArgsText();
    }
+   
+   public int getTestHeapSizeLine() {
+      return testTaskProperties.getMaxHeapSizeLine();
+   }
 
    public int getAndroidLine() {
       return androidLine;
@@ -234,6 +238,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    
    public String getIntegrationTestJvmArgsText() {
       return integrationTestTaskProperties.getTestJvmArgsText();
+   }
+   
+   public int getIntegrationTestHeapSizeLine() {
+      return integrationTestTaskProperties.getMaxHeapSizeLine();
    }
 
    public boolean isHasVersion() {
