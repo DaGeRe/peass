@@ -44,7 +44,7 @@ public class ExecutionConfig implements Serializable {
    private List<String> excludeByRule = new LinkedList<>();
 
    private List<String> forbiddenMethods = new LinkedList<>();
-   
+
    protected String startcommit;
    protected String endcommit;
    private String pl;
@@ -67,7 +67,7 @@ public class ExecutionConfig implements Serializable {
    private String testExecutor = DEFAULT_TEST_EXECUTOR;
    private String gitCryptKey;
    private boolean useAnbox = false;
-   
+
    private String xmx = null;
 
    private List<String> increaseVariableValues = new LinkedList<>();
@@ -119,7 +119,7 @@ public class ExecutionConfig implements Serializable {
 
       this.clazzFolders = other.clazzFolders;
       this.testClazzFolders = other.testClazzFolders;
-      
+
       this.useAnbox = other.useAnbox;
       this.xmx = other.xmx;
 
@@ -165,11 +165,11 @@ public class ExecutionConfig implements Serializable {
    public String getCleanGoal() {
       return cleanGoal;
    }
-   
+
    public void setCleanGoal(String cleanGoal) {
       this.cleanGoal = cleanGoal;
    }
-   
+
    @JsonInclude(Include.NON_NULL)
    public String getTestGoal() {
       return testGoal;
@@ -430,13 +430,16 @@ public class ExecutionConfig implements Serializable {
    public void setUseAnbox(boolean useAnbox) {
       this.useAnbox = useAnbox;
    }
-   
+
    public String getXmx() {
       return xmx;
    }
-   
+
    @JsonInclude(value = JsonInclude.Include.NON_NULL)
    public void setXmx(String xmx) {
+      if (xmx != null && !xmx.matches("[0-9]*g") && !xmx.matches("[0-9]*m")) {
+         throw new RuntimeException("Please specify heap size either in Gigabyte (e.g. 5g) or Megabyte (e.g. 2048m)");
+      }
       this.xmx = xmx;
    }
 

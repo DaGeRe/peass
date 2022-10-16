@@ -42,7 +42,7 @@ public class ExecutionConfigMixin {
          + "If you want to use test<VariantName> for Android, please specify a goal (i.e. task name) here."
          + "If you want to run integration tests in maven e.g. by calling failsafe, also specify it here. ")
    protected String testGoal;
-   
+
    @Option(names = { "-cleanGoal", "--cleanGoal" }, description = "Clean goal that is called before the test execution *in Gradle*; defaults to cleanTest.")
    protected String cleanGoal;
 
@@ -101,6 +101,10 @@ public class ExecutionConfigMixin {
    @Option(names = { "-properties", "--properties" }, description = "Sets the properties that should be passed to the test (e.g. \"-Dmy.var=5\")")
    public String properties;
 
+   @Option(names = { "-heapSize",
+         "--heapSize" }, description = "Sets the heap size of the child VMs by setting something like -Xmx5g in the buildfile; only pass the size (e.g. 5g or 2048m, not -Xmx5g nor -Xmx2024m)")
+   public String heapSize;
+
    @Option(names = { "-useAnbox",
          "--useAnbox" }, description = "Activates usage of Anbox measurement features (currently experimental)")
    protected boolean useAnbox = false;
@@ -148,11 +152,11 @@ public class ExecutionConfigMixin {
    public String getTestGoal() {
       return testGoal;
    }
-   
+
    public void setCleanGoal(String cleanGoal) {
       this.cleanGoal = cleanGoal;
    }
-   
+
    public String getCleanGoal() {
       return cleanGoal;
    }
@@ -309,6 +313,14 @@ public class ExecutionConfigMixin {
       this.onlyMeasureWorkload = onlyMeasureWorkload;
    }
 
+   public String getHeapSize() {
+      return heapSize;
+   }
+
+   public void setHeapSize(String heapSize) {
+      this.heapSize = heapSize;
+   }
+
    public String getProperties() {
       return properties;
    }
@@ -316,11 +328,11 @@ public class ExecutionConfigMixin {
    public void setProperties(final String properties) {
       this.properties = properties;
    }
-   
+
    public boolean isUseAnbox() {
       return useAnbox;
    }
-   
+
    public void setUseAnbox(boolean useAnbox) {
       this.useAnbox = useAnbox;
    }
@@ -391,6 +403,7 @@ public class ExecutionConfigMixin {
       config.setRemoveSnapshots(removeSnapshots);
       config.setExecuteBeforeClassInMeasurement(executeBeforeClassInMeasurement);
       config.setProperties(properties);
+      config.setXmx(heapSize);
 
       if (getClazzFolder() != null) {
          List<String> clazzFolders = ExecutionConfig.buildFolderList(getClazzFolder());
