@@ -99,7 +99,7 @@ public class GradleBuildfileEditor {
 
       addDependencies(visitor);
 
-      if (visitor.getTestSystemPropertiesLine() != -1 || visitor.getIntegrationTestSystemPropertiesLine() != -1) {
+      if (visitor.getTestTaskProperties().getPropertiesLine() != -1 || visitor.getIntegrationTestTaskProperties().getPropertiesLine() != -1) {
          GradleParseUtil.updateExecutionMode(visitor);
       }
 
@@ -181,12 +181,12 @@ public class GradleBuildfileEditor {
    private void enhanceIntegrationTestTask(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder,
          File tempFolder, GradleTaskAnalyzer taskAnalyzer) {
       if (visitor.getIntegrationTestLine() != -1) {
-         if (visitor.getIntegrationTestSystemPropertiesLine() == -1) {
+         if (visitor.getIntegrationTestTaskProperties().getPropertiesLine() == -1) {
             visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
                String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasIntegrationTestSystemPropertiesBlock());
-               visitor.addLine(visitor.getIntegrationTestSystemPropertiesLine(), addedText);
+               visitor.addLine(visitor.getIntegrationTestTaskProperties().getPropertiesLine(), addedText);
             }
             TestTaskParser integrationTestTaskProperties = visitor.getIntegrationTestTaskProperties();
             adaptTask(visitor, argLineBuilder, integrationTestTaskProperties, visitor.getIntegrationTestLine() - 1);
@@ -214,12 +214,12 @@ public class GradleBuildfileEditor {
    private void enhanceTestTask(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder,
          File tempFolder) {
       if (visitor.getTestLine() != -1) {
-         if (visitor.getTestSystemPropertiesLine() == -1) {
+         if (visitor.getTestTaskProperties().getPropertiesLine() == -1) {
             visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else {
             for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
                String addedText = createTextForAdding(entry.getKey(), entry.getValue(), visitor.hasTestSystemPropertiesBlock());
-               visitor.addLine(visitor.getTestSystemPropertiesLine(), addedText);
+               visitor.addLine(visitor.getTestTaskProperties().getPropertiesLine(), addedText);
             }
             TestTaskParser testTaskProperties = visitor.getTestTaskProperties();
             adaptTask(visitor, argLineBuilder, testTaskProperties, visitor.getTestLine() - 1);

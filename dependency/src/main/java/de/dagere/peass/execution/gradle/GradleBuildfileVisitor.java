@@ -268,14 +268,6 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       return allConfigurationsLine;
    }
 
-   public int getTestSystemPropertiesLine() {
-      return testTaskProperties != null ? testTaskProperties.getPropertiesLine() : -1;
-   }
-
-   public int getIntegrationTestSystemPropertiesLine() {
-      return integrationTestTaskProperties != null ? integrationTestTaskProperties.getPropertiesLine() : -1;
-   }
-
    public Map<String, Integer> getTestExecutionProperties() {
       return testExecutionProperties;
    }
