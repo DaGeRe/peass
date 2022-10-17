@@ -5,7 +5,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class GradleDaemonFileDeleter {
+
+   private static final Logger LOG = LogManager.getLogger(GradleDaemonFileDeleter.class);
+
    public static void deleteDaemonFile(File regularLogFile) {
       try (BufferedReader reader = new BufferedReader(new FileReader(regularLogFile))) {
 
@@ -20,7 +26,7 @@ public class GradleDaemonFileDeleter {
                return;
             }
          }
-         System.out.println("pid could not be found in first " + maxSearchLines + " lines of logfile, logfile was not deleted!");
+         LOG.debug("pid could not be found in first {} lines of logfile, logfile was not deleted!", maxSearchLines);
 
       } catch (IOException e) {
          e.printStackTrace();
