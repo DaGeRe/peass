@@ -20,4 +20,13 @@ public class TestGradleDaemonFileDeleter {
 
       Assert.assertFalse(exampleLogFile.exists());
    }
+
+   @Test
+   public void testDeleteDaemonFile() throws IOException {
+      File exampleLogFile = new File("target/daemon-122850.out.log");
+      FileUtils.touch(exampleLogFile);
+
+      GradleDaemonFileDeleter.deleteDaemonFile(new File("src/test/resources/dependencyIT/gradle/example_daemon_log.txt"));
+      Assert.assertFalse(exampleLogFile.exists());
+   }
 }
