@@ -3,7 +3,6 @@ package de.dagere.peass.execution.gradle;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.BinaryExpression;
 import org.codehaus.groovy.ast.expr.ClosureExpression;
@@ -57,7 +56,7 @@ public class TestTaskParser {
                   }
                }
                if (potentialSystemProperties != null && potentialSystemProperties.getExpression() instanceof MethodCallExpression) {
-                  propertiesLine = getPropertiesLine(potentialSystemProperties);
+                  fetchPropertiesLine(potentialSystemProperties);
                }
             }
          } else {
@@ -83,9 +82,7 @@ public class TestTaskParser {
       }
    }
 
-   private int getPropertiesLine(ExpressionStatement potentialSystemProperties) {
-      int propertiesLine = -1;
-
+   private void fetchPropertiesLine(ExpressionStatement potentialSystemProperties) {
       MethodCallExpression methodCallExpression = (MethodCallExpression) potentialSystemProperties.getExpression();
       String method = methodCallExpression.getMethodAsString();
       ArgumentListExpression propertiesArguments = (ArgumentListExpression) methodCallExpression.getArguments();
@@ -97,7 +94,7 @@ public class TestTaskParser {
                String key = expression.getKeyExpression().getText();
                String value = expression.getValueExpression().getText();
                propertiesLine = expression.getLineNumber();
-               addExecutionProperties(executionProperties, expression.getLineNumber(), key, value);
+               addExecutionProperties(key, value);
             }
          }
       } else if (method.equals("systemProperty")) {
@@ -106,18 +103,17 @@ public class TestTaskParser {
             propertiesLine = propertiesArguments.getExpression(0).getLineNumber();
             String key = propertiesArguments.getExpression(0).getText();
             String value = propertiesArguments.getExpression(1).getText();
-            addExecutionProperties(executionProperties, propertiesLine, key, value);
+            addExecutionProperties(key, value);
          }
       }
-      return propertiesLine;
    }
 
-   private static void addExecutionProperties(Map<String, Integer> executionProperties, int line, String key, String value) {
+   private void addExecutionProperties(String key, String value) {
       if (key.startsWith(GradleBuildfileVisitor.JUPITER_EXECUTION_CONFIG_DEFAULT) && value.contains("concurrent")) {
-         executionProperties.put(GradleBuildfileVisitor.JUPITER_EXECUTION_CONFIG_DEFAULT, line);
+         executionProperties.put(GradleBuildfileVisitor.JUPITER_EXECUTION_CONFIG_DEFAULT, propertiesLine);
       }
       if (key.startsWith(GradleBuildfileVisitor.JUPITER_EXECUTION_CONFIG) && value.contains("true")) {
-         executionProperties.put(GradleBuildfileVisitor.JUPITER_EXECUTION_CONFIG, line);
+         executionProperties.put(GradleBuildfileVisitor.JUPITER_EXECUTION_CONFIG, propertiesLine);
       }
    }
    
