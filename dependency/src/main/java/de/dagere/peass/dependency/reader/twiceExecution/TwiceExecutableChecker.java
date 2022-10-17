@@ -1,5 +1,6 @@
 package de.dagere.peass.dependency.reader.twiceExecution;
 
+import java.util.Map;
 import java.util.Set;
 
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
@@ -17,5 +18,10 @@ public class TwiceExecutableChecker {
 
    public void checkTwiceExecution(Set<TestMethodCall> tests) {
       
+   }
+
+   public Map<TestMethodCall, Boolean> getTestProperties() {
+      // TODO Auto-generated method stub
+      return null;
    }
 }
