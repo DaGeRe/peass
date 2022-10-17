@@ -86,7 +86,7 @@ public class DependencyReader {
 
       setURLs(url);
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
-      twiceExecutableChecker = new TwiceExecutableChecker(getExecutor(), new JUnitTestTransformer(folders.getProjectFolder(), null));
+      twiceExecutableChecker = null;
 
       this.changeManager = changeManager;
 
@@ -123,7 +123,7 @@ public class DependencyReader {
 
       setURLs(url);
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
-      twiceExecutableChecker = new TwiceExecutableChecker(getExecutor(), new JUnitTestTransformer(folders.getProjectFolder(), null));
+      twiceExecutableChecker = null;
       
       if (!kiekerConfig.isUseKieker()) {
          throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");
