@@ -84,7 +84,7 @@ public class TestTaskParser {
    }
 
    private int getPropertiesLine(ExpressionStatement potentialSystemProperties) {
-      int propertiesLine = -1;
+      int propertiesLine = getPropertiesLine();
 
       MethodCallExpression methodCallExpression = (MethodCallExpression) potentialSystemProperties.getExpression();
       String method = methodCallExpression.getMethodAsString();
