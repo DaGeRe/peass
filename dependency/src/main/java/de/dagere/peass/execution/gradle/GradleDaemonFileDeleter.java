@@ -12,8 +12,13 @@ public class GradleDaemonFileDeleter {
 
    private static final Logger LOG = LogManager.getLogger(GradleDaemonFileDeleter.class);
 
-   public static void deleteDaemonFile(File regularLogFile) {
+   public static void deleteDaemonFile(final File regularLogFile) {
       try (BufferedReader reader = new BufferedReader(new FileReader(regularLogFile))) {
+
+         if (!regularLogFile.getName().endsWith(".out.log")) {
+            LOG.debug("File {} does not seem to be a gradle-daemon logfile (does not end with \".out.log\"), so it was not deleted!", regularLogFile.getAbsolutePath());
+            return;
+         }
 
          String daemonLine = "";
          final String searchString = "The client will now receive all logging from the daemon (pid: ";
