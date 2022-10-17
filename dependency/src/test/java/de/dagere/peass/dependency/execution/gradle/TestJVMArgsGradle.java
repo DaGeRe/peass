@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution;
+package de.dagere.peass.dependency.execution.gradle;
 
 import java.io.File;
 import java.io.IOException;

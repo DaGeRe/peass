@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.execution.GradleTestUtil;
 import de.dagere.peass.execution.gradle.GradleBuildfileVisitor;
 import de.dagere.peass.execution.gradle.GradleTaskAnalyzer;
 import de.dagere.peass.execution.utils.EnvironmentVariables;

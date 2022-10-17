@@ -3,8 +3,6 @@ package de.dagere.peass.dependency.execution.gradle;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.execution.GradleTestUtil;
-import de.dagere.peass.dependency.execution.TestBuildGradle;
 import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
