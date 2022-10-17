@@ -65,7 +65,7 @@ public class DependencyReader {
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
-   protected DependencyManager dependencyManager;
+   protected final DependencyManager dependencyManager;
    private ChangeManager changeManager;
    private StaticChangeHandler staticChangeHandler;
    
@@ -85,6 +85,8 @@ public class DependencyReader {
       this.env = env;
 
       setURLs(url);
+      
+      dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
       twiceExecutableChecker = null;
 
@@ -122,6 +124,9 @@ public class DependencyReader {
       this.env = env;
 
       setURLs(url);
+      
+      dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
+      
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
       twiceExecutableChecker = null;
       
@@ -284,7 +289,6 @@ public class DependencyReader {
    }
 
    public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException, ParseException {
-      dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       InitialCommitReader initialVersionReader = new InitialCommitReader(dependencyResult, dependencyManager, iterator);
@@ -312,7 +316,6 @@ public class DependencyReader {
    }
 
    public void readCompletedCommits(final StaticTestSelection initialdependencies, CommitComparatorInstance comparator) {
-      dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       

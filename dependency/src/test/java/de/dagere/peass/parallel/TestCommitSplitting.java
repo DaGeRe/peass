@@ -54,7 +54,6 @@ public class TestCommitSplitting {
 
       @Override
       public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException {
-         dependencyManager = new DependencyManager(folders, new ExecutionConfig(60), new KiekerConfig(true), new EnvironmentVariables());
          dependencyResult.setInitialcommit(new InitialCommit());
          dependencyResult.getInitialcommit().setCommit(iterator.getCommitName());
          return true;
