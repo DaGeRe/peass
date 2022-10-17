@@ -21,6 +21,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.dependency.reader.twiceExecution.TwiceExecutableChecker;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionExecutor;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
@@ -30,6 +31,7 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.CommitIterator;
 import de.dagere.peass.vcs.GitCommitWriter;
@@ -50,6 +52,7 @@ public class DependencyReader {
    private final ExecutionData coverageBasedSelection = new ExecutionData();
    private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
    private final CoverageSelectionExecutor coverageExecutor;
+   private final TwiceExecutableChecker twiceExecutableChecker;
    
    protected final ResultsFolders resultsFolders;
    
@@ -83,6 +86,7 @@ public class DependencyReader {
 
       setURLs(url);
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
+      twiceExecutableChecker = new TwiceExecutableChecker(getExecutor(), new JUnitTestTransformer(folders.getProjectFolder(), null));
 
       this.changeManager = changeManager;
 
@@ -119,7 +123,8 @@ public class DependencyReader {
 
       setURLs(url);
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
-
+      twiceExecutableChecker = new TwiceExecutableChecker(getExecutor(), new JUnitTestTransformer(folders.getProjectFolder(), null));
+      
       if (!kiekerConfig.isUseKieker()) {
          throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");
       }
@@ -241,9 +246,13 @@ public class DependencyReader {
             DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(commit));
             diffGenerator.generateAllDiffs(commit, newCommitInfo, traceFileMapping, executionResult);
 
+            TestSet dynamicallySelected = executionResult.getCommits().get(commit);
             if (testSelectionConfig.isGenerateCoverageSelection()) {
-               TestSet dynamicallySelected = executionResult.getCommits().get(commit);
                coverageExecutor.generateCoverageBasedSelection(commit, newCommitInfo, dynamicallySelected);
+            }
+            
+            if (testSelectionConfig.isGenerateTwiceExecutability()) {
+               twiceExecutableChecker.checkTwiceExecution(dynamicallySelected.getTestMethods());
             }
          }
       } else {

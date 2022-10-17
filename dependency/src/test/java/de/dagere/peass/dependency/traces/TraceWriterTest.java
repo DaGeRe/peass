@@ -22,7 +22,7 @@ public class TraceWriterTest {
    @Test
    public void testSimpleWriting() throws IOException {
       ResultsFolders resultsFolders = new ResultsFolders(tempDir, "test");
-      TestSelectionConfig testSelectionConfig = new TestSelectionConfig(1, false, true, true, true);
+      TestSelectionConfig testSelectionConfig = new TestSelectionConfig(1, false, true, true, false, true);
       TraceWriter writer = new TraceWriter("000001", new TestMethodCall("ClazzA", "methodA"), resultsFolders, new TraceFileMapping(), testSelectionConfig);
 
       TraceWithMethods exampleTrace = getTrace();
@@ -37,7 +37,7 @@ public class TraceWriterTest {
    public void testModuleWriting() throws IOException {
       ResultsFolders resultsFolders = new ResultsFolders(tempDir, "test");
       
-      TestSelectionConfig testSelectionConfig = new TestSelectionConfig(1, false, true, true, true);
+      TestSelectionConfig testSelectionConfig = new TestSelectionConfig(1, false, true, true, false, true);
       TraceWriter writer = new TraceWriter("000001", new TestMethodCall("ClazzA", "methodA", "moduleA"), resultsFolders, new TraceFileMapping(), testSelectionConfig);
 
       TraceWithMethods exampleTrace = getTrace();

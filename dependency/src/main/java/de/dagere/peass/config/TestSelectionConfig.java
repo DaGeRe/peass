@@ -10,6 +10,7 @@ public class TestSelectionConfig implements Serializable {
    private final boolean doNotUpdateDependencies;
    private final boolean generateTraces;
    private final boolean generateCoverageSelection;
+   private final boolean generateTwiceExecutability;
    private final boolean skipProcessSuccessRuns;
    private final boolean writeAsZip;
 
@@ -24,25 +25,28 @@ public class TestSelectionConfig implements Serializable {
       // Coverage selection does not create high additional effort after view generation, so generate it by default if views are generated
          generateCoverageSelection = true; 
       }
+      generateTwiceExecutability = false;
       skipProcessSuccessRuns = false;
       writeAsZip = false;
    }
 
-   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection, boolean writeAsZip) {
+   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection, boolean generateTwiceExecutability, boolean writeAsZip) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
       this.generateTraces = generateViews;
       this.generateCoverageSelection = generateCoverageSelection;
+      this.generateTwiceExecutability = generateTwiceExecutability;
       this.writeAsZip = writeAsZip;
       skipProcessSuccessRuns = false;
       check();
    }
    
-   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateTraces, final boolean generateCoverageSelection, final boolean skipProcessSuccessRuns, boolean writeAsZip) {
+   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateTraces, final boolean generateCoverageSelection, boolean generateTwiceExecutability, final boolean skipProcessSuccessRuns, boolean writeAsZip) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
       this.generateTraces = generateTraces;
       this.generateCoverageSelection = generateCoverageSelection;
+      this.generateTwiceExecutability = generateTwiceExecutability;
       this.skipProcessSuccessRuns = skipProcessSuccessRuns;
       this.writeAsZip = writeAsZip;
       check();
@@ -73,6 +77,10 @@ public class TestSelectionConfig implements Serializable {
    
    public boolean isGenerateCoverageSelection() {
       return generateCoverageSelection;
+   }
+   
+   public boolean isGenerateTwiceExecutability() {
+      return generateTwiceExecutability;
    }
    
    public boolean isSkipProcessSuccessRuns() {

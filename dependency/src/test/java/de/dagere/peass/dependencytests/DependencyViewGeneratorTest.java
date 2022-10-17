@@ -39,7 +39,7 @@ public class DependencyViewGeneratorTest {
 
          ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
 
-         TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false, true, false, true);
+         TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false, true, false, false, true);
 
          FakeFileIterator iteratorspied = mockIterator();
 
