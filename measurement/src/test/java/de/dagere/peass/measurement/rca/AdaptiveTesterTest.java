@@ -24,6 +24,7 @@ import de.dagere.peass.measurement.dataloading.ResultLoader;
 import de.dagere.peass.measurement.dependencyprocessors.AdaptiveTester;
 import de.dagere.peass.measurement.dependencyprocessors.DependencyTester;
 import de.dagere.peass.measurement.dependencyprocessors.reductioninfos.ReductionManager;
+import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.rca.helper.VCSTestUtils;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.vcs.VersionControlSystem;
@@ -54,6 +55,7 @@ public class AdaptiveTesterTest {
          Mockito.when(testGenerator.getConfig()).thenReturn(config2);
 
          AdaptiveTester tester2 = prepareTester();
+         mockResultOrganizer(tester2);
          Mockito.doReturn(false).when(tester2).checkIsDecidable(Mockito.eq(testcase), Mockito.anyInt());
 
          for (int i = 0; i < vms; i++) {
@@ -76,6 +78,12 @@ public class AdaptiveTesterTest {
 
    }
 
+   private void mockResultOrganizer(AdaptiveTester tester2) {
+      ResultOrganizer resultOrganizerMock = Mockito.mock(ResultOrganizer.class);
+      Mockito.doReturn(new PeassFolders(new File("target"))).when(resultOrganizerMock).getFolders();
+      Mockito.doReturn(resultOrganizerMock).when(tester2).getCurrentOrganizer();
+   }
+
    @Ignore
    @Test
    public void testEarlyDecision() throws Exception {
@@ -90,7 +98,7 @@ public class AdaptiveTesterTest {
       Mockito.when(testGenerator.getConfig()).thenReturn(config2);
 
       AdaptiveTester tester2 = prepareTester();
-
+      
       createEarlyBreakData(tester2);
 
       tester2.evaluate(testcase);
@@ -109,7 +117,8 @@ public class AdaptiveTesterTest {
       Mockito.when(testGenerator.getConfig()).thenReturn(config2);
 
       AdaptiveTester tester2 = prepareTester();
-
+      mockResultOrganizer(tester2);
+      
       createEarlyBreakData(tester2);
 
       tester2.evaluate(testcase);
