@@ -210,6 +210,10 @@ public abstract class TestExecutor {
    public File getProjectFolder() {
       return folders.getProjectFolder();
    }
+   
+   public PeassFolders getFolders() {
+      return folders;
+   }
 
    public boolean isAndroid() {
       return false;

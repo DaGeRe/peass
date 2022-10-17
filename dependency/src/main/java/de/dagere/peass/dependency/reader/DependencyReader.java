@@ -88,7 +88,7 @@ public class DependencyReader {
       
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
-      twiceExecutableChecker = null;
+      twiceExecutableChecker = new TwiceExecutableChecker(getExecutor());
 
       this.changeManager = changeManager;
 

@@ -3,13 +3,14 @@ package de.dagere.peass.folders;
 import java.io.File;
 
 public class VMExecutionLogFolders {
-   private final File dependencyLogFolder, measureLogFolder, treeLogFolder, rcaLogFolder;
+   private final File dependencyLogFolder, measureLogFolder, treeLogFolder, rcaLogFolder, twiceRunningLogFolder;
    
    public VMExecutionLogFolders(final File peassFolder) {
       dependencyLogFolder = new File(peassFolder, "logs/dependencyLogs");
       measureLogFolder = new File(peassFolder, "logs/measureLogs");
       treeLogFolder = new File(peassFolder, "logs/treeLogs");
       rcaLogFolder = new File(peassFolder, "logs/rcaLogs");
+      twiceRunningLogFolder = new File(dependencyLogFolder, "twiceRunning");
    }
    
    public File getDependencyLogFolder() {
@@ -38,5 +39,12 @@ public class VMExecutionLogFolders {
          rcaLogFolder.mkdirs();
       }
       return rcaLogFolder;
+   }
+
+   public File getTwiceRunningLogFolder() {
+      if (!twiceRunningLogFolder.exists()) {
+         twiceRunningLogFolder.mkdirs();
+      }
+      return twiceRunningLogFolder;
    }
 }

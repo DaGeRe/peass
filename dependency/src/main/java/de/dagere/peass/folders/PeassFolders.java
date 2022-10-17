@@ -114,6 +114,10 @@ public class PeassFolders {
    public File getDependencyLogFolder() {
       return logFolders.getDependencyLogFolder();
    }
+   
+   public File getTwiceRunningLogFolder() {
+      return logFolders.getTwiceRunningLogFolder();
+   }
 
    public File getDependencyLogSuccessRunFile(final String commit) {
       final File commitFolder = new File(getDependencyLogFolder(), commit);
