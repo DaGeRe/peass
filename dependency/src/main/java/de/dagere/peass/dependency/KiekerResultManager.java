@@ -148,11 +148,11 @@ public class KiekerResultManager {
       }
    }
 
-   public File getXMLFileFolder(final File moduleFolder) throws FileNotFoundException, IOException, XmlPullParserException {
-      return getXMLFileFolder(folders, moduleFolder);
+   public File getJSONFileFolder(final File moduleFolder) throws FileNotFoundException, IOException, XmlPullParserException {
+      return getJSONFileFolder(folders, moduleFolder);
    }
 
-   public static File getXMLFileFolder(final PeassFolders folders, final File moduleFolder) {
+   public static File getJSONFileFolder(final PeassFolders folders, final File moduleFolder) {
       File xmlFileFolder = null;
       final BuildtoolProjectNameReader buildtoolProjectNameReader = new BuildtoolProjectNameReader();
       if (buildtoolProjectNameReader.searchBuildfile(moduleFolder, 1)) {

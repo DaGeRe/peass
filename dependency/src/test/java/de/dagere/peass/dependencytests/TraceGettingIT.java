@@ -130,7 +130,7 @@ public class TraceGettingIT {
       LOG.debug("Trace-Analysis..");
 
       final boolean worked = analyseTrace(new TestMethodCall("viewtest.TestMe", "test", ""), VIEWS_FOLDER_TEST, new HashMap<>(), githash,
-            tracereader.getXMLFileFolder(TestConstants.CURRENT_FOLDER));
+            tracereader.getJSONFileFolder(TestConstants.CURRENT_FOLDER));
       Assert.assertEquals(true, worked);
 
       tracereader.deleteTempFiles();

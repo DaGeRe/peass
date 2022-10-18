@@ -92,7 +92,7 @@ public class TestPeassFilter {
       PeassFolders peassFolders = new PeassFolders(CURRENT);
       manager.getExecutor().loadClasses();
       manager.executeKoPeMeKiekerRun(testset, ""+i, peassFolders.getDependencyLogFolder());
-      final File kiekerFolderComparison = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
+      final File kiekerFolderComparison = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getJSONFileFolder(CURRENT))[0];
       LOG.debug("Searching: " + kiekerFolderComparison);
       final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping, new KiekerConfig()).getShortTrace("");
       return compareTrace;

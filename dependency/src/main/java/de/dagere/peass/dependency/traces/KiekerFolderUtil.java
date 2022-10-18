@@ -75,12 +75,12 @@ public class KiekerFolderUtil {
    public static File getModuleResultFolder(final PeassFolders folders, final TestCase testcase) {
       if (testcase.getModule() != null) {
          File rawModuleFolder = new File(folders.getProjectFolder(), testcase.getModule());
-         File moduleResultsFolder = KiekerResultManager.getXMLFileFolder(folders, rawModuleFolder);
+         File moduleResultsFolder = KiekerResultManager.getJSONFileFolder(folders, rawModuleFolder);
          if (moduleResultsFolder.exists()) {
             return moduleResultsFolder;
          }
       } 
-      File projectResultsFolder = KiekerResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
+      File projectResultsFolder = KiekerResultManager.getJSONFileFolder(folders, folders.getProjectFolder());
       return projectResultsFolder;
    }
 }

@@ -13,7 +13,7 @@ public class TooBigLogCleaner {
    public static final int MAX_SIZE_IN_MB = 10;
 
    public static void cleanXMLFolder(final PeassFolders folders) throws FileNotFoundException, IOException {
-      final File xmlFileFolder = KiekerResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
+      final File xmlFileFolder = KiekerResultManager.getJSONFileFolder(folders, folders.getProjectFolder());
       if (xmlFileFolder != null) {
          FileUtils.deleteDirectory(xmlFileFolder);
       }
