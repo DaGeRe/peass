@@ -104,9 +104,15 @@ public class ContinuousDependencyReader {
             ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageSelectionFile(), ExecutionData.class);
             tests = fetchTestset(commit, executionData);
          } else {
-            LOG.info("Using dynamic test selection results");
-            ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
-            tests = fetchTestset(commit, executionData);
+            if (dependencyConfig.isGenerateTwiceExecutability()) {
+               LOG.info("Using twice executable test selection results");
+               ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getTwiceExecutableFile(), ExecutionData.class);
+               tests = fetchTestset(commit, executionData);
+            } else {
+               LOG.info("Using trace test selection results");
+               ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
+               tests = fetchTestset(commit, executionData);
+            }
          }
          return tests;
       } catch (IOException e) {
