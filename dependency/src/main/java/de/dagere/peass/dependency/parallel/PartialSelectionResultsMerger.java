@@ -113,7 +113,7 @@ public class PartialSelectionResultsMerger {
             if (resultFolder.getCoverageSelectionFile() != null && resultFolder.getCoverageSelectionFile().exists()) {
                coverageSelectionOutFiles.add(resultFolder.getCoverageSelectionFile());
             }
-            if (resultFolder.getTwiceExecutableFile().exists()) {
+            if (resultFolder.getTwiceExecutableFile() != null && resultFolder.getTwiceExecutableFile().exists()) {
                twiceExecutableOutFiles.add(resultFolder.getTwiceExecutableFile());
             }
          }
