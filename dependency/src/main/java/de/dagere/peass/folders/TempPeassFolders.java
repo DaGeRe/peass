@@ -30,5 +30,10 @@ public class TempPeassFolders extends PeassFolders {
    public File getRCALogFolder() {
       return parentLogFolders.getRCALogFolder();
    }
+   
+   @Override
+   public File getTwiceRunningLogFolder() {
+      return parentLogFolders.getTwiceRunningLogFolder();
+   }
 
 }
