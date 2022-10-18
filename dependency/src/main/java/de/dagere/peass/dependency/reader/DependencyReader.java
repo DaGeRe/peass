@@ -192,9 +192,7 @@ public class DependencyReader {
     * @param commit
     * @return
     * @throws IOException
-    * @throws XmlPullParserException
     * @throws InterruptedException
-    * @throws ViewNotFoundException
     * @throws ParseException
     */
    public int analyseCommit(final ChangeManager changeManager) throws IOException, InterruptedException, ParseException {

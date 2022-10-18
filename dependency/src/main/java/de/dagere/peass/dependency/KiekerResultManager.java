@@ -67,11 +67,11 @@ public class KiekerResultManager {
    public TestTransformer getTestTransformer() {
       return testTransformer;
    }
-   
+
    public ModuleClassMapping getModuleClassMapping() {
       return new ModuleClassMapping(executor);
    }
-   
+
    public TestSet getIgnoredTests() {
       return ignoredTests;
    }
@@ -79,7 +79,7 @@ public class KiekerResultManager {
    public void runTraceTests(final TestSet testsToUpdate, final String commit) {
       truncateKiekerResults();
       // TODO Verschieben
-      
+
       LOG.debug("Executing dependency update test, results folder: {}", folders.getTempMeasurementFolder());
       ModuleClassMapping mapping = new ModuleClassMapping(executor);
       final RunnableTestInformation tests = testTransformer.buildTestMethodSet(testsToUpdate, mapping);
@@ -91,11 +91,11 @@ public class KiekerResultManager {
       LOG.debug("Truncating: {}", folders.getTempMeasurementFolder().getAbsolutePath());
       try {
          FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
-         
+
          // Workaround: do delete temporary tomcat output folders, so peass-ant "knows" when to re-instrument all classes
          File outputFolder = new File(folders.getProjectFolder(), "output");
          if (folders.getProjectName().equals("tomcat") && outputFolder.exists()) {
-        	 FileUtils.deleteDirectory(outputFolder);
+            FileUtils.deleteDirectory(outputFolder);
          }
       } catch (final IOException e) {
          e.printStackTrace();
