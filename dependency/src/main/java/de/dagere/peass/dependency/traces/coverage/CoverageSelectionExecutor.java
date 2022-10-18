@@ -8,10 +8,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -37,22 +35,22 @@ public class CoverageSelectionExecutor {
       this.coverageSelectionInfo = coverageSelectionInfo;
    }
 
-   public void generateCoverageBasedSelection(final String version, final CommitStaticSelection newVersionInfo, TestSet dynamicallySelected)
-         throws IOException, JsonParseException, JsonMappingException {
+   public void generateCoverageBasedSelection(final String commit, final CommitStaticSelection newCommitSelection, TestSet dynamicallySelected)
+         throws IOException {
       List<TraceCallSummary> summaries = getSummaries(dynamicallySelected);
 
-      for (ChangedEntity change : newVersionInfo.getChangedClazzes().keySet()) {
+      for (ChangedEntity change : newCommitSelection.getChangedClazzes().keySet()) {
          LOG.info("Change: {}", change.toString());
          LOG.info("Parameters: {}", change.getParametersPrintable());
       }
 
-      CoverageSelectionCommit selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
+      CoverageSelectionCommit selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newCommitSelection.getChangedClazzes().keySet());
       for (TraceCallSummary traceCallSummary : selected.getTestcases().values()) {
          if (traceCallSummary.isSelected()) {
-            coverageBasedSelection.addCall(version, traceCallSummary.getTestcase());
+            coverageBasedSelection.addCall(commit, traceCallSummary.getTestcase());
          }
       }
-      coverageSelectionInfo.getCommits().put(version, selected);
+      coverageSelectionInfo.getCommits().put(commit, selected);
    }
 
    private List<TraceCallSummary> getSummaries(TestSet dynamicallySelected) throws IOException, StreamReadException, DatabindException {
