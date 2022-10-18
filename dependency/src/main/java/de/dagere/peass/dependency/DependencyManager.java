@@ -347,7 +347,7 @@ public class DependencyManager extends KiekerResultManager {
     * @throws XmlPullParserException
     * @throws InterruptedException
     */
-   public TestExistenceChanges updateDependencies(final TestSet testsToUpdate, final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
+   public TestExistenceChanges updateDependencies(final TestSet testsToUpdate, final ModuleClassMapping mapping) {
       final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies = dependencies.getCopiedDependencies();
 
       // Remove all old dependencies where changes happened, because they may

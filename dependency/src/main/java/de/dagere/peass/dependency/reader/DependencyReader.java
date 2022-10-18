@@ -148,19 +148,19 @@ public class DependencyReader {
          lastRunningVersion = iterator.getCommitName();
          while (iterator.hasNextCommit()) {
             iterator.goToNextCommit();
-            readVersion();
+            readCommit();
          }
 
          LOG.debug("Finished dependency-reading");
          return true;
-      } catch (IOException | XmlPullParserException | InterruptedException | ParseException e) {
+      } catch (IOException | InterruptedException | ParseException e) {
          e.printStackTrace();
          return false;
       }
    }
 
-   public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException {
-      final int tests = analyseVersion(changeManager);
+   public void readCommit() throws IOException, FileNotFoundException, InterruptedException, ParseException {
+      final int tests = analyseCommit(changeManager);
       GitCommitWriter.writeCurrentCommits(folders, iterator.getCommits(), resultsFolders);
       DependencyReaderUtil.write(staticSelectionResult, resultsFolders.getStaticTestSelectionFile());
       if (testSelectionConfig.isGenerateTraces()) {
@@ -197,7 +197,7 @@ public class DependencyReader {
     * @throws ViewNotFoundException
     * @throws ParseException
     */
-   public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException {
+   public int analyseCommit(final ChangeManager changeManager) throws IOException, InterruptedException, ParseException {
       final String commit = iterator.getCommitName();
       if (!testSelectionConfig.isSkipProcessSuccessRuns()) {
          if (!dependencyManager.getExecutor().isCommitRunning(iterator.getCommitName())) {
@@ -242,7 +242,7 @@ public class DependencyReader {
    }
 
    private int analyseChanges(final String commit, final DependencyReadingInput input)
-         throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException {
+         throws IOException, JsonGenerationException, JsonMappingException, InterruptedException, ParseException {
       final CommitStaticSelection newCommitInfo = staticChangeHandler.handleStaticAnalysisChanges(commit, input, dependencyManager.getModuleClassMapping());
 
       if (!testSelectionConfig.isDoNotUpdateDependencies()) {

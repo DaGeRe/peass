@@ -65,7 +65,7 @@ public class DependencyDetectorOneCallWriterIT {
          Assert.assertTrue(success);
          fakeIterator.goToNextCommit();
 
-         reader.analyseVersion(changeManager);
+         reader.analyseCommit(changeManager);
          return reader;
       } catch (IOException | InterruptedException | XmlPullParserException | ParseException e) {
          throw new RuntimeException(e);

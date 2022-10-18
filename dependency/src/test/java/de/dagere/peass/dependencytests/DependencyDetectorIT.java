@@ -146,7 +146,7 @@ public class DependencyDetectorIT {
 
       fakeIterator.goToNextCommit();
 
-      reader.analyseVersion(changeManager);
+      reader.analyseCommit(changeManager);
 
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(dependencies, "defaultpackage.NormalDependency", DependencyTestConstants.VERSION_1);
 
@@ -184,7 +184,7 @@ public class DependencyDetectorIT {
       Assert.assertEquals(1, reader.getDependencies().getCommits().get("000001").getChangedClazzes().size());
 
       fakeIterator.goToNextCommit();
-      reader.analyseVersion(changeManager);
+      reader.analyseCommit(changeManager);
 
       System.out.println(reader.getDependencies());
 

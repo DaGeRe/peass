@@ -1,5 +1,8 @@
 package de.dagere.peass.execution.gradle;
 
+import static de.dagere.peass.execution.gradle.GradleBuildfileVisitor.JUPITER_EXECUTION_CONFIG;
+import static de.dagere.peass.execution.gradle.GradleBuildfileVisitor.JUPITER_EXECUTION_CONFIG_DEFAULT;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -16,8 +19,6 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
-
-import static de.dagere.peass.execution.gradle.GradleBuildfileVisitor.*;
 
 public class GradleParseUtil {
 

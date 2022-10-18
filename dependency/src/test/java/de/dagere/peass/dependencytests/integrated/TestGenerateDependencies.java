@@ -53,7 +53,7 @@ public class TestGenerateDependencies {
       value.put(testMeEntity, new ClazzChangeData(testMeEntity, false));
       Mockito.when(manager.getChanges(Mockito.any())).thenReturn(value);
 
-      final int tests = reader.analyseVersion(manager);
+      final int tests = reader.analyseCommit(manager);
 
       LOG.debug(Constants.OBJECTMAPPER.writeValueAsString(reader.getDependencies()));
 

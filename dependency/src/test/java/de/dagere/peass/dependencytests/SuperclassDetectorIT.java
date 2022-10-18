@@ -68,7 +68,7 @@ public class SuperclassDetectorIT {
       checkInitialDependencies(reader);
 
       fakeIterator.goToNextCommit();
-      reader.analyseVersion(changeManager);
+      reader.analyseCommit(changeManager);
 
       checkFirstVersionDependencies(reader);
    }

@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -47,7 +46,7 @@ public class TraceChangeHandler {
    }
 
    public void handleTraceAnalysisChanges(final CommitStaticSelection newCommitInfo)
-         throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException {
+         throws IOException, JsonGenerationException, JsonMappingException, InterruptedException {
       LOG.debug("Updating dependencies.. {}", commit);
 
       final ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
@@ -84,7 +83,7 @@ public class TraceChangeHandler {
    }
 
    private void analyzeTests(final CommitStaticSelection newCommitInfo, final TestSet testsToRun, ModuleClassMapping mapping)
-         throws IOException, XmlPullParserException {
+         throws IOException {
       
       dependencyManager.runTraceTests(testsToRun, commit);
 
@@ -97,7 +96,7 @@ public class TraceChangeHandler {
    }
 
    private void handleDependencyChanges(final CommitStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)
-         throws IOException, XmlPullParserException {
+         throws IOException {
       final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, mapping);
       final Map<ChangedEntity, Set<TestMethodCall>> addedTestcases = testExistenceChanges.getAddedTests();
 

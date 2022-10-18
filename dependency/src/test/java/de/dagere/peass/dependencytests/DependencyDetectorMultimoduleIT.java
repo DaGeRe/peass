@@ -76,7 +76,7 @@ public class DependencyDetectorMultimoduleIT {
       checkInitialVersion(dependencies);
 
       fakeIterator.goToNextCommit();
-      reader.analyseVersion(changeManager);
+      reader.analyseCommit(changeManager);
 
       testFirstChange(dependencies);
    }
@@ -98,7 +98,7 @@ public class DependencyDetectorMultimoduleIT {
       checkInitialVersion(dependencies);
       
       fakeIterator.goToNextCommit();
-      reader.analyseVersion(changeManager);
+      reader.analyseCommit(changeManager);
 
       testFirstChange(dependencies);
       testSecondChange(dependencies);

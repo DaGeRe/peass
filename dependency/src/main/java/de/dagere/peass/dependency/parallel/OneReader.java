@@ -59,7 +59,7 @@ public final class OneReader implements Runnable {
       while (reserveIterator.hasNextCommit() && comparator.isBefore(newest, minimumCommit)) {
          reserveIterator.goToNextCommit();
          LOG.debug("Remaining: {} This: {}", reserveIterator.getCommitName(), this);
-         reader.readVersion();
+         reader.readCommit();
          newest = reader.getDependencies().getNewestCommit();
       }
    }

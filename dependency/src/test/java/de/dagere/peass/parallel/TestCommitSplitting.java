@@ -62,7 +62,7 @@ public class TestCommitSplitting {
       static Set<String> nonRunning = new HashSet<>(Arrays.asList("4", "5"));
 
       @Override
-      public void readVersion() throws IOException, FileNotFoundException {
+      public void readCommit() throws IOException, FileNotFoundException {
          System.out.println(nonRunning + " " + iterator.getCommitName() + " " + nonRunning.contains(iterator.getCommitName()));
          if (!nonRunning.contains(iterator.getCommitName())) {
             staticSelectionResult.getCommits().put(iterator.getCommitName(), null);
