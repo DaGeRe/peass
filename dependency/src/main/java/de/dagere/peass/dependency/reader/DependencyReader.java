@@ -31,7 +31,6 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.CommitIterator;
 import de.dagere.peass.vcs.GitCommitWriter;
@@ -47,7 +46,7 @@ public class DependencyReader {
    private static final Logger LOG = LogManager.getLogger(DependencyReader.class);
 
    private final TestSelectionConfig testSelectionConfig;
-   protected final StaticTestSelection dependencyResult = new StaticTestSelection();
+   protected final StaticTestSelection staticSelectionResult = new StaticTestSelection();
    private final ExecutionData executionResult = new ExecutionData();
    private final ExecutionData coverageBasedSelection = new ExecutionData();
    private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
@@ -100,7 +99,7 @@ public class DependencyReader {
    }
 
    private void setURLs(final String url) {
-      dependencyResult.setUrl(url);
+      staticSelectionResult.setUrl(url);
       executionResult.setUrl(url);
       coverageBasedSelection.setUrl(url);
    }
@@ -163,7 +162,7 @@ public class DependencyReader {
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException {
       final int tests = analyseVersion(changeManager);
       GitCommitWriter.writeCurrentCommits(folders, iterator.getCommits(), resultsFolders);
-      DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
+      DependencyReaderUtil.write(staticSelectionResult, resultsFolders.getStaticTestSelectionFile());
       if (testSelectionConfig.isGenerateTraces()) {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getTraceTestSelectionFile(), executionResult);
          if (testSelectionConfig.isGenerateCoverageSelection()) {
@@ -189,7 +188,7 @@ public class DependencyReader {
     * @param dependencyFile
     * @param dependencyManager
     * @param dependencies
-    * @param dependencyResult
+    * @param staticSelectionResult
     * @param commit
     * @return
     * @throws IOException
@@ -231,7 +230,7 @@ public class DependencyReader {
       emptyCommit.setJdk(dependencyManager.getExecutor().getJDKVersion());
       emptyCommit.setRunning(true);
       emptyCommit.setPredecessor(input.getPredecessor());
-      dependencyResult.getCommits().put(commit, emptyCommit);
+      staticSelectionResult.getCommits().put(commit, emptyCommit);
       if (testSelectionConfig.isGenerateTraces()) {
          executionResult.addEmptyCommit(commit, null);
          coverageBasedSelection.addEmptyCommit(commit, null);
@@ -255,7 +254,7 @@ public class DependencyReader {
       } else {
          LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");
       }
-      dependencyResult.getCommits().put(commit, newCommitInfo);
+      staticSelectionResult.getCommits().put(commit, newCommitInfo);
 
       final int changedClazzCount = calculateChangedClassCount(newCommitInfo);
       return changedClazzCount;
@@ -293,22 +292,22 @@ public class DependencyReader {
 
    public void documentFailure(final String commit) {
       if (dependencyManager.getExecutor().isAndroid()) {
-         dependencyResult.setAndroid(true);
+         staticSelectionResult.setAndroid(true);
          executionResult.setAndroid(true);
          coverageBasedSelection.setAndroid(true);
       }
       LOG.error("Commit not running");
       final CommitStaticSelection newCommitInfo = new CommitStaticSelection();
       newCommitInfo.setRunning(false);
-      dependencyResult.getCommits().put(commit, newCommitInfo);
+      staticSelectionResult.getCommits().put(commit, newCommitInfo);
    }
 
    public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException, ParseException {
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
-      InitialCommitReader initialVersionReader = new InitialCommitReader(dependencyResult, dependencyManager, iterator);
+      InitialCommitReader initialVersionReader = new InitialCommitReader(staticSelectionResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialCommit()) {
-         DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
+         DependencyReaderUtil.write(staticSelectionResult, resultsFolders.getStaticTestSelectionFile());
          lastRunningVersion = iterator.getCommitName();
 
          if (testSelectionConfig.isGenerateTraces()) {
@@ -322,7 +321,7 @@ public class DependencyReader {
    }
 
    private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, InterruptedException {
-      TestSet initialTests = dependencyResult.getInitialcommit().getInitialTests();
+      TestSet initialTests = staticSelectionResult.getInitialcommit().getInitialTests();
       TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getCommitName(), traceFileMapping, kiekerConfig, testSelectionConfig);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
 
@@ -334,17 +333,17 @@ public class DependencyReader {
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       
-      dependencyResult.setCommits(initialdependencies.getCommits());
-      dependencyResult.setInitialcommit(initialdependencies.getInitialcommit());
+      staticSelectionResult.setCommits(initialdependencies.getCommits());
+      staticSelectionResult.setInitialcommit(initialdependencies.getInitialcommit());
 
       InitialCommitReader initialCommitReader = new InitialCommitReader(initialdependencies, dependencyManager, iterator);
       initialCommitReader.readCompletedCommits(comparator);
-      DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
+      DependencyReaderUtil.write(staticSelectionResult, resultsFolders.getStaticTestSelectionFile());
       lastRunningVersion = iterator.getCommitName();
    }
 
    public StaticTestSelection getDependencies() {
-      return dependencyResult;
+      return staticSelectionResult;
    }
 
    public ExecutionData getExecutionResult() {
@@ -368,7 +367,7 @@ public class DependencyReader {
       executionResult.setUrl(executions.getUrl());
       executionResult.setCommits(executions.getCommits());
 
-      new OldTraceReader(traceFileMapping, dependencyResult, resultsFolders).addTraces();
+      new OldTraceReader(traceFileMapping, staticSelectionResult, resultsFolders).addTraces();
    }
 
    public void setCoverageInfo(final CoverageSelectionInfo coverageInfo) {
