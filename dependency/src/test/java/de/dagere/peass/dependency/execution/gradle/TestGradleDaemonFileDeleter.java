@@ -11,9 +11,10 @@ import de.dagere.peass.execution.gradle.GradleDaemonFileDeleter;
 
 public class TestGradleDaemonFileDeleter {
 
+   File exampleLogFile = new File("target/temp.out.log");
+   
    @Test
    public void testRegularDeletion() throws IOException {
-      File exampleLogFile = new File("target/temp.out.log");
       FileUtils.touch(exampleLogFile);
 
       GradleDaemonFileDeleter.deleteDaemonFile(new File("src/test/resources/dependencyIT/gradle/example_log.out.log"));
@@ -23,7 +24,6 @@ public class TestGradleDaemonFileDeleter {
 
    @Test
    public void testDeleteDaemonFile() throws IOException {
-      File exampleLogFile = new File("target/daemon-122850.out.log");
       FileUtils.touch(exampleLogFile);
 
       GradleDaemonFileDeleter.deleteDaemonFile(new File("src/test/resources/dependencyIT/gradle/example_daemon.out.log"));
