@@ -117,8 +117,7 @@ public class TraceGettingIT {
    }
 
    private void executeTraceGetting(final File project, final String githash)
-         throws IOException, ParseException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
-         IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+         throws IOException, ParseException {
       DependencyDetectorTestUtil.init(project);
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       final KiekerResultManager tracereader = new KiekerResultManager(folders, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());

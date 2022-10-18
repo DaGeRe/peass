@@ -159,7 +159,7 @@ public class DependencyReader {
       }
    }
 
-   public void readCommit() throws IOException, FileNotFoundException, InterruptedException, ParseException {
+   public void readCommit() throws IOException, InterruptedException, ParseException {
       final int tests = analyseCommit(changeManager);
       GitCommitWriter.writeCurrentCommits(folders, iterator.getCommits(), resultsFolders);
       DependencyReaderUtil.write(staticSelectionResult, resultsFolders.getStaticTestSelectionFile());
@@ -177,7 +177,7 @@ public class DependencyReader {
       sizeRecorder.addVersionSize(dependencyManager.getDependencyMap().size(), tests);
 
       dependencyManager.getExecutor().deleteTemporaryFiles();
-      TooBigLogCleaner.cleanXMLFolder(folders);
+      TooBigLogCleaner.cleanJSONFolder(folders);
       TooBigLogCleaner.cleanTooBigLogs(folders, iterator.getCommitName());
    }
 

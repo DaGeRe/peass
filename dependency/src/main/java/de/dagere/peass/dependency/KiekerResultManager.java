@@ -17,7 +17,6 @@
 package de.dagere.peass.dependency;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
@@ -148,20 +147,20 @@ public class KiekerResultManager {
       }
    }
 
-   public File getJSONFileFolder(final File moduleFolder) throws FileNotFoundException, IOException, XmlPullParserException {
+   public File getJSONFileFolder(final File moduleFolder) {
       return getJSONFileFolder(folders, moduleFolder);
    }
 
    public static File getJSONFileFolder(final PeassFolders folders, final File moduleFolder) {
-      File xmlFileFolder = null;
+      File jsonFileFolder = null;
       final BuildtoolProjectNameReader buildtoolProjectNameReader = new BuildtoolProjectNameReader();
       if (buildtoolProjectNameReader.searchBuildfile(moduleFolder, 1)) {
          final String name = buildtoolProjectNameReader.getProjectName();
-         xmlFileFolder = new File(folders.getTempMeasurementFolder(), name);
+         jsonFileFolder = new File(folders.getTempMeasurementFolder(), name);
       } else {
          LOG.error("No buildfile found in {}", moduleFolder);
       }
-      return xmlFileFolder;
+      return jsonFileFolder;
    }
 
    public void deleteTempFiles() {

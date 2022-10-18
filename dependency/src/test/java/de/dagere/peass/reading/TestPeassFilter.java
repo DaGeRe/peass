@@ -1,15 +1,12 @@
 package de.dagere.peass.reading;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +47,7 @@ public class TestPeassFilter {
    }
 
    @Test
-   public void testExecution() throws IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testExecution() throws IOException, InterruptedException {
       Assume.assumeFalse(EnvironmentVariables.isWindows());
       PeassFolders folders = new PeassFolders(CURRENT);
       final KiekerResultManager manager = new KiekerResultManager(folders, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
@@ -87,7 +84,7 @@ public class TestPeassFilter {
    }
 
    private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet testset, final TestMethodCall testcase, final ModuleClassMapping mapping, final int i)
-         throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException {
+         throws IOException {
       cleanup();
       PeassFolders peassFolders = new PeassFolders(CURRENT);
       manager.getExecutor().loadClasses();
