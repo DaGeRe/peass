@@ -46,7 +46,7 @@ public class GradleDaemonFileDeleter {
       String daemonLine = "";
       for (int i = 0; i < maxSearchLines; i++) {
          daemonLine = reader.readLine();
-         if (daemonLine.contains(searchString)) {
+         if (daemonLine != null && daemonLine.contains(searchString)) {
             return daemonLine.substring(daemonLine.lastIndexOf(" ") + 1);
          }
       }
