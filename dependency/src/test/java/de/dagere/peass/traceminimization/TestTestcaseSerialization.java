@@ -19,20 +19,20 @@ public class TestTestcaseSerialization {
    @Test
    public void testSerialization() throws JsonProcessingException {
       CoverageSelectionInfo info = new CoverageSelectionInfo();
-      CoverageSelectionCommit version = new CoverageSelectionCommit();
+      CoverageSelectionCommit commit = new CoverageSelectionCommit();
       TestMethodCall test = new TestMethodCall("ClazzA", "methodA2", "moduleA", "int,String");
       TraceCallSummary traceCallSummary = new TraceCallSummary();
       traceCallSummary.addCall("app" + ChangedEntity.MODULE_SEPARATOR + "ClazzB" + ChangedEntity.METHOD_SEPARATOR + "methodB(double)");
       traceCallSummary.setTestcase(test);
-      version.getTestcases().put(test, traceCallSummary);
-      info.getVersions().put("000001", version);
+      commit.getTestcases().put(test, traceCallSummary);
+      info.getCommits().put("000001", commit);
       
       String serialized = Constants.OBJECTMAPPER.writeValueAsString(info);
       
       System.out.println(serialized);
       
       CoverageSelectionInfo deserialized = Constants.OBJECTMAPPER.readValue(serialized, CoverageSelectionInfo.class);
-      TestMethodCall deserializedTest = deserialized.getVersions().get("000001").getTestcases().keySet().iterator().next();
+      TestMethodCall deserializedTest = deserialized.getCommits().get("000001").getTestcases().keySet().iterator().next();
       Assert.assertEquals("ClazzA", deserializedTest.getClazz());
       Assert.assertEquals("methodA2", deserializedTest.getMethod());
       Assert.assertEquals("moduleA", deserializedTest.getModule());
@@ -42,20 +42,20 @@ public class TestTestcaseSerialization {
    @Test
    public void testNoParamSerialization() throws JsonProcessingException {
       CoverageSelectionInfo info = new CoverageSelectionInfo();
-      CoverageSelectionCommit version = new CoverageSelectionCommit();
+      CoverageSelectionCommit commit = new CoverageSelectionCommit();
       TestMethodCall test = new TestMethodCall("ClazzA", "methodA2", "moduleA");
       TraceCallSummary traceCallSummary = new TraceCallSummary();
       traceCallSummary.addCall("app" + ChangedEntity.MODULE_SEPARATOR + "ClazzB" + ChangedEntity.METHOD_SEPARATOR + "methodB");
       traceCallSummary.setTestcase(test);
-      version.getTestcases().put(test, traceCallSummary);
-      info.getVersions().put("000001", version);
+      commit.getTestcases().put(test, traceCallSummary);
+      info.getCommits().put("000001", commit);
       
       String serialized = Constants.OBJECTMAPPER.writeValueAsString(info);
       
       System.out.println(serialized);
       
       CoverageSelectionInfo deserialized = Constants.OBJECTMAPPER.readValue(serialized, CoverageSelectionInfo.class);
-      TestMethodCall deserializedTest = deserialized.getVersions().get("000001").getTestcases().keySet().iterator().next();
+      TestMethodCall deserializedTest = deserialized.getCommits().get("000001").getTestcases().keySet().iterator().next();
       Assert.assertEquals("ClazzA", deserializedTest.getClazz());
       Assert.assertEquals("methodA2", deserializedTest.getMethod());
       Assert.assertEquals("moduleA", deserializedTest.getModule());

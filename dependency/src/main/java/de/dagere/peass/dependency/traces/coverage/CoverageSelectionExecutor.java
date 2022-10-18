@@ -52,7 +52,7 @@ public class CoverageSelectionExecutor {
             coverageBasedSelection.addCall(version, traceCallSummary.getTestcase());
          }
       }
-      coverageSelectionInfo.getVersions().put(version, selected);
+      coverageSelectionInfo.getCommits().put(version, selected);
    }
 
    private List<TraceCallSummary> getSummaries(TestSet dynamicallySelected) throws IOException, StreamReadException, DatabindException {

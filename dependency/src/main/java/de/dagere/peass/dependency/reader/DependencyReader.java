@@ -357,7 +357,7 @@ public class DependencyReader {
    }
 
    public void setCoverageInfo(final CoverageSelectionInfo coverageInfo) {
-      coverageSelectionInfo.getVersions().putAll(coverageInfo.getVersions());
+      coverageSelectionInfo.getCommits().putAll(coverageInfo.getCommits());
    }
 
    public TestExecutor getExecutor() {
