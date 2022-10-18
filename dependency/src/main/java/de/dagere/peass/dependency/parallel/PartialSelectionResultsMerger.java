@@ -29,7 +29,8 @@ public class PartialSelectionResultsMerger {
 
    }
 
-   public static StaticTestSelection mergePartFiles(final File out, final File[] partFiles, CommitComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
+   public static StaticTestSelection mergePartFiles(final File out, final File[] partFiles, CommitComparatorInstance comparator)
+         throws IOException, JsonGenerationException, JsonMappingException {
       final List<StaticTestSelection> staticTestSelection = readStaticTestSelection(partFiles);
       StaticTestSelection merged = mergeDependencies(staticTestSelection, comparator);
 
@@ -37,7 +38,8 @@ public class PartialSelectionResultsMerger {
       return merged;
    }
 
-   public static void mergeSelectionResults(final File out, final ResultsFolders[] partFolders, CommitComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
+   public static void mergeSelectionResults(final File out, final ResultsFolders[] partFolders, CommitComparatorInstance comparator)
+         throws IOException, JsonGenerationException, JsonMappingException {
       File[] partFiles = new File[partFolders.length];
       for (int i = 0; i < partFolders.length; i++) {
          partFiles[i] = partFolders[i].getStaticTestSelectionFile();
@@ -102,6 +104,7 @@ public class PartialSelectionResultsMerger {
    public static ExecutionData mergeExecutions(final ResultsFolders mergedOut, final ResultsFolders[] outFiles) throws JsonParseException, JsonMappingException, IOException {
       List<File> executionOutFiles = new LinkedList<>();
       List<File> coverageSelectionOutFiles = new LinkedList<>();
+      List<File> twiceExecutableOutFiles = new LinkedList<>();
       for (ResultsFolders resultFolder : outFiles) {
          if (resultFolder != null) {
             if (resultFolder.getTraceTestSelectionFile().exists()) {
@@ -109,6 +112,9 @@ public class PartialSelectionResultsMerger {
             }
             if (resultFolder.getCoverageSelectionFile() != null && resultFolder.getCoverageSelectionFile().exists()) {
                coverageSelectionOutFiles.add(resultFolder.getCoverageSelectionFile());
+            }
+            if (resultFolder.getTwiceExecutableFile().exists()) {
+               twiceExecutableOutFiles.add(resultFolder.getTwiceExecutableFile());
             }
          }
       }
@@ -119,10 +125,16 @@ public class PartialSelectionResultsMerger {
          ExecutionData mergedCoverage = mergeExecutionFiles(coverageSelectionOutFiles);
          Constants.OBJECTMAPPER.writeValue(mergedOut.getCoverageSelectionFile(), mergedCoverage);
       }
+
+      if (twiceExecutableOutFiles.size() > 0) {
+         ExecutionData mergedTwiceExecutable = mergeExecutionFiles(twiceExecutableOutFiles);
+         Constants.OBJECTMAPPER.writeValue(mergedOut.getTwiceExecutableFile(), mergedTwiceExecutable);
+      }
+
       return mergedExecutions;
    }
 
-   private static ExecutionData mergeExecutionFiles(final List<File> executionOutFiles) throws IOException, JsonParseException, JsonMappingException {
+   private static ExecutionData mergeExecutionFiles(final List<File> executionOutFiles) throws IOException {
       List<ExecutionData> executionData = new LinkedList<>();
       for (File file : executionOutFiles) {
          ExecutionData currentData = Constants.OBJECTMAPPER.readValue(file, ExecutionData.class);

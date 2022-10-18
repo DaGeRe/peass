@@ -330,6 +330,7 @@ public class DependencyReader {
 
       executionResult.getCommits().put(iterator.getCommitName(), new TestSet());
       coverageBasedSelection.getCommits().put(iterator.getCommitName(), new TestSet());
+      twiceExecutableSelected.getCommits().put(iterator.getCommitName(), new TestSet());
    }
 
    public void readCompletedCommits(final StaticTestSelection initialdependencies, CommitComparatorInstance comparator) {
