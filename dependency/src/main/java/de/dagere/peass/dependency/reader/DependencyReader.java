@@ -264,7 +264,7 @@ public class DependencyReader {
    private void deriveAdditionalTestProperties(final String commit, final CommitStaticSelection newCommitInfo) throws IOException {
       TestSet dynamicallySelected = executionResult.getCommits().get(commit);
       if (testSelectionConfig.isGenerateTwiceExecutability()) {
-         twiceExecutableChecker.checkTwiceExecution(commit, dynamicallySelected.getTestMethods());
+         twiceExecutableChecker.checkTwiceExecution(commit, newCommitInfo.getPredecessor(), dynamicallySelected.getTestMethods());
          dynamicallySelected = twiceExecutableSelected.getCommits().get(commit);
          LOG.info("Left after twice execution checking: {}", dynamicallySelected);
       } 

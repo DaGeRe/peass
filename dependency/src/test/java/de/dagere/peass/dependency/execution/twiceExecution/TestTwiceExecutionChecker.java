@@ -23,7 +23,11 @@ import de.dagere.peass.testtransformation.TestTransformer;
 
 public class TestTwiceExecutionChecker {
 
+   private static final String COMMIT = "000001";
+
    private static final File PROJECT_FOLDER = new File("target/twiceExecution");
+   
+   private ExecutionData currentExecutionData = new ExecutionData();
 
    @Test
    public void testTwiceExecutionFalse() throws IOException {
@@ -34,13 +38,13 @@ public class TestTwiceExecutionChecker {
 
       TestTransformer testTransformer = RTSTestTransformerBuilder.createTestTransformer(new PeassFolders(PROJECT_FOLDER), new ExecutionConfig(), new KiekerConfig());
       TestExecutor executor = ExecutorCreator.createExecutor(new PeassFolders(PROJECT_FOLDER), testTransformer, new EnvironmentVariables());
-      TwiceExecutableChecker checker = new TwiceExecutableChecker(executor, new ExecutionData());
+      TwiceExecutableChecker checker = new TwiceExecutableChecker(executor, currentExecutionData);
 
       Set<TestMethodCall> tests = new HashSet<>();
       tests.add(new TestMethodCall("defaultpackage.TestMe", "testMe"));
-      checker.checkTwiceExecution("000001", tests);
+      checker.checkTwiceExecution(COMMIT, COMMIT + "~1", tests);
       
-      boolean isExecutableTwice = checker.getTestProperties().get(new TestMethodCall("defaultpackage.TestMe", "testMe"));
+      boolean isExecutableTwice = currentExecutionData.getCommits().get(COMMIT).getTestMethods().contains(new TestMethodCall("defaultpackage.TestMe", "testMe"));
       Assert.assertFalse(isExecutableTwice);
    }
    
@@ -53,13 +57,13 @@ public class TestTwiceExecutionChecker {
 
       TestTransformer testTransformer = RTSTestTransformerBuilder.createTestTransformer(new PeassFolders(PROJECT_FOLDER), new ExecutionConfig(), new KiekerConfig());
       TestExecutor executor = ExecutorCreator.createExecutor(new PeassFolders(PROJECT_FOLDER), testTransformer, new EnvironmentVariables());
-      TwiceExecutableChecker checker = new TwiceExecutableChecker(executor, new ExecutionData());
+      TwiceExecutableChecker checker = new TwiceExecutableChecker(executor, currentExecutionData);
 
       Set<TestMethodCall> tests = new HashSet<>();
       tests.add(new TestMethodCall("defaultpackage.TestMe", "testMe"));
-      checker.checkTwiceExecution("000001", tests);
+      checker.checkTwiceExecution(COMMIT, COMMIT + "~1", tests);
       
-      boolean isExecutableTwice = checker.getTestProperties().get(new TestMethodCall("defaultpackage.TestMe", "testMe"));
+      boolean isExecutableTwice = currentExecutionData.getCommits().get(COMMIT).getTestMethods().contains(new TestMethodCall("defaultpackage.TestMe", "testMe"));
       Assert.assertTrue(isExecutableTwice);
    }
 }

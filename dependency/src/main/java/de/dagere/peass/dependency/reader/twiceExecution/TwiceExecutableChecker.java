@@ -2,9 +2,7 @@ package de.dagere.peass.dependency.reader.twiceExecution;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +24,6 @@ public class TwiceExecutableChecker {
    private final TestTransformer transformer;
 
    private final ExecutionData executionData;
-   private final Map<TestMethodCall, Boolean> twiceExecutionInfo = new LinkedHashMap<>();
 
    public TwiceExecutableChecker(TestExecutor executor, ExecutionData executionData) {
       this.executor = executor;
@@ -34,8 +31,9 @@ public class TwiceExecutableChecker {
       this.executionData = executionData;
    }
 
-   public void checkTwiceExecution(String commit, Set<TestMethodCall> tests) {
+   public void checkTwiceExecution(String commit, String predecessor, Set<TestMethodCall> tests) {
       transformer.getConfig().setIterations(2);
+      executionData.addEmptyCommit(commit, commit);
 
       executor.prepareKoPeMeExecution(new File(executor.getFolders().getTwiceRunningLogFolder(), "twicePreparation.txt"));
       for (TestMethodCall testcase : tests) {
@@ -50,20 +48,13 @@ public class TwiceExecutableChecker {
             List<VMResult> firstDataCollectorContent = data.getFirstDatacollectorContent();
             if (firstDataCollectorContent.size() == 1 && firstDataCollectorContent.get(0).isError() == false) {
                LOG.info("Test is twice executable and therefore likely to be suitable for performance measurement: {}", testcase);
-               twiceExecutionInfo.put(testcase, true);
                executionData.addCall(commit, testcase);
             } else {
                LOG.info("Test is *not* twice executable and therefore likely to be *not* suitable for performance measurement: {}", testcase);
-               twiceExecutionInfo.put(testcase, false);
             }
          } else {
             LOG.info("Test is *not* twice executable and therefore likely to be *not* suitable for performance measurement: {}", testcase);
-            twiceExecutionInfo.put(testcase, false);
          }
       }
-   }
-
-   public Map<TestMethodCall, Boolean> getTestProperties() {
-      return twiceExecutionInfo;
    }
 }
