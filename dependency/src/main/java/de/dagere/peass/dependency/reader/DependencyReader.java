@@ -129,7 +129,7 @@ public class DependencyReader {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
-      twiceExecutableChecker = null;
+      twiceExecutableChecker = new TwiceExecutableChecker(getExecutor(), twiceExecutableSelected);
       
       if (!kiekerConfig.isUseKieker()) {
          throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");
@@ -234,6 +234,9 @@ public class DependencyReader {
       if (testSelectionConfig.isGenerateTraces()) {
          executionResult.addEmptyCommit(commit, null);
          coverageBasedSelection.addEmptyCommit(commit, null);
+      }
+      if (testSelectionConfig.isGenerateTwiceExecutability()) {
+         twiceExecutableSelected.addEmptyCommit(commit, null);
       }
       skippedNoChange.addCommit(commit, "No Change at all");
    }

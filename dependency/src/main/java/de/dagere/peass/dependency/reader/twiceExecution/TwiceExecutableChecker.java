@@ -33,7 +33,7 @@ public class TwiceExecutableChecker {
 
    public void checkTwiceExecution(String commit, String predecessor, Set<TestMethodCall> tests) {
       transformer.getConfig().setIterations(2);
-      executionData.addEmptyCommit(commit, commit);
+      executionData.addEmptyCommit(commit, predecessor);
 
       executor.prepareKoPeMeExecution(new File(executor.getFolders().getTwiceRunningLogFolder(), "twicePreparation.txt"));
       for (TestMethodCall testcase : tests) {
