@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,34 +14,21 @@ public class GradleDaemonFileDeleter {
    private static final Logger LOG = LogManager.getLogger(GradleDaemonFileDeleter.class);
 
    public static void deleteDaemonFile(final File regularLogFile) {
-      final String daemonFileName = getDaemonFilename(regularLogFile);
-      deleteDaemonFileByName(daemonFileName);
+      try (final BufferedReader reader = new BufferedReader(new FileReader(regularLogFile))) {
+         String daemonFilename = findDaemonFilename(reader);
+         deleteDaemonFileByName(daemonFilename);
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
    }
 
    public static void deleteDaemonFile(final String processOutput) {
-      final String daemonFilename = getDaemonFilename(processOutput);
-      deleteDaemonFileByName(daemonFilename);
-   }
-
-   private static String getDaemonFilename(final Object logFileOrProcessOutput) {
-
-      if (logFileOrProcessOutput instanceof File) {
-         try (final BufferedReader reader = new BufferedReader(new FileReader((File) logFileOrProcessOutput))) {
-            return findDaemonFilename(reader);
-         } catch (IOException e) {
-            e.printStackTrace();
-         }
-
-      } else if (logFileOrProcessOutput instanceof String) {
-         try (final BufferedReader reader = new BufferedReader(new FileReader((String) logFileOrProcessOutput))) {
-            return findDaemonFilename(reader);
-         } catch (IOException e) {
-            e.printStackTrace();
-         }
+      try (final BufferedReader reader = new BufferedReader(new StringReader(processOutput))) {
+         String daemonFilename = findDaemonFilename(reader);
+         deleteDaemonFileByName(daemonFilename);
+      } catch (IOException e) {
+         e.printStackTrace();
       }
-
-      LOG.debug("Passed Object is neither String nor File, daemonFilename could not be determined!");
-      return null;
    }
 
    private static boolean isLogfile(final String daemonFilename) {
