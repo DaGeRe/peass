@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
@@ -15,6 +14,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.RTSTestTransformerBuilder;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.twiceExecution.TwiceExecutableChecker;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -34,11 +34,11 @@ public class TestTwiceExecutionChecker {
 
       TestTransformer testTransformer = RTSTestTransformerBuilder.createTestTransformer(new PeassFolders(PROJECT_FOLDER), new ExecutionConfig(), new KiekerConfig());
       TestExecutor executor = ExecutorCreator.createExecutor(new PeassFolders(PROJECT_FOLDER), testTransformer, new EnvironmentVariables());
-      TwiceExecutableChecker checker = new TwiceExecutableChecker(executor);
+      TwiceExecutableChecker checker = new TwiceExecutableChecker(executor, new ExecutionData());
 
       Set<TestMethodCall> tests = new HashSet<>();
       tests.add(new TestMethodCall("defaultpackage.TestMe", "testMe"));
-      checker.checkTwiceExecution(tests);
+      checker.checkTwiceExecution("000001", tests);
       
       boolean isExecutableTwice = checker.getTestProperties().get(new TestMethodCall("defaultpackage.TestMe", "testMe"));
       Assert.assertFalse(isExecutableTwice);
@@ -53,11 +53,11 @@ public class TestTwiceExecutionChecker {
 
       TestTransformer testTransformer = RTSTestTransformerBuilder.createTestTransformer(new PeassFolders(PROJECT_FOLDER), new ExecutionConfig(), new KiekerConfig());
       TestExecutor executor = ExecutorCreator.createExecutor(new PeassFolders(PROJECT_FOLDER), testTransformer, new EnvironmentVariables());
-      TwiceExecutableChecker checker = new TwiceExecutableChecker(executor);
+      TwiceExecutableChecker checker = new TwiceExecutableChecker(executor, new ExecutionData());
 
       Set<TestMethodCall> tests = new HashSet<>();
       tests.add(new TestMethodCall("defaultpackage.TestMe", "testMe"));
-      checker.checkTwiceExecution(tests);
+      checker.checkTwiceExecution("000001", tests);
       
       boolean isExecutableTwice = checker.getTestProperties().get(new TestMethodCall("defaultpackage.TestMe", "testMe"));
       Assert.assertTrue(isExecutableTwice);

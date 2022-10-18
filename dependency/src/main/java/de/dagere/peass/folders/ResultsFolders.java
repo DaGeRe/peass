@@ -5,6 +5,8 @@ import java.io.File;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -56,6 +58,10 @@ public class ResultsFolders {
 
    public File getCoverageInfoFile() {
       return new File(resultFolder, "coverageInfo_" + projectName + ".json");
+   }
+   
+   public File getTwiceExecutableFile() {
+      return new File(resultFolder, "twiceExecutable_" + projectName + ".json");
    }
    
    public File getCommitMetadataFile() {

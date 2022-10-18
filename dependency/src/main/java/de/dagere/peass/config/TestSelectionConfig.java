@@ -61,6 +61,9 @@ public class TestSelectionConfig implements Serializable {
          throw new RuntimeException("generateCoverageSelection may only be true if generateViews is true! "
                + "If generateViews is disabled, no traces are generates; then it is not possible to select by code coverage");
       }
+      if (!generateTraces && generateTwiceExecutability) {
+         throw new RuntimeException("If generateTwiceExecutability is true, generateTraces should be true.");
+      }
    }
 
    public int getThreads() {

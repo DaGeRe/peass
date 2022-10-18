@@ -51,6 +51,8 @@ public class DependencyReader {
    private final ExecutionData executionResult = new ExecutionData();
    private final ExecutionData coverageBasedSelection = new ExecutionData();
    private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
+   private final ExecutionData twiceExecutableSelected = new ExecutionData();
+   
    private final CoverageSelectionExecutor coverageExecutor;
    private final TwiceExecutableChecker twiceExecutableChecker;
    
@@ -88,7 +90,7 @@ public class DependencyReader {
       
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
-      twiceExecutableChecker = new TwiceExecutableChecker(getExecutor());
+      twiceExecutableChecker = new TwiceExecutableChecker(getExecutor(), twiceExecutableSelected);
 
       this.changeManager = changeManager;
 
@@ -168,6 +170,9 @@ public class DependencyReader {
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageSelectionFile(), coverageBasedSelection);
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageInfoFile(), coverageSelectionInfo);
          }
+         if (testSelectionConfig.isGenerateTwiceExecutability()) {
+            Constants.OBJECTMAPPER.writeValue(resultsFolders.getTwiceExecutableFile(), twiceExecutableSelected);
+         }
       }
 
       sizeRecorder.addVersionSize(dependencyManager.getDependencyMap().size(), tests);
@@ -243,22 +248,9 @@ public class DependencyReader {
          traceChangeHandler.handleTraceAnalysisChanges(newCommitInfo);
 
          if (testSelectionConfig.isGenerateTraces()) {
-            executionResult.addEmptyCommit(commit, newCommitInfo.getPredecessor());
-            coverageBasedSelection.addEmptyCommit(commit, newCommitInfo.getPredecessor());
-            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, commit, traceFileMapping, kiekerConfig, testSelectionConfig);
-            traceViewGenerator.generateViews(resultsFolders, newCommitInfo.getTests());
+            generateTraces(commit, newCommitInfo);
 
-            DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(commit));
-            diffGenerator.generateAllDiffs(commit, newCommitInfo, traceFileMapping, executionResult);
-
-            TestSet dynamicallySelected = executionResult.getCommits().get(commit);
-            if (testSelectionConfig.isGenerateCoverageSelection()) {
-               coverageExecutor.generateCoverageBasedSelection(commit, newCommitInfo, dynamicallySelected);
-            }
-            
-            if (testSelectionConfig.isGenerateTwiceExecutability()) {
-               twiceExecutableChecker.checkTwiceExecution(dynamicallySelected.getTestMethods());
-            }
+            deriveAdditionalTestProperties(commit, newCommitInfo);
          }
       } else {
          LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");
@@ -267,6 +259,29 @@ public class DependencyReader {
 
       final int changedClazzCount = calculateChangedClassCount(newCommitInfo);
       return changedClazzCount;
+   }
+
+   private void deriveAdditionalTestProperties(final String commit, final CommitStaticSelection newCommitInfo) throws IOException {
+      TestSet dynamicallySelected = executionResult.getCommits().get(commit);
+      if (testSelectionConfig.isGenerateTwiceExecutability()) {
+         twiceExecutableChecker.checkTwiceExecution(commit, dynamicallySelected.getTestMethods());
+         dynamicallySelected = twiceExecutableSelected.getCommits().get(commit);
+         LOG.info("Left after twice execution checking: {}", dynamicallySelected);
+      } 
+      
+      if (testSelectionConfig.isGenerateCoverageSelection()) {
+         coverageExecutor.generateCoverageBasedSelection(commit, newCommitInfo, dynamicallySelected);
+      }
+   }
+
+   private void generateTraces(final String commit, final CommitStaticSelection newCommitInfo) throws IOException, ParseException {
+      executionResult.addEmptyCommit(commit, newCommitInfo.getPredecessor());
+      coverageBasedSelection.addEmptyCommit(commit, newCommitInfo.getPredecessor());
+      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, commit, traceFileMapping, kiekerConfig, testSelectionConfig);
+      traceViewGenerator.generateViews(resultsFolders, newCommitInfo.getTests());
+
+      DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(commit));
+      diffGenerator.generateAllDiffs(commit, newCommitInfo, traceFileMapping, executionResult);
    }
 
    private int calculateChangedClassCount(final CommitStaticSelection newCommitInfo) {
