@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.StringStartsWith;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -26,11 +27,11 @@ public class TestLogRedirectorToStream {
       executeSomeOutputStuff(outerStream, stream1, stream2);
 
       String[] content1 = stream1.toString().split("\n");
-      Assert.assertEquals("Should go to file", content1[0]);
+      MatcherAssert.assertThat(content1[0], StringStartsWith.startsWith("Should go to file"));
       MatcherAssert.assertThat(content1[1], Matchers.containsString("test logging - should also go to file"));
 
       String[] content2 = stream2.toString().split("\n");
-      Assert.assertEquals("Should go to file2", content2[0]);
+      MatcherAssert.assertThat(content2[0], StringStartsWith.startsWith("Should go to file2"));
       MatcherAssert.assertThat(content2[1], Matchers.containsString("test - should go to file2"));
 
       String[] contentOuter = outerStream.toString().split("\n");
