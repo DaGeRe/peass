@@ -141,8 +141,6 @@ public class TestJVMArgsGradle {
       
       String testTask = gradleFileContents.substring(testIndex, integrationTestIndex);
       
-      System.out.println(testTask);
-      
       Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
       MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g"));
       
@@ -150,6 +148,26 @@ public class TestJVMArgsGradle {
       
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
+   }
+   
+   @Test
+   public void testXmxDoubleArgs() throws IOException {
+      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "buildJVMDoubleArgs.gradle");
+
+      final String gradleFileContents = updateGradleFile(gradleFile);
+
+      int testIndex = gradleFileContents.indexOf("test {");
+      int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
+      
+      String testTask = gradleFileContents.substring(testIndex, integrationTestIndex);
+      
+      Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
+      MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g\'"));
+      
+      String integrationTestTask = gradleFileContents.substring(integrationTestIndex);
+      
+      Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
+      MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g\'"));
    }
    
    private String updateGradleFile(final File gradleFile) throws IOException {
