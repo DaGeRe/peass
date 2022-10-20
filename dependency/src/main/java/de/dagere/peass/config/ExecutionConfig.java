@@ -437,10 +437,12 @@ public class ExecutionConfig implements Serializable {
 
    @JsonInclude(value = JsonInclude.Include.NON_NULL)
    public void setXmx(String xmx) {
-      if (xmx != null && !xmx.matches("[0-9]*g") && !xmx.matches("[0-9]*m")) {
-         throw new RuntimeException("Please specify heap size either in Gigabyte (e.g. 5g) or Megabyte (e.g. 2048m)");
+      if (xmx != null && !xmx.isEmpty() && !xmx.matches("[0-9]*g") && !xmx.matches("[0-9]*m")) {
+         throw new RuntimeException("Please specify heap size either in Gigabyte (e.g. 5g) or Megabyte (e.g. 2048m), but was " + xmx);
       }
-      this.xmx = xmx;
+      if (xmx != null && !xmx.isEmpty()) {
+         this.xmx = xmx;
+      }
    }
 
    @JsonInclude(Include.NON_EMPTY)
