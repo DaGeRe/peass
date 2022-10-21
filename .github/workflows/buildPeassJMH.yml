@@ -29,12 +29,6 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java }}
-    - name: Set up Maven
-      uses: stCarolas/setup-maven@v4.2
-      with:
-        maven-version: 3.8.4
-    - name: Test Maven Version
-      run: mvn -version
     - name: Cache Maven packages
       uses: actions/cache@v2
       with:
