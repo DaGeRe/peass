@@ -194,7 +194,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
          final String[] vars;
          if (!isAndroid) {
-            vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", "testClasses", "assemble" };
+            vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", getCleanGoal(), "testClasses", "assemble" };
          } else {
             vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", "assemble" };
          }
