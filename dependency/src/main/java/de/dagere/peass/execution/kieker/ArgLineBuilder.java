@@ -130,7 +130,7 @@ public class ArgLineBuilder {
       String changedArgLine = getXmxArgLine(oldArgLine);
 
       if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
-         return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\", " + changedArgLine + "]";
+         return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"," + changedArgLine + "]";
       } else {
          return changedArgLine;
       }
