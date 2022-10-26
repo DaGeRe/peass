@@ -44,7 +44,7 @@ public class ReductionManager {
             
             try {
                File reductionFile = organizer.getFolders().getReductionFile(testcase);
-               Constants.OBJECTMAPPER.writeValue(reductionFile, commitCurrentResult);
+               Constants.OBJECTMAPPER.writeValue(reductionFile, reductionInformation);
             } catch (IOException e) {
                e.printStackTrace();
             }
