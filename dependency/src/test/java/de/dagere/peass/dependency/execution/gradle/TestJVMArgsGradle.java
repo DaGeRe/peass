@@ -101,19 +101,12 @@ public class TestJVMArgsGradle {
 
    @Test
    public void testXmxIncreaseSimple() throws IOException {
-      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "buildJVMArgsSimple.gradle");
-
-      final String gradleFileContents = updateGradleFile(gradleFile);
-
-      int testIndex = gradleFileContents.indexOf("test {");
-      int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
-
-      String testTask = gradleFileContents.substring(testIndex, integrationTestIndex);
+      final String[] testTasks = getTestTasks("buildJVMArgsSimple.gradle");
+      final String testTask = testTasks[0];
+      final String integrationTestTask = testTasks[1];
 
       Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
       MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g"));
-
-      String integrationTestTask = gradleFileContents.substring(integrationTestIndex);
 
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
