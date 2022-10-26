@@ -100,7 +100,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
     * Executes the Gradle process; since gradle is run inside the module folder, different parameters than for the maven execution are required
     */
    private Process buildGradleProcess(final File moduleFolder, final File logFile, TestMethodCall test, final String... commandLineAddition)
-         throws IOException, XmlPullParserException {
+         throws IOException {
       final String testGoal = getTestGoal();
       String wrapper = new File(folders.getProjectFolder(), EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
       String[] originals = new String[] { wrapper,
@@ -159,7 +159,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          execute(testname, timeout, process);
 
          GradleDaemonFileDeleter.deleteDaemonFile(methodLogFile);
-      } catch (final IOException | XmlPullParserException e) {
+      } catch (final IOException e) {
          e.printStackTrace();
       }
    }
