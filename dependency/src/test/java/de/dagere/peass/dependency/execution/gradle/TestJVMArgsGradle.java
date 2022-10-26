@@ -55,9 +55,11 @@ public class TestJVMArgsGradle {
 
       Assert.assertEquals(1, StringUtils.countMatches(testTask, "maxHeapSize"));
       MatcherAssert.assertThat(testTask, Matchers.containsString("maxHeapSize = \"5g\""));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(testTask));
 
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("maxHeapSize = \"5g\""));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(integrationTestTask));
    }
 
    @Test
@@ -68,9 +70,11 @@ public class TestJVMArgsGradle {
 
       Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
       MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g"));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(testTask));
 
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(integrationTestTask));
    }
 
    @Test
@@ -81,9 +85,11 @@ public class TestJVMArgsGradle {
 
       Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
       MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g"));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(testTask));
 
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(integrationTestTask));
    }
 
    @Test
@@ -94,9 +100,11 @@ public class TestJVMArgsGradle {
 
       Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
       MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g"));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(testTask));
 
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(integrationTestTask));
    }
 
    @Test
@@ -107,9 +115,11 @@ public class TestJVMArgsGradle {
 
       Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
       MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g"));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(testTask));
 
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(integrationTestTask));
    }
 
    @Test
@@ -120,9 +130,11 @@ public class TestJVMArgsGradle {
 
       Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
       MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g\'"));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(testTask));
 
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g\'"));
+      Assert.assertFalse(checkJVMArgsContainWhitespace(integrationTestTask));
    }
 
    private String updateGradleFile(final File gradleFile) throws IOException {
@@ -143,5 +155,13 @@ public class TestJVMArgsGradle {
       final int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
 
       return new String[] { gradleFileContents.substring(testIndex, integrationTestIndex), gradleFileContents.substring(integrationTestIndex) };
+   }
+
+   private boolean checkJVMArgsContainWhitespace (final String task) {
+      final String jvmArgsPattern = "jvmArgs=[";
+      final int jvmArgsIndex = task.indexOf(jvmArgsPattern);
+      final String jvmArguments = task.substring(jvmArgsIndex + jvmArgsPattern.length(), task.lastIndexOf("]"));
+
+      return StringUtils.containsWhitespace(jvmArguments);
    }
 }
