@@ -88,18 +88,12 @@ public class TestJVMArgsGradle {
 
    @Test
    public void testXmxIncreaseMegabyte() throws IOException {
-      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "buildJVMArgsInMegabyte.gradle");
+      final String[] testTasks = getTestTasks("buildJVMArgsInMegabyte.gradle");
+      final String testTask = testTasks[0];
+      final String integrationTestTask = testTasks[1];
 
-      final String gradleFileContents = updateGradleFile(gradleFile);
-
-      int testIndex = gradleFileContents.indexOf("test {");
-      int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
-
-      String testTask = gradleFileContents.substring(testIndex, integrationTestIndex);
       Assert.assertEquals(1, StringUtils.countMatches(testTask, "jvmArgs"));
       MatcherAssert.assertThat(testTask, Matchers.containsString("-Xmx5g"));
-
-      String integrationTestTask = gradleFileContents.substring(integrationTestIndex);
 
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("-Xmx5g"));
