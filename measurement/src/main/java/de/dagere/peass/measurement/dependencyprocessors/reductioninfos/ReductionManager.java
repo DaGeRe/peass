@@ -37,7 +37,8 @@ public class ReductionManager {
          if (reducedIterations != measurementConfig.getIterations()) {
             reductionInformation.addReduction(vmid, reductionOld, reductionCurrent);
 
-            LOG.error("Should originally run {} iterations, but did not succeed - reducing to {}", measurementConfig.getIterations(), reducedIterations);
+            LOG.error("Should originally run {} iterations, but did not succeed (because of {}) - reducing to {}", 
+                  measurementConfig.getIterations(), reductionOld.getReason() + " - " + reductionCurrent.getReason(), reducedIterations);
             // final int lessIterations = testTransformer.getConfig().getIterations() / 5;
             shouldBreak = reduceExecutions(shouldBreak, reducedIterations);
             
