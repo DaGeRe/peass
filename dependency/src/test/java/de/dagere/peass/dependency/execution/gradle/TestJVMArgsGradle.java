@@ -49,21 +49,12 @@ public class TestJVMArgsGradle {
 
    @Test
    public void testHeapsizeReplacement() throws IOException {
-      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "build.gradle");
-
-      final String gradleFileContents = updateGradleFile(gradleFile);
-
-      int testIndex = gradleFileContents.indexOf("test {");
-      int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
-
-      String testTask = gradleFileContents.substring(testIndex, integrationTestIndex);
-
-      System.out.println(gradleFileContents);
+      final String[] testTasks = getTestTasks("build.gradle");
+      final String testTask = testTasks[0];
+      final String integrationTestTask = testTasks[1];
 
       Assert.assertEquals(1, StringUtils.countMatches(testTask, "maxHeapSize"));
       MatcherAssert.assertThat(testTask, Matchers.containsString("maxHeapSize = \"5g\""));
-
-      String integrationTestTask = gradleFileContents.substring(integrationTestIndex);
 
       Assert.assertEquals(1, StringUtils.countMatches(integrationTestTask, "jvmArgs"));
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("maxHeapSize = \"5g\""));
@@ -177,5 +168,15 @@ public class TestJVMArgsGradle {
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
       return gradleFileContents;
+   }
+
+   private String[] getTestTasks(final String gradleFileName) throws IOException {
+
+      final File gradleBuildFile = new File(GRADLE_BUILDFILE_FOLDER, gradleFileName);
+      final String gradleFileContents = updateGradleFile(gradleBuildFile);
+      final int testIndex = gradleFileContents.indexOf("test {");
+      final int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
+
+      return new String[] { gradleFileContents.substring(testIndex, integrationTestIndex), gradleFileContents.substring(integrationTestIndex) };
    }
 }
