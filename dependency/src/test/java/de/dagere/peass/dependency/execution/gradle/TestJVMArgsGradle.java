@@ -146,6 +146,13 @@ public class TestJVMArgsGradle {
       Assert.assertTrue(integrationTestTask.contains("jvmArgs=[") && integrationTestTask.contains("aspectj.jar"));
    }
 
+   @Test
+   public void testAspectJAddedWithOnlyOneCallRecordingAndTesttaskNotConfigured() throws IOException {
+      final String[] testTasks = getTestTasks("build_with_exclusions.gradle");
+      String testTask = testTasks[0];
+      Assert.assertTrue(testTask.contains("jvmArgs=[") && testTask.contains("aspectj.jar"));
+   }
+
    private String updateGradleFile(final File gradleFile) throws IOException {
       final File destFile = GradleTestUtil.initProject(gradleFile, CURRENT);
 
