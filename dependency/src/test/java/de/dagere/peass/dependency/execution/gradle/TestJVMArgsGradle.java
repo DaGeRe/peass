@@ -154,7 +154,12 @@ public class TestJVMArgsGradle {
       final int testIndex = gradleFileContents.indexOf("test {");
       final int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
 
-      return new String[] { gradleFileContents.substring(testIndex, integrationTestIndex), gradleFileContents.substring(integrationTestIndex) };
+      if (integrationTestIndex != -1) {
+         return new String[] { gradleFileContents.substring(testIndex, integrationTestIndex), gradleFileContents.substring(integrationTestIndex) };
+      } else {
+         final String testTaskTillEOF = gradleFileContents.substring(testIndex);
+         return new String[] { testTaskTillEOF.substring(0, testTaskTillEOF.indexOf("}")), "" };
+      }
    }
 
    private boolean checkJVMArgsContainWhitespace (final String task) {
