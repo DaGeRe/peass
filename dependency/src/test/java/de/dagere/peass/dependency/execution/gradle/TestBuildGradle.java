@@ -55,6 +55,18 @@ public class TestBuildGradle {
 
       Assert.assertTrue(FileUtils.contentEquals(gradleFile, destFile));
    }
+   
+   @Test
+   public void testImport() throws IOException {
+      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "buildWithImport.gradle");
+
+      final File destFile = GradleTestUtil.initProject(gradleFile, CURRENT);
+
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
+
+      Assert.assertFalse(FileUtils.contentEquals(gradleFile, destFile));
+   }
 
    @Test
    public void testSprintBootUpdate() throws IOException {

@@ -1,0 +1,55 @@
+import org.gradle.api.artifacts.ProjectDependency
+
+apply plugin: 'java'
+
+project.ext.subprojectmap  = new HashMap()
+project.subprojects.each { sp ->
+	addSubproject(sp)
+}
+
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration-test/java')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+dependencies {
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+}
+
+configurations {
+    integrationTestImplementation.extendsFrom testImplementation
+}
+
+test {
+    systemProperties([
+            'junit.jupiter.execution.parallel.enabled'             : 'true',
+    ])
+    maxHeapSize = "6g"
+
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform()
+    systemProperties([
+            'junit.jupiter.execution.parallel.enabled'             : 'true',
+    ])
+    maxHeapSize = "6g"
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+task myStupidTask {
+    Project sp = rootProject.ext.subprojectmap.get("myTest")
+    if(sp==null)
+	{
+		out.println("Project not found: myTest");
+	}
+}
+				

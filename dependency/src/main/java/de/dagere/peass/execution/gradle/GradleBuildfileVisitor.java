@@ -15,7 +15,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
+import org.codehaus.groovy.ast.InnerClassNode;
 import org.codehaus.groovy.ast.builder.AstBuilder;
+import org.codehaus.groovy.ast.builder.AstStringCompiler;
 import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
@@ -23,6 +25,7 @@ import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.NamedArgumentListExpression;
 import org.codehaus.groovy.ast.expr.TupleExpression;
+import org.codehaus.groovy.control.CompilePhase;
 
 import de.dagere.peass.config.ExecutionConfig;
 
@@ -60,15 +63,16 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
 
       try (Stream<String> lines = Files.lines(buildfile.toPath())) {
-         final AstBuilder builder = new AstBuilder();
-
-         String content = lines.filter(line -> !line.trim().startsWith("import ") || (offset++) == -1)
+         String content = lines
                .collect(Collectors.joining("\n"));
 
-         final List<ASTNode> nodes = builder.buildFromString(content);
+         AstStringCompiler astStringCompiler = new AstStringCompiler();
+         final List<ASTNode> nodes = astStringCompiler.compile(content, CompilePhase.CONVERSION, true);
 
          for (final ASTNode node : nodes) {
-            node.visit(this);
+            if (!(node instanceof InnerClassNode)) {
+               node.visit(this);
+            }
          }
       }
    }
