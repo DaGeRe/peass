@@ -137,6 +137,13 @@ public class TestJVMArgsGradle {
       Assert.assertFalse(checkJVMArgsContainWhitespace(integrationTestTask));
    }
 
+   @Test
+   public void testAspectJAddedWithOnlyOneCallRecordingAndEmptyTestBlock() throws IOException {
+      final String[] testTasks = getTestTasks("minimalGradleEmptyTestblock.gradle");
+      final String testTask = testTasks[0];
+      Assert.assertTrue(testTask.contains("jvmArgs=[") && testTask.contains("aspectj.jar"));
+   }
+
    private String updateGradleFile(final File gradleFile) throws IOException {
       final File destFile = GradleTestUtil.initProject(gradleFile, CURRENT);
 
