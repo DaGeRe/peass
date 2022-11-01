@@ -231,7 +231,17 @@ public class GradleBuildfileEditor {
          adaptTask(visitor, argLineBuilder, testTaskProperties, visitor.getTestLine() - 1);
 
       } else {
-         visitor.getLines().add("test { " + argLineBuilder.buildSystemPropertiesGradle(tempFolder) + "}");
+         visitor.addLine(visitor.getLines().size() - 1, "test {");
+         visitor.addLine(visitor.getLines().size() - 1, argLineBuilder.buildSystemPropertiesGradle(tempFolder));
+         visitor.addLine(visitor.getLines().size() - 1, "}");
+
+         if (visitor.getTestTaskProperties() != null) {
+            TestTaskParser testTaskProperties = visitor.getTestTaskProperties();
+            adaptTask(visitor, argLineBuilder, testTaskProperties, visitor.getLines().size() - 1);
+         } else {
+            adaptTask(visitor, argLineBuilder, null, visitor.getLines().size() - 1);
+         }
+
       }
    }
 }
