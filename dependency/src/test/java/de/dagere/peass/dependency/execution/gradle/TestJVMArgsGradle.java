@@ -145,8 +145,6 @@ public class TestJVMArgsGradle {
       Assert.assertTrue(testTask.contains("jvmArgs=[") && testTask.contains("aspectj.jar"));
    }
 
-   //This fails, if you have no testblock at all
-   @Ignore
    @Test
    public void testAspectJAddedWithOnlyOneCallRecordingAndNoTestBlock() throws IOException {
       final String[] testTasks = getTestTasks("minimalGradleNoTestblock.gradle");
