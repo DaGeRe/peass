@@ -198,7 +198,7 @@ public class GradleBuildfileEditor {
 
    private void adaptTask(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, TestTaskParser integrationTestTaskProperties, int testTaskLine) {
       if (argLineBuilder.getJVMArgs() != null) {
-         if (integrationTestTaskProperties.getJvmArgsLine() != -1) {
+         if (integrationTestTaskProperties != null && integrationTestTaskProperties.getJvmArgsLine() != -1) {
             String taskWithoutQuotations = integrationTestTaskProperties.getTestJvmArgsText().substring(1, integrationTestTaskProperties.getTestJvmArgsText().length() - 1);
             String testJvmArgsText = "'" + // args should start by ' 
                   taskWithoutQuotations 
@@ -211,7 +211,7 @@ public class GradleBuildfileEditor {
             visitor.addLine(testTaskLine, argLineBuilder.getJVMArgs());
          }
       }
-      if (integrationTestTaskProperties.getMaxHeapSizeLine() != -1 && testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
+      if (integrationTestTaskProperties != null && integrationTestTaskProperties.getMaxHeapSizeLine() != -1 && testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
          visitor.getLines().set(integrationTestTaskProperties.getMaxHeapSizeLine() -1, "    maxHeapSize = \"" + testTransformer.getConfig().getExecutionConfig().getXmx() + "\"");
       }
    }
