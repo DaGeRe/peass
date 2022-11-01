@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -137,6 +138,20 @@ public class TestJVMArgsGradle {
       Assert.assertFalse(checkJVMArgsContainWhitespace(integrationTestTask));
    }
 
+   @Test
+   public void testAspectJAddedWithOnlyOneCallRecordingAndEmptyTestBlock() throws IOException {
+      final String[] testTasks = getTestTasks("minimalGradleEmptyTestblock.gradle");
+      final String testTask = testTasks[0];
+      Assert.assertTrue(testTask.contains("jvmArgs=[") && testTask.contains("aspectj.jar"));
+   }
+
+   @Test
+   public void testAspectJAddedWithOnlyOneCallRecordingAndNoTestBlock() throws IOException {
+      final String[] testTasks = getTestTasks("minimalGradleNoTestblock.gradle");
+      final String testTask = testTasks[0];
+      Assert.assertTrue(testTask.contains("jvmArgs=[") && testTask.contains("aspectj.jar"));
+   }
+
    private String updateGradleFile(final File gradleFile) throws IOException {
       final File destFile = GradleTestUtil.initProject(gradleFile, CURRENT);
 
@@ -154,7 +169,12 @@ public class TestJVMArgsGradle {
       final int testIndex = gradleFileContents.indexOf("test {");
       final int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
 
-      return new String[] { gradleFileContents.substring(testIndex, integrationTestIndex), gradleFileContents.substring(integrationTestIndex) };
+      if (integrationTestIndex != -1) {
+         return new String[] { gradleFileContents.substring(testIndex, integrationTestIndex), gradleFileContents.substring(integrationTestIndex) };
+      } else {
+         final String testTaskTillEOF = gradleFileContents.substring(testIndex);
+         return new String[] { testTaskTillEOF.substring(0, testTaskTillEOF.lastIndexOf("}")), "" };
+      }
    }
 
    private boolean checkJVMArgsContainWhitespace (final String task) {
