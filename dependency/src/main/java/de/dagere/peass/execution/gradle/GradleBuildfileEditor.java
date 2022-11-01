@@ -237,9 +237,9 @@ public class GradleBuildfileEditor {
 
          if (visitor.getTestTaskProperties() != null) {
             TestTaskParser testTaskProperties = visitor.getTestTaskProperties();
-            adaptTask(visitor, argLineBuilder, testTaskProperties, visitor.getLines().size() - 1);
+            adaptTask(visitor, argLineBuilder, testTaskProperties, visitor.getLines().size() - 2);
          } else {
-            adaptTask(visitor, argLineBuilder, null, visitor.getLines().size() - 1);
+            adaptTask(visitor, argLineBuilder, null, visitor.getLines().size() - 2);
          }
 
       }
