@@ -165,7 +165,7 @@ public class TestJVMArgsGradle {
          return new String[] { gradleFileContents.substring(testIndex, integrationTestIndex), gradleFileContents.substring(integrationTestIndex) };
       } else {
          final String testTaskTillEOF = gradleFileContents.substring(testIndex);
-         return new String[] { testTaskTillEOF.substring(0, testTaskTillEOF.indexOf("}")), "" };
+         return new String[] { testTaskTillEOF.substring(0, testTaskTillEOF.lastIndexOf("}")), "" };
       }
    }
 
