@@ -81,11 +81,16 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    private void editOneBuildfile(final File gradleFile, final ProjectModules modules) {
-      final GradleBuildfileVisitor visitor;
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(testTransformer, gradleFile, modules);
-      visitor = editor.addDependencies(lastTmpFile, env);
-      if (visitor.isAndroid()) {
-         isAndroid = true;
+      try {
+         GradleTaskAnalyzer taskAnalyzer = new GradleTaskAnalyzer(gradleFile.getParentFile(), testTransformer.getProjectFolder(), env);
+         final GradleBuildfileVisitor visitor;
+         GradleBuildfileEditor editor = new GradleBuildfileEditor(testTransformer, gradleFile, modules, taskAnalyzer);
+         visitor = editor.addDependencies(lastTmpFile, env);
+         if (visitor.isAndroid()) {
+            isAndroid = true;
+         }
+      } catch (IOException e) {
+         e.printStackTrace();
       }
    }
 

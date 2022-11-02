@@ -29,11 +29,13 @@ public class GradleBuildfileEditor {
    private final JUnitTestTransformer testTransformer;
    private final File buildfile;
    private final ProjectModules modules;
+   private final GradleTaskAnalyzer taskAnalyzer;
 
-   public GradleBuildfileEditor(final JUnitTestTransformer testTransformer, final File buildfile, final ProjectModules modules) {
+   public GradleBuildfileEditor(final JUnitTestTransformer testTransformer, final File buildfile, final ProjectModules modules, GradleTaskAnalyzer taskAnalyzer) {
       this.testTransformer = testTransformer;
       this.buildfile = buildfile;
       this.modules = modules;
+      this.taskAnalyzer = taskAnalyzer;
    }
 
    public GradleBuildfileVisitor addDependencies(final File tempFolder, EnvironmentVariables env) {
@@ -42,15 +44,13 @@ public class GradleBuildfileEditor {
          LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
          visitor = GradleParseUtil.parseBuildfile(buildfile, testTransformer.getConfig().getExecutionConfig());
 
-         GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), testTransformer.getProjectFolder(), env);
-
-         if (executor.isUseJava()) {
-            editGradlefileContents(tempFolder, visitor, executor);
+         if (taskAnalyzer.isUseJava()) {
+            editGradlefileContents(tempFolder, visitor);
          } else {
             LOG.debug("Buildfile itself does not contain Java plugin, checking parent projects");
             boolean isUseJava = isParentUseJava(buildfile, modules);
             if (isUseJava) {
-               editGradlefileContents(tempFolder, visitor, executor);
+               editGradlefileContents(tempFolder, visitor);
             } else {
                LOG.info("Parent buildfile did not contain java; not changing buildfile");
             }
@@ -78,7 +78,7 @@ public class GradleBuildfileEditor {
       return isUseJava;
    }
 
-   private void editGradlefileContents(final File tempFolder, final GradleBuildfileVisitor visitor, GradleTaskAnalyzer taskAnalyzer) {
+   private void editGradlefileContents(final File tempFolder, final GradleBuildfileVisitor visitor) {
       if (visitor.getBuildTools() != -1) {
          GradleParseUtil.updateBuildTools(visitor);
       }
@@ -103,7 +103,7 @@ public class GradleBuildfileEditor {
          GradleParseUtil.updateExecutionMode(visitor);
       }
 
-      addKiekerLine(tempFolder, visitor, taskAnalyzer);
+      addKiekerLine(tempFolder, visitor);
    }
 
    private void addDependencies(final GradleBuildfileVisitor visitor) {
@@ -158,12 +158,12 @@ public class GradleBuildfileEditor {
       }
    }
 
-   public void addKiekerLine(final File tempFolder, final GradleBuildfileVisitor visitor, GradleTaskAnalyzer taskAnalyzer) {
+   public void addKiekerLine(final File tempFolder, final GradleBuildfileVisitor visitor) {
       ArgLineBuilder argLineBuilder = new ArgLineBuilder(testTransformer, buildfile.getParentFile());
-      addArgLine(visitor, argLineBuilder, tempFolder, taskAnalyzer);
+      addArgLine(visitor, argLineBuilder, tempFolder);
    }
 
-   private void addArgLine(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, File tempFolder, GradleTaskAnalyzer taskAnalyzer) {
+   private void addArgLine(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, File tempFolder) {
       if (visitor.getAndroidLine() != -1) {
          if (visitor.getUnitTestsAll() != -1) {
             visitor.addLine(visitor.getUnitTestsAll() - 1, argLineBuilder.buildSystemPropertiesGradle(tempFolder));
@@ -175,11 +175,11 @@ public class GradleBuildfileEditor {
       } else {
          enhanceTestTask(visitor, argLineBuilder, tempFolder);
       }
-      enhanceIntegrationTestTask(visitor, argLineBuilder, tempFolder, taskAnalyzer);
+      enhanceIntegrationTestTask(visitor, argLineBuilder, tempFolder);
    }
 
    private void enhanceIntegrationTestTask(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder,
-         File tempFolder, GradleTaskAnalyzer taskAnalyzer) {
+         File tempFolder) {
       if (visitor.getIntegrationTestLine() != -1) {
          if (visitor.getIntegrationTestTaskProperties().getPropertiesLine() == -1) {
             visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildSystemPropertiesGradle(tempFolder));

@@ -63,7 +63,6 @@ public class GradleTaskAnalyzer {
             || isSpring;
 
       isIntegrationTest = taskLines.stream().anyMatch(line -> line.startsWith("integrationTest"));
-
    }
 
    public GradleTaskAnalyzer(File moduleFolder, EnvironmentVariables env) throws IOException {

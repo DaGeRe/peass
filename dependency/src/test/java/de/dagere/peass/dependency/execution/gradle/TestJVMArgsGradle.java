@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
+import de.dagere.peass.execution.gradle.GradleTaskAnalyzer;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -27,6 +28,7 @@ public class TestJVMArgsGradle {
    public static final File GRADLE_BUILDFILE_FOLDER = new File("src/test/resources/gradle");
 
    private JUnitTestTransformer mockedTransformer;
+   private GradleTaskAnalyzer taskAnalyzerMock;
 
    @BeforeEach
    public void setupTransformer() throws IOException {
@@ -45,6 +47,9 @@ public class TestJVMArgsGradle {
 
       mockedTransformer.getConfig().getKiekerConfig().setOnlyOneCallRecording(true);
       mockedTransformer.getConfig().getExecutionConfig().setXmx("5g");
+      
+      taskAnalyzerMock = Mockito.mock(GradleTaskAnalyzer.class);
+      Mockito.when(taskAnalyzerMock.isUseJava()).thenReturn(true);
    }
 
    @Test
@@ -158,7 +163,7 @@ public class TestJVMArgsGradle {
    private String updateGradleFile(final File gradleFile) throws IOException {
       final File destFile = GradleTestUtil.initProject(gradleFile, CURRENT);
 
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT));
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT), taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());

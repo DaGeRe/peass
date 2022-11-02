@@ -4,6 +4,7 @@ import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
+import de.dagere.peass.execution.gradle.GradleTaskAnalyzer;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -40,7 +41,9 @@ public class TestBuildGradleSystemProperties {
 
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
 
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
+      GradleTaskAnalyzer taskAnalyzerMock = new GradleTaskAnalyzer(TestBuildGradle.CURRENT, new EnvironmentVariables());
+      
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT), taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
