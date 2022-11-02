@@ -69,13 +69,15 @@ public class GradleTaskAnalyzer {
 
       LinkedList<File> moduleFiles = new LinkedList<>();
       taskLines.stream()
-            .filter(line -> line.contains("compileJava"))
+            .filter(line -> line.contains("compileJava "))
             .forEach(line -> {
-               String firstPart = line.substring(0, line.indexOf('-') - 1);
+               String firstPart = line.substring(0, line.indexOf(" - "));
                if (firstPart.equals("compileJava")) {
                   moduleFiles.add(moduleFolder);
                } else {
-                  String subModuleName = firstPart.substring(0, firstPart.length() - "compileJava".length());
+                  String subModuleName = firstPart
+                        .substring(0, firstPart.length() - "compileJava".length())
+                        .replace(":", File.separator);
                   File subModuleFile = new File(moduleFolder, subModuleName);
                   if (subModuleFile.exists()) {
                      moduleFiles.add(subModuleFile);
