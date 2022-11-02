@@ -31,10 +31,10 @@ public class GradleBuildfileEditor {
    private final ProjectModules modules;
    private final GradleTaskAnalyzer taskAnalyzer;
 
-   public GradleBuildfileEditor(final JUnitTestTransformer testTransformer, final File buildfile, final ProjectModules modules, GradleTaskAnalyzer taskAnalyzer) {
+   public GradleBuildfileEditor(final JUnitTestTransformer testTransformer, final File buildfile, GradleTaskAnalyzer taskAnalyzer) {
       this.testTransformer = testTransformer;
       this.buildfile = buildfile;
-      this.modules = modules;
+      this.modules = taskAnalyzer.getModules();
       this.taskAnalyzer = taskAnalyzer;
    }
 

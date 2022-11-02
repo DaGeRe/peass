@@ -39,6 +39,7 @@ public class TestBuildGradleExclusions {
       
       taskAnalyzerMock = Mockito.mock(GradleTaskAnalyzer.class);
       Mockito.when(taskAnalyzerMock.isUseJava()).thenReturn(true);
+      Mockito.when(taskAnalyzerMock.getModules()).thenReturn(new ProjectModules(TestBuildGradle.CURRENT));
    }
 
    @Test
@@ -48,7 +49,7 @@ public class TestBuildGradleExclusions {
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
       mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jSlf4jImpl(true);
 
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT), taskAnalyzerMock);
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
@@ -64,7 +65,7 @@ public class TestBuildGradleExclusions {
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
       mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jSlf4jImpl(true);
 
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT), taskAnalyzerMock);
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
@@ -87,7 +88,7 @@ public class TestBuildGradleExclusions {
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
       mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jToSlf4j(true);
 
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT), taskAnalyzerMock);
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
@@ -108,7 +109,7 @@ public class TestBuildGradleExclusions {
 
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
 
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT), taskAnalyzerMock);
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
@@ -130,7 +131,7 @@ public class TestBuildGradleExclusions {
       
       mockedTransformer.getConfig().getExecutionConfig().setUseAnbox(true);
       
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT), taskAnalyzerMock);
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());

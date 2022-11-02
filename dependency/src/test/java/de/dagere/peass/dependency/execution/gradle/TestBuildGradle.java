@@ -53,8 +53,9 @@ public class TestBuildGradle {
 
       GradleTaskAnalyzer taskAnalyzerMock = Mockito.mock(GradleTaskAnalyzer.class);
       Mockito.when(taskAnalyzerMock.isUseJava()).thenReturn(false);
+      Mockito.when(taskAnalyzerMock.getModules()).thenReturn(new ProjectModules(CURRENT));
       
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT), taskAnalyzerMock);
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       Assert.assertTrue(FileUtils.contentEquals(gradleFile, destFile));
@@ -68,8 +69,9 @@ public class TestBuildGradle {
 
       GradleTaskAnalyzer taskAnalyzerMock = Mockito.mock(GradleTaskAnalyzer.class);
       Mockito.when(taskAnalyzerMock.isUseJava()).thenReturn(true);
+      Mockito.when(taskAnalyzerMock.getModules()).thenReturn(new ProjectModules(CURRENT));
       
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT), taskAnalyzerMock);
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       Assert.assertFalse(FileUtils.contentEquals(gradleFile, destFile));
@@ -172,7 +174,7 @@ public class TestBuildGradle {
 
       GradleTaskAnalyzer taskAnalyzerMock = new GradleTaskAnalyzer(CURRENT, new EnvironmentVariables());
       
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT), taskAnalyzerMock);
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());

@@ -3,6 +3,7 @@ package de.dagere.peass.execution.gradle;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.execution.utils.CommandConcatenator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
+import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.utils.StreamGobbler;
 
 /**
@@ -28,6 +30,7 @@ public class GradleTaskAnalyzer {
    private final boolean isSpring;
    private final boolean isIntegrationTest;
    private final boolean isAndroid;
+   private final ProjectModules modules;
 
    public GradleTaskAnalyzer(File moduleFolder, File projectFolder, EnvironmentVariables env) throws IOException {
       String wrapper = new File(projectFolder, EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
@@ -48,7 +51,7 @@ public class GradleTaskAnalyzer {
       String processOutput = StreamGobbler.getFullProcess(process, true);
 
       GradleDaemonFileDeleter.deleteDaemonFile(processOutput);
-      
+
       LOG.debug(processOutput);
 
       List<String> taskLines = Arrays.stream(processOutput.split("\n"))
@@ -63,6 +66,24 @@ public class GradleTaskAnalyzer {
             || isSpring;
 
       isIntegrationTest = taskLines.stream().anyMatch(line -> line.startsWith("integrationTest"));
+
+      LinkedList<File> moduleFiles = new LinkedList<>();
+      taskLines.stream()
+            .filter(line -> line.contains("compileJava"))
+            .forEach(line -> {
+               String firstPart = line.substring(0, line.indexOf('-') - 1);
+               if (firstPart.equals("compileJava")) {
+                  moduleFiles.add(moduleFolder);
+               } else {
+                  String subModuleName = firstPart.substring(0, firstPart.length() - "compileJava".length());
+                  File subModuleFile = new File(moduleFolder, subModuleName);
+                  if (subModuleFile.exists()) {
+                     moduleFiles.add(subModuleFile);
+                  }
+               }
+            });
+
+      modules = new ProjectModules(moduleFiles);
    }
 
    public GradleTaskAnalyzer(File moduleFolder, EnvironmentVariables env) throws IOException {
@@ -83,5 +104,9 @@ public class GradleTaskAnalyzer {
 
    public boolean isAndroid() {
       return isAndroid;
+   }
+
+   public ProjectModules getModules() {
+      return modules;
    }
 }

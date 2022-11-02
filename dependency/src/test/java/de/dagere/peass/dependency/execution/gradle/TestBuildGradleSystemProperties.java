@@ -42,8 +42,9 @@ public class TestBuildGradleSystemProperties {
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
 
       GradleTaskAnalyzer taskAnalyzerMock = new GradleTaskAnalyzer(TestBuildGradle.CURRENT, new EnvironmentVariables());
+      Mockito.when(taskAnalyzerMock.getModules()).thenReturn(new ProjectModules(TestBuildGradle.CURRENT));
       
-      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT), taskAnalyzerMock);
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());

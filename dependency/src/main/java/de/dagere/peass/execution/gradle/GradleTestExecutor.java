@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.config.ExecutionConfig;
@@ -64,7 +63,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          replaceAllBuildfiles(modules);
          for (final File module : modules.getModules()) {
             final File gradleFile = GradleParseHelper.findGradleFile(module);
-            editOneBuildfile(gradleFile, modules);
+            editOneBuildfile(gradleFile);
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -80,11 +79,11 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       }
    }
 
-   private void editOneBuildfile(final File gradleFile, final ProjectModules modules) {
+   private void editOneBuildfile(final File gradleFile) {
       try {
          GradleTaskAnalyzer taskAnalyzer = new GradleTaskAnalyzer(gradleFile.getParentFile(), testTransformer.getProjectFolder(), env);
          final GradleBuildfileVisitor visitor;
-         GradleBuildfileEditor editor = new GradleBuildfileEditor(testTransformer, gradleFile, modules, taskAnalyzer);
+         GradleBuildfileEditor editor = new GradleBuildfileEditor(testTransformer, gradleFile, taskAnalyzer);
          visitor = editor.addDependencies(lastTmpFile, env);
          if (visitor.isAndroid()) {
             isAndroid = true;
@@ -228,7 +227,12 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
    @Override
    public ProjectModules getModules() {
-      return SettingsFileParser.getModules(folders.getProjectFolder());
+      try {
+         return new GradleTaskAnalyzer(folders.getProjectFolder(), env).getModules();
+      } catch (IOException e) {
+         e.printStackTrace();
+         return null;
+      }
    }
 
    @Override

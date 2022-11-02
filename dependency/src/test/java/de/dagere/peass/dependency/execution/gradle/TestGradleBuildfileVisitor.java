@@ -3,6 +3,8 @@ package de.dagere.peass.dependency.execution.gradle;
 import java.io.File;
 import java.io.IOException;
 
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.collection.IsIterableWithSize;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +33,8 @@ public class TestGradleBuildfileVisitor {
       
       GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), new EnvironmentVariables());
       Assert.assertTrue(executor.isUseJava());
+      
+      MatcherAssert.assertThat(executor.getModules().getModules(), IsIterableWithSize.iterableWithSize(1));
    }
    
    @Test
