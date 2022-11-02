@@ -30,7 +30,7 @@ public class TestGradleReplacement {
    
    private static final Logger LOG = LogManager.getLogger(TestGradleReplacement.class);
 
-   private static final String ALTERNATIVE_FILE_CONTENT = "apply plugin: 'java'";
+   private static final String ALTERNATIVE_FILE_CONTENT = "apply plugin: 'java' // This is a changed version";
 
    @BeforeEach
    public void prepareFolder() throws IOException {

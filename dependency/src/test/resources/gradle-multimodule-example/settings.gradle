@@ -1,2 +1,6 @@
 include 'myModule1'
 include 'myModule2'
+
+rootProject.children.each {
+    it.buildFileName = "${it.name}.gradle"
+}
