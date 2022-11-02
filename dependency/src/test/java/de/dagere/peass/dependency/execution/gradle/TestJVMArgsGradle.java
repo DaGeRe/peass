@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -139,10 +138,12 @@ public class TestJVMArgsGradle {
    }
 
    @Test
-   public void testAspectJAddedWithOnlyOneCallRecordingAndEmptyTestBlock() throws IOException {
-      final String[] testTasks = getTestTasks("minimalGradleEmptyTestblock.gradle");
+   public void testAspectJAddedWithOnlyOneCallRecordingAndEmptyTestBlocks() throws IOException {
+      final String[] testTasks = getTestTasks("minimalGradleEmptyTestblocks.gradle");
       final String testTask = testTasks[0];
+      final String integrationTestTask = testTasks[1];
       Assert.assertTrue(testTask.contains("jvmArgs=[") && testTask.contains("aspectj.jar"));
+      Assert.assertTrue(integrationTestTask.contains("jvmArgs=[") && integrationTestTask.contains("aspectj.jar"));
    }
 
    @Test

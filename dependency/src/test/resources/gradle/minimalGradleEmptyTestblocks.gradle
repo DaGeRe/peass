@@ -1,0 +1,27 @@
+apply plugin: 'java'
+
+sourceSets {
+    intTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    intTestImplementation.extendsFrom implementation
+    intTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+
+    intTestImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+}
+
+test {
+
+}
+
+task integrationTest(type: Test) {
+    
+}
