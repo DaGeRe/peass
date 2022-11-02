@@ -6,7 +6,6 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
 import de.dagere.peass.execution.gradle.GradleTaskAnalyzer;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
-import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
@@ -42,7 +41,6 @@ public class TestBuildGradleSystemProperties {
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
 
       GradleTaskAnalyzer taskAnalyzerMock = new GradleTaskAnalyzer(TestBuildGradle.CURRENT, new EnvironmentVariables());
-      Mockito.when(taskAnalyzerMock.getModules()).thenReturn(new ProjectModules(TestBuildGradle.CURRENT));
       
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, taskAnalyzerMock);
       editor.addDependencies(new File("xyz"), new EnvironmentVariables());
