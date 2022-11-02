@@ -231,9 +231,9 @@ public class GradleBuildfileEditor {
          adaptTask(visitor, argLineBuilder, testTaskProperties, visitor.getTestLine() - 1);
 
       } else {
-         visitor.addLine(visitor.getLines().size() - 1, "test {");
-         visitor.addLine(visitor.getLines().size() - 1, argLineBuilder.buildSystemPropertiesGradle(tempFolder));
-         visitor.addLine(visitor.getLines().size() - 1, "}");
+         visitor.addLine(visitor.getLines().size(), "test {");
+         visitor.addLine(visitor.getLines().size(), argLineBuilder.buildSystemPropertiesGradle(tempFolder));
+         visitor.addLine(visitor.getLines().size(), "}");
 
          if (visitor.getTestTaskProperties() != null) {
             TestTaskParser testTaskProperties = visitor.getTestTaskProperties();
