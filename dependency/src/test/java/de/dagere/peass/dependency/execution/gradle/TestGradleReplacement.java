@@ -24,12 +24,13 @@ import de.dagere.peass.execution.gradle.SettingsFileParser;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.JUnitVersions;
 
 public class TestGradleReplacement {
    
    private static final Logger LOG = LogManager.getLogger(TestGradleReplacement.class);
 
-   private static final String ALTERNATIVE_FILE_CONTENT = "This is an alternative buildfile";
+   private static final String ALTERNATIVE_FILE_CONTENT = "apply plugin: 'java'";
 
    @BeforeEach
    public void prepareFolder() throws IOException {
@@ -83,6 +84,7 @@ public class TestGradleReplacement {
 
       PeassFolders folders = new PeassFolders(TestBuildGradle.CURRENT);
       Mockito.when(mockedTransformer.getProjectFolder()).thenReturn(TestBuildGradle.CURRENT);
+      Mockito.when(mockedTransformer.getJUnitVersions()).thenReturn(new JUnitVersions());
 
       GradleTestExecutor gte = new GradleTestExecutor(folders, mockedTransformer, new EnvironmentVariables());
 
