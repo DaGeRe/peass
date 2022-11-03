@@ -192,9 +192,7 @@ public class GradleBuildfileEditor {
          TestTaskParser integrationTestTaskProperties = visitor.getIntegrationTestTaskProperties();
          adaptTask(visitor, argLineBuilder, integrationTestTaskProperties, visitor.getIntegrationTestLine() - 1);
       } else if (taskAnalyzer.isIntegrationTest()) {
-         visitor.addLine(visitor.getLines().size(), "integrationTest {");
-         visitor.addLine(visitor.getLines().size(), argLineBuilder.buildSystemPropertiesGradle(tempFolder));
-         visitor.addLine(visitor.getLines().size(), "}");
+         addTestPhaseBlock(visitor, argLineBuilder, tempFolder, "integrationTest {");
 
          if (visitor.getIntegrationTestTaskProperties() != null) {
             TestTaskParser integrationTestTaskProperties = visitor.getIntegrationTestTaskProperties();
@@ -203,6 +201,12 @@ public class GradleBuildfileEditor {
             adaptTask(visitor, argLineBuilder, null, visitor.getLines().size() - 2);
          }
       }
+   }
+
+   private void addTestPhaseBlock(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, final File tempFolder, final String blockStart) {
+      visitor.addLine(visitor.getLines().size(), blockStart);
+      visitor.addLine(visitor.getLines().size(), argLineBuilder.buildSystemPropertiesGradle(tempFolder));
+      visitor.addLine(visitor.getLines().size(), "}");
    }
 
    private void adaptTask(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, TestTaskParser integrationTestTaskProperties, int testTaskLine) {
@@ -240,9 +244,7 @@ public class GradleBuildfileEditor {
          adaptTask(visitor, argLineBuilder, testTaskProperties, visitor.getTestLine() - 1);
 
       } else {
-         visitor.addLine(visitor.getLines().size(), "test {");
-         visitor.addLine(visitor.getLines().size(), argLineBuilder.buildSystemPropertiesGradle(tempFolder));
-         visitor.addLine(visitor.getLines().size(), "}");
+         addTestPhaseBlock(visitor, argLineBuilder, tempFolder, "test {");
 
          if (visitor.getTestTaskProperties() != null) {
             TestTaskParser testTaskProperties = visitor.getTestTaskProperties();
