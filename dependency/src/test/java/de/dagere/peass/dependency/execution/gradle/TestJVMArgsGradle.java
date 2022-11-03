@@ -147,10 +147,12 @@ public class TestJVMArgsGradle {
    }
 
    @Test
-   public void testAspectJAddedWithOnlyOneCallRecordingAndNoTestBlock() throws IOException {
-      final String[] testTasks = getTestTasks("minimalGradleNoTestblock.gradle");
+   public void testAspectJAddedWithOnlyOneCallRecordingAndNoTestBlocks() throws IOException {
+      final String[] testTasks = getTestTasks("minimalGradleNoTestblocks.gradle");
       final String testTask = testTasks[0];
+      final String integrationTestTask = testTasks[1];
       Assert.assertTrue(testTask.contains("jvmArgs=[") && testTask.contains("aspectj.jar"));
+      Assert.assertTrue(integrationTestTask.contains("jvmArgs=[") && integrationTestTask.contains("aspectj.jar"));
    }
 
    private String updateGradleFile(final File gradleFile) throws IOException {
@@ -168,10 +170,22 @@ public class TestJVMArgsGradle {
       final File gradleBuildFile = new File(GRADLE_BUILDFILE_FOLDER, gradleFileName);
       final String gradleFileContents = updateGradleFile(gradleBuildFile);
       final int testIndex = gradleFileContents.indexOf("test {");
-      final int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
+      int integrationTestIndex = gradleFileContents.indexOf("task integrationTest");
+
+      /*
+       * integrationTest maybe uses alternative syntax for registration
+       */
+      if (integrationTestIndex == -1) {
+         integrationTestIndex = gradleFileContents.indexOf("tasks.register('integrationTest'");
+      }
 
       if (integrationTestIndex != -1) {
-         return new String[] { gradleFileContents.substring(testIndex, integrationTestIndex), gradleFileContents.substring(integrationTestIndex) };
+         if (integrationTestIndex > testIndex) {
+            return new String[] { gradleFileContents.substring(testIndex, integrationTestIndex), gradleFileContents.substring(integrationTestIndex) };
+         } else {
+            return new String[] {gradleFileContents.substring(testIndex), gradleFileContents.substring(integrationTestIndex, testIndex) };
+         }
+
       } else {
          final String testTaskTillEOF = gradleFileContents.substring(testIndex);
          return new String[] { testTaskTillEOF.substring(0, testTaskTillEOF.lastIndexOf("}")), "" };
