@@ -192,9 +192,7 @@ public class GradleBuildfileEditor {
          TestTaskParser integrationTestTaskProperties = visitor.getIntegrationTestTaskProperties();
          adaptTask(visitor, argLineBuilder, integrationTestTaskProperties, visitor.getIntegrationTestLine() - 1);
       } else if (taskAnalyzer.isIntegrationTest()) {
-         visitor.addLine(visitor.getLines().size(), "integrationTest {");
-         visitor.addLine(visitor.getLines().size(), argLineBuilder.buildSystemPropertiesGradle(tempFolder));
-         visitor.addLine(visitor.getLines().size(), "}");
+         addTestPhaseBlock(visitor, argLineBuilder, tempFolder, "integrationTest {");
 
          if (visitor.getIntegrationTestTaskProperties() != null) {
             TestTaskParser integrationTestTaskProperties = visitor.getIntegrationTestTaskProperties();
@@ -205,23 +203,29 @@ public class GradleBuildfileEditor {
       }
    }
 
-   private void adaptTask(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, TestTaskParser integrationTestTaskProperties, int testTaskLine) {
+   private void addTestPhaseBlock(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, final File tempFolder, final String blockStart) {
+      visitor.addLine(visitor.getLines().size(), blockStart);
+      visitor.addLine(visitor.getLines().size(), argLineBuilder.buildSystemPropertiesGradle(tempFolder));
+      visitor.addLine(visitor.getLines().size(), "}");
+   }
+
+   private void adaptTask(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, final TestTaskParser testTaskParser, final int testTaskLine) {
       if (argLineBuilder.getJVMArgs() != null) {
-         if (integrationTestTaskProperties != null && integrationTestTaskProperties.getJvmArgsLine() != -1) {
-            String taskWithoutQuotations = integrationTestTaskProperties.getTestJvmArgsText().substring(1, integrationTestTaskProperties.getTestJvmArgsText().length() - 1);
+         if (testTaskParser != null && testTaskParser.getJvmArgsLine() != -1) {
+            String taskWithoutQuotations = testTaskParser.getTestJvmArgsText().substring(1, testTaskParser.getTestJvmArgsText().length() - 1);
             String testJvmArgsText = "'" + // args should start by ' 
                   taskWithoutQuotations 
                   .replace(", ", ",") // There should be no spaces inside the args
                   .replace(",", "','") // Args should be separated by ','
                   + "'"; // Args should be finished by '
             String adaptedText = argLineBuilder.getJVMArgs(testJvmArgsText);
-            visitor.getLines().set(integrationTestTaskProperties.getJvmArgsLine() - 1, adaptedText);
+            visitor.getLines().set(testTaskParser.getJvmArgsLine() - 1, adaptedText);
          } else {
             visitor.addLine(testTaskLine, argLineBuilder.getJVMArgs());
          }
       }
-      if (integrationTestTaskProperties != null && integrationTestTaskProperties.getMaxHeapSizeLine() != -1 && testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
-         visitor.getLines().set(integrationTestTaskProperties.getMaxHeapSizeLine() -1, "    maxHeapSize = \"" + testTransformer.getConfig().getExecutionConfig().getXmx() + "\"");
+      if (testTaskParser != null && testTaskParser.getMaxHeapSizeLine() != -1 && testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
+         visitor.getLines().set(testTaskParser.getMaxHeapSizeLine() -1, "    maxHeapSize = \"" + testTransformer.getConfig().getExecutionConfig().getXmx() + "\"");
       }
    }
 
@@ -240,9 +244,7 @@ public class GradleBuildfileEditor {
          adaptTask(visitor, argLineBuilder, testTaskProperties, visitor.getTestLine() - 1);
 
       } else {
-         visitor.addLine(visitor.getLines().size(), "test {");
-         visitor.addLine(visitor.getLines().size(), argLineBuilder.buildSystemPropertiesGradle(tempFolder));
-         visitor.addLine(visitor.getLines().size(), "}");
+         addTestPhaseBlock(visitor, argLineBuilder, tempFolder, "test {");
 
          if (visitor.getTestTaskProperties() != null) {
             TestTaskParser testTaskProperties = visitor.getTestTaskProperties();
