@@ -1,7 +1,6 @@
 package de.dagere.peass.dependency.reader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
@@ -102,6 +101,7 @@ public class DependencyReader {
       staticSelectionResult.setUrl(url);
       executionResult.setUrl(url);
       coverageBasedSelection.setUrl(url);
+      twiceExecutableSelected.setUrl(url);
    }
 
    /**
@@ -321,7 +321,7 @@ public class DependencyReader {
       }
    }
 
-   private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, InterruptedException {
+   private void generateInitialViews() throws IOException, ParseException {
       TestSet initialTests = staticSelectionResult.getInitialcommit().getInitialTests();
       TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getCommitName(), traceFileMapping, kiekerConfig, testSelectionConfig);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
