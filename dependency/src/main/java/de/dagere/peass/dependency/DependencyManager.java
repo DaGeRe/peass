@@ -98,7 +98,7 @@ public class DependencyManager extends KiekerResultManager {
       this.deleteFolderSize = deleteFolderSize;
    }
 
-   public boolean initialyGetTraces(final String version) throws IOException, InterruptedException, XmlPullParserException {
+   public boolean initialyGetTraces(final String version) throws IOException {
       if (folders.getTempMeasurementFolder().exists()) {
          FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
       }
@@ -120,7 +120,7 @@ public class DependencyManager extends KiekerResultManager {
       }
    }
 
-   private TestSet findIncludedTests(final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
+   private TestSet findIncludedTests(final ModuleClassMapping mapping) throws IOException {
       List<String> includedModules = getIncludedModules();
 
       return testTransformer.findModuleTests(mapping, includedModules, executor.getModules());

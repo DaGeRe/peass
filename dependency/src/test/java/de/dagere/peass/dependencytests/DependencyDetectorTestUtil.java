@@ -9,7 +9,6 @@ import java.util.TreeMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.mockito.Mockito;
 
@@ -104,7 +103,7 @@ public class DependencyDetectorTestUtil {
    }
 
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final CommitIterator fakeIterator)
-         throws IOException, InterruptedException, XmlPullParserException, ParseException {
+         throws IOException, ParseException {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
@@ -118,7 +117,7 @@ public class DependencyDetectorTestUtil {
 
          reader.analyseCommit(changeManager);
          return reader;
-      } catch (IOException | InterruptedException | XmlPullParserException | ParseException e) {
+      } catch (IOException | ParseException e) {
          throw new RuntimeException(e);
       }
    }

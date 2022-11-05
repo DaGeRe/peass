@@ -5,10 +5,7 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.ExecutionConfig;
@@ -50,12 +47,12 @@ public class DependencyReader {
    private final ExecutionData coverageBasedSelection = new ExecutionData();
    private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
    private final ExecutionData twiceExecutableSelected = new ExecutionData();
-   
+
    private final CoverageSelectionExecutor coverageExecutor;
    private final TwiceExecutableChecker twiceExecutableChecker;
-   
+
    protected final ResultsFolders resultsFolders;
-   
+
    protected final PeassFolders folders;
    protected CommitIterator iterator;
    protected String lastRunningVersion;
@@ -68,7 +65,7 @@ public class DependencyReader {
    protected final DependencyManager dependencyManager;
    private ChangeManager changeManager;
    private StaticChangeHandler staticChangeHandler;
-   
+
    private final DependencySizeRecorder sizeRecorder = new DependencySizeRecorder();
    private final TraceFileMapping traceFileMapping = new TraceFileMapping();
 
@@ -85,7 +82,7 @@ public class DependencyReader {
       this.env = env;
 
       setURLs(url);
-      
+
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
       twiceExecutableChecker = new TwiceExecutableChecker(getExecutor(), twiceExecutableSelected);
@@ -125,12 +122,12 @@ public class DependencyReader {
       this.env = env;
 
       setURLs(url);
-      
+
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
-      
+
       coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
       twiceExecutableChecker = new TwiceExecutableChecker(getExecutor(), twiceExecutableSelected);
-      
+
       if (!kiekerConfig.isUseKieker()) {
          throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");
       }
@@ -195,7 +192,7 @@ public class DependencyReader {
     * @throws InterruptedException
     * @throws ParseException
     */
-   public int analyseCommit(final ChangeManager changeManager) throws IOException, InterruptedException, ParseException {
+   public int analyseCommit(final ChangeManager changeManager) throws IOException, ParseException {
       final String commit = iterator.getCommitName();
       if (!testSelectionConfig.isSkipProcessSuccessRuns()) {
          if (!dependencyManager.getExecutor().isCommitRunning(iterator.getCommitName())) {
@@ -240,7 +237,7 @@ public class DependencyReader {
    }
 
    private int analyseChanges(final String commit, final DependencyReadingInput input)
-         throws IOException, JsonGenerationException, JsonMappingException, InterruptedException, ParseException {
+         throws IOException, ParseException {
       final CommitStaticSelection newCommitInfo = staticChangeHandler.handleStaticAnalysisChanges(commit, input, dependencyManager.getModuleClassMapping());
 
       if (!testSelectionConfig.isDoNotUpdateDependencies()) {
@@ -267,8 +264,8 @@ public class DependencyReader {
          twiceExecutableChecker.checkTwiceExecution(commit, newCommitInfo.getPredecessor(), dynamicallySelected.getTestMethods());
          dynamicallySelected = twiceExecutableSelected.getCommits().get(commit);
          LOG.info("Left after twice execution checking: {}", dynamicallySelected);
-      } 
-      
+      }
+
       if (testSelectionConfig.isGenerateCoverageSelection()) {
          coverageExecutor.generateCoverageBasedSelection(commit, newCommitInfo, dynamicallySelected);
       }
@@ -303,7 +300,7 @@ public class DependencyReader {
       staticSelectionResult.getCommits().put(commit, newCommitInfo);
    }
 
-   public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException, ParseException {
+   public boolean readInitialCommit() throws IOException, ParseException {
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       InitialCommitReader initialVersionReader = new InitialCommitReader(staticSelectionResult, dependencyManager, iterator);
@@ -334,7 +331,7 @@ public class DependencyReader {
    public void readCompletedCommits(final StaticTestSelection initialdependencies, CommitComparatorInstance comparator) {
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
-      
+
       staticSelectionResult.setCommits(initialdependencies.getCommits());
       staticSelectionResult.setInitialcommit(initialdependencies.getInitialcommit());
 

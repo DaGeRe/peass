@@ -45,8 +45,7 @@ public class TraceChangeHandler {
       this.commit = commit;
    }
 
-   public void handleTraceAnalysisChanges(final CommitStaticSelection newCommitInfo)
-         throws IOException, JsonGenerationException, JsonMappingException, InterruptedException {
+   public void handleTraceAnalysisChanges(final CommitStaticSelection newCommitInfo) throws IOException {
       LOG.debug("Updating dependencies.. {}", commit);
 
       final ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
@@ -57,18 +56,19 @@ public class TraceChangeHandler {
       }
    }
 
-   private TestSet getTestsToRun(final CommitStaticSelection newCommitStaticSelection, ModuleClassMapping mapping) throws IOException, JsonGenerationException, JsonMappingException {
-      final TestSet testsToRun = newCommitStaticSelection.getTests() ; // contains only the tests that need to be run -> could be changeTestMap.values() und dann
-                                                                                      // umwandeln
+   private TestSet getTestsToRun(final CommitStaticSelection newCommitStaticSelection, ModuleClassMapping mapping)
+         throws IOException, JsonGenerationException, JsonMappingException {
+      final TestSet testsToRun = newCommitStaticSelection.getTests(); // contains only the tests that need to be run -> could be changeTestMap.values() und dann
+                                                                      // umwandeln
       addAddedTests(newCommitStaticSelection, testsToRun);
-      
+
       Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + commit + ".json"), testsToRun.entrySet());
 
       NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
-      
+
       TestTransformer testTransformer = dependencyManager.getTestTransformer();
       NonIncludedByRule.removeNotIncluded(testsToRun, testTransformer, mapping);
-      
+
       return testsToRun;
    }
 
@@ -84,15 +84,15 @@ public class TraceChangeHandler {
 
    private void analyzeTests(final CommitStaticSelection newCommitInfo, final TestSet testsToRun, ModuleClassMapping mapping)
          throws IOException {
-      
+
       dependencyManager.runTraceTests(testsToRun, commit);
 
       handleDependencyChanges(newCommitInfo, testsToRun, mapping);
-      
+
       if (dependencyManager.getIgnoredTests().getTestMethods().size() > 0) {
          newCommitInfo.setIgnoredAffectedTests(dependencyManager.getIgnoredTests());
       }
-      
+
    }
 
    private void handleDependencyChanges(final CommitStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)

@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.CalledMethods;
@@ -47,7 +46,7 @@ public class InitialCommitReader {
       dependencyMap = dependencyManager.getDependencyMap();
    }
    
-   public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException {
+   public boolean readInitialCommit() throws IOException {
       if (!dependencyManager.initialyGetTraces(iterator.getCommitName())) {
          return false;
       }
