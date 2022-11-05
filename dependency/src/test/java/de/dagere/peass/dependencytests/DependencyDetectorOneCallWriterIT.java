@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +49,7 @@ public class DependencyDetectorOneCallWriterIT {
    }
    
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final CommitIterator fakeIterator)
-         throws IOException, InterruptedException, XmlPullParserException, ParseException {
+         throws IOException, ParseException {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
@@ -67,7 +66,7 @@ public class DependencyDetectorOneCallWriterIT {
 
          reader.analyseCommit(changeManager);
          return reader;
-      } catch (IOException | InterruptedException | XmlPullParserException | ParseException e) {
+      } catch (IOException | ParseException e) {
          throw new RuntimeException(e);
       }
    }

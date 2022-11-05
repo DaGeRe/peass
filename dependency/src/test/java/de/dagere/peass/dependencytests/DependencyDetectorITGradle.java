@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +37,7 @@ public class DependencyDetectorITGradle {
    // }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
+   public void testNormalChange() throws IOException, InterruptedException, ParseException {
       init(BASIC_STATE);
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
@@ -51,7 +50,7 @@ public class DependencyDetectorITGradle {
    }
    
    @Test
-   public void testNormalChangeAndroid() throws IOException, InterruptedException, XmlPullParserException, ParseException {
+   public void testNormalChangeAndroid() throws IOException, InterruptedException, ParseException {
       init(BASIC_STATE_ANDROID);
       
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();

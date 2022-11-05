@@ -53,11 +53,10 @@ public class DependencyDetectorMultimoduleIT {
       FileUtils.copyDirectory(BASIC_STATE, DependencyTestConstants.CURRENT);
    }
 
-
    // This test is disabled since it takes too long and nearly tests the same as testTwoChanges; however, since it enables easier debugging, it is left in the code
    @Disabled
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
+   public void testNormalChange() throws IOException, ParseException {
       final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
       final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
@@ -82,13 +81,12 @@ public class DependencyDetectorMultimoduleIT {
    }
 
    @Test
-   public void testTwoChanges()
-         throws IOException, XmlPullParserException, InterruptedException, ParseException {
+   public void testTwoChanges() throws IOException, ParseException {
       final File thirdVersion = new File(VERSIONS_FOLDER, "another_change");
       final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(thirdVersion));
 
       ChangeManager changeManager = mockChangeManager();
-      
+
       final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT),
             DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
       final boolean success = reader.readInitialCommit();
@@ -96,14 +94,13 @@ public class DependencyDetectorMultimoduleIT {
 
       StaticTestSelection dependencies = reader.getDependencies();
       checkInitialVersion(dependencies);
-      
+
       fakeIterator.goToNextCommit();
       reader.analyseCommit(changeManager);
 
       testFirstChange(dependencies);
       testSecondChange(dependencies);
    }
-
 
    private ChangeManager mockChangeManager() {
       final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
@@ -113,7 +110,7 @@ public class DependencyDetectorMultimoduleIT {
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
       return changeManager;
    }
-   
+
    private void checkInitialVersion(final StaticTestSelection dependencies) {
       LOG.debug(dependencies.getInitialcommit().getInitialDependencies());
       final InitialCallList dependency = dependencies.getInitialcommit().getInitialDependencies()

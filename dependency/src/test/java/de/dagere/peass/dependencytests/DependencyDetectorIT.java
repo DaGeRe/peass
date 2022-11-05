@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -160,11 +159,7 @@ public class DependencyDetectorIT {
     * Tests removal of a method. In the first version, the method should not be called (but the other method of TestMe should be called, since the class interface changed). In the
     * second version, the changes should only influence TestMe.testMe, not TestMe.removeMe.
     * 
-    * @throws IOException
-    * @throws InterruptedException
-    * @throws XmlPullParserException
-    * @throws ViewNotFoundException
-    * @throws ParseException
+    * @throws Exception
     */
    @Test
    public void testMethodRemoval() throws Exception {

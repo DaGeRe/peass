@@ -15,7 +15,6 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.jupiter.api.Test;
@@ -52,7 +51,7 @@ public class TraceGettingIT {
    private static final File VIEWS_FOLDER_TEST = new File(VIEW_IT_PROJECTFOLDER, "views_test");
 
    @Test
-   public void testBasicView() throws ParseException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+   public void testBasicView() throws ParseException, IOException, InstantiationException,
          IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = BASIC;
       final String githash = "1";
@@ -61,7 +60,7 @@ public class TraceGettingIT {
    }
 
    @Test
-   public void testRepetition() throws ParseException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+   public void testRepetition() throws ParseException, IOException, InstantiationException,
          IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = REPETITION;
       final String githash = "2";
@@ -69,7 +68,7 @@ public class TraceGettingIT {
    }
 
    @Test
-   public void testMultipleRepetition() throws ParseException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+   public void testMultipleRepetition() throws ParseException, IOException, InstantiationException,
          IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = REPETITION_MULTIPLE;
       final String githash = "3";
@@ -77,7 +76,7 @@ public class TraceGettingIT {
    }
 
    @Test
-   public void testDeepRepetition() throws ParseException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+   public void testDeepRepetition() throws ParseException, IOException, InstantiationException,
          IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = REPETITION_DEEP;
       final String githash = "4";
@@ -85,7 +84,7 @@ public class TraceGettingIT {
    }
 
    @Test
-   public void testRepetitionRepetition() throws ParseException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException,
+   public void testRepetitionRepetition() throws ParseException, IOException, InstantiationException,
          IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       Assume.assumeFalse(EnvironmentVariables.isWindows());
 

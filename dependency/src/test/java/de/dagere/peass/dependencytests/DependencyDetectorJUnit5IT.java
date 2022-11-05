@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,7 @@ public class DependencyDetectorJUnit5IT {
    }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
+   public void testNormalChange() throws IOException, ParseException {
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
       final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(NORMAL_CHANGE));

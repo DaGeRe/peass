@@ -14,7 +14,6 @@ import java.util.TreeMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.github.javaparser.ParseException;
 
@@ -56,11 +55,10 @@ public class ChangeManager {
     * Returns a set of the full qualified names of all classes that have been changed in the current revision.
     * 
     * @return full qualified names of all classes that have been changed in the current revision.
-    * @throws XmlPullParserException
     * @throws IOException
     * @throws FileNotFoundException
     */
-   private List<ChangedEntity> getChangedClasses(final String lastVersion) throws FileNotFoundException, IOException, XmlPullParserException {
+   private List<ChangedEntity> getChangedClasses(final String lastVersion) throws FileNotFoundException, IOException {
       List<File> moduleFiles = testExecutor.getModules().getModules(); 
       final CommitDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastVersion, config);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
@@ -153,7 +151,7 @@ public class ChangeManager {
          } else {
             LOG.info("Kein Ordner für alte Dateien vorhanden");
          }
-      } catch (IOException | XmlPullParserException e1) {
+      } catch (IOException e1) {
          e1.printStackTrace();
       }
 

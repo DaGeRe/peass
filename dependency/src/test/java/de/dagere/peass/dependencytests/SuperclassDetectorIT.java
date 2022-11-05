@@ -11,7 +11,6 @@ import java.util.TreeMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -50,7 +49,7 @@ public class SuperclassDetectorIT {
    }
 
    @Test
-   public void testSuperclassChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testSuperclassChange() throws IOException, ParseException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File secondVersion = new File(VERSIONS_FOLDER, "superclass_changed");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();

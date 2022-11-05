@@ -114,7 +114,6 @@ public class KiekerResultManager {
     * 
     * @param testsToUpdate
     * @throws IOException
-    * @throws XmlPullParserException
     * @throws InterruptedException
     */
    public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String commit, final File logFolder) {

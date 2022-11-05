@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
@@ -35,7 +34,7 @@ public class CoverageBasedSelectionIT {
    }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
+   public void testNormalChange() throws IOException, ParseException {
       try (MockedStatic<GitUtils> staticMock = Mockito.mockStatic(GitUtils.class)) {
          final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 

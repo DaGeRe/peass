@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,7 @@ public class DependencyDetectorNoUpdateIT {
    }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
+   public void testNormalChange() throws IOException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change");
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
@@ -49,7 +48,7 @@ public class DependencyDetectorNoUpdateIT {
    }
 
    @Test
-   public void testTestChange() throws IOException, InterruptedException, XmlPullParserException, ParseException {
+   public void testTestChange() throws IOException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "changed_test");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
@@ -68,7 +67,7 @@ public class DependencyDetectorNoUpdateIT {
    }
 
    @Test
-   public void testClassRemoval() throws IOException, InterruptedException, XmlPullParserException, ParseException {
+   public void testClassRemoval() throws IOException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_class");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();

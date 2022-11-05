@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,6 @@ import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.parallel.OneReader;
 import de.dagere.peass.dependency.parallel.PartialSelectionResultsMerger;
 import de.dagere.peass.dependency.persistence.InitialCommit;
@@ -53,7 +51,7 @@ public class TestCommitSplitting {
       }
 
       @Override
-      public boolean readInitialCommit() throws IOException, InterruptedException, XmlPullParserException {
+      public boolean readInitialCommit() throws IOException {
          staticSelectionResult.setInitialcommit(new InitialCommit());
          staticSelectionResult.getInitialcommit().setCommit(iterator.getCommitName());
          return true;
