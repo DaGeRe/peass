@@ -86,7 +86,7 @@ public class SettingsFileParser {
       if (splitted[0].equals("include")) {
          for (int candidateIndex = 1; candidateIndex < splitted.length; candidateIndex++) {
             final String candidate = splitted[candidateIndex].substring(1, splitted[candidateIndex].length() - 1);
-            String folderName = prefix + candidate.replace(':', File.separatorChar) + suffix;
+            String folderName = prefix + candidate.replace(":", "") + suffix;
             final File module = new File(projectFolder, folderName);
             if (module.exists()) {
                modules.add(module);
