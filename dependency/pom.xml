@@ -95,7 +95,7 @@
     <dependency>
       <groupId>de.dagere.kieker</groupId>
       <artifactId>kieker-source-instrumentation-library</artifactId>
-      <version>1.15.14</version>
+      <version>1.15.15</version>
     </dependency>
 
     <dependency>
@@ -125,7 +125,7 @@
     <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
-      <version>4.6.3</version>
+      <version>4.7.0</version>
     </dependency>
 
     <!-- Both are needed in your local maven repo, and both should be downloaded when building (but are only needed at runtime, if a project does not use snapshot 
