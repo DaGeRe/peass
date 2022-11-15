@@ -4,7 +4,6 @@ import java.util.concurrent.Callable;
 
 import de.dagere.peass.measurement.cleaning.CleanStarter;
 import de.dagere.peass.measurement.utils.CreateScriptStarter;
-import de.dagere.peass.reexecutions.FindMissingExecutionStarter;
 import de.dagere.peass.visualization.VisualizeRCAStarter;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -17,8 +16,7 @@ import picocli.CommandLine.Command;
       SearchCauseStarter.class, 
       CreateScriptStarter.class, 
       VisualizeRCAStarter.class, 
-      ContinuousExecutionStarter.class,
-      FindMissingExecutionStarter.class}, synopsisSubcommandLabel = "COMMAND")
+      ContinuousExecutionStarter.class}, synopsisSubcommandLabel = "COMMAND")
 public class PeassMain implements Callable<Void> {
    public static void main(final String[] args) {
       final CommandLine line = new CommandLine(new PeassMain());

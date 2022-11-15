@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -136,7 +135,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
          }
          generatedPropertyFolder = propertyFolder;
       } else {
-         generatedPropertyFolder = new File(new RepoFolders().getPropertiesFolder(), "properties" + File.separator + projectName);
+         throw new RuntimeException("Property folder was not defined!");
       }
       return generatedPropertyFolder;
    }
