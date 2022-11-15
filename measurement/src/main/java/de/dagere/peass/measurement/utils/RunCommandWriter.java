@@ -43,7 +43,7 @@ public class RunCommandWriter {
 
    public void createFullVersionCommand(final int commitIndex, final String commit, final Set<TestMethodCall> tests) {
       for (TestMethodCall testcase : tests) {
-         final String testcaseName = testcase.getClazz() + "#" + testcase.getMethod();
+         final String testcaseName = testcase.toString();
          createSingleMethodCommand(commitIndex, commit, testcaseName);
       }
    }
