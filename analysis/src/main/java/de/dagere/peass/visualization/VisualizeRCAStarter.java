@@ -56,9 +56,10 @@ public class VisualizeRCAStarter implements Callable<Void> {
    public VisualizeRCAStarter() {
    }
 
-   public VisualizeRCAStarter(final File[] data, final File resultFolder) {
+   public VisualizeRCAStarter(final File[] data, final File resultFolder, File propertyFolder) {
       this.data = data;
       this.resultFolder = resultFolder;
+      this.propertyFolder = propertyFolder;
    }
 
    @Override

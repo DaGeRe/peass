@@ -15,7 +15,7 @@ public class TestVisualizerNoTree {
    public void testBasicVisualization() throws Exception {
       File dataFile = new File("src/test/resources/visualization/demo_peass");
       final File resultFolder = new File("target/current_visualization");
-      VisualizeRCAStarter visualizeRCAStarter = new VisualizeRCAStarter(new File[] { dataFile }, resultFolder);
+      VisualizeRCAStarter visualizeRCAStarter = new VisualizeRCAStarter(new File[] { dataFile }, resultFolder, new File("/dev/null"));
       visualizeRCAStarter.call();
 
       File resultfile = new File(resultFolder, "f347830fce35e02c0f76e15076658f2f2a2ee116/de.peass.DemoClass/method0.html");
