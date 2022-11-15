@@ -27,8 +27,8 @@ public class TestSelectionConfigMixin {
    @Option(names = {"-doNotGenerateCoverageSelection", "--doNotGenerateCoverageSelection"}, description = "Disables coverage selection. Is false by default, but will be activated automatically if --doNotGenerateCoverageSelection is set.")
    public boolean doNotGenerateCoverageSelection = false;
    
-   @Option(names = {"-doGenerateTwiceExecutability", "--doGenerateTwiceExecutability"}, description = "Enables checking, whether tests are executable twice (will need more time, but may sort out tests that are not measurable)")
-   public boolean doGenerateTwiceExecutability = false;
+   @Option(names = {"-doNotGenerateTwiceExecutability", "--doNotGenerateTwiceExecutability"}, description = "Disables checking, whether tests are executable twice (need some time, but may sort out tests that are not measurable)")
+   public boolean doNotGenerateTwiceExecutability = false;
    
    @Option(names = {"-doNotGenerateProperties", "--doNotGenerateProperties"}, description = "Disables properties generation. By default, properties will be generated.")
    public boolean doNotGenerateProperties = false;
@@ -67,6 +67,7 @@ public class TestSelectionConfigMixin {
       }
       boolean generateTraces = !doNotGenerateTraces;
       boolean generateCoverageSelection = !doNotGenerateCoverageSelection;
-      return new TestSelectionConfig(threads, doNotUpdateDependencies, generateTraces, generateCoverageSelection, doGenerateTwiceExecutability, skipProcessSuccessRuns, !dontWriteAsZip);
+      boolean generateTwiceExecutability = !doNotGenerateTwiceExecutability;
+      return new TestSelectionConfig(threads, doNotUpdateDependencies, generateTraces, generateCoverageSelection, generateTwiceExecutability, skipProcessSuccessRuns, !dontWriteAsZip);
    }
 }
