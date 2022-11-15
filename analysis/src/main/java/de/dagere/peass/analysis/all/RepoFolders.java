@@ -92,11 +92,11 @@ public class RepoFolders {
       return statisticsFolder;
    }
 
-   public File getDependencyFile(final String project) {
+   public File getStaticSelectionFile(final String project) {
       return new File(dependencyFolder, ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
    }
 
-   public ExecutionData getExecutionData(final String project) throws JsonParseException, JsonMappingException, IOException {
+   public ExecutionData getExecutionData(final String project) throws IOException {
       final File executionFile = new File(dependencyFolder, ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");
       final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
       return changedTests;

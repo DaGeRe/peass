@@ -39,8 +39,7 @@ public class MissingExecutionFinder {
       this.experimentId = experimentId;
    }
 
-   public void findMissing(final File[] dataFolders)
-         throws FileNotFoundException, IOException {
+   public void findMissing(final File[] dataFolders) throws FileNotFoundException, IOException {
 
       int countAll = tests.getAllExecutions();
 
