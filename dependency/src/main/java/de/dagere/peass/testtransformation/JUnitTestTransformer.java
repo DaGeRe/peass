@@ -188,7 +188,7 @@ public class JUnitTestTransformer implements TestTransformer {
             for (final TestMethodCall test : rti.getTestsToUpdate().getTestMethods()) {
                addTestIfIncluded(tests, test, mapping);
             }
-            
+
          } else {
             for (final String method : currentClazzMethods) {
                TestMethodCall test = new TestMethodCall(clazzname.getClazz(), method, clazzname.getModule());
@@ -517,7 +517,7 @@ public class JUnitTestTransformer implements TestTransformer {
       unit.addImport("de.dagere.kopeme.datacollection.DataCollectorList");
 
       for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
-         if (!clazz.getExtendedTypes(0).getNameAsString().equals("KoPeMeTestcase")) {
+         if (clazz.getExtendedTypes().size() > 0 && !clazz.getExtendedTypes(0).getNameAsString().equals("KoPeMeTestcase")) {
             if (clazz.getExtendedTypes(0).getNameAsString().equals("TestCase")) {
                clazz.setExtendedTypes(new NodeList<>());
                clazz.addExtendedType("KoPeMeTestcase");
