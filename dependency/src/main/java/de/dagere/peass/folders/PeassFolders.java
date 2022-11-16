@@ -193,12 +193,14 @@ public class PeassFolders {
     */
    public List<File> findTempClazzFolder(final TestCase testcase) {
       final String expectedFolderName = "*" + testcase.getClazz();
+      System.out.println("Testcase: " + testcase + " " + expectedFolderName);
       FileFilter folderFilter = new WildcardFileFilter(expectedFolderName);
       return findTempClazzFolder(tempResultFolder, folderFilter);
    }
 
    private List<File> findTempClazzFolder(final File baseFolder, final FileFilter folderFilter) {
       final List<File> files = new LinkedList<>();
+      System.out.println("Searching in " + baseFolder + " " + baseFolder.exists());
       for (final File subfolder : baseFolder.listFiles()) {
          if (subfolder.isDirectory()) {
             if (folderFilter.accept(subfolder)) {
@@ -325,6 +327,10 @@ public class PeassFolders {
          clazzFolder.mkdirs();
       }
       return new File(clazzFolder, testcase.getMethodWithParams() + ".json");
+   }
+
+   public VMExecutionLogFolders getLogFolders() {
+      return logFolders;
    }
 
 }
