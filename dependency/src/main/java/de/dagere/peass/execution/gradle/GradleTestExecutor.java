@@ -91,7 +91,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    protected String getCleanGoal() {
       String cleanGoal;
       ExecutionConfig executionConfig = testTransformer.getConfig().getExecutionConfig();
-      cleanGoal = executionConfig.getCleanGoal() != null ? executionConfig.getCleanGoal() : "cleanTest";
+      cleanGoal = executionConfig.getCleanGoal() != null ? executionConfig.getCleanGoal() : "clean";
       return cleanGoal;
    }
 
