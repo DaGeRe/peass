@@ -37,11 +37,13 @@ public class TwiceExecutableChecker {
       transformer.getConfig().setIterations(2);
       executionData.addEmptyCommit(commit, predecessor);
 
-      executor.prepareKoPeMeExecution(new File(executor.getFolders().getTwiceRunningLogFolder(), "twicePreparation.txt"));
+      File twiceRunningLogFolder = new File(executor.getFolders().getTwiceRunningLogFolder(), commit);
+      twiceRunningLogFolder.mkdir();
+      executor.prepareKoPeMeExecution(new File(twiceRunningLogFolder, "twicePreparation.txt"));
       truncateLastRunResults();
       
       for (TestMethodCall testcase : tests) {
-         executor.executeTest(testcase, executor.getFolders().getTwiceRunningLogFolder(), transformer.getConfig().getExecutionConfig().getTimeout());
+         executor.executeTest(testcase, twiceRunningLogFolder, transformer.getConfig().getExecutionConfig().getTimeout());
 
          checkTestExistance(commit, testcase);
       }
