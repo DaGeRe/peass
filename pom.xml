@@ -136,7 +136,7 @@
   </build>
 
   <properties>
-    <mockito.version>4.8.1</mockito.version>
+    <mockito.version>4.9.0</mockito.version>
     <junit.version>5.9.1</junit.version>
     <kieker.version>1.15.2</kieker.version>
     <kopeme.version>1.1.14</kopeme.version>
