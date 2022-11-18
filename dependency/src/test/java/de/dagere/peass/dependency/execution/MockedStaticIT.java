@@ -7,7 +7,6 @@ import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.kopemedata.Kopemedata;
@@ -22,7 +21,6 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.utils.Constants;
 
-@Disabled
 public class MockedStaticIT {
 
    @BeforeEach
@@ -40,6 +38,8 @@ public class MockedStaticIT {
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       MeasurementConfig config = new MeasurementConfig(2);
       config.setIterations(5);
+      config.getExecutionConfig().setClearMockitoCaches(true);
+      config.getExecutionConfig().setExecuteBeforeClassInMeasurement(true);
       JUnitTestTransformer testTransformer = new JUnitTestTransformer(TestConstants.CURRENT_FOLDER, config);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, new EnvironmentVariables());
       

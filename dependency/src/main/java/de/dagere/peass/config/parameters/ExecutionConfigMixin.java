@@ -67,6 +67,10 @@ public class ExecutionConfigMixin {
    @Option(names = { "-executeBeforeClassInMeasurement", "--executeBeforeClassInMeasurement" }, description = "Execute @BeforeClass / @BeforeAll in measurement loop")
    protected boolean executeBeforeClassInMeasurement = false;
 
+   @Option(names = { "-clearMockitoCaches",
+         "--clearMockitoCaches" }, description = "Clear Mockito cache by adding a method that calls Mockito.clearAllCaches() in every repetition")
+   protected boolean clearMockitoCaches = false;
+
    @Option(names = { "-removeSnapshots",
          "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
    protected boolean removeSnapshots = false;
@@ -265,6 +269,14 @@ public class ExecutionConfigMixin {
       this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
    }
 
+   public boolean isClearMockitoCaches() {
+      return clearMockitoCaches;
+   }
+
+   public void setClearMockitoCaches(boolean clearMockitoCaches) {
+      this.clearMockitoCaches = clearMockitoCaches;
+   }
+
    public String getClazzFolder() {
       return clazzFolder;
    }
@@ -402,6 +414,7 @@ public class ExecutionConfigMixin {
       config.setUseAlternativeBuildfile(useAlternativeBuildfile);
       config.setRemoveSnapshots(removeSnapshots);
       config.setExecuteBeforeClassInMeasurement(executeBeforeClassInMeasurement);
+      config.setClearMockitoCaches(clearMockitoCaches);
       config.setProperties(properties);
       config.setXmx(heapSize);
 
@@ -422,6 +435,10 @@ public class ExecutionConfigMixin {
 
       if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
          throw new RuntimeException("executeBeforeClassInMeasurement may only be activated if onlyMeasureWorkload is deactivated!");
+      }
+
+      if (config.isClearMockitoCaches() && !config.isExecuteBeforeClassInMeasurement()) {
+         throw new RuntimeException("Currently, clearMockitoCaches is only allowed if executeBeforeClassInMeasurement is also activated!");
       }
 
       config.setUseAnbox(useAnbox);

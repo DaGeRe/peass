@@ -58,6 +58,7 @@ public class ExecutionConfig implements Serializable {
    private boolean excludeLog4jToSlf4j = false;
 
    private boolean executeBeforeClassInMeasurement = false;
+   private boolean clearMockitoCaches = false;
    private boolean onlyMeasureWorkload = false;
    private boolean showStart = false;
    private boolean redirectToNull = true;
@@ -113,6 +114,7 @@ public class ExecutionConfig implements Serializable {
       this.pl = other.getPl();
 
       this.executeBeforeClassInMeasurement = other.executeBeforeClassInMeasurement;
+      this.clearMockitoCaches = clearMockitoCaches;
       this.onlyMeasureWorkload = other.onlyMeasureWorkload;
       this.showStart = other.showStart;
       this.redirectToNull = other.redirectToNull;
@@ -310,6 +312,14 @@ public class ExecutionConfig implements Serializable {
 
    public void setExecuteBeforeClassInMeasurement(final boolean executeBeforeClassInMeasurement) {
       this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
+   }
+   
+   public boolean isClearMockitoCaches() {
+      return clearMockitoCaches;
+   }
+   
+   public void setClearMockitoCaches(boolean clearMockitoCaches) {
+      this.clearMockitoCaches = clearMockitoCaches;
    }
 
    public boolean isOnlyMeasureWorkload() {

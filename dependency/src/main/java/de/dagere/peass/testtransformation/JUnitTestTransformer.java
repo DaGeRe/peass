@@ -42,13 +42,16 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.ClassExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.Name;
+import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -613,10 +616,28 @@ public class JUnitTestTransformer implements TestTransformer {
                new ClassExpr(new TypeParameter("KoPeMeExtension")));
          clazz.addAnnotation(extendAnnotation);
 
+         eventuallyClearMockitoCache(clazz);
+
          List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
          new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
 
          BeforeAfterTransformer.transformBeforeAfter(clazz, config.getExecutionConfig());
+      }
+   }
+
+   private void eventuallyClearMockitoCache(ClassOrInterfaceDeclaration clazz) {
+      if (config.getExecutionConfig().isClearMockitoCaches()) {
+         final MethodDeclaration newMethod;
+         if (config.getExecutionConfig().isExecuteBeforeClassInMeasurement()) {
+            newMethod = clazz.addMethod("_peass_initializeMockito", Keyword.PUBLIC, Keyword.STATIC);
+            
+         } else {
+            newMethod = clazz.addMethod("_peass_initializeMockito", Keyword.PUBLIC);
+         }
+         NormalAnnotationExpr beforeWithMeasurementAnnotation = newMethod.addAndGetAnnotation("de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement");
+         beforeWithMeasurementAnnotation.addPair("priority", Integer.toString(5));
+         newMethod.setBody(new BlockStmt());
+         newMethod.getBody().get().addAndGetStatement(new MethodCallExpr("Mockito.clearAllCaches"));
       }
    }
 
