@@ -62,7 +62,7 @@ public class ReductionManager {
       } else if (result.getIterations() < measurementConfig.getIterations()) {
          LOG.error("Measurement executions: {}", result.getIterations());
          final int minOfExecuted = (int) result.getIterations() - 2;
-         reductionInfo = new VMReductionInfo(minOfExecuted, ReductionReasons.TOO_LESS_ITERATIONS);
+         reductionInfo = new VMReductionInfo(minOfExecuted, ReductionReasons.TOO_FEW_ITERATIONS);
       } else if (Double.isNaN(result.getValue())) {
          LOG.error("Measurement executions: {}", result.getIterations());
          reductionInfo = new VMReductionInfo(measurementConfig.getIterations() / 2, ReductionReasons.NO_DATA);
