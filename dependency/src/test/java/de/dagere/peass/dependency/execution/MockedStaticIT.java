@@ -45,7 +45,7 @@ public class MockedStaticIT {
       testTransformer.transformTests();
       
       TestMethodCall test = new TestMethodCall("de.dagere.peass.ExampleTest", "test");
-      executor.executeTest(test, new File("target/"), 5);
+      executor.executeTest(test, TestConstants.CURRENT_PEASS, 50);
       
       File resultingFile = new File(folders.getTempMeasurementFolder(), "de.dagere.peass/mockedStaticExample/de.dagere.peass.ExampleTest/test.json");
       Kopemedata data = Constants.OBJECTMAPPER.readValue(resultingFile, Kopemedata.class);
