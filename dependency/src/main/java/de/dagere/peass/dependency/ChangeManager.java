@@ -149,7 +149,7 @@ public class ChangeManager {
                compareClazz(changedClassesMethods, clazzIterator);
             }
          } else {
-            LOG.info("Kein Ordner für alte Dateien vorhanden");
+            LOG.info("There is no folder for old files");
          }
       } catch (IOException e1) {
          e1.printStackTrace();
@@ -167,7 +167,7 @@ public class ChangeManager {
          ClazzFileFinder finder = new ClazzFileFinder(config);
          final File newFile = finder.getSourceFile(folders.getProjectFolder(), clazz);
          final File oldFile = finder.getSourceFile(folders.getOldSources(), clazz);
-         LOG.info("Vergleiche {}", newFile, oldFile);
+         LOG.info("Comparing {}", newFile, oldFile);
          if (newFile != null && newFile.exists() && oldFile != null) {
             compareFiles(changedClassesMethods, clazzIterator, clazz, changeData, newFile, oldFile);
          } else {
@@ -205,7 +205,7 @@ public class ChangeManager {
       
       if (!changeData.isChange() && !isImportChange) {
          clazzIterator.remove();
-         LOG.debug("Dateien gleich: {}", clazz);
+         LOG.debug("Files identical: {}", clazz);
       } else {
          changedClassesMethods.put(clazz, changeData);
       }
