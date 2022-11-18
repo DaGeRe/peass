@@ -49,7 +49,7 @@ public class TestGradleParseUtil {
    }
 
    @Test
-   public void testSubprojectInstrumentation() throws IOException, XmlPullParserException, InterruptedException {
+   public void testSubprojectInstrumentation() throws IOException, InterruptedException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       FileUtils.copyDirectory(new File("src/test/resources/gradle-multimodule-subprojectexample/"), TestConstants.CURRENT_FOLDER);
       GradleTestUtil.initWrapper(TestConstants.CURRENT_FOLDER);
