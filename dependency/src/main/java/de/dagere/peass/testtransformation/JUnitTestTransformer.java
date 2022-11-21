@@ -637,7 +637,7 @@ public class JUnitTestTransformer implements TestTransformer {
          NormalAnnotationExpr beforeWithMeasurementAnnotation = newMethod.addAndGetAnnotation("de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement");
          beforeWithMeasurementAnnotation.addPair("priority", Integer.toString(5));
          newMethod.setBody(new BlockStmt());
-         newMethod.getBody().get().addAndGetStatement(new MethodCallExpr("Mockito.clearAllCaches"));
+         newMethod.getBody().get().addAndGetStatement(new MethodCallExpr("org.mockito.Mockito.clearAllCaches"));
       }
    }
 
