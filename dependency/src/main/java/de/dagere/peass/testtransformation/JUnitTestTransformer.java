@@ -616,7 +616,9 @@ public class JUnitTestTransformer implements TestTransformer {
                new ClassExpr(new TypeParameter("KoPeMeExtension")));
          clazz.addAnnotation(extendAnnotation);
 
-         eventuallyClearMockitoCache(clazz);
+         if (eventuallyClearMockitoCache(clazz)) {
+            unit.addImport("org.mockito.Mockito");
+         }
 
          List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
          new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
@@ -625,12 +627,11 @@ public class JUnitTestTransformer implements TestTransformer {
       }
    }
 
-   private void eventuallyClearMockitoCache(ClassOrInterfaceDeclaration clazz) {
+   private boolean eventuallyClearMockitoCache(ClassOrInterfaceDeclaration clazz) {
       if (config.getExecutionConfig().isClearMockitoCaches()) {
          final MethodDeclaration newMethod;
          if (config.getExecutionConfig().isExecuteBeforeClassInMeasurement()) {
             newMethod = clazz.addMethod("_peass_initializeMockito", Keyword.PUBLIC, Keyword.STATIC);
-            
          } else {
             newMethod = clazz.addMethod("_peass_initializeMockito", Keyword.PUBLIC);
          }
@@ -638,7 +639,9 @@ public class JUnitTestTransformer implements TestTransformer {
          beforeWithMeasurementAnnotation.addPair("priority", Integer.toString(5));
          newMethod.setBody(new BlockStmt());
          newMethod.getBody().get().addAndGetStatement(new MethodCallExpr("Mockito.clearAllCaches"));
+         return true;
       }
+      return false;
    }
 
    public File getProjectFolder() {
