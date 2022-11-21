@@ -616,7 +616,10 @@ public class JUnitTestTransformer implements TestTransformer {
                new ClassExpr(new TypeParameter("KoPeMeExtension")));
          clazz.addAnnotation(extendAnnotation);
 
-         eventuallyClearMockitoCache(clazz);
+         boolean containsMockito = unit.getImports().stream().anyMatch(imp -> imp.getNameAsString().contains("mockito"));
+         if (containsMockito) {
+            eventuallyClearMockitoCache(clazz);
+         }
 
          List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
          new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
