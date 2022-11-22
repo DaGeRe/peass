@@ -88,22 +88,24 @@ public class TraceReadUtils {
       for (final Node child : parent.getChildNodes()) {
          LOG.trace(child.getClass());
          if (child instanceof ClassOrInterfaceDeclaration) {
-            final String ownName = ((ClassOrInterfaceDeclaration) child).getNameAsString();
+            ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) child;
+            final String ownName = classOrInterfaceDeclaration.getNameAsString();
             if (alreadyReadPrefix.equals("")) {
-               foundDeclaredClasses.put(ownName, (ClassOrInterfaceDeclaration) child);
+               foundDeclaredClasses.put(ownName, classOrInterfaceDeclaration);
                foundDeclaredClasses.putAll(getNamedClasses(child, ownName));
             } else {
-               foundDeclaredClasses.put(alreadyReadPrefix + "$" + ownName, (ClassOrInterfaceDeclaration) child);
+               foundDeclaredClasses.put(alreadyReadPrefix + "$" + ownName, classOrInterfaceDeclaration);
                foundDeclaredClasses.putAll(getNamedClasses(child, alreadyReadPrefix + "$" + ownName));
             }
 
          } else if (child instanceof EnumDeclaration) {
-            final String ownName = ((EnumDeclaration) child).getNameAsString();
+            EnumDeclaration enumDeclaration = (EnumDeclaration) child;
+            final String ownName = enumDeclaration.getNameAsString();
             if (alreadyReadPrefix.equals("")) {
-               foundDeclaredClasses.put(ownName, (ClassOrInterfaceDeclaration) child);
+               foundDeclaredClasses.put(ownName, enumDeclaration);
                foundDeclaredClasses.putAll(getNamedClasses(child, ownName));
             } else {
-               foundDeclaredClasses.put(alreadyReadPrefix + "$" + ownName, (EnumDeclaration) child);
+               foundDeclaredClasses.put(alreadyReadPrefix + "$" + ownName, enumDeclaration);
                foundDeclaredClasses.putAll(getNamedClasses(child, alreadyReadPrefix + "$" + ownName));
             }
          } else {
