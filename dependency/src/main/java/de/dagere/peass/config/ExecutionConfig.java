@@ -114,7 +114,7 @@ public class ExecutionConfig implements Serializable {
       this.pl = other.getPl();
 
       this.executeBeforeClassInMeasurement = other.executeBeforeClassInMeasurement;
-      this.clearMockitoCaches = clearMockitoCaches;
+      this.clearMockitoCaches = other.clearMockitoCaches;
       this.onlyMeasureWorkload = other.onlyMeasureWorkload;
       this.showStart = other.showStart;
       this.redirectToNull = other.redirectToNull;
