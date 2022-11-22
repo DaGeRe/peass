@@ -94,7 +94,7 @@ public class CreateScriptStarter implements Callable<Void> {
          staticTestSelection = new StaticTestSelection(executionData);
       }
       if (executionData == null && staticTestSelection == null) {
-         throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
+         throw new RuntimeException("StaticSelectionFile and executionFile not readable - one needs to be defined!");
       }
 
       MeasurementConfig config = new MeasurementConfig(measurementConfigMixin, executionConfigMixin, new StatisticsConfigMixin(), new KiekerConfigMixin());
