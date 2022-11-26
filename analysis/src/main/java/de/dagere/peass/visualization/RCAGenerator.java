@@ -51,8 +51,7 @@ public class RCAGenerator {
       TestMethodCall testMethodCall = TestMethodCall.createFromString(data.getTestcase());
       KoPeMeTreeConverter kopemeTreeConverter = new KoPeMeTreeConverter(folders, data.getMeasurementConfig().getFixedCommitConfig().getCommit(), testMethodCall);
       HTMLWriter writer = new HTMLWriter(rootNode, data, destFolder, propertyFolder, kopemeTreeConverter.getData());
-      writer.writeHTML();;
-//      writeHTML(rootNode, data);
+      writer.writeHTML();
    }
 
    private CauseSearchData readData(final File details) throws IOException, JsonParseException, JsonMappingException {
