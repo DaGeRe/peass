@@ -1,7 +1,6 @@
 package de.dagere.peass.visualization;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
@@ -9,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
@@ -43,7 +41,7 @@ public class RCAGenerator {
       this.propertyFolder = propertyFolder;
    }
 
-   public void createVisualization() throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
+   public void createVisualization() throws IOException {
       LOG.info("Visualizing " + data.getTestcase());
       final NodePreparator preparator = new NodePreparator(rootPredecessor, rootVersion, data);
       preparator.prepare();

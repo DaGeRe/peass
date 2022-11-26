@@ -63,7 +63,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
    }
 
    @Override
-   public Void call() throws Exception {
+   public Void call() throws IOException {
       if (!resultFolder.exists()) {
          resultFolder.mkdir();
       }
@@ -81,7 +81,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
       return null;
    }
 
-   private void visualizeRegularMeasurementFile(final File peassFolder) throws JsonProcessingException, FileNotFoundException, IOException {
+   private void visualizeRegularMeasurementFile(final File peassFolder) throws IOException {
       VisualizeRegularMeasurement measurementVisualizer = new VisualizeRegularMeasurement(resultFolder);
       measurementVisualizer.analyzeFile(peassFolder);
    }
@@ -98,8 +98,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
       }
    }
 
-   private void visualizeRCAFile(final File versionResultFolder, final File treeFile)
-         throws JsonParseException, JsonMappingException, IOException, JsonProcessingException, FileNotFoundException {
+   private void visualizeRCAFile(final File versionResultFolder, final File treeFile) throws IOException {
       final CauseSearchFolders folders = getCauseSearchFolders(treeFile);
 
       final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, versionResultFolder, folders);

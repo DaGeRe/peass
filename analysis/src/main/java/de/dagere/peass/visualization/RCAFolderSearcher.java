@@ -25,7 +25,7 @@ public class RCAFolderSearcher {
       this.data = data;
    }
 
-   public List<File> searchPeassFiles() throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
+   public List<File> searchPeassFiles() {
       List<File> peassFilesToHandle = new LinkedList<>();
       for (final File source : data) {
          if (source.isDirectory()) {
