@@ -68,11 +68,12 @@ public class KoPeMeTreeConverter {
    }
 
    private void readStatistics(final CauseSearchFolders folders, final String commit, final TestMethodCall testcase) {
-      for (File versionFolder : folders.getArchiveResultFolder(commit, testcase).listFiles()) {
-         File levelFolder = new File(versionFolder, "0"); // For the beginning, just analyze topmost KoPeMe-measurement
+      File archiveResultFolder = folders.getArchiveResultFolder(commit, testcase);
+      for (File commitFolder : archiveResultFolder.listFiles()) {
+         File levelFolder = new File(commitFolder, "0"); // For the beginning, just analyze topmost KoPeMe-measurement
          for (File kopemeFile : levelFolder.listFiles((FileFilter) new OrFileFilter(new WildcardFileFilter(testcase.getMethod() + "*.json"),
                new WildcardFileFilter(testcase.getMethod() + "*.xml")))) {
-            readFile(commit, testcase, versionFolder.getName(), kopemeFile);
+            readFile(commit, testcase, commitFolder.getName(), kopemeFile);
          }
       }
 

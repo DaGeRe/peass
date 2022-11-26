@@ -7,9 +7,6 @@ import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -28,7 +25,7 @@ public class RCAGenerator {
 
    private CallTreeNode rootPredecessor, rootVersion;
 
-   public RCAGenerator(final File source, final File destFolder, final CauseSearchFolders folders) throws JsonParseException, JsonMappingException, IOException {
+   public RCAGenerator(final File source, final File destFolder, final CauseSearchFolders folders) throws IOException {
       this.source = source;
       this.destFolder = destFolder;
       this.folders = folders;
@@ -56,7 +53,7 @@ public class RCAGenerator {
       }
    }
 
-   private CauseSearchData readData(final File details) throws IOException, JsonParseException, JsonMappingException {
+   private CauseSearchData readData(final File details) throws IOException {
       final CauseSearchData data;
       if (details.exists()) {
          data = Constants.OBJECTMAPPER.readValue(details, CauseSearchData.class);
