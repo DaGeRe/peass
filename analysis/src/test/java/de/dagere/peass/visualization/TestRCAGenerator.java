@@ -13,6 +13,7 @@ import de.dagere.peass.folders.CauseSearchFolders;
 
 public class TestRCAGenerator {
 
+   private static final File VISUALIZATION_FOLDER = new File("src/test/resources/visualization/");
    private static final File RESULT_FOLDER = new File("target/example");
 
    @BeforeEach
@@ -22,7 +23,7 @@ public class TestRCAGenerator {
 
    @Test
    public void testRCAGeneration() throws IOException {
-      File folder = new File("src/test/resources/visualization/project_3_peass");
+      File folder = new File(VISUALIZATION_FOLDER, "project_3_peass");
       String commit = "9177678d505bfacb64a95c2271fb03b1e18475a8";
 
       File expectedResultFile = generate(folder, commit);
@@ -31,17 +32,17 @@ public class TestRCAGenerator {
 
    @Test
    public void testFailingGeneration() throws IOException {
-      File folder = new File("src/test/resources/visualization/project_wrong_peass");
+      File folder = new File(VISUALIZATION_FOLDER, "project_wrong_peass");
       String commit = "9177678d505bfacb64a95c2271fb03b1e18475a8";
 
       Assert.assertThrows(FileNotFoundException.class, () -> {
          File expectedResultFile = generate(folder, commit);
       });
    }
-   
+
    @Test
    public void testNumberTooSmallGeneration() throws IOException {
-      File folder = new File("src/test/resources/visualization/numberTooSmall_peass");
+      File folder = new File(VISUALIZATION_FOLDER, "numberTooSmall_peass");
       String commit = "0e89a15c9e2ebf9078ef03c2dcd556fcfe228970";
 
       File expectedResultFile = generate(folder, commit);
