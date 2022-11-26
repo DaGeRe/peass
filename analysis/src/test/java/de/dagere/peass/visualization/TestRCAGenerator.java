@@ -38,6 +38,15 @@ public class TestRCAGenerator {
          File expectedResultFile = generate(folder, commit);
       });
    }
+   
+   @Test
+   public void testNumberTooSmallGeneration() throws IOException {
+      File folder = new File("src/test/resources/visualization/numberTooSmall_peass");
+      String commit = "0e89a15c9e2ebf9078ef03c2dcd556fcfe228970";
+
+      File expectedResultFile = generate(folder, commit);
+      Assert.assertFalse(expectedResultFile.exists());
+   }
 
    private File generate(File folder, String commit) throws IOException {
       CauseSearchFolders folders = new CauseSearchFolders(folder);
