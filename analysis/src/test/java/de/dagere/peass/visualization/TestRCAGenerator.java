@@ -18,7 +18,9 @@ public class TestRCAGenerator {
 
    @BeforeEach
    public void init() throws IOException {
-      FileUtils.cleanDirectory(RESULT_FOLDER);
+      if (RESULT_FOLDER.exists()) {
+         FileUtils.cleanDirectory(RESULT_FOLDER);
+      }
    }
 
    @Test
