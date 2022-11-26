@@ -1,0 +1,54 @@
+{
+  "clazz" : "de.peass.MainTest",
+  "methods" : [ {
+    "method" : "testMe",
+    "datacollectorResults" : [ {
+      "name" : "de.dagere.kopeme.datacollection.TimeDataCollectorNoGC",
+      "chunks" : [ ],
+      "results" : [ {
+        "value" : 3.674724348418333E11,
+        "deviation" : 1.7336331688777509,
+        "min" : 9.3334180915E10,
+        "max" : 1.66773153488E12,
+        "warmup" : 0,
+        "iterations" : 4,
+        "repetitions" : 1,
+        "commit" : null,
+        "vmRunConfiguration" : {
+          "showStart" : false,
+          "executeBeforeClassInMeasurement" : false,
+          "redirectToTemp" : false,
+          "redirectToNull" : true,
+          "useKieker" : true
+        },
+        "javaVersion" : "1.8.0_332",
+        "cpu" : "model name : AMD Ryzen 5 3600 6-Core Processor",
+        "memory" : "MemTotal: 65853056 kB",
+        "date" : 1667731597869,
+        "error" : true,
+        "fulldata" : {
+          "fileName" : null,
+          "values" : [ {
+            "startTime" : 1667730997777,
+            "value" : 100361675436
+          }, {
+            "startTime" : 1667731098139,
+            "value" : 93334180915
+          }, {
+            "startTime" : 1667731191473,
+            "value" : 109641003557
+          }, {
+            "startTime" : 1667731301114,
+            "value" : 115939268134
+          }, {
+            "startTime" : 1667731417053,
+            "value" : 117826946129
+          }, {
+            "startTime" : 1667731534880,
+            "value" : 1667731534880
+          } ]
+        }
+      } ]
+    } ]
+  } ]
+}
