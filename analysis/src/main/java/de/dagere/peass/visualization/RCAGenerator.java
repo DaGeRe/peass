@@ -40,9 +40,7 @@ public class RCAGenerator {
 
    public void createVisualization() throws IOException {
       LOG.info("Visualizing " + data.getTestcase());
-      final NodePreparator preparator = new NodePreparator(rootPredecessor, rootVersion, data);
-      preparator.prepare();
-      final GraphNode rootNode = preparator.getRootNode();
+      final GraphNode rootNode = createMeasurementNode();
       TestMethodCall testMethodCall = TestMethodCall.createFromString(data.getTestcase());
       try {
          KoPeMeTreeConverter kopemeTreeConverter = new KoPeMeTreeConverter(folders, data.getMeasurementConfig().getFixedCommitConfig().getCommit(), testMethodCall);
@@ -51,6 +49,13 @@ public class RCAGenerator {
       } catch (NumberIsTooSmallException e) {
          LOG.error("RCA was not finished successfully - not able to create HTML", e);
       }
+   }
+
+   private GraphNode createMeasurementNode() {
+      final NodePreparator preparator = new NodePreparator(rootPredecessor, rootVersion, data);
+      preparator.prepare();
+      final GraphNode rootNode = preparator.getRootNode();
+      return rootNode;
    }
 
    private CauseSearchData readData(final File details) throws IOException {
