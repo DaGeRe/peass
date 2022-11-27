@@ -1,0 +1,107 @@
+{
+  "measurementConfig" : {
+    "vms" : 3,
+    "earlyStop" : false,
+    "warmup" : 10,
+    "iterations" : 10,
+    "repetitions" : 10,
+    "logFullData" : true,
+    "useGC" : false,
+    "callSyncBetweenVMs" : true,
+    "waitTimeBetweenVMs" : 1000,
+    "maxLogSizeInMb" : 100,
+    "kiekerConfig" : {
+      "useKieker" : true,
+      "useSourceInstrumentation" : true,
+      "useSelectiveInstrumentation" : true,
+      "useAggregation" : true,
+      "useCircularQueue" : true,
+      "enableAdaptiveMonitoring" : false,
+      "adaptiveInstrumentation" : false,
+      "kiekerAggregationInterval" : 5000,
+      "record" : "DURATION",
+      "onlyOneCallRecording" : false,
+      "extractMethod" : false,
+      "traceSizeInMb" : 100,
+      "kiekerQueueSize" : 10000000,
+      "createDefaultConstructor" : false,
+      "kiekerWaitTime" : 10,
+      "excludeForTracing" : [ "new org.eclipse.jetty.logging.JettyLevel.<init>(..)", "* org.eclipse.jetty.logging.JettyLevel.*(..)", "*[] org.eclipse.jetty.logging.JettyLevel.*(..)", "*.* org.eclipse.jetty.logging.JettyLevel.*(..)", "*.*.* org.eclipse.jetty.logging.JettyLevel.*(..)", "*.*.*.* org.eclipse.jetty.logging.JettyLevel.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.JettyLevel.*(..)", "new org.eclipse.jetty.logging.JettyLoggerConfiguration.<init>(..)", "* org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "*[] org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "*.* org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "*.*.* org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "*.*.*.* org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "new org.eclipse.jetty.logging.JettyLoggingServiceProvider.<init>(..)", "* org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "*[] org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "*.* org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "*.*.* org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "*.*.*.* org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "new org.eclipse.jetty.logging.JettyLoggerFactory.<init>(..)", "* org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "*[] org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "*.* org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "*.*.* org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "*.*.*.* org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "new org.eclipse.jetty.logging.StdErrAppender.<init>(..)", "* org.eclipse.jetty.logging.StdErrAppender.*(..)", "*[] org.eclipse.jetty.logging.StdErrAppender.*(..)", "*.* org.eclipse.jetty.logging.StdErrAppender.*(..)", "*.*.* org.eclipse.jetty.logging.StdErrAppender.*(..)", "*.*.*.* org.eclipse.jetty.logging.StdErrAppender.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.StdErrAppender.*(..)", "new org.eclipse.jetty.logging.Timestamp.<init>(..)", "* org.eclipse.jetty.logging.Timestamp.*(..)", "*[] org.eclipse.jetty.logging.Timestamp.*(..)", "*.* org.eclipse.jetty.logging.Timestamp.*(..)", "*.*.* org.eclipse.jetty.logging.Timestamp.*(..)", "*.*.*.* org.eclipse.jetty.logging.Timestamp.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.Timestamp.*(..)", "new org.eclipse.jetty.logging.Timestamp$Tick.<init>(..)", "* org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "*[] org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "*.* org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "*.*.* org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "*.*.*.* org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "new org.eclipse.jetty.logging.JettyLogger.<init>(..)", "* org.eclipse.jetty.logging.JettyLogger.*(..)", "*[] org.eclipse.jetty.logging.JettyLogger.*(..)", "*.* org.eclipse.jetty.logging.JettyLogger.*(..)", "*.*.* org.eclipse.jetty.logging.JettyLogger.*(..)", "*.*.*.* org.eclipse.jetty.logging.JettyLogger.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.JettyLogger.*(..)" ]
+    },
+    "saveAll" : true,
+    "javaVersion" : "11.0.16",
+    "measurementStrategy" : "SEQUENTIAL",
+    "statisticsConfig" : {
+      "type1error" : 0.01,
+      "type2error" : 0.01,
+      "outlierFactor" : 3.29,
+      "statisticTest" : "T_TEST"
+    },
+    "executionConfig" : {
+      "testGoal" : "test",
+      "timeout" : 60000,
+      "redirectSubprocessOutputToFile" : true,
+      "useTieredCompilation" : false,
+      "removeSnapshots" : false,
+      "useAlternativeBuildfile" : false,
+      "excludeLog4jSlf4jImpl" : false,
+      "excludeLog4jToSlf4j" : false,
+      "executeBeforeClassInMeasurement" : false,
+      "onlyMeasureWorkload" : false,
+      "showStart" : true,
+      "redirectToNull" : true,
+      "createDetailDebugFiles" : true
+    },
+    "fixedCommitConfig" : {
+      "commit" : "0e8c00cb58fa9873c89ba04e8d447376ca4b90f5",
+      "commitOld" : "32759dad8f3be04835d1e833ede95662f4a412e1"
+    }
+  },
+  "causeConfig" : {
+    "splitAggregated" : true,
+    "minTime" : 0.01,
+    "ignoreEOIs" : true,
+    "rcaStrategy" : "UNTIL_SOURCE_CHANGE",
+    "levels" : 1,
+    "testCase" : {
+      "clazz" : "de.peass.MainTest",
+      "method" : "testMe",
+      "module" : "",
+      "params" : null
+    },
+    "propertyFolder" : "/home/reichelt/nvme/workspaces/dissworkspace/permanent/peass-ci-plugin/work/workspace/meintest/meintest/../meintest_fullPeass/properties_meintest"
+  },
+  "nodes" : {
+    "call" : "de.peass.MainTest#testMe",
+    "kiekerPattern" : "public void de.peass.MainTest.testMe()",
+    "otherKiekerPattern" : "public void de.peass.MainTest.testMe()",
+    "module" : "using",
+    "statistic" : {
+      "meanOld" : 9.619243271666665E7,
+      "meanCurrent" : 5.007580453666667E8,
+      "deviationOld" : 26514.931204908124,
+      "deviationCurrent" : 44684.82270079745,
+      "vms" : 3,
+      "callsOld" : 30,
+      "calls" : 30,
+      "tvalue" : -13486.082461862286
+    },
+    "childs" : [ {
+      "call" : "de.dagere.using.AnotherChangeable#callMe",
+      "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.callMe()",
+      "otherKiekerPattern" : "public void de.dagere.using.AnotherChangeable.callMe()",
+      "module" : "using",
+      "statistic" : {
+        "meanOld" : 9.611935378333335E7,
+        "meanCurrent" : 5.007058649666667E8,
+        "deviationOld" : 16530.06871010763,
+        "deviationCurrent" : 44916.44068939763,
+        "vms" : 3,
+        "callsOld" : 30,
+        "calls" : 30,
+        "tvalue" : -14641.483839538276
+      },
+      "childs" : [ ]
+    } ]
+  }
+}

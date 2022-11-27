@@ -129,8 +129,13 @@ public class CauseSearchFolders extends PeassFolders {
    }
 
    public File getTreeCacheFolder(final String commit, final TestMethodCall testcase) {
-      final File folder = new File(treeCacheFolder, commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethodWithParams());
+      final File folder = getExistingTreeCacheFolder(commit, testcase);
       folder.mkdirs();
+      return folder;
+   }
+   
+   public File getExistingTreeCacheFolder(final String commit, final TestMethodCall testcase) {
+      final File folder = new File(treeCacheFolder, commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethodWithParams());
       return folder;
    }
 

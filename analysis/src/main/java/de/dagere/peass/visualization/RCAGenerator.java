@@ -1,6 +1,8 @@
 package de.dagere.peass.visualization;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
@@ -12,6 +14,7 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
+import de.dagere.peass.visualization.html.HTMLEnvironmentGenerator;
 import de.dagere.peass.visualization.html.HTMLWriter;
 
 public class RCAGenerator {
@@ -23,7 +26,7 @@ public class RCAGenerator {
    private final CauseSearchFolders folders;
    private File propertyFolder;
 
-   private CallTreeNode rootPredecessor, rootVersion;
+   private CallTreeNode rootPredecessor, rootCurrent;
 
    public RCAGenerator(final File source, final File destFolder, final CauseSearchFolders folders) throws IOException {
       this.source = source;
@@ -51,8 +54,29 @@ public class RCAGenerator {
       }
    }
 
+   public void createSingleVisualization(String commit, CallTreeNode pureNode) {
+      TestMethodCall testcaseObject = data.getCauseConfig().getTestCase();
+      String outputName = data.getMeasurementConfig().getFixedCommitConfig().getCommit() + "/" + testcaseObject.getClassWithModule() + "/"
+            + testcaseObject.getMethodWithParams() + "_" + commit + ".html";
+      String jsName = outputName.replace(".html", ".json");
+      File singleVisualizationFile = new File(destFolder, outputName);
+      try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(singleVisualizationFile))) {
+         final HTMLEnvironmentGenerator htmlGenerator = new HTMLEnvironmentGenerator(fileWriter);
+         fileWriter.write("<!DOCTYPE html>\n");
+         htmlGenerator.writeHTML("visualization/TreeStructureHeader.html");
+
+         fileWriter.write("<script src='" + jsName + "'></script>\n");
+
+         htmlGenerator.writeHTML("visualization/RestOfHTML.html");
+         fileWriter.flush();
+         fileWriter.flush();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+
    private GraphNode createMeasurementNode() {
-      final NodePreparator preparator = new NodePreparator(rootPredecessor, rootVersion, data);
+      final NodePreparator preparator = new NodePreparator(rootPredecessor, rootCurrent, data);
       preparator.prepare();
       final GraphNode rootNode = preparator.getRootNode();
       return rootNode;
@@ -74,6 +98,6 @@ public class RCAGenerator {
 
    public void setFullTree(final CallTreeNode rootPredecessor, final CallTreeNode rootVersion) {
       this.rootPredecessor = rootPredecessor;
-      this.rootVersion = rootVersion;
+      this.rootCurrent = rootVersion;
    }
 }

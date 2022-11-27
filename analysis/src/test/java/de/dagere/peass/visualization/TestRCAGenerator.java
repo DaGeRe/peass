@@ -9,7 +9,13 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
+
+import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.CauseSearchFolders;
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.utils.Constants;
 
 public class TestRCAGenerator {
 
@@ -25,11 +31,25 @@ public class TestRCAGenerator {
 
    @Test
    public void testRCAGeneration() throws IOException {
+      File folder = new File(VISUALIZATION_FOLDER, "rcaSingleTreeTest_peass");
+      String commit = "0e8c00cb58fa9873c89ba04e8d447376ca4b90f5";
+
+      File expectedResultFile = generate(folder, commit);
+      Assert.assertTrue(expectedResultFile.exists());
+
+      File clazzResultFolder = new File(RESULT_FOLDER, "0e8c00cb58fa9873c89ba04e8d447376ca4b90f5/de.peass.MainTest/");
+      File expectedFirstSingleFile = new File(clazzResultFolder, "testMe_0e8c00cb58fa9873c89ba04e8d447376ca4b90f5.html");
+      Assert.assertTrue(expectedFirstSingleFile.exists());
+   }
+   
+   @Test
+   public void testSingleTreeGeneration() throws IOException {
       File folder = new File(VISUALIZATION_FOLDER, "project_3_peass");
       String commit = "9177678d505bfacb64a95c2271fb03b1e18475a8";
 
       File expectedResultFile = generate(folder, commit);
       Assert.assertTrue(expectedResultFile.exists());
+      
    }
 
    @Test
@@ -57,8 +77,24 @@ public class TestRCAGenerator {
 
       RCAGenerator generator = new RCAGenerator(sourceFile, RESULT_FOLDER, folders);
       generator.createVisualization();
+      
+      createTreeStructureView(commit, folders, generator);
 
       File expectedResultFile = new File(RESULT_FOLDER, commit + "/de.peass.MainTest/testMe.html");
       return expectedResultFile;
+   }
+
+   private void createTreeStructureView(String commit, CauseSearchFolders folders, RCAGenerator generator) throws IOException, StreamReadException, DatabindException {
+      File treeFolder = folders.getExistingTreeCacheFolder(commit, new TestMethodCall("de.peass.MainTest", "testMe"));
+      if (treeFolder.exists()) {
+         final File potentialCacheFileOld = new File(treeFolder, "32759dad8f3be04835d1e833ede95662f4a412e1");
+         final File potentialCacheFile = new File(treeFolder, "0e8c00cb58fa9873c89ba04e8d447376ca4b90f5");
+         
+         final CallTreeNode rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
+         final CallTreeNode rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
+         
+         generator.createSingleVisualization(commit, rootVersion);
+         generator.createSingleVisualization("32759dad8f3be04835d1e833ede95662f4a412e1", rootPredecessor);
+      }
    }
 }
