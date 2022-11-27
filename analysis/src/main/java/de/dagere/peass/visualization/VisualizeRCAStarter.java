@@ -98,10 +98,10 @@ public class VisualizeRCAStarter implements Callable<Void> {
       }
    }
 
-   private void visualizeRCAFile(final File versionResultFolder, final File treeFile) throws IOException {
+   private void visualizeRCAFile(final File commitResultFolder, final File treeFile) throws IOException {
       final CauseSearchFolders folders = getCauseSearchFolders(treeFile);
 
-      final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, versionResultFolder, folders);
+      final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, commitResultFolder, folders);
       final File propertyFolder = getPropertyFolder(projectName);
       rcaGenerator.setPropertyFolder(propertyFolder);
 
