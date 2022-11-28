@@ -7,6 +7,7 @@ import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.hamcrest.core.StringContains;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,8 +51,13 @@ public class TestRCAGenerator {
       File expectedJSSingleFileOld = new File(clazzResultFolder, "testMe_32759dad8f3be04835d1e833ede95662f4a412e1.js");
       Assert.assertTrue(expectedJSSingleFileOld.exists());
       
-      String text = Files.readString(expectedJSSingleFileOld.toPath());
-      MatcherAssert.assertThat(text, StringContains.containsString("de.dagere.using.AnotherChangeable#method0"));
+      String textCurrent = Files.readString(expectedJSSingleFileCurrent.toPath());
+      MatcherAssert.assertThat(textCurrent, Matchers.not( StringContains.containsString("de.dagere.using.AnotherChangeable#method0")));
+      
+      String textOld = Files.readString(expectedJSSingleFileOld.toPath());
+      MatcherAssert.assertThat(textOld, StringContains.containsString("de.dagere.using.AnotherChangeable#method0"));
+      
+      
    }
    
    @Test
