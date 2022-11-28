@@ -16,6 +16,7 @@ import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.visualization.html.HTMLEnvironmentGenerator;
 import de.dagere.peass.visualization.html.HTMLWriter;
+import de.dagere.peass.visualization.html.SingleHTMLWriter;
 
 public class RCAGenerator {
 
@@ -55,23 +56,11 @@ public class RCAGenerator {
    }
 
    public void createSingleVisualization(String commit, CallTreeNode pureNode) {
-      TestMethodCall testcaseObject = data.getCauseConfig().getTestCase();
-      String outputName = data.getMeasurementConfig().getFixedCommitConfig().getCommit() + "/" + testcaseObject.getClassWithModule() + "/"
-            + testcaseObject.getMethodWithParams() + "_" + commit + ".html";
-      String jsName = outputName.replace(".html", ".json");
-      File singleVisualizationFile = new File(destFolder, outputName);
-      try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(singleVisualizationFile))) {
-         final HTMLEnvironmentGenerator htmlGenerator = new HTMLEnvironmentGenerator(fileWriter);
-         fileWriter.write("<!DOCTYPE html>\n");
-         htmlGenerator.writeHTML("visualization/TreeStructureHeader.html");
-
-         fileWriter.write("<script src='" + jsName + "'></script>\n");
-
-         htmlGenerator.writeHTML("visualization/RestOfHTML.html");
-         fileWriter.flush();
-         fileWriter.flush();
-      } catch (IOException e) {
-         e.printStackTrace();
+      try {
+         SingleHTMLWriter writer = new SingleHTMLWriter(pureNode, destFolder, propertyFolder);
+         writer.writeHTML(data, commit);
+      } catch (IOException e1) {
+         e1.printStackTrace();
       }
    }
 
