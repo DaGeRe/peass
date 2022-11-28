@@ -23,10 +23,13 @@ public class SingleHTMLWriter {
       TestMethodCall testcaseObject = data.getCauseConfig().getTestCase();
       String outputName = data.getMeasurementConfig().getFixedCommitConfig().getCommit() + "/" + testcaseObject.getClassWithModule() + "/"
             + testcaseObject.getMethodWithParams() + "_" + commit + ".html";
-      String jsName = outputName.replace(".html", ".json");
+      String jsName = outputName.replace(".html", ".js");
       File singleVisualizationFile = new File(destFolder, outputName);
 
       writeOverviewHTML(singleVisualizationFile, jsName.substring(jsName.lastIndexOf('/') + 1));
+      
+      SingleTreeJSWriter jsWriter = new SingleTreeJSWriter(propertyFolder, root);
+      jsWriter.writeJS(data, singleVisualizationFile, jsName.substring(jsName.lastIndexOf('/') + 1));
    }
 
    private void writeOverviewHTML(final File output, final String jsName) throws IOException {

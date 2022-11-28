@@ -40,6 +40,9 @@ public class TestRCAGenerator {
       File clazzResultFolder = new File(RESULT_FOLDER, "0e8c00cb58fa9873c89ba04e8d447376ca4b90f5/de.peass.MainTest/");
       File expectedFirstSingleFile = new File(clazzResultFolder, "testMe_0e8c00cb58fa9873c89ba04e8d447376ca4b90f5.html");
       Assert.assertTrue(expectedFirstSingleFile.exists());
+      
+      File expectedJSSingleFile = new File(clazzResultFolder, "testMe_0e8c00cb58fa9873c89ba04e8d447376ca4b90f5.js");
+      Assert.assertTrue(expectedJSSingleFile.exists());
    }
    
    @Test

@@ -17,6 +17,7 @@ import de.dagere.peass.utils.Constants;
 import de.dagere.peass.visualization.html.HTMLEnvironmentGenerator;
 import de.dagere.peass.visualization.html.HTMLWriter;
 import de.dagere.peass.visualization.html.SingleHTMLWriter;
+import de.dagere.peass.visualization.html.SingleTreeJSWriter;
 
 public class RCAGenerator {
 
