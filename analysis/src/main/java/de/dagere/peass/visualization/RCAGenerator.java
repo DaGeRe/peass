@@ -62,10 +62,20 @@ public class RCAGenerator {
          nodePreparator.prepare();
          GraphNode singleRoot = nodePreparator.getRootNode();
          
+         
+         resetColor(singleRoot);
+         
          SingleHTMLWriter writer = new SingleHTMLWriter(singleRoot, destFolder, propertyFolder);
          writer.writeHTML(data, commit);
       } catch (IOException e1) {
          e1.printStackTrace();
+      }
+   }
+
+   private void resetColor(GraphNode node) {
+      node.setColor("#FFF");
+      for (GraphNode child : node.getChildren()) { 
+         resetColor(child);
       }
    }
 
