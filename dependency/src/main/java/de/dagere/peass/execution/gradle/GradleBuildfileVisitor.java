@@ -298,6 +298,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    public int getDefaultConfigLine() {
       return defaultConfigLine;
    }
+
+   public void setDefaultConfigLine(int defaultConfigEnd) {
+      defaultConfigLine = defaultConfigEnd;
+   }
    
    public int getMinSdkVersion() {
       return minSdkVersion;
@@ -313,6 +317,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    
    public int getAndroidPackagingOptions() {
       return androidPackagingOptions;
+   }
+
+   public void setAndroidPackagingOptions(int androidPackagingOptionsEnd) {
+      androidPackagingOptions = androidPackagingOptionsEnd;
    }
 
    public boolean isSubprojectJava() {
@@ -409,5 +417,4 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    public void clearLine(final Integer lineNumber) {
       gradleFileContents.set(lineNumber - 1, "");
    }
-
 }

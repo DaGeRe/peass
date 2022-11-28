@@ -105,7 +105,16 @@ public class GradleBuildfileEditor {
          if (visitor.getMultiDexEnabled() != -1) {
             GradleParseUtil.updateMultiDexEnabled(visitor);
          } else {
-            visitor.addLine(visitor.getDefaultConfigLine() - 1, "        multiDexEnabled = true");
+            if (visitor.getDefaultConfigLine() != -1) {
+               visitor.addLine(visitor.getDefaultConfigLine() - 1, "        multiDexEnabled = true");
+            } else {
+               visitor.addLine(visitor.getAndroidLine() - 1, "    defaultConfig {");
+               visitor.addLine(visitor.getAndroidLine() - 1, "        multiDexEnabled = true");
+               int defaultConfigEnd = visitor.getAndroidLine() - 1;
+               visitor.addLine(defaultConfigEnd, "    }");
+
+               visitor.setDefaultConfigLine(defaultConfigEnd);
+            }
          }
          addAndroidPackagingOptions(visitor);
       }
@@ -129,7 +138,10 @@ public class GradleBuildfileEditor {
       } else {
          visitor.addLine(visitor.getAndroidLine() - 1, "    android.packagingOptions {");
          addExcludeFiles(visitor, excludeFiles);
-         visitor.addLine(visitor.getAndroidLine() - 1, "    }");
+         int androidPackagingOptionsEnd = visitor.getAndroidLine() - 1;
+         visitor.addLine(androidPackagingOptionsEnd - 1, "    }");
+
+         visitor.setAndroidPackagingOptions(androidPackagingOptionsEnd);
       }
    }
 

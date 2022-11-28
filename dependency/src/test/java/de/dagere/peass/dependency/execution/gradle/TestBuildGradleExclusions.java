@@ -121,7 +121,7 @@ public class TestBuildGradleExclusions {
    
    @Test
    public void testAnboxEditing() throws IOException {
-      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "build.gradle");
+      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "androidlib.gradle");
 
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
       
