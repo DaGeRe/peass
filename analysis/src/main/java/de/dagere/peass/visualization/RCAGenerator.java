@@ -58,7 +58,7 @@ public class RCAGenerator {
 
    public void createSingleVisualization(String commit, CallTreeNode pureNode) {
       try {
-         NodePreparator nodePreparator = new NodePreparator(pureNode, null, data);
+         NodePreparator nodePreparator = new NodePreparator(pureNode, pureNode, data);
          nodePreparator.prepare();
          GraphNode singleRoot = nodePreparator.getRootNode();
          

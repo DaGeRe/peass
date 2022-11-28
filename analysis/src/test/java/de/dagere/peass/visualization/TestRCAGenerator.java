@@ -3,8 +3,11 @@ package de.dagere.peass.visualization;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.StringContains;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,8 +44,14 @@ public class TestRCAGenerator {
       File expectedFirstSingleFile = new File(clazzResultFolder, "testMe_0e8c00cb58fa9873c89ba04e8d447376ca4b90f5.html");
       Assert.assertTrue(expectedFirstSingleFile.exists());
       
-      File expectedJSSingleFile = new File(clazzResultFolder, "testMe_0e8c00cb58fa9873c89ba04e8d447376ca4b90f5.js");
-      Assert.assertTrue(expectedJSSingleFile.exists());
+      File expectedJSSingleFileCurrent = new File(clazzResultFolder, "testMe_0e8c00cb58fa9873c89ba04e8d447376ca4b90f5.js");
+      Assert.assertTrue(expectedJSSingleFileCurrent.exists());
+      
+      File expectedJSSingleFileOld = new File(clazzResultFolder, "testMe_32759dad8f3be04835d1e833ede95662f4a412e1.js");
+      Assert.assertTrue(expectedJSSingleFileOld.exists());
+      
+      String text = Files.readString(expectedJSSingleFileOld.toPath());
+      MatcherAssert.assertThat(text, StringContains.containsString("de.dagere.using.AnotherChangeable#method0"));
    }
    
    @Test
@@ -94,9 +103,9 @@ public class TestRCAGenerator {
          final File potentialCacheFile = new File(treeFolder, "0e8c00cb58fa9873c89ba04e8d447376ca4b90f5");
          
          final CallTreeNode rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
-         final CallTreeNode rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
+         final CallTreeNode rootCurrent = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
          
-         generator.createSingleVisualization(commit, rootVersion);
+         generator.createSingleVisualization(commit, rootCurrent);
          generator.createSingleVisualization("32759dad8f3be04835d1e833ede95662f4a412e1", rootPredecessor);
       }
    }
