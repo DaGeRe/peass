@@ -58,7 +58,11 @@ public class RCAGenerator {
 
    public void createSingleVisualization(String commit, CallTreeNode pureNode) {
       try {
-         SingleHTMLWriter writer = new SingleHTMLWriter(pureNode, destFolder, propertyFolder);
+         NodePreparator nodePreparator = new NodePreparator(pureNode, null, data);
+         nodePreparator.prepare();
+         GraphNode singleRoot = nodePreparator.getRootNode();
+         
+         SingleHTMLWriter writer = new SingleHTMLWriter(singleRoot, destFolder, propertyFolder);
          writer.writeHTML(data, commit);
       } catch (IOException e1) {
          e1.printStackTrace();

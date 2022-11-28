@@ -6,14 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
-import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.visualization.GraphNode;
 
 public class SingleHTMLWriter {
-   private final CallTreeNode root;
+   private final GraphNode root;
    private final File destFolder, propertyFolder;
 
-   public SingleHTMLWriter(CallTreeNode root, File destFolder, File propertyFolder) {
+   public SingleHTMLWriter(GraphNode root, File destFolder, File propertyFolder) {
       this.root = root;
       this.destFolder = destFolder;
       this.propertyFolder = propertyFolder;

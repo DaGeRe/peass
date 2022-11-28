@@ -25,17 +25,18 @@ public class NodePreparator {
 
    private static final Logger LOG = LogManager.getLogger(NodePreparator.class);
 
-   private CallTreeNode rootPredecessor, rootVersion;
+   private CallTreeNode rootPredecessor, rootCurrent;
    private final CauseSearchData data;
    private final GraphNode root;
 
-   public NodePreparator(final CallTreeNode rootPredecessor, final CallTreeNode rootVersion, final CauseSearchData data) {
+   public NodePreparator(final CallTreeNode rootPredecessor, final CallTreeNode rootCurrent, final CauseSearchData data) {
       this.rootPredecessor = rootPredecessor;
-      this.rootVersion = rootVersion;
+      this.rootCurrent = rootCurrent;
       this.data = data;
 
-      root = new GraphNode(data.getNodes().getCall(), data.getNodes().getKiekerPattern(), data.getNodes().getOtherKiekerPattern());
-      root.setModule(data.getNodes().getModule());
+      MeasuredNode rootNodeData = data.getNodes();
+      root = new GraphNode(rootNodeData.getCall(), rootNodeData.getKiekerPattern(), rootNodeData.getOtherKiekerPattern());
+      root.setModule(rootNodeData.getModule());
    }
 
    public NodePreparator(final CauseSearchData data) {
@@ -49,24 +50,24 @@ public class NodePreparator {
 
       processNode(parent, root);
 
-      if (rootPredecessor != null && rootVersion != null) {
-         handleFullTreeNode(root, rootPredecessor, rootVersion);
+      if (rootPredecessor != null && rootCurrent != null) {
+         handleFullTreeNode(root, rootPredecessor, rootCurrent);
       }
 
       preparePrefix(root);
    }
 
-   private void handleFullTreeNode(final GraphNode graphNode, final CallTreeNode nodePredecessor, final CallTreeNode nodeVersion) {
+   private void handleFullTreeNode(final GraphNode graphNode, final CallTreeNode nodePredecessor, final CallTreeNode nodeCurrent) {
       if (graphNode.getChildren().size() > 0) {
-         handleMeasuredTriple(graphNode, nodePredecessor, nodeVersion);
+         handleMeasuredTriple(graphNode, nodePredecessor, nodeCurrent);
       } else {
-         handleUnmeasuredNode(graphNode, nodePredecessor, nodeVersion);
+         handleUnmeasuredNode(graphNode, nodePredecessor, nodeCurrent);
       }
 
    }
 
-   private void handleUnmeasuredNode(final GraphNode graphNode, final CallTreeNode nodePredecessor, final CallTreeNode nodeVersion) {
-      TreeUtil.findChildMapping(nodePredecessor, nodeVersion);
+   private void handleUnmeasuredNode(final GraphNode graphNode, final CallTreeNode nodePredecessor, final CallTreeNode nodeCurrent) {
+      TreeUtil.findChildMapping(nodePredecessor, nodeCurrent);
 
       final Set<String> addedEmptyChildren = new HashSet<>();
       for (final CallTreeNode purePredecessorChild : nodePredecessor.getChildren()) {
@@ -89,7 +90,6 @@ public class NodePreparator {
             LOG.trace("Adding: " + purePredecessorChild.getCall() + " Parent: " + graphNode.getKiekerPattern());
             handleFullTreeNode(newChild, purePredecessorChild, purePredecessorChild.getOtherCommitNode());
          }
-
       }
    }
 

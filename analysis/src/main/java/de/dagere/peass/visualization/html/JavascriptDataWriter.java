@@ -71,8 +71,6 @@ public class JavascriptDataWriter {
       fileWriter.write("   }\n");
    }
 
-  
-
    private void writeColoredTree(final BufferedWriter fileWriter) throws IOException, JsonProcessingException {
       fileWriter.write("var treeData = [\n");
       fileWriter.write(Constants.OBJECTMAPPER.writeValueAsString(root));

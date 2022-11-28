@@ -10,18 +10,18 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
+import de.dagere.peass.visualization.GraphNode;
 
 public class SingleTreeJSWriter {
    
    private static final Logger LOG = LogManager.getLogger(SingleTreeJSWriter.class);
    
    private final File propertyFolder;
-   private final CallTreeNode root;
+   private final GraphNode root;
    
-   public SingleTreeJSWriter(final File propertyFolder, final CallTreeNode root) {
+   public SingleTreeJSWriter(final File propertyFolder, final GraphNode root) {
       this.propertyFolder = propertyFolder;
       this.root = root;
    }
