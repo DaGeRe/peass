@@ -27,8 +27,19 @@ public class SingleTreeJSWriter {
                + data.getMeasurementConfig().getFixedCommitConfig().getCommit() + "</a><br>");
          fileWriter.write("Test Case: " + data.getTestcase() + "<br>\";\n");
          fileWriter.write("}\n");
+         fileWriter.write("\n");
+         
+         writeSources(data, fileWriter);
       } catch (IOException e) {
          e.printStackTrace();
+      }
+   }
+   
+   private void writeSources(final CauseSearchData data, final BufferedWriter fileWriter) throws IOException {
+      if (propertyFolder != null) {
+         final File methodSourceFolder = new File(propertyFolder, "methods");
+         final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
+         writer.writeSources(root);
       }
    }
 }

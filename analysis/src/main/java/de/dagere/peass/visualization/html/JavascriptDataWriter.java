@@ -38,13 +38,10 @@ public class JavascriptDataWriter {
          fileWriter.write("Test Case: " + data.getTestcase() + "<br>\";\n");
          writeDashboardLink(data, fileWriter);
          fileWriter.write("}\n");
-
          fileWriter.write("\n");
-         if (propertyFolder != null) {
-            final File methodSourceFolder = new File(propertyFolder, "methods");
-            final SourceWriter writer = new SourceWriter(root, fileWriter, methodSourceFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
-            writer.writeSources();
-         }
+
+         writeSources(data, fileWriter);
+         
          writeColoredTree(fileWriter);
 
          writeTreeDivSizes(fileWriter);
@@ -52,6 +49,14 @@ public class JavascriptDataWriter {
          fileWriter.write("var kopemeData = [\n");
          fileWriter.write(Constants.OBJECTMAPPER.writeValueAsString(converted));
          fileWriter.write("];\n");
+      }
+   }
+
+   private void writeSources(final CauseSearchData data, final BufferedWriter fileWriter) throws IOException {
+      if (propertyFolder != null) {
+         final File methodSourceFolder = new File(propertyFolder, "methods");
+         final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
+         writer.writeSources(root);
       }
    }
 
