@@ -92,9 +92,9 @@ public class VisualizeRCAStarter implements Callable<Void> {
          final File potentialCacheFile = new File(treeFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
 
          final CallTreeNode rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
-         final CallTreeNode rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
+         final CallTreeNode rootCurrent = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
 
-         rcaGenerator.setFullTree(rootPredecessor, rootVersion);
+         rcaGenerator.setFullTree(rootPredecessor, rootCurrent);
       }
    }
 
