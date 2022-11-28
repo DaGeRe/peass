@@ -93,29 +93,38 @@ public class GradleBuildfileEditor {
       }
 
       if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()){
-         if (visitor.getCompileSdkVersion() != -1) {
-            GradleParseUtil.updateCompileSdkVersion(visitor);
-         }
-         if (visitor.getMinSdkVersion() != -1) {
-            GradleParseUtil.updateMinSdkVersion(visitor);
-         }
-         if (visitor.getTargetSdkVersion() != -1) {
-            GradleParseUtil.updateTargetSdkVersion(visitor);
-         }
-         if (visitor.getMultiDexEnabled() != -1) {
-            GradleParseUtil.updateMultiDexEnabled(visitor);
-         } else {
-            if (visitor.getDefaultConfigLine() != -1) {
-               visitor.addLine(visitor.getDefaultConfigLine() - 1, "        multiDexEnabled = true");
-            } else {
-               visitor.addLine(visitor.getAndroidLine() - 1, "    defaultConfig {");
-               visitor.addLine(visitor.getAndroidLine() - 1, "        multiDexEnabled = true");
-               int defaultConfigEnd = visitor.getAndroidLine() - 1;
-               visitor.addLine(defaultConfigEnd, "    }");
+         final String COMPILE_SDK_VERSION = "    compileSdkVersion 29";
+         final String MIN_SDK_VERSION     = "        minSdkVersion 26";
+         final String TARGET_SDK_VERSION  = "        targetSdkVersion 29";
+         final String MULTIDEX_ENABLED    = "        multiDexEnabled = true";
 
-               visitor.setDefaultConfigLine(defaultConfigEnd);
-            }
+         if (visitor.getCompileSdkVersion() != -1) {
+            // assumption: compileSdkVersion always exists
+            final int lineIndex = visitor.getCompileSdkVersion() - 1;
+            visitor.getLines().set(lineIndex, COMPILE_SDK_VERSION);
          }
+
+         if (visitor.getMinSdkVersion() != -1) {
+            final int lineIndex = visitor.getMinSdkVersion() - 1;
+            visitor.getLines().set(lineIndex, MIN_SDK_VERSION);
+         } else {
+            addLineWithinDefaultConfig(visitor, MIN_SDK_VERSION);
+         }
+
+         if (visitor.getTargetSdkVersion() != -1) {
+            final int lineIndex = visitor.getTargetSdkVersion() - 1;
+            visitor.getLines().set(lineIndex, TARGET_SDK_VERSION);
+         } else {
+            addLineWithinDefaultConfig(visitor, TARGET_SDK_VERSION);
+         }
+
+         if (visitor.getMultiDexEnabled() != -1) {
+            final int lineIndex = visitor.getMultiDexEnabled() - 1;
+            visitor.getLines().set(lineIndex, MULTIDEX_ENABLED);
+         } else {
+            addLineWithinDefaultConfig(visitor, MULTIDEX_ENABLED);
+         }
+
          addAndroidPackagingOptions(visitor);
       }
 
@@ -138,10 +147,24 @@ public class GradleBuildfileEditor {
       } else {
          visitor.addLine(visitor.getAndroidLine() - 1, "    android.packagingOptions {");
          addExcludeFiles(visitor, excludeFiles);
-         int androidPackagingOptionsEnd = visitor.getAndroidLine() - 1;
+         int androidPackagingOptionsEnd = visitor.getAndroidLine();
          visitor.addLine(androidPackagingOptionsEnd - 1, "    }");
 
          visitor.setAndroidPackagingOptions(androidPackagingOptionsEnd);
+      }
+   }
+
+   private void addLineWithinDefaultConfig(GradleBuildfileVisitor visitor, String textForAdding) {
+      if (visitor.getDefaultConfigLine() != -1) {
+         visitor.addLine(visitor.getDefaultConfigLine() - 1, textForAdding);
+      } else {
+         visitor.addLine(visitor.getAndroidLine() - 1, "    defaultConfig {");
+         visitor.addLine(visitor.getAndroidLine() - 1, textForAdding);
+
+         int defaultConfigEnd = visitor.getAndroidLine();
+         visitor.addLine(defaultConfigEnd - 1, "    }");
+
+         visitor.setDefaultConfigLine(defaultConfigEnd);
       }
    }
 
