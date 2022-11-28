@@ -5,10 +5,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.utils.Constants;
 
 public class SingleTreeJSWriter {
+   
+   private static final Logger LOG = LogManager.getLogger(SingleTreeJSWriter.class);
    
    private final File propertyFolder;
    private final CallTreeNode root;
@@ -30,6 +38,10 @@ public class SingleTreeJSWriter {
          fileWriter.write("\n");
          
          writeSources(data, fileWriter);
+         
+         writeTree(fileWriter);
+         
+         JavascriptFunctions.writeTreeDivSizes(fileWriter, root);
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -40,6 +52,14 @@ public class SingleTreeJSWriter {
          final File methodSourceFolder = new File(propertyFolder, "methods");
          final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
          writer.writeSources(root);
+      } else {
+         fileWriter.write("var source = {\"current\": {}, \"old\": {}};\n");
       }
+   }
+   
+   private void writeTree(final BufferedWriter fileWriter) throws IOException, JsonProcessingException {
+      fileWriter.write("var treeData = [\n");
+      fileWriter.write(Constants.OBJECTMAPPER.writeValueAsString(root));
+      fileWriter.write("];\n");
    }
 }
