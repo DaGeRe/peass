@@ -66,7 +66,7 @@
     "testCase" : {
       "clazz" : "de.peass.MainTest",
       "method" : "testMe",
-      "module" : "",
+      "module" : "using",
       "params" : null
     },
     "propertyFolder" : "/home/reichelt/nvme/workspaces/dissworkspace/permanent/peass-ci-plugin/work/workspace/meintest/meintest/../meintest_fullPeass/properties_meintest"

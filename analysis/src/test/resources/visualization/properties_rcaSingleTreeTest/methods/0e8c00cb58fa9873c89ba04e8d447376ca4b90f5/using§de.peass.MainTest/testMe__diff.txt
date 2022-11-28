@@ -1,0 +1,5 @@
+@Test
+public void testMe() {
+    final AnotherChangeable ac = new AnotherChangeable();
+    ac.callMe();
+}
