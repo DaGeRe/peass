@@ -34,9 +34,14 @@ public class NodePreparator {
       this.rootCurrent = rootCurrent;
       this.data = data;
 
-      MeasuredNode rootNodeData = data.getNodes();
-      root = new GraphNode(rootNodeData.getCall(), rootNodeData.getKiekerPattern(), rootNodeData.getOtherKiekerPattern());
-      root.setModule(rootNodeData.getModule());
+      MeasuredNode measuredRootNode = data.getNodes();
+      root = new GraphNode(measuredRootNode.getCall(), measuredRootNode.getKiekerPattern(), measuredRootNode.getOtherKiekerPattern());
+      root.setModule(measuredRootNode.getModule());
+
+      if (rootPredecessor != null && !measuredRootNode.getCall().equals(rootPredecessor.getCall())) {
+         throw new RuntimeException("Internal error happened: Meaured node had call " + measuredRootNode.getCall() +
+               " but structure node had call " + rootPredecessor.getCall());
+      }
    }
 
    public NodePreparator(final CauseSearchData data) {
@@ -45,7 +50,6 @@ public class NodePreparator {
 
    public void prepare() {
       final MeasuredNode parent = data.getNodes();
-      System.out.println(parent.getCall());
       setGraphData(parent, root);
 
       processNode(parent, root);

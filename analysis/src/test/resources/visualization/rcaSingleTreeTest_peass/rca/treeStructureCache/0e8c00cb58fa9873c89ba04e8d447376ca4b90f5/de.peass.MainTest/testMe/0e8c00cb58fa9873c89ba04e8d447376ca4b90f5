@@ -1,6 +1,6 @@
 {
-  "call" : "de.AnotherTest#testMe",
-  "kiekerPattern" : "public void de.AnotherTest.testMe()",
+  "call" : "de.peass.MainTest#testMe",
+  "kiekerPattern" : "public void de.peass.MainTest.testMe()",
   "otherKiekerPattern" : null,
   "module" : "using",
   "children" : [ {
@@ -8,72 +8,6 @@
     "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.callMe()",
     "otherKiekerPattern" : null,
     "module" : "using",
-    "children" : [ {
-      "call" : "de.dagere.using.AnotherChangeable#method0",
-      "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method0()",
-      "otherKiekerPattern" : null,
-      "module" : "using",
-      "children" : [ {
-        "call" : "de.dagere.using.AnotherChangeable#method1",
-        "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method1()",
-        "otherKiekerPattern" : null,
-        "module" : "using",
-        "children" : [ {
-          "call" : "de.dagere.using.AnotherChangeable#method2",
-          "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method2()",
-          "otherKiekerPattern" : null,
-          "module" : "using",
-          "children" : [ {
-            "call" : "de.dagere.using.AnotherChangeable#method3",
-            "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method3()",
-            "otherKiekerPattern" : null,
-            "module" : "using",
-            "children" : [ {
-              "call" : "de.dagere.using.AnotherChangeable#method4",
-              "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method4()",
-              "otherKiekerPattern" : null,
-              "module" : "using",
-              "children" : [ {
-                "call" : "de.dagere.using.AnotherChangeable#method5",
-                "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method5()",
-                "otherKiekerPattern" : null,
-                "module" : "using",
-                "children" : [ {
-                  "call" : "de.dagere.using.AnotherChangeable#method6",
-                  "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method6()",
-                  "otherKiekerPattern" : null,
-                  "module" : "using",
-                  "children" : [ {
-                    "call" : "de.dagere.using.AnotherChangeable#method7",
-                    "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method7()",
-                    "otherKiekerPattern" : null,
-                    "module" : "using",
-                    "children" : [ {
-                      "call" : "de.dagere.using.AnotherChangeable#method8",
-                      "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method8()",
-                      "otherKiekerPattern" : null,
-                      "module" : "using",
-                      "children" : [ {
-                        "call" : "de.dagere.using.AnotherChangeable#method9",
-                        "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method9()",
-                        "otherKiekerPattern" : null,
-                        "module" : "using",
-                        "children" : [ {
-                          "call" : "de.dagere.using.AnotherChangeable#method10",
-                          "kiekerPattern" : "public void de.dagere.using.AnotherChangeable.method10()",
-                          "otherKiekerPattern" : null,
-                          "module" : "using",
-                          "children" : [ ]
-                        } ]
-                      } ]
-                    } ]
-                  } ]
-                } ]
-              } ]
-            } ]
-          } ]
-        } ]
-      } ]
-    } ]
+    "children" : [ ]
   } ]
 }
