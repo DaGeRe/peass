@@ -3,6 +3,7 @@ package de.dagere.peass.visualization;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
@@ -51,10 +52,10 @@ public class TestRCAGenerator {
       File expectedJSSingleFileOld = new File(clazzResultFolder, "testMe_32759dad8f3be04835d1e833ede95662f4a412e1.js");
       Assert.assertTrue(expectedJSSingleFileOld.exists());
       
-      String textCurrent = Files.readString(expectedJSSingleFileCurrent.toPath());
+      String textCurrent = FileUtils.readFileToString(expectedJSSingleFileCurrent, Charset.defaultCharset());
       MatcherAssert.assertThat(textCurrent, Matchers.not( StringContains.containsString("de.dagere.using.AnotherChangeable#method0")));
       
-      String textOld = Files.readString(expectedJSSingleFileOld.toPath());
+      String textOld = FileUtils.readFileToString(expectedJSSingleFileOld, Charset.defaultCharset());
       MatcherAssert.assertThat(textOld, StringContains.containsString("de.dagere.using.AnotherChangeable#method0"));
       
       
