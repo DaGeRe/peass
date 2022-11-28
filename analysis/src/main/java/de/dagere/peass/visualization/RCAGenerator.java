@@ -74,6 +74,7 @@ public class RCAGenerator {
 
    private void resetColor(GraphNode node) {
       node.setColor("#FFF");
+      node.setStatistic(null);
       for (GraphNode child : node.getChildren()) { 
          resetColor(child);
       }
