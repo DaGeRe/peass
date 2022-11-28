@@ -9,8 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.properties.ChangedMethodManager;
-import de.dagere.peass.measurement.rca.data.BasicNode;
-import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.visualization.GraphNode;
 
 public class SourceWriter {
@@ -27,17 +25,17 @@ public class SourceWriter {
       this.commit = commit;
    }
 
-   public void writeSources(final BasicNode root) throws IOException {
+   public void writeSources(final GraphNode root) throws IOException {
+
       SingleTreeSourceReader reader;
-      if (root instanceof GraphNode) {
+      if (root.getOtherKiekerPattern() != null) {
          reader = new SourceReader(manager, commit);
-         reader.readSources((GraphNode) root);
-      } else if (root instanceof CallTreeNode) {
-         reader = new SingleTreeSourceReader(manager, commit);
-         reader.readSources((GraphNode) root);
+         ((SourceReader) reader).readSources(root);
       } else {
-         throw new RuntimeException("Unexpected type: " + root.getClass());
+         reader = new SingleTreeSourceReader(manager, commit);
+         reader.readSources(root);
       }
+
       fileWriter.write("var source = {");
       fileWriter.write("\"current\":\n{\n ");
       for (final Map.Entry<String, String> sources : reader.getNameSourceCurrent().entrySet()) {
