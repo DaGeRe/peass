@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -105,13 +107,21 @@ public class VisualizeRCAStarter implements Callable<Void> {
       final File propertyFolder = getPropertyFolder(projectName);
       rcaGenerator.setPropertyFolder(propertyFolder);
 
+      final CauseSearchData data = rcaGenerator.getData();
+      final File treeFolder = folders.getTreeCacheFolder(data.getMeasurementConfig().getFixedCommitConfig().getCommit(), data.getCauseConfig().getTestCase());
       if (visualizeFull) {
-         final CauseSearchData data = rcaGenerator.getData();
-
-         final File treeFolder = folders.getTreeCacheFolder(data.getMeasurementConfig().getFixedCommitConfig().getCommit(), data.getCauseConfig().getTestCase());
          getFullTree(rcaGenerator, data, treeFolder);
       }
+      visualizeSingleTree(rcaGenerator, treeFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommitOld());
+      visualizeSingleTree(rcaGenerator, treeFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
+      
       rcaGenerator.createVisualization();
+   }
+
+   private void visualizeSingleTree(final RCAGenerator rcaGenerator, final File treeFolder, String commit) throws IOException, StreamReadException, DatabindException {
+      final File potentialCacheFile = new File(treeFolder, commit);
+      final CallTreeNode rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
+      rcaGenerator.createSingleVisualization(commit, rootPredecessor);
    }
 
    private CauseSearchFolders getCauseSearchFolders(final File treeFile) {

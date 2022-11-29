@@ -31,6 +31,8 @@ public class RCAGenerator {
       this.destFolder = destFolder;
       this.folders = folders;
 
+      destFolder.mkdirs();
+
       File details = new File(source.getParentFile(), "details" + File.separator + source.getName());
       data = readData(details);
    }
@@ -57,9 +59,9 @@ public class RCAGenerator {
          NodePreparator nodePreparator = new NodePreparator(pureNode, pureNode, data);
          nodePreparator.prepare();
          GraphNode singleRoot = nodePreparator.getRootNode();
-         
+
          resetColor(singleRoot);
-         
+
          SingleHTMLWriter writer = new SingleHTMLWriter(singleRoot, destFolder, propertyFolder);
          writer.writeHTML(data, commit);
       } catch (IOException e1) {
@@ -78,7 +80,7 @@ public class RCAGenerator {
       node.setVmValuesPredecessor(null);
       node.setOtherKey(null);
       node.setOtherKiekerPattern(null);
-      for (GraphNode child : node.getChildren()) { 
+      for (GraphNode child : node.getChildren()) {
          resetColor(child);
       }
    }
