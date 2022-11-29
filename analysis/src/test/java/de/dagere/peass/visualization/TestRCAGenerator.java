@@ -107,7 +107,7 @@ public class TestRCAGenerator {
 
    private void createTreeStructureView(String commit, CauseSearchFolders folders, RCAGenerator generator) throws IOException, StreamReadException, DatabindException {
       File treeFolder = folders.getExistingTreeCacheFolder(commit, new TestMethodCall("de.peass.MainTest", "testMe"));
-      if (treeFolder.exists()) {
+      if (treeFolder.exists() && commit.equals("0e8c00cb58fa9873c89ba04e8d447376ca4b90f5")) {
          final File potentialCacheFileOld = new File(treeFolder, "32759dad8f3be04835d1e833ede95662f4a412e1");
          final File potentialCacheFile = new File(treeFolder, "0e8c00cb58fa9873c89ba04e8d447376ca4b90f5");
 
