@@ -21,7 +21,7 @@ public class NodeDashboardWriter {
       try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(destination)) ){
          new HTMLEnvironmentGenerator(fileWriter).writeHTML("visualization/nodeDashboard.html");
          fileWriter.write("<script src='"+jsName+"'></script>\n");
-         fileWriter.write("<script src='peass-dashboard-start.js'></script>\n");
+         fileWriter.write("<script src='../libs/peass-dashboard-start.js'></script>\n");
          fileWriter.write("</body></html>");
       } catch (IOException e) {
          e.printStackTrace();
