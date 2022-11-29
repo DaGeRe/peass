@@ -14,15 +14,16 @@ import de.dagere.peass.measurement.rca.data.BasicNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 
 public class SingleTreeSourceReader {
-   
+
    protected final ChangedMethodManager manager;
-   protected final String commit;
-   
+   protected final String mainCommit, analyzedCommit;
+
    protected final Map<String, String> nameSourceCurrent = new HashMap<>();
-   
-   public SingleTreeSourceReader(ChangedMethodManager manager, String commit) {
+
+   public SingleTreeSourceReader(ChangedMethodManager manager, String mainCommit, String analyzedCommit) {
       this.manager = manager;
-      this.commit = commit;
+      this.mainCommit = mainCommit;
+      this.analyzedCommit = analyzedCommit;
    }
 
    public void readSources(final BasicNode parent) throws IOException {
@@ -31,22 +32,31 @@ public class SingleTreeSourceReader {
          readSources(node);
       }
    }
-   
+
    private void getNodeSource(final BasicNode node) throws IOException {
       final String currentPattern = node.getKiekerPattern();
-      
+
       ChangedEntity methodEntity = getChangedEntity(node, currentPattern);
       final String key = KiekerPatternConverter.getKey(currentPattern);
-      
-      //TODO: We need to decide here which commit is currently analyzed and whether we want predecessor or current file
-      final File currentSourceFile = manager.getMethodMainFile(commit, methodEntity);
-      if (currentSourceFile.exists()) {
+
+      // TODO: We need to decide here which commit is currently analyzed and whether we want predecessor or current file
+
+      final File currentSourceFile = manager.getMethodMainFile(mainCommit, methodEntity);
+      final File oldSourceFile = manager.getMethodOldFile(mainCommit, methodEntity);
+
+      if (currentSourceFile.exists() && mainCommit.equals(analyzedCommit)) {
          final String sourceCurrent = FileUtils.readFileToString(currentSourceFile, Charset.defaultCharset());
          nameSourceCurrent.put(key, sourceCurrent);
+      } else if (oldSourceFile.exists() && !mainCommit.equals(analyzedCommit)) {
+         final String sourceOld = FileUtils.readFileToString(oldSourceFile, Charset.defaultCharset());
+         nameSourceCurrent.put(key, sourceOld);
+      } else {
+         File equalFile = manager.getMethodDiffFile(mainCommit, methodEntity);
+         final String sourceEqual = FileUtils.readFileToString(equalFile, Charset.defaultCharset());
+         nameSourceCurrent.put(key, sourceEqual);
       }
    }
-   
-   
+
    protected ChangedEntity getChangedEntity(final BasicNode node, final String currentPattern) {
       int openingParenthesis = currentPattern.lastIndexOf('(');
       final String call = currentPattern.substring(currentPattern.lastIndexOf(' ') + 1, openingParenthesis);
@@ -58,7 +68,7 @@ public class SingleTreeSourceReader {
       methodEntity.createParameters(parameterString);
       return methodEntity;
    }
-   
+
    public Map<String, String> getNameSourceCurrent() {
       return nameSourceCurrent;
    }

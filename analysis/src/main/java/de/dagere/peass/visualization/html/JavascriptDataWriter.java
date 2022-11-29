@@ -54,7 +54,9 @@ public class JavascriptDataWriter {
    private void writeSources(final CauseSearchData data, final BufferedWriter fileWriter) throws IOException {
       if (propertyFolder != null) {
          final File methodSourceFolder = new File(propertyFolder, "methods");
-         final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
+         String mainCommit = data.getMeasurementConfig().getFixedCommitConfig().getCommit();
+         String analyzedCommit = data.getMeasurementConfig().getFixedCommitConfig().getCommitOld();
+         final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, mainCommit, analyzedCommit);
          writer.writeSources(root);
       }
    }

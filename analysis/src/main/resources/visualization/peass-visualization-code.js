@@ -265,21 +265,29 @@ function shownode(node) {
   } else if (typeof infos !== 'undefined') {
 	  infos.innerHTML = "No statistic";
   }
-  if (node.key != node.otherKey){
-    diffUsingJS(source["old"][node.key], source["current"][node.otherKey], quelltext);
-  } else {
+  
+  if (node.otherKey == null){
     var sourceCurrent = source["current"][node.key];
-    var sourceOld = source["old"][node.key];
-    if (sourceCurrent != null && sourceOld != null){
-      if (sourceCurrent == sourceOld) {
-      	const highlightedCode = hljs.highlight("java", source["current"][node.key]).value;
-    	quelltext.innerHTML="<pre>"+highlightedCode+"</pre>";
-      } else {
-    	  diffUsingJS(sourceOld, sourceCurrent, quelltext);
+    const highlightedCode = hljs.highlight("java", source["current"][node.key]).value;
+    quelltext.innerHTML="<pre>"+highlightedCode+"</pre>";
+  } else {
+    if (node.key != node.otherKey){
+      var sourceCurrent = source["current"][node.otherKey];
+      var sourceOld = source["old"][node.key];
+      diffUsingJS(sourceOld, sourceCurrent, quelltext);
+    } else {
+      var sourceCurrent = source["current"][node.key];
+      var sourceOld = source["old"][node.key];
+      if (sourceCurrent != null && sourceOld != null){
+        if (sourceCurrent == sourceOld) {
+          const highlightedCode = hljs.highlight("java", source["current"][node.key]).value;
+      	  quelltext.innerHTML="<pre>"+highlightedCode+"</pre>";
+        } else {
+          diffUsingJS(sourceOld, sourceCurrent, quelltext);
+        }
       }
     }
   }
-  
   
   var inspectLink = "";
   if (node.ess != -1){

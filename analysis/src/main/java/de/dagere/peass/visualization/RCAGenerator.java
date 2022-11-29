@@ -1,8 +1,6 @@
 package de.dagere.peass.visualization;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
@@ -14,10 +12,8 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.visualization.html.HTMLEnvironmentGenerator;
 import de.dagere.peass.visualization.html.HTMLWriter;
 import de.dagere.peass.visualization.html.SingleHTMLWriter;
-import de.dagere.peass.visualization.html.SingleTreeJSWriter;
 
 public class RCAGenerator {
 
@@ -62,7 +58,6 @@ public class RCAGenerator {
          nodePreparator.prepare();
          GraphNode singleRoot = nodePreparator.getRootNode();
          
-         
          resetColor(singleRoot);
          
          SingleHTMLWriter writer = new SingleHTMLWriter(singleRoot, destFolder, propertyFolder);
@@ -75,6 +70,14 @@ public class RCAGenerator {
    private void resetColor(GraphNode node) {
       node.setColor("#FFF");
       node.setStatistic(null);
+      node.setState(null);
+      node.setHasSourceChange(false);
+      node.setValues(null);
+      node.setValuesPredecessor(null);
+      node.setVmValues(null);
+      node.setVmValuesPredecessor(null);
+      node.setOtherKey(null);
+      node.setOtherKiekerPattern(null);
       for (GraphNode child : node.getChildren()) { 
          resetColor(child);
       }

@@ -17,22 +17,23 @@ public class SourceWriter {
 
    private final BufferedWriter fileWriter;
    private final ChangedMethodManager manager;
-   private final String commit;
+   private final String mainCommit, analyzedCommit;
 
-   public SourceWriter(final BufferedWriter fileWriter, final File methodSourceFolder, final String commit) {
+   public SourceWriter(final BufferedWriter fileWriter, final File methodSourceFolder, final String mainCommit, String analyzedCommit) {
       this.fileWriter = fileWriter;
       this.manager = new ChangedMethodManager(methodSourceFolder);
-      this.commit = commit;
+      this.mainCommit = mainCommit;
+      this.analyzedCommit = analyzedCommit;
    }
 
    public void writeSources(final GraphNode root) throws IOException {
 
       SingleTreeSourceReader reader;
       if (root.getOtherKiekerPattern() != null) {
-         reader = new SourceReader(manager, commit);
+         reader = new SourceReader(manager, mainCommit);
          ((SourceReader) reader).readSources(root);
       } else {
-         reader = new SingleTreeSourceReader(manager, commit);
+         reader = new SingleTreeSourceReader(manager, mainCommit, analyzedCommit);
          reader.readSources(root);
       }
 

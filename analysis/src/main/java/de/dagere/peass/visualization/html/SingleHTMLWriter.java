@@ -19,16 +19,16 @@ public class SingleHTMLWriter {
       this.propertyFolder = propertyFolder;
    }
 
-   public void writeHTML(CauseSearchData data, String commit) throws IOException {
+   public void writeHTML(CauseSearchData data, String analyzedCommit) throws IOException {
       TestMethodCall testcaseObject = data.getCauseConfig().getTestCase();
-      String outputName = data.getMeasurementConfig().getFixedCommitConfig().getCommit() + "/" + testcaseObject.getClassWithModule() + "/"
-            + testcaseObject.getMethodWithParams() + "_" + commit + ".html";
+      String mainCommit = data.getMeasurementConfig().getFixedCommitConfig().getCommit();
+      String outputName = mainCommit + "/" + testcaseObject.getClassWithModule() + "/" + testcaseObject.getMethodWithParams() + "_" + analyzedCommit + ".html";
       String jsName = outputName.replace(".html", ".js");
       File singleVisualizationFile = new File(destFolder, outputName);
 
       writeOverviewHTML(singleVisualizationFile, jsName.substring(jsName.lastIndexOf('/') + 1));
-      
-      SingleTreeJSWriter jsWriter = new SingleTreeJSWriter(propertyFolder, root);
+
+      SingleTreeJSWriter jsWriter = new SingleTreeJSWriter(propertyFolder, root, analyzedCommit);
       jsWriter.writeJS(data, singleVisualizationFile, jsName.substring(jsName.lastIndexOf('/') + 1));
    }
 

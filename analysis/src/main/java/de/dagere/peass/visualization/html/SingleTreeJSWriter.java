@@ -20,10 +20,12 @@ public class SingleTreeJSWriter {
    
    private final File propertyFolder;
    private final GraphNode root;
+   private final String analyzedCommit;
    
-   public SingleTreeJSWriter(final File propertyFolder, final GraphNode root) {
+   public SingleTreeJSWriter(final File propertyFolder, final GraphNode root, String analyzedCommit) {
       this.propertyFolder = propertyFolder;
       this.root = root;
+      this.analyzedCommit = analyzedCommit;
    }
    
    public void writeJS(CauseSearchData data, File output, String jsName) {
@@ -50,7 +52,8 @@ public class SingleTreeJSWriter {
    private void writeSources(final CauseSearchData data, final BufferedWriter fileWriter) throws IOException {
       if (propertyFolder != null) {
          final File methodSourceFolder = new File(propertyFolder, "methods");
-         final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, data.getMeasurementConfig().getFixedCommitConfig().getCommit());
+         String mainCommit = data.getMeasurementConfig().getFixedCommitConfig().getCommit();
+         final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, mainCommit, analyzedCommit);
          writer.writeSources(root);
       } else {
          fileWriter.write("var source = {\"current\": {}, \"old\": {}};\n");

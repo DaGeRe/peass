@@ -23,7 +23,7 @@ public class SourceReader extends SingleTreeSourceReader {
    private final Map<String, String> nameSourceOld = new HashMap<>();
 
    public SourceReader(ChangedMethodManager manager, String commit) {
-      super(manager, commit);
+      super(manager, commit, null);
    }
 
    public void readSources(final GraphNode parent) throws IOException {
@@ -49,8 +49,8 @@ public class SourceReader extends SingleTreeSourceReader {
 
       final String key = KiekerPatternConverter.getKey(currentPattern);
 
-      final File currentSourceFile = manager.getMethodMainFile(commit, methodEntity);
-      final File oldSourceFile = manager.getMethodOldFile(commit, methodEntity);
+      final File currentSourceFile = manager.getMethodMainFile(mainCommit, methodEntity);
+      final File oldSourceFile = manager.getMethodOldFile(mainCommit, methodEntity);
       if (currentSourceFile.exists() && oldSourceFile.exists()) {
          node.setHasSourceChange(true);
          final String sourceCurrent = FileUtils.readFileToString(currentSourceFile, Charset.defaultCharset());
@@ -58,7 +58,7 @@ public class SourceReader extends SingleTreeSourceReader {
          final String sourceOld = FileUtils.readFileToString(oldSourceFile, Charset.defaultCharset());
          nameSourceOld.put(key, sourceOld);
       } else {
-         final File diffSourceFile = manager.getMethodDiffFile(commit, methodEntity);
+         final File diffSourceFile = manager.getMethodDiffFile(mainCommit, methodEntity);
          if (diffSourceFile.exists()) {
             final String source = FileUtils.readFileToString(diffSourceFile, Charset.defaultCharset());
             nameSourceCurrent.put(key, source);
