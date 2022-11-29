@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.github.javaparser.utils.Log;
 
 import de.dagere.peass.analysis.properties.ChangedMethodManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -14,6 +18,8 @@ import de.dagere.peass.measurement.rca.data.BasicNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 
 public class SingleTreeSourceReader {
+   
+   private static final Logger LOG = LogManager.getLogger(SingleTreeSourceReader.class);
 
    protected final ChangedMethodManager manager;
    protected final String mainCommit, analyzedCommit;
@@ -52,8 +58,13 @@ public class SingleTreeSourceReader {
          nameSourceCurrent.put(key, sourceOld);
       } else {
          File equalFile = manager.getMethodDiffFile(mainCommit, methodEntity);
-         final String sourceEqual = FileUtils.readFileToString(equalFile, Charset.defaultCharset());
-         nameSourceCurrent.put(key, sourceEqual);
+         if (equalFile.exists()) {
+            final String sourceEqual = FileUtils.readFileToString(equalFile, Charset.defaultCharset());
+            nameSourceCurrent.put(key, sourceEqual);
+         } else {
+            LOG.error("No method file for " + methodEntity + " existed");
+         }
+         
       }
    }
 
