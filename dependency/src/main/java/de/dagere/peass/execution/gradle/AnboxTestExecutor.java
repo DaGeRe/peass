@@ -16,6 +16,9 @@ import de.dagere.peass.utils.StreamGobbler;
 
 public class AnboxTestExecutor extends GradleTestExecutor {
 
+   public static final String ANBOX_EMULATOR_FOLDER_BASE = "/storage/emulated/0/Documents/peass/";
+   public static final String ANBOX_EMULATOR_FOLDER_TEMP_RESULT = ANBOX_EMULATOR_FOLDER_BASE + "measurementsTemp/";
+
    private static final Logger LOG = LogManager.getLogger(AnboxTestExecutor.class);
 
    public AnboxTestExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
@@ -26,6 +29,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    public void prepareKoPeMeExecution(final File logFile) {
       super.prepareKoPeMeExecution(logFile);
 
+      adbPush();
       compileSources();
    }
 
@@ -44,16 +48,86 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    }
 
    /**
+    * Executes the adb push command. 
+    * Copies config files necessary for proper execution of KoPeMe
+    */
+   private void adbPush() {
+      String adb = EnvironmentVariables.fetchAdbCall();
+
+      // cleanup previous iteration
+      removeDirInEmulator(adb, ANBOX_EMULATOR_FOLDER_BASE);
+      createDirInEmulator(adb, ANBOX_EMULATOR_FOLDER_BASE);
+
+      // copy files
+      final String[] filesToBePushed = {
+            "build.gradle",
+            "gradle.properties",
+            "app/build.gradle"
+      };
+
+      final File sourceFolder = folders.getProjectFolder();
+
+      for (final String fileName : filesToBePushed) {
+         File f = new File(fileName);
+
+         // create directories if necessary
+         if (f.getParent() != null) {
+            String subDir = String.format("%s%s", ANBOX_EMULATOR_FOLDER_BASE, f.getParent());
+            createDirInEmulator(adb, subDir);
+         }
+
+         // push the file
+         String destinationFolder = ANBOX_EMULATOR_FOLDER_BASE + (f.getParent() != null ? (f.getParent() + "/") : "");
+
+         ProcessBuilder builder = new ProcessBuilder(adb, "push", fileName, destinationFolder);
+         builder.directory(sourceFolder);
+         LOG.debug("ADB: Pushing {}/{} to {}", sourceFolder, fileName, destinationFolder);
+
+         try {
+            Process process = builder.start();
+            StreamGobbler.showFullProcess(process);
+         } catch (IOException e) {
+            throw new RuntimeException(e);
+         }
+      }
+   }
+
+   private void removeDirInEmulator(String adb, String path) {
+      String shellCommand = String.format("rm -fr %s", path);
+      ProcessBuilder builder = new ProcessBuilder(adb, "shell", shellCommand);
+      LOG.debug("ADB: Removing directory {}", path);
+
+      try {
+         Process process = builder.start();
+         StreamGobbler.showFullProcess(process);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
+   
+   private void createDirInEmulator(String adb, String path) {
+      String shellCommand = String.format("mkdir -p %s", path);
+      ProcessBuilder builder = new ProcessBuilder(adb, "shell", shellCommand);
+      LOG.debug("ADB: Creating directory {}", path);
+
+      try {
+         Process process = builder.start();
+         StreamGobbler.showFullProcess(process);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
+
+   /**
     * Executes the adb pull command. 
     * Copies measurementsTemp folder from emulator to the temporary project folder.
     */
     private void adbPull() {
       String adb = EnvironmentVariables.fetchAdbCall();
-      String androidTempResultFolder = "/storage/emulated/0/Documents/measurementsTemp"; // temporary solution
-
-      ProcessBuilder builder = new ProcessBuilder(adb, "pull", androidTempResultFolder, ".");
+      
+      ProcessBuilder builder = new ProcessBuilder(adb, "pull", ANBOX_EMULATOR_FOLDER_TEMP_RESULT, ".");
       builder.directory(folders.getPeassFolder());
-      LOG.debug("ADB: Pulling {} to {}", androidTempResultFolder, folders.getPeassFolder());
+      LOG.debug("ADB: Pulling {} to {}", ANBOX_EMULATOR_FOLDER_TEMP_RESULT, folders.getPeassFolder());
       try {
          Process process = builder.start();
          StreamGobbler.showFullProcess(process);
