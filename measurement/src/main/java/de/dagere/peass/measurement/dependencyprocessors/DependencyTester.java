@@ -79,7 +79,7 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    private void evaluateSimple(final TestMethodCall testcase, final File logFolder, final ProgressWriter writer)
-         throws IOException, InterruptedException, XmlPullParserException {
+         throws IOException {
       currentChunkStart = System.currentTimeMillis();
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
          long comparisonStart = System.currentTimeMillis();
@@ -88,7 +88,7 @@ public class DependencyTester implements KiekerResultHandler {
 
          final boolean shouldBreak = reductionManager.updateExecutions(testcase, finishedVMs, getCurrentOrganizer());
          if (shouldBreak) {
-            LOG.debug("Too less executions possible - finishing testing.");
+            LOG.debug("Too few executions possible - finishing testing.");
             break;
          }
 
