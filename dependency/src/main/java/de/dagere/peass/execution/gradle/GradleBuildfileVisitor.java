@@ -45,6 +45,12 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private int unitTestsAll = -1;
    private int buildTools = -1;
    private int buildToolsVersion = -1;
+   private int compileSdkVersion = -1;
+   private int defaultConfigLine = -1;
+   private int minSdkVersion = -1;
+   private int targetSdkVersion = -1;
+   private int multiDexEnabled = -1;
+   private int androidPackagingOptions = -1;
    private int allConfigurationsLine = -1;
    private MethodCallExpression configurations = null;
 
@@ -103,6 +109,18 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             unitTestsAll = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("buildToolsVersion")) {
             buildToolsVersion = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("compileSdkVersion")) {
+            compileSdkVersion = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("defaultConfig")) {
+            defaultConfigLine = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("minSdkVersion")) {
+            minSdkVersion = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("targetSdkVersion")) {
+            targetSdkVersion = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("multiDexEnabled")) {
+            multiDexEnabled = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("android.packagingOptions")) {
+            androidPackagingOptions = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("task")) {
             parseNewTask(call);
          } else if (call.getMethodAsString().equals("register")) {
@@ -242,6 +260,38 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       return buildToolsVersion;
    }
 
+   public int getCompileSdkVersion() {
+      return compileSdkVersion;
+   }
+
+   public int getDefaultConfigLine() {
+      return defaultConfigLine;
+   }
+
+   public void setDefaultConfigLine(int defaultConfigEnd) {
+      defaultConfigLine = defaultConfigEnd;
+   }
+   
+   public int getMinSdkVersion() {
+      return minSdkVersion;
+   }
+   
+   public int getTargetSdkVersion() {
+      return targetSdkVersion;
+   }
+
+   public int getMultiDexEnabled() {
+      return multiDexEnabled;
+   }
+   
+   public int getAndroidPackagingOptions() {
+      return androidPackagingOptions;
+   }
+
+   public void setAndroidPackagingOptions(int androidPackagingOptionsEnd) {
+      androidPackagingOptions = androidPackagingOptionsEnd;
+   }
+
    public boolean isSubprojectJava() {
       return subprojectJava;
    }
@@ -292,6 +342,24 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       }
       if (lineIndex < buildToolsVersion && buildToolsVersion != -1) {
          buildToolsVersion++;
+      }
+      if (lineIndex < compileSdkVersion && compileSdkVersion != -1) {
+         compileSdkVersion++;
+      }
+      if (lineIndex < defaultConfigLine && defaultConfigLine != -1) {
+         defaultConfigLine++;
+      }
+      if (lineIndex < minSdkVersion && minSdkVersion != -1) {
+         minSdkVersion++;
+      }
+      if (lineIndex < targetSdkVersion && targetSdkVersion != -1) {
+         targetSdkVersion++;
+      }
+      if (lineIndex < multiDexEnabled && multiDexEnabled != -1) {
+         multiDexEnabled++;
+      }
+      if (lineIndex < androidPackagingOptions && androidPackagingOptions != -1) {
+         androidPackagingOptions++;
       }
       if (lineIndex < allConfigurationsLine && allConfigurationsLine != -1) {
          allConfigurationsLine++;

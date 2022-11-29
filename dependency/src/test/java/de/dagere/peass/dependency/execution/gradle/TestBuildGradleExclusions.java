@@ -119,7 +119,7 @@ public class TestBuildGradleExclusions {
    
    @Test
    public void testAnboxEditing() throws IOException {
-      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "build.gradle");
+      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "androidlib.gradle");
 
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
       
@@ -136,4 +136,67 @@ public class TestBuildGradleExclusions {
       
    }
 
+   @Test
+   public void testConflictingFileExclusion() throws IOException {
+      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "androidlib.gradle");
+
+      final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
+
+      mockedTransformer.getConfig().getExecutionConfig().setUseAnbox(true);
+
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
+      
+      final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'META-INF/DEPENDENCIES'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'META-INF/LICENSE.md'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'META-INF/NOTICE.md'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'META-INF/jing-copying.html'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'META-INF/LICENSE-notice.md'"));
+   }
+
+   @Test
+   public void testAndroidVersions() throws IOException {
+      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "androidlib.gradle");
+
+      final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
+
+      mockedTransformer.getConfig().getExecutionConfig().setUseAnbox(true);
+
+      final String gradleFileContentsBefore = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+
+      // this is the original version in androidlib.gradle but should be replaced
+      MatcherAssert.assertThat(gradleFileContentsBefore, Matchers.containsString("compileSdkVersion 19"));
+
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
+
+      final String gradleFileContentsAfter = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+
+      System.out.println(gradleFileContentsAfter);
+
+      // should be in the file anymore
+      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.not(Matchers.containsString("compileSdkVersion 19")));
+
+      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("compileSdkVersion 29"));
+      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("minSdkVersion 26"));
+      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("targetSdkVersion 29"));
+   }
+
+   @Test
+   public void testMultidexEnabled() throws IOException {
+      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "androidlib.gradle");
+
+      final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
+
+      mockedTransformer.getConfig().getExecutionConfig().setUseAnbox(true);
+
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
+
+      final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("multiDexEnabled = true"));
+   }
 }

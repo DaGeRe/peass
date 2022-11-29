@@ -94,6 +94,42 @@ public class GradleBuildfileEditor {
          LOG.info("Did not find spring boot");
       }
 
+      if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()){
+         final String COMPILE_SDK_VERSION = "    compileSdkVersion 29";
+         final String MIN_SDK_VERSION     = "        minSdkVersion 26";
+         final String TARGET_SDK_VERSION  = "        targetSdkVersion 29";
+         final String MULTIDEX_ENABLED    = "        multiDexEnabled = true";
+
+         if (visitor.getCompileSdkVersion() != -1) {
+            // assumption: compileSdkVersion always exists
+            final int lineIndex = visitor.getCompileSdkVersion() - 1;
+            visitor.getLines().set(lineIndex, COMPILE_SDK_VERSION);
+         }
+
+         if (visitor.getMinSdkVersion() != -1) {
+            final int lineIndex = visitor.getMinSdkVersion() - 1;
+            visitor.getLines().set(lineIndex, MIN_SDK_VERSION);
+         } else {
+            addLineWithinDefaultConfig(visitor, MIN_SDK_VERSION);
+         }
+
+         if (visitor.getTargetSdkVersion() != -1) {
+            final int lineIndex = visitor.getTargetSdkVersion() - 1;
+            visitor.getLines().set(lineIndex, TARGET_SDK_VERSION);
+         } else {
+            addLineWithinDefaultConfig(visitor, TARGET_SDK_VERSION);
+         }
+
+         if (visitor.getMultiDexEnabled() != -1) {
+            final int lineIndex = visitor.getMultiDexEnabled() - 1;
+            visitor.getLines().set(lineIndex, MULTIDEX_ENABLED);
+         } else {
+            addLineWithinDefaultConfig(visitor, MULTIDEX_ENABLED);
+         }
+
+         addAndroidPackagingOptions(visitor);
+      }
+
       GradleParseUtil.removeExclusions(visitor);
 
       addDependencies(visitor);
@@ -104,6 +140,46 @@ public class GradleBuildfileEditor {
       }
 
       addKiekerLine(tempFolder, visitor, taskAnalyzer);
+   }
+   private void addAndroidPackagingOptions(final GradleBuildfileVisitor visitor) {
+      String[] excludeFiles = {
+         "'META-INF/DEPENDENCIES'",
+         "'META-INF/LICENSE.md'",
+         "'META-INF/NOTICE.md'",
+         "'META-INF/jing-copying.html'",
+         "'META-INF/LICENSE-notice.md'",
+      };
+      if (visitor.getAndroidPackagingOptions() != -1) {
+         addExcludeFiles(visitor, excludeFiles);
+      } else {
+         visitor.addLine(visitor.getAndroidLine() - 1, "    android.packagingOptions {");
+         addExcludeFiles(visitor, excludeFiles);
+         int androidPackagingOptionsEnd = visitor.getAndroidLine();
+         visitor.addLine(androidPackagingOptionsEnd - 1, "    }");
+
+         visitor.setAndroidPackagingOptions(androidPackagingOptionsEnd);
+      }
+   }
+
+   private void addLineWithinDefaultConfig(GradleBuildfileVisitor visitor, String textForAdding) {
+      if (visitor.getDefaultConfigLine() != -1) {
+         visitor.addLine(visitor.getDefaultConfigLine() - 1, textForAdding);
+      } else {
+         visitor.addLine(visitor.getAndroidLine() - 1, "    defaultConfig {");
+         visitor.addLine(visitor.getAndroidLine() - 1, textForAdding);
+
+         int defaultConfigEnd = visitor.getAndroidLine();
+         visitor.addLine(defaultConfigEnd - 1, "    }");
+
+         visitor.setDefaultConfigLine(defaultConfigEnd);
+      }
+   }
+
+   private void addExcludeFiles(final GradleBuildfileVisitor visitor, String[] excludeFiles){
+      for (String file : excludeFiles) {
+         String packagingOption = "        exclude " + file;
+         visitor.addLine(visitor.getAndroidLine() - 1, packagingOption);
+      }
    }
 
    private void addDependencies(final GradleBuildfileVisitor visitor) {
