@@ -21,8 +21,13 @@ public class AnboxTestExecutor extends GradleTestExecutor {
 
    private static final Logger LOG = LogManager.getLogger(AnboxTestExecutor.class);
 
+   private final String adbCall;
+   private final AnboxDirHandler dirHandler;
+
    public AnboxTestExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
+      this.adbCall = EnvironmentVariables.fetchAdbCall();
+      dirHandler = new AnboxDirHandler(adbCall);
    }
 
    @Override
@@ -48,15 +53,12 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    }
 
    /**
-    * Executes the adb push command. 
-    * Copies config files necessary for proper execution of KoPeMe
+    * Executes the adb push command. Copies config files necessary for proper execution of KoPeMe
     */
    private void adbPush() {
-      String adb = EnvironmentVariables.fetchAdbCall();
-
       // cleanup previous iteration
-      removeDirInEmulator(adb, ANBOX_EMULATOR_FOLDER_BASE);
-      createDirInEmulator(adb, ANBOX_EMULATOR_FOLDER_BASE);
+      dirHandler.removeDirInEmulator(ANBOX_EMULATOR_FOLDER_BASE);
+      dirHandler.createDirInEmulator(ANBOX_EMULATOR_FOLDER_BASE);
 
       // copy files
       final String[] filesToBePushed = {
@@ -70,21 +72,21 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       for (final String fileName : filesToBePushed) {
          File f = new File(fileName);
 
-         pushSingleFile(adb, sourceFolder, fileName, f);
+         pushSingleFile(sourceFolder, fileName, f);
       }
    }
 
-   private void pushSingleFile(String adb, final File sourceFolder, final String fileName, File f) {
+   private void pushSingleFile(final File sourceFolder, final String fileName, File f) {
       // create directories if necessary
       if (f.getParent() != null) {
          String subDir = String.format("%s%s", ANBOX_EMULATOR_FOLDER_BASE, f.getParent());
-         createDirInEmulator(adb, subDir);
+         dirHandler.createDirInEmulator(subDir);
       }
 
       // push the file
       String destinationFolder = ANBOX_EMULATOR_FOLDER_BASE + (f.getParent() != null ? (f.getParent() + "/") : "");
 
-      ProcessBuilder builder = new ProcessBuilder(adb, "push", fileName, destinationFolder);
+      ProcessBuilder builder = new ProcessBuilder(adbCall, "push", fileName, destinationFolder);
       builder.directory(sourceFolder);
       LOG.debug("ADB: Pushing {}/{} to {}", sourceFolder, fileName, destinationFolder);
 
@@ -96,40 +98,11 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       }
    }
 
-   private void removeDirInEmulator(String adb, String path) {
-      String shellCommand = String.format("rm -fr %s", path);
-      ProcessBuilder builder = new ProcessBuilder(adb, "shell", shellCommand);
-      LOG.debug("ADB: Removing directory {}", path);
-
-      try {
-         Process process = builder.start();
-         StreamGobbler.showFullProcess(process);
-      } catch (IOException e) {
-         throw new RuntimeException(e);
-      }
-   }
-   
-   private void createDirInEmulator(String adb, String path) {
-      String shellCommand = String.format("mkdir -p %s", path);
-      ProcessBuilder builder = new ProcessBuilder(adb, "shell", shellCommand);
-      LOG.debug("ADB: Creating directory {}", path);
-
-      try {
-         Process process = builder.start();
-         StreamGobbler.showFullProcess(process);
-      } catch (IOException e) {
-         throw new RuntimeException(e);
-      }
-   }
-
    /**
-    * Executes the adb pull command. 
-    * Copies measurementsTemp folder from emulator to the temporary project folder.
+    * Executes the adb pull command. Copies measurementsTemp folder from emulator to the temporary project folder.
     */
-    private void adbPull() {
-      String adb = EnvironmentVariables.fetchAdbCall();
-      
-      ProcessBuilder builder = new ProcessBuilder(adb, "pull", ANBOX_EMULATOR_FOLDER_TEMP_RESULT, ".");
+   private void adbPull() {
+      ProcessBuilder builder = new ProcessBuilder(adbCall, "pull", ANBOX_EMULATOR_FOLDER_TEMP_RESULT, ".");
       builder.directory(folders.getPeassFolder());
       LOG.debug("ADB: Pulling {} to {}", ANBOX_EMULATOR_FOLDER_TEMP_RESULT, folders.getPeassFolder());
       try {
@@ -145,7 +118,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
     */
    private Process buildGradleProcess(final File moduleFolder, final File logFile, TestMethodCall test) {
 
-      String[] anboxOriginals = new String[] { EnvironmentVariables.fetchAdbCall(), "shell", "am", "instrument", "-w", "-e", "class" };
+      String[] anboxOriginals = new String[] { adbCall, "shell", "am", "instrument", "-w", "-e", "class" };
 
       final String[] vars = CommandConcatenator.concatenateCommandArrays(anboxOriginals,
             new String[] { test.getExecutable(), test.getPackage() + ".test" + "/androidx.test.runner.AndroidJUnitRunner" });
