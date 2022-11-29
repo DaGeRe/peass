@@ -70,25 +70,29 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       for (final String fileName : filesToBePushed) {
          File f = new File(fileName);
 
-         // create directories if necessary
-         if (f.getParent() != null) {
-            String subDir = String.format("%s%s", ANBOX_EMULATOR_FOLDER_BASE, f.getParent());
-            createDirInEmulator(adb, subDir);
-         }
+         pushSingleFile(adb, sourceFolder, fileName, f);
+      }
+   }
 
-         // push the file
-         String destinationFolder = ANBOX_EMULATOR_FOLDER_BASE + (f.getParent() != null ? (f.getParent() + "/") : "");
+   private void pushSingleFile(String adb, final File sourceFolder, final String fileName, File f) {
+      // create directories if necessary
+      if (f.getParent() != null) {
+         String subDir = String.format("%s%s", ANBOX_EMULATOR_FOLDER_BASE, f.getParent());
+         createDirInEmulator(adb, subDir);
+      }
 
-         ProcessBuilder builder = new ProcessBuilder(adb, "push", fileName, destinationFolder);
-         builder.directory(sourceFolder);
-         LOG.debug("ADB: Pushing {}/{} to {}", sourceFolder, fileName, destinationFolder);
+      // push the file
+      String destinationFolder = ANBOX_EMULATOR_FOLDER_BASE + (f.getParent() != null ? (f.getParent() + "/") : "");
 
-         try {
-            Process process = builder.start();
-            StreamGobbler.showFullProcess(process);
-         } catch (IOException e) {
-            throw new RuntimeException(e);
-         }
+      ProcessBuilder builder = new ProcessBuilder(adb, "push", fileName, destinationFolder);
+      builder.directory(sourceFolder);
+      LOG.debug("ADB: Pushing {}/{} to {}", sourceFolder, fileName, destinationFolder);
+
+      try {
+         Process process = builder.start();
+         StreamGobbler.showFullProcess(process);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
       }
    }
 
