@@ -17,43 +17,48 @@ public class SourceWriter {
 
    private final BufferedWriter fileWriter;
    private final ChangedMethodManager manager;
-   private final String mainCommit, analyzedCommit;
+   private final String mainCommit;
 
-   public SourceWriter(final BufferedWriter fileWriter, final File methodSourceFolder, final String mainCommit, String analyzedCommit) {
+   public SourceWriter(final BufferedWriter fileWriter, final File methodSourceFolder, final String mainCommit) {
       this.fileWriter = fileWriter;
       this.manager = new ChangedMethodManager(methodSourceFolder);
       this.mainCommit = mainCommit;
-      this.analyzedCommit = analyzedCommit;
+   }
+
+   public void writeSingleTreeSources(final GraphNode root, String analyzedCommit) throws IOException {
+
+      SingleTreeSourceReader reader = new SingleTreeSourceReader(manager, mainCommit, analyzedCommit);
+      reader.readSources(root);
+
+      writeCurrentSource(reader);
+
+      fileWriter.write("};\n");
    }
 
    public void writeSources(final GraphNode root) throws IOException {
 
-      SingleTreeSourceReader reader;
-      if (root.getOtherKiekerPattern() != null) {
-         reader = new SourceReader(manager, mainCommit);
-         ((SourceReader) reader).readSources(root);
-      } else {
-         reader = new SingleTreeSourceReader(manager, mainCommit, analyzedCommit);
-         reader.readSources(root);
-      }
+      SourceReader reader = new SourceReader(manager, mainCommit);
+      reader.readSources(root);
 
+      writeCurrentSource(reader);
+
+      fileWriter.write("\"old\":\n{\n ");
+      SourceReader sourceReader = (SourceReader) reader;
+      for (final Map.Entry<String, String> sources : sourceReader.getNameSourceOld().entrySet()) {
+         fileWriter.write("\"" + sources.getKey() + "\":\n `" + sources.getValue() + "`,");
+      }
+      fileWriter.write("},\n");
+
+      fileWriter.write("};\n");
+   }
+   
+   private void writeCurrentSource(SingleTreeSourceReader reader) throws IOException {
       fileWriter.write("var source = {");
       fileWriter.write("\"current\":\n{\n ");
       for (final Map.Entry<String, String> sources : reader.getNameSourceCurrent().entrySet()) {
          fileWriter.write("\"" + sources.getKey() + "\":\n `" + sources.getValue() + "`,");
       }
       fileWriter.write("},\n");
-
-      if (reader instanceof SourceReader) {
-         fileWriter.write("\"old\":\n{\n ");
-         SourceReader sourceReader = (SourceReader) reader;
-         for (final Map.Entry<String, String> sources : sourceReader.getNameSourceOld().entrySet()) {
-            fileWriter.write("\"" + sources.getKey() + "\":\n `" + sources.getValue() + "`,");
-         }
-         fileWriter.write("},\n");
-      }
-
-      fileWriter.write("};\n");
    }
 
 }

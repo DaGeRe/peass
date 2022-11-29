@@ -32,7 +32,7 @@ public class TestSourceWriter {
             "public void de.dagere.peass.analysis.properties.TestMethodChangeReader.init()",
             "public void de.dagere.peass.analysis.properties.TestMethodChangeReader.init()");
       BufferedWriter mockedWriter = Mockito.mock(BufferedWriter.class);
-      SourceWriter writer = new SourceWriter(mockedWriter, TestMethodChangeReader.methodSourceFolder, TestMethodChangeReader.COMMIT, null);
+      SourceWriter writer = new SourceWriter(mockedWriter, TestMethodChangeReader.methodSourceFolder, TestMethodChangeReader.COMMIT);
 
       writer.writeSources(root);
 
@@ -56,7 +56,7 @@ public class TestSourceWriter {
             "public new de.dagere.peass.analysis.properties.TestMethodChangeReader.<init>()",
             "public new de.dagere.peass.analysis.properties.TestMethodChangeReader.<init>()");
       BufferedWriter mockedWriter = Mockito.mock(BufferedWriter.class);
-      SourceWriter writer = new SourceWriter(mockedWriter, TestMethodChangeReader.methodSourceFolder, TestMethodChangeReader.COMMIT, null);
+      SourceWriter writer = new SourceWriter(mockedWriter, TestMethodChangeReader.methodSourceFolder, TestMethodChangeReader.COMMIT);
 
       writer.writeSources(root);
 

@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import de.dagere.peass.measurement.rca.data.BasicNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.visualization.GraphNode;
@@ -55,8 +54,7 @@ public class JavascriptDataWriter {
       if (propertyFolder != null) {
          final File methodSourceFolder = new File(propertyFolder, "methods");
          String mainCommit = data.getMeasurementConfig().getFixedCommitConfig().getCommit();
-         String analyzedCommit = data.getMeasurementConfig().getFixedCommitConfig().getCommitOld();
-         final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, mainCommit, analyzedCommit);
+         final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, mainCommit);
          writer.writeSources(root);
       }
    }

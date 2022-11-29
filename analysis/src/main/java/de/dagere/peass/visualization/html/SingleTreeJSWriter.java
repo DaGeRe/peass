@@ -53,8 +53,8 @@ public class SingleTreeJSWriter {
       if (propertyFolder != null) {
          final File methodSourceFolder = new File(propertyFolder, "methods");
          String mainCommit = data.getMeasurementConfig().getFixedCommitConfig().getCommit();
-         final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, mainCommit, analyzedCommit);
-         writer.writeSources(root);
+         final SourceWriter writer = new SourceWriter(fileWriter, methodSourceFolder, mainCommit);
+         writer.writeSingleTreeSources(root, analyzedCommit);
       } else {
          fileWriter.write("var source = {\"current\": {}, \"old\": {}};\n");
       }
