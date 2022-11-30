@@ -3,8 +3,19 @@ package de.dagere.peass.execution.gradle;
 import java.io.File;
 import java.io.IOException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
@@ -34,8 +45,56 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    public void prepareKoPeMeExecution(final File logFile) {
       super.prepareKoPeMeExecution(logFile);
 
-      adbPush();
+      updateAndroidManifest();
+      adbPush();      
       compileSources();
+   }
+
+   private void updateAndroidManifest() {
+      File projectFolder = folders.getProjectFolder();
+
+      // TODO make the AndroidManifest.xml path configurable
+      File manifestFile = new File(projectFolder, "app/src/main/AndroidManifest.xml");
+
+      try {
+         // parse XML file to build DOM
+         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+         Document dom = builder.parse(manifestFile);
+     
+         // normalize XML structure
+         dom.normalizeDocument();
+     
+         // get root element
+         Element root = dom.getDocumentElement();
+
+         Node nodeApplication = root.getElementsByTagName("application").item(0);
+
+         if (nodeApplication != null && nodeApplication.getNodeType() == Node.ELEMENT_NODE) {
+            ((Element) nodeApplication).setAttribute("android:requestLegacyExternalStorage", "true");
+         }
+
+         // add read external storage permission element
+         Element elementUsesPermissionReadExternal = dom.createElement("uses-permission");
+         elementUsesPermissionReadExternal.setAttribute("android:name", "android.permission.READ_EXTERNAL_STORAGE");
+         root.insertBefore(elementUsesPermissionReadExternal, nodeApplication); // if nodeApplication is null, appended to the end
+
+         // add write external storage permission element
+         Element elementUsesPermissionWriteExternal = dom.createElement("uses-permission");
+         elementUsesPermissionWriteExternal.setAttribute("android:name", "android.permission.WRITE_EXTERNAL_STORAGE");
+         root.insertBefore(elementUsesPermissionWriteExternal, nodeApplication); // if nodeApplication is null, appended to the end
+
+         // write back
+         Transformer transformer = TransformerFactory.newInstance().newTransformer();
+         
+         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+         transformer.transform(new DOMSource(dom), new StreamResult(manifestFile));
+      } catch (Exception ex) {
+         ex.printStackTrace();
+      }
    }
 
    private void compileSources() {
