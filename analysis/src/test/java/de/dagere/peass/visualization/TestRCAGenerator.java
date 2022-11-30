@@ -95,11 +95,12 @@ public class TestRCAGenerator {
       File sourceFile = new File(folder, "rca/treeMeasurementResults/" + commit + "/MainTest/details/testMe.json");
 
       RCAGenerator generator = new RCAGenerator(sourceFile, RESULT_FOLDER, folders);
-      generator.createVisualization();
-
+      
       generator.setPropertyFolder(new File(VISUALIZATION_FOLDER, "properties_rcaSingleTreeTest"));
 
       createTreeStructureView(commit, folders, generator);
+      
+      generator.createVisualization();
 
       File expectedResultFile = new File(RESULT_FOLDER, commit + "/de.peass.MainTest/testMe.html");
       return expectedResultFile;

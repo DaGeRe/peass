@@ -25,6 +25,7 @@ public class SingleHTMLWriter {
       String outputName = mainCommit + "/" + testcaseObject.getClassWithModule() + "/" + testcaseObject.getMethodWithParams() + "_" + analyzedCommit + ".html";
       String jsName = outputName.replace(".html", ".js");
       File singleVisualizationFile = new File(destFolder, outputName);
+      singleVisualizationFile.getParentFile().mkdirs();
 
       writeOverviewHTML(singleVisualizationFile, jsName.substring(jsName.lastIndexOf('/') + 1));
 
