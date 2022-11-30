@@ -18,7 +18,7 @@ public class CauseSearchFolders extends PeassFolders {
    public static final String RCA_RESULT_FOLDERNAME = "treeMeasurementResults";
    private final File levelFolder;
    private final File archivedFolder;
-   private final File treeFolder;
+   private final File treeMeasurementResultsFolder;
    private final File treeCacheFolder;
    private final File rcaFolder;
 
@@ -33,10 +33,10 @@ public class CauseSearchFolders extends PeassFolders {
       // Due to renaming tree to treeMeasurementResults (for understandability), we need to try whether a folder with the old name exists
       File candidate = new File(rcaFolder, "tree");
       if (candidate.exists()) {
-         treeFolder = candidate;
+         treeMeasurementResultsFolder = candidate;
       } else {
-         treeFolder = new File(rcaFolder, RCA_RESULT_FOLDERNAME);
-         treeFolder.mkdir();
+         treeMeasurementResultsFolder = new File(rcaFolder, RCA_RESULT_FOLDERNAME);
+         treeMeasurementResultsFolder.mkdir();
       }
       
 
@@ -92,7 +92,7 @@ public class CauseSearchFolders extends PeassFolders {
    }
 
    public File getRcaTreeFolder() {
-      return treeFolder;
+      return treeMeasurementResultsFolder;
    }
 
    public File getRcaFolder() {
@@ -101,7 +101,7 @@ public class CauseSearchFolders extends PeassFolders {
 
    public List<File> getRcaMethodFiles() {
       List<File> rcaMethodFiles = new LinkedList<>();
-      for (File commitFile : treeFolder.listFiles()) {
+      for (File commitFile : treeMeasurementResultsFolder.listFiles()) {
          for (File testclazzFile : commitFile.listFiles()) {
             for (File methodFile : testclazzFile.listFiles((FileFilter) new WildcardFileFilter("*.json"))) {
                rcaMethodFiles.add(methodFile);
@@ -112,7 +112,7 @@ public class CauseSearchFolders extends PeassFolders {
    }
 
    public File getRcaTreeFolder(final String commit, final TestCase testcase) {
-      final File treeDataFolder = new File(treeFolder, commit + File.separator + testcase.getShortClazz());
+      final File treeDataFolder = new File(treeMeasurementResultsFolder, commit + File.separator + testcase.getShortClazz());
       return treeDataFolder;
    }
 
