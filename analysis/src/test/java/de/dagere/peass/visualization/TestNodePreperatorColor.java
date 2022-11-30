@@ -44,10 +44,10 @@ public class TestNodePreperatorColor {
       final NodePreparator preparator = new NodePreparator(data);
       preparator.prepare();
 
-      Assert.assertFalse(preparator.getRootNode().isHasSourceChange());
-      Assert.assertFalse(preparator.getRootNode().getChildren().get(0).isHasSourceChange());
-      Assert.assertTrue(preparator.getRootNode().getChildren().get(1).isHasSourceChange());
-      Assert.assertTrue(preparator.getRootNode().getChildren().get(2).isHasSourceChange());
+      Assert.assertFalse(preparator.getGraphRoot().isHasSourceChange());
+      Assert.assertFalse(preparator.getGraphRoot().getChildren().get(0).isHasSourceChange());
+      Assert.assertTrue(preparator.getGraphRoot().getChildren().get(1).isHasSourceChange());
+      Assert.assertTrue(preparator.getGraphRoot().getChildren().get(2).isHasSourceChange());
    }
 
    @Test
@@ -57,8 +57,8 @@ public class TestNodePreperatorColor {
       final NodePreparator preparator = new NodePreparator(data);
       preparator.prepare();
 
-      Assert.assertEquals(2, preparator.getRootNode().getChildren().size());
-      Assert.assertEquals(3, preparator.getRootNode().getChildren().get(0).getChildren().size());
+      Assert.assertEquals(2, preparator.getGraphRoot().getChildren().size());
+      Assert.assertEquals(3, preparator.getGraphRoot().getChildren().get(0).getChildren().size());
    }
 
    @Test
@@ -68,9 +68,9 @@ public class TestNodePreperatorColor {
       final NodePreparator preparator = new NodePreparator(data);
       preparator.prepare();
 
-      Assert.assertEquals(3, preparator.getRootNode().getChildren().size());
-      Assert.assertEquals(2, preparator.getRootNode().getChildren().get(0).getChildren().size());
-      Assert.assertEquals(2, preparator.getRootNode().getChildren().get(1).getChildren().size());
+      Assert.assertEquals(3, preparator.getGraphRoot().getChildren().size());
+      Assert.assertEquals(2, preparator.getGraphRoot().getChildren().get(0).getChildren().size());
+      Assert.assertEquals(2, preparator.getGraphRoot().getChildren().get(1).getChildren().size());
    }
 
    private void prepareLongTree() {

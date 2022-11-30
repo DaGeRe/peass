@@ -56,9 +56,9 @@ public class RCAGenerator {
 
    public void createSingleVisualization(String commit, CallTreeNode pureNode) {
       try {
-         NodePreparator nodePreparator = new NodePreparator(pureNode, pureNode, data);
-         nodePreparator.prepare();
-         GraphNode singleRoot = nodePreparator.getRootNode();
+         SingleNodePreparator singleNodePreparator = new SingleNodePreparator(pureNode);
+         singleNodePreparator.prepare();
+         GraphNode singleRoot = singleNodePreparator.getGraphRoot();
 
          resetColor(singleRoot);
 
@@ -88,7 +88,7 @@ public class RCAGenerator {
    private GraphNode createMeasurementNode() {
       final NodePreparator preparator = new NodePreparator(rootPredecessor, rootCurrent, data);
       preparator.prepare();
-      final GraphNode rootNode = preparator.getRootNode();
+      final GraphNode rootNode = preparator.getGraphRoot();
       return rootNode;
    }
 

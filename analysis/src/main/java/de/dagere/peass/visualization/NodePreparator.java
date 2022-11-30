@@ -18,7 +18,7 @@ import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
 import de.dagere.peass.visualization.GraphNode.State;
 
-public class NodePreparator {
+public class NodePreparator implements INodePreparator {
 
    public static final String COLOR_FASTER = "#00FF00";
    public static final String COLOR_SLOWER = "#FF0000";
@@ -27,7 +27,7 @@ public class NodePreparator {
 
    private CallTreeNode rootPredecessor, rootCurrent;
    private final CauseSearchData data;
-   private final GraphNode root;
+   private final GraphNode rootGraph;
 
    public NodePreparator(final CallTreeNode rootPredecessor, final CallTreeNode rootCurrent, final CauseSearchData data) {
       this.rootPredecessor = rootPredecessor;
@@ -35,8 +35,8 @@ public class NodePreparator {
       this.data = data;
 
       MeasuredNode measuredRootNode = data.getNodes();
-      root = new GraphNode(measuredRootNode.getCall(), measuredRootNode.getKiekerPattern(), measuredRootNode.getOtherKiekerPattern());
-      root.setModule(measuredRootNode.getModule());
+      rootGraph = new GraphNode(measuredRootNode.getCall(), measuredRootNode.getKiekerPattern(), measuredRootNode.getOtherKiekerPattern());
+      rootGraph.setModule(measuredRootNode.getModule());
 
       if (rootPredecessor != null && !measuredRootNode.getCall().equals(rootPredecessor.getCall())) {
          throw new RuntimeException("Internal error happened: Meaured node had call " + measuredRootNode.getCall() +
@@ -50,15 +50,15 @@ public class NodePreparator {
 
    public void prepare() {
       final MeasuredNode parent = data.getNodes();
-      setGraphData(parent, root);
+      setGraphData(parent, rootGraph);
 
-      processNode(parent, root);
+      processNode(parent, rootGraph);
 
       if (rootPredecessor != null && rootCurrent != null) {
-         handleFullTreeNode(root, rootPredecessor, rootCurrent);
+         handleFullTreeNode(rootGraph, rootPredecessor, rootCurrent);
       }
 
-      preparePrefix(root);
+      PrefixSetter.preparePrefix(rootGraph);
    }
 
    private void handleFullTreeNode(final GraphNode graphNode, final CallTreeNode nodePredecessor, final CallTreeNode nodeCurrent) {
@@ -71,7 +71,9 @@ public class NodePreparator {
    }
 
    private void handleUnmeasuredNode(final GraphNode graphNode, final CallTreeNode nodePredecessor, final CallTreeNode nodeCurrent) {
-      TreeUtil.findChildMapping(nodePredecessor, nodeCurrent);
+      if (nodePredecessor != null && nodeCurrent != null) {
+         TreeUtil.findChildMapping(nodePredecessor, nodeCurrent);
+      }
 
       final Set<String> addedEmptyChildren = new HashSet<>();
       for (final CallTreeNode purePredecessorChild : nodePredecessor.getChildren()) {
@@ -97,36 +99,22 @@ public class NodePreparator {
       }
    }
 
-   private void handleMeasuredTriple(final GraphNode graphNode, final CallTreeNode nodePredecessor, final CallTreeNode nodeVersion) {
-      TreeUtil.findChildMapping(nodePredecessor, nodeVersion);
+   private void handleMeasuredTriple(final GraphNode graphNode, final CallTreeNode nodePredecessor, final CallTreeNode nodeCurrent) {
+      if (nodePredecessor != null && nodeCurrent != null) {
+         TreeUtil.findChildMapping(nodePredecessor, nodeCurrent);
+      }
 
+      System.out.println("Handling: " + graphNode + " " + nodePredecessor + " " + nodeCurrent);
       for (int index = 0; index < graphNode.getChildren().size(); index++) {
          final GraphNode graphChild = graphNode.getChildren().get(index);
-         final CallTreeNode purePredecessorChild = nodePredecessor.getChildren().get(index);
-         handleFullTreeNode(graphChild, purePredecessorChild, purePredecessorChild.getOtherCommitNode());
+         final CallTreeNode purePredecessorChild;
+         if (nodePredecessor != null && nodePredecessor.getChildren().size() > index) {
+            purePredecessorChild = nodePredecessor.getChildren().get(index);
+         } else {
+            purePredecessorChild = null;
+         }
+         handleFullTreeNode(graphChild, purePredecessorChild, (purePredecessorChild != null ? purePredecessorChild.getOtherCommitNode() : null));
       }
-   }
-
-   private void preparePrefix(final GraphNode parent) {
-      final String longestPrefix = getLongestPrefix(parent);
-      setPrefix(parent, longestPrefix);
-      LOG.info("Prefix: {}", longestPrefix);
-   }
-
-   private void setPrefix(final GraphNode parent, final String longestPrefix) {
-      parent.setName(parent.getCall().substring(longestPrefix.length()));
-      for (final GraphNode node : parent.getChildren()) {
-         setPrefix(node, longestPrefix);
-      }
-   }
-
-   private String getLongestPrefix(final GraphNode parent) {
-      String longestPrefix = parent.getCall();
-      for (final GraphNode node : parent.getChildren()) {
-         final String clazz = node.getCall().substring(0, node.getCall().lastIndexOf('.') + 1);
-         longestPrefix = StringUtils.getCommonPrefix(longestPrefix, getLongestPrefix(node), clazz);
-      }
-      return longestPrefix;
    }
 
    private void processNode(final MeasuredNode measuredParent, final GraphNode graphParent) {
@@ -243,7 +231,8 @@ public class NodePreparator {
       }
    }
 
-   public GraphNode getRootNode() {
-      return root;
+   @Override
+   public GraphNode getGraphRoot() {
+      return rootGraph;
    }
 }

@@ -21,7 +21,7 @@ public class MeasuredNode extends BasicNode {
 
    // Contains duration in microseconds
    private TestcaseStatistic statistic;
-   private List<MeasuredNode> childs = new LinkedList<>();
+   private List<MeasuredNode> children = new LinkedList<>();
 
    @JsonInclude(Include.NON_NULL)
    private MeasuredValues values;
@@ -83,22 +83,22 @@ public class MeasuredNode extends BasicNode {
    }
 
    public List<MeasuredNode> getChilds() {
-      return childs;
+      return children;
    }
 
-   public void setChilds(final List<MeasuredNode> childs) {
-      this.childs = childs;
+   public void setChilds(final List<MeasuredNode> children) {
+      this.children = children;
    }
 
    @JsonIgnore
    @Override
    public List<MeasuredNode> getChildren() {
-      return childs;
+      return children;
    }
 
    public MeasuredNode getChildByPattern(final String name) {
       MeasuredNode result = null;
-      for (MeasuredNode node : childs) {
+      for (MeasuredNode node : children) {
          if (node.getKiekerPattern().contentEquals(name)) {
             result = node;
          }

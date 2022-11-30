@@ -29,7 +29,7 @@ public class TestNodePreparatorTreeStructure {
       NodePreparator preparator = new NodePreparator(csd);
       preparator.prepare();
       
-      GraphNode root = preparator.getRootNode();
+      GraphNode root = preparator.getGraphRoot();
       
       Assert.assertEquals(NodePreparator.COLOR_SLOWER, root.getColor());
    }
@@ -47,7 +47,7 @@ public class TestNodePreparatorTreeStructure {
       NodePreparator preparator = new NodePreparator(csd);
       preparator.prepare();
       
-      GraphNode root = preparator.getRootNode();
+      GraphNode root = preparator.getGraphRoot();
       
       Assert.assertEquals(NodePreparator.COLOR_SLOWER, root.getColor());
       Assert.assertEquals(NodePreparator.COLOR_FASTER, root.getChildren().get(0).getColor());
@@ -65,7 +65,7 @@ public class TestNodePreparatorTreeStructure {
       NodePreparator preparator = new NodePreparator(csd);
       preparator.prepare();
       
-      GraphNode root = preparator.getRootNode();
+      GraphNode root = preparator.getGraphRoot();
       
       Assert.assertEquals(NodePreparator.COLOR_SLOWER, root.getColor());
       Assert.assertEquals(NodePreparator.COLOR_SLOWER, root.getChildren().get(0).getColor());
