@@ -68,6 +68,7 @@ public class ExecutionConfig implements Serializable {
    private String testExecutor = DEFAULT_TEST_EXECUTOR;
    private String gitCryptKey;
    private boolean useAnbox = false;
+   private String androidManifest;
 
    private String xmx = null;
 
@@ -123,6 +124,7 @@ public class ExecutionConfig implements Serializable {
       this.testClazzFolders = other.testClazzFolders;
 
       this.useAnbox = other.useAnbox;
+      this.androidManifest = other.androidManifest;
       this.xmx = other.xmx;
 
       this.increaseVariableValues = other.getIncreaseVariableValues();
@@ -439,6 +441,15 @@ public class ExecutionConfig implements Serializable {
    @JsonInclude(value = JsonInclude.Include.NON_DEFAULT)
    public void setUseAnbox(boolean useAnbox) {
       this.useAnbox = useAnbox;
+   }
+
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   public String getAndroidManifest() {
+      return androidManifest;
+   }
+
+   public void setAndroidManifest(String androidManifest) {
+      this.androidManifest = androidManifest;
    }
 
    public String getXmx() {

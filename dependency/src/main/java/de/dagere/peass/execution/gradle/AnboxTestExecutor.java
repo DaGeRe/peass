@@ -53,47 +53,52 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    private void updateAndroidManifest() {
       File projectFolder = folders.getProjectFolder();
 
-      // TODO make the AndroidManifest.xml path configurable
-      File manifestFile = new File(projectFolder, "app/src/main/AndroidManifest.xml");
+      String relativeManifestFilePath = testTransformer.getConfig().getExecutionConfig().getAndroidManifest();
 
-      try {
-         // parse XML file to build DOM
-         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-         Document dom = builder.parse(manifestFile);
-     
-         // normalize XML structure
-         dom.normalizeDocument();
-     
-         // get root element
-         Element root = dom.getDocumentElement();
+      if (relativeManifestFilePath != null) {
+         File manifestFile = new File(projectFolder, relativeManifestFilePath);
 
-         Node nodeApplication = root.getElementsByTagName("application").item(0);
+         try {
+            // parse XML file to build DOM
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document dom = builder.parse(manifestFile);
 
-         if (nodeApplication != null && nodeApplication.getNodeType() == Node.ELEMENT_NODE) {
-            ((Element) nodeApplication).setAttribute("android:requestLegacyExternalStorage", "true");
+            // normalize XML structure
+            dom.normalizeDocument();
+
+            // get root element
+            Element root = dom.getDocumentElement();
+
+            Node nodeApplication = root.getElementsByTagName("application").item(0);
+
+            if (nodeApplication != null && nodeApplication.getNodeType() == Node.ELEMENT_NODE) {
+               ((Element) nodeApplication).setAttribute("android:requestLegacyExternalStorage", "true");
+            }
+
+            // add read external storage permission element
+            Element elementUsesPermissionReadExternal = dom.createElement("uses-permission");
+            elementUsesPermissionReadExternal.setAttribute("android:name", "android.permission.READ_EXTERNAL_STORAGE");
+            root.insertBefore(elementUsesPermissionReadExternal, nodeApplication); // if nodeApplication is null, appended to the end
+
+            // add write external storage permission element
+            Element elementUsesPermissionWriteExternal = dom.createElement("uses-permission");
+            elementUsesPermissionWriteExternal.setAttribute("android:name", "android.permission.WRITE_EXTERNAL_STORAGE");
+            root.insertBefore(elementUsesPermissionWriteExternal, nodeApplication); // if nodeApplication is null, appended to the end
+
+            // write back
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            transformer.transform(new DOMSource(dom), new StreamResult(manifestFile));
+         } catch (Exception ex) {
+            ex.printStackTrace();
          }
-
-         // add read external storage permission element
-         Element elementUsesPermissionReadExternal = dom.createElement("uses-permission");
-         elementUsesPermissionReadExternal.setAttribute("android:name", "android.permission.READ_EXTERNAL_STORAGE");
-         root.insertBefore(elementUsesPermissionReadExternal, nodeApplication); // if nodeApplication is null, appended to the end
-
-         // add write external storage permission element
-         Element elementUsesPermissionWriteExternal = dom.createElement("uses-permission");
-         elementUsesPermissionWriteExternal.setAttribute("android:name", "android.permission.WRITE_EXTERNAL_STORAGE");
-         root.insertBefore(elementUsesPermissionWriteExternal, nodeApplication); // if nodeApplication is null, appended to the end
-
-         // write back
-         Transformer transformer = TransformerFactory.newInstance().newTransformer();
-         
-         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-         transformer.transform(new DOMSource(dom), new StreamResult(manifestFile));
-      } catch (Exception ex) {
-         ex.printStackTrace();
+      } else {
+         LOG.error("Android manifest file path is not specified. Use --androidManifest switch to specify the path.");
       }
    }
 
