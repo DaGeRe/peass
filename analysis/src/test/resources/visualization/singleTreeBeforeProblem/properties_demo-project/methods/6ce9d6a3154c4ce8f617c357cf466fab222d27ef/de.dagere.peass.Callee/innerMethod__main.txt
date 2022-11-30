@@ -1,0 +1,7 @@
+private void innerMethod() {
+    try {
+        Thread.sleep(20);
+    } catch (final InterruptedException e) {
+        e.printStackTrace();
+    }
+}

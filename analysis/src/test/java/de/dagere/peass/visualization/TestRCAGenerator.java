@@ -24,8 +24,8 @@ import de.dagere.peass.utils.Constants;
 
 public class TestRCAGenerator {
 
-   private static final File VISUALIZATION_FOLDER = new File("src/test/resources/visualization/");
-   private static final File RESULT_FOLDER = new File("target/example");
+   public static final File VISUALIZATION_FOLDER = new File("src/test/resources/visualization/");
+   public static final File RESULT_FOLDER = new File("target/example");
 
    @BeforeEach
    public void init() throws IOException {

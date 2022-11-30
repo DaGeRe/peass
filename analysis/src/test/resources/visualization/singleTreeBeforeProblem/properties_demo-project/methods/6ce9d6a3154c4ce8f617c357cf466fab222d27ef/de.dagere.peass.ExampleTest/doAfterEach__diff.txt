@@ -1,0 +1,4 @@
+@AfterEach
+public void doAfterEach() {
+    System.out.println(stuffAfter.toString());
+}

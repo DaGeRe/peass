@@ -1,0 +1,5 @@
+@BeforeEach
+public void doSomeBeforeEach() {
+    System.out.println("Doing before");
+    stuffBefore = new Object();
+}

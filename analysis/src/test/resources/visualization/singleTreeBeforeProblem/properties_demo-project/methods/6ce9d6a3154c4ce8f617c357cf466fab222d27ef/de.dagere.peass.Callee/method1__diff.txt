@@ -1,0 +1,3 @@
+protected void method1() {
+    innerMethod();
+}

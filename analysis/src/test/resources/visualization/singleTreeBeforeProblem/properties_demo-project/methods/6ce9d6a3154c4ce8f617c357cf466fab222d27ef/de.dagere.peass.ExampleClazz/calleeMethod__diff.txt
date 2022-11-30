@@ -1,0 +1,3 @@
+protected void calleeMethod() {
+    new Callee().method1();
+}

@@ -1,0 +1,10 @@
+@Test
+public void test() {
+    final ExampleClazz exampleClazz = new ExampleClazz();
+    exampleClazz.calleeMethod();
+    Assertions.assertNotNull(exampleClazz);
+    System.out.println(stuffBeforeAll.toString());
+    System.out.println(stuffBefore.toString());
+    stuffAfter = new Object();
+    stuffAfterAll = new Object();
+}
