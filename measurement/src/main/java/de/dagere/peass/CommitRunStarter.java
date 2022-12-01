@@ -19,13 +19,9 @@ import picocli.CommandLine.Command;
  * @author reichelt
  *
  */
-@Command(description = "Starts running every version just for downloading the dependencies. After all dependencies have been downloaded, most operations can be run locally (as long as the version" + 
+@Command(description = "Starts running every commit just for downloading the dependencies. After all dependencies have been downloaded, most operations can be run locally (as long as the version" + 
       " control system can operate locally).", name = "downloadDependencies")
-public class VersionRunStarter extends CommitProcessor {
-
-   public VersionRunStarter() throws  JsonParseException, JsonMappingException, IOException {
-      super();
-   }
+public class CommitRunStarter extends CommitProcessor {
 
    @Override
    protected void processCommit(final String version, final CommitStaticSelection versioninfo) {
@@ -41,7 +37,7 @@ public class VersionRunStarter extends CommitProcessor {
    }
 
    public static void main(final String[] args) throws  JsonParseException, JsonMappingException, IOException {
-      VersionRunStarter command = new VersionRunStarter();
+      CommitRunStarter command = new CommitRunStarter();
       CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
       command.processCommandline();
