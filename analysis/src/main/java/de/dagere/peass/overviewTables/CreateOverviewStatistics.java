@@ -14,7 +14,7 @@ import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.properties.ChangeProperties;
 import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.PropertyProcessor;
-import de.dagere.peass.analysis.properties.VersionChangeProperties;
+import de.dagere.peass.analysis.properties.CommitChangeProperties;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.ResultsFolders;
@@ -94,7 +94,7 @@ public class CreateOverviewStatistics {
 
                final File changefileOnlysource = new File(propertyFolder, project + "/" + project + ".json");
                if (changefileOnlysource.exists()) {
-                  final VersionChangeProperties measuredChangesOnlysource = Constants.OBJECTMAPPER.readValue(changefileOnlysource, VersionChangeProperties.class);
+                  final CommitChangeProperties measuredChangesOnlysource = Constants.OBJECTMAPPER.readValue(changefileOnlysource, CommitChangeProperties.class);
                   for (final ChangeProperties changesAll : measuredChangesOnlysource.getVersions().values()) {
                      for (final List<ChangeProperty> method : changesAll.getProperties().values()) {
                         for (final ChangeProperty nowMetho : method) {
@@ -110,7 +110,7 @@ public class CreateOverviewStatistics {
 
             final File allTestProps = new File(propertyFolder, project + "/" + project + "_all.json");
             if (allTestProps.exists()) {
-               final VersionChangeProperties properties = Constants.OBJECTMAPPER.readValue(allTestProps, VersionChangeProperties.class);
+               final CommitChangeProperties properties = Constants.OBJECTMAPPER.readValue(allTestProps, CommitChangeProperties.class);
                sourceTests = properties.getSourceChanges();
             }
 
@@ -125,7 +125,7 @@ public class CreateOverviewStatistics {
 
             final File changeTestProperties = new File(propertyFolder, project + File.separator + project + ".json");
             if (changeTestProperties.exists()) {
-               final VersionChangeProperties versionProperties = Constants.OBJECTMAPPER.readValue(changeTestProperties, VersionChangeProperties.class);
+               final CommitChangeProperties versionProperties = Constants.OBJECTMAPPER.readValue(changeTestProperties, CommitChangeProperties.class);
 
                final ProjectStatistics projectStatistics = new ProjectStatistics();
                versionProperties.executeProcessor(projectStatistics);

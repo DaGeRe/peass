@@ -41,11 +41,11 @@ public class PropertyReader {
 
    public void readAllTestsProperties() {
       try {
-         final VersionChangeProperties commitProperties = new VersionChangeProperties();
+         final CommitChangeProperties commitProperties = new CommitChangeProperties();
          final File methodFolder = new File(resultsFolders.getPropertiesFolder(), "methods");
          methodFolder.mkdirs();
          for (final Map.Entry<String, TestSet> commit : changedTests.getCommits().entrySet()) {
-            readVersion(commitProperties, methodFolder, commit);
+            readCommit(commitProperties, methodFolder, commit);
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getPropertiesFile(), commitProperties);
          }
 
@@ -55,8 +55,7 @@ public class PropertyReader {
       }
    }
 
-   private void readVersion(final VersionChangeProperties commitProperties, final File methodFolder, final Map.Entry<String, TestSet> commit) throws IOException {
-      // String prevVersion = VersionComparator.getPreviousVersion(version.getKey());
+   private void readCommit(final CommitChangeProperties commitProperties, final File methodFolder, final Map.Entry<String, TestSet> commit) throws IOException {
       LOG.debug("Reading {}", commit.getKey());
       final ChangeProperties changeProperties = new ChangeProperties();
       changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, commit.getKey()));

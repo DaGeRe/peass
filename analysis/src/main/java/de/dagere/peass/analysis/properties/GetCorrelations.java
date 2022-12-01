@@ -17,7 +17,7 @@ import de.dagere.peass.utils.Constants;
 public class GetCorrelations {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final File propertyFile = new File("/home/reichelt/daten3/diss/repos/properties/properties/commons-io/commons-io.json");
-      final VersionChangeProperties props = Constants.OBJECTMAPPER.readValue(propertyFile, VersionChangeProperties.class);
+      final CommitChangeProperties props = Constants.OBJECTMAPPER.readValue(propertyFile, CommitChangeProperties.class);
 
       int count = 0;
       for (final Entry<String, ChangeProperties> version : props.getVersions().entrySet()) {

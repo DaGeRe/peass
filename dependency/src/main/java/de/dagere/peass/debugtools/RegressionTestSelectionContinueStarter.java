@@ -95,7 +95,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       
       VersionComparator.setVersions(GitUtils.getCommits(projectFolder, false));
 
-      String previousVersion = getPreviousVersion(executionConfigMixin.getStartcommit(), projectFolder, dependencies, comparator);
+      String previousCommit = getPreviousCommit(executionConfigMixin.getStartcommit(), projectFolder, dependencies, comparator);
 
       final long timeout = executionConfigMixin.getTimeout();
 
@@ -103,7 +103,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
 
       ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), config.getProjectFolder().getName() + "_out");
-      final DependencyReader reader = createReader(config, resultsFolders, dependencies, previousVersion, timeout, vcs);
+      final DependencyReader reader = createReader(config, resultsFolders, dependencies, previousCommit, timeout, vcs);
       reader.readCompletedCommits(dependencies, comparator);
       reader.readDependencies();
 
@@ -121,34 +121,33 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
    }
 
    /**
-    * Returns the previous version before the dependency reading starts, i.e. the version before the given startversion or
-    * if no startversion is given the latest version in the dependencies
-    * @param startversion
+    * Returns the previous commit before the dependency reading starts, i.e. the commit before the given startcommit or
+    * if no startcommit is given the latest commit in the dependencies
+    * @param startcommit
     * @param projectFolder
     * @param dependencies
     * @return
     */
-   static String getPreviousVersion(final String startversion, final File projectFolder, final StaticTestSelection dependencies, CommitComparatorInstance comparator) {
-      String previousVersion;
-      if (startversion != null) {
-         String[] versionNames = dependencies.getCommitNames();
-         int startVersionIndex = Arrays.asList(versionNames).indexOf(startversion);
-         String versionAfterStartVersion = versionNames[startVersionIndex - 1];
-         previousVersion = versionAfterStartVersion;
-         truncateVersions(startversion, dependencies.getCommits(), comparator);
+   static String getPreviousCommit(final String startcommit, final File projectFolder, final StaticTestSelection dependencies, CommitComparatorInstance comparator) {
+      String previousCommit;
+      String[] commitNames = dependencies.getCommitNames();
+      if (startcommit != null) {
+         int startCommitIndex = Arrays.asList(commitNames).indexOf(startcommit);
+         String commitAfterStartCommit = commitNames[startCommitIndex - 1];
+         previousCommit = commitAfterStartCommit;
+         truncateCommits(startcommit, dependencies.getCommits(), comparator);
       } else {
-         String[] versionNames = dependencies.getCommitNames();
-         String newestVersion = versionNames[versionNames.length - 1];
-         previousVersion = newestVersion;
+         String newestCommit = commitNames[commitNames.length - 1];
+         previousCommit = newestCommit;
       }
-      return previousVersion;
+      return previousCommit;
    }
 
-   DependencyReader createReader(final TestSelectionConfigMixin config, final ResultsFolders resultsFolders, final StaticTestSelection dependencies, final String previousVersion,
+   DependencyReader createReader(final TestSelectionConfigMixin config, final ResultsFolders resultsFolders, final StaticTestSelection dependencies, final String previousCommit,
          final long timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
-         final CommitIterator iterator = createIterator(config, previousVersion);
+         final CommitIterator iterator = createIterator(config, previousCommit);
          ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
          reader = new DependencyReader(config.getDependencyConfig(), new PeassFolders(config.getProjectFolder()), 
                resultsFolders, dependencies.getUrl(), iterator, new CommitKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), 
@@ -162,21 +161,21 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       return reader;
    }
 
-   private CommitIterator createIterator(final TestSelectionConfigMixin config, final String previousVersion) {
+   private CommitIterator createIterator(final TestSelectionConfigMixin config, final String previousCommit) {
       final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
-      commits.add(0, previousVersion);
-      final CommitIterator iterator = new CommitIteratorGit(config.getProjectFolder(), commits, previousVersion);
+      commits.add(0, previousCommit);
+      final CommitIterator iterator = new CommitIteratorGit(config.getProjectFolder(), commits, previousCommit);
       return iterator;
    }
 
    /**
-    * Removes every version from the map that is before the given startversion
+    * Removes every commit from the map that is before the given startcommit
     */
-   public static void truncateVersions(final String startversion, final Map<String, CommitStaticSelection> versions, CommitComparatorInstance comparator) {
-      for (final java.util.Iterator<Entry<String, CommitStaticSelection>> it = versions.entrySet().iterator(); it.hasNext();) {
-         final Entry<String, CommitStaticSelection> version = it.next();
-         if (comparator.isBefore(startversion, version.getKey()) || version.getKey().equals(startversion)) {
-            LOG.trace("Remove: " + version.getKey() + " " + comparator.isBefore(startversion, version.getKey()));
+   public static void truncateCommits(final String startcommit, final Map<String, CommitStaticSelection> commits, CommitComparatorInstance comparator) {
+      for (final java.util.Iterator<Entry<String, CommitStaticSelection>> it = commits.entrySet().iterator(); it.hasNext();) {
+         final Entry<String, CommitStaticSelection> commit = it.next();
+         if (comparator.isBefore(startcommit, commit.getKey()) || commit.getKey().equals(startcommit)) {
+            LOG.trace("Remove: " + commit.getKey() + " " + comparator.isBefore(startcommit, commit.getKey()));
             it.remove();
          }
       }

@@ -98,7 +98,7 @@ public class DependencyManager extends KiekerResultManager {
       this.deleteFolderSize = deleteFolderSize;
    }
 
-   public boolean initialyGetTraces(final String version) throws IOException {
+   public boolean initialyGetTraces(final String commit) throws IOException {
       if (folders.getTempMeasurementFolder().exists()) {
          FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
       }
@@ -111,7 +111,7 @@ public class DependencyManager extends KiekerResultManager {
          LOG.error("No tests were selected - maybe the tests are all disabled or no tests meets the pattern");
          return false;
       }
-      runTraceTests(tests, version);
+      runTraceTests(tests, commit);
 
       if (folders.getTempMeasurementFolder().exists()) {
          return readInitialResultFiles(mapping);

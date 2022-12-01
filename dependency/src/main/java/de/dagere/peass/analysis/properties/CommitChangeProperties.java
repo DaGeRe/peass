@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 
-public class VersionChangeProperties {
+public class CommitChangeProperties {
 
    private Map<String, ChangeProperties> commits = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
 
