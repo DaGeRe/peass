@@ -2,6 +2,7 @@ package de.dagere.peass.execution.gradle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -95,5 +96,21 @@ public class ManifestEditor {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
         transformer.transform(new DOMSource(dom), new StreamResult(file));
+    }
+
+    public void updateForExternalStorageReadWrite() throws TransformerException {
+        addAttribute("application", "android:requestLegacyExternalStorage", "true");
+
+        addElement("uses-permission", new HashMap<String, String>() {{
+              put("android:name", "android.permission.READ_EXTERNAL_STORAGE");
+           }
+        });
+        
+        addElement("uses-permission", new HashMap<String, String>() {{
+              put("android:name", "android.permission.WRITE_EXTERNAL_STORAGE");
+           }
+        });
+        
+        writeToFile();
     }
 }

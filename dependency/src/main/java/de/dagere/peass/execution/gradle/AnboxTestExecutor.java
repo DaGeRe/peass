@@ -2,7 +2,6 @@ package de.dagere.peass.execution.gradle;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,20 +49,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
 
          try {
             ManifestEditor manifestEditor = new ManifestEditor(manifestFile);
-
-            manifestEditor.addAttribute("application", "android:requestLegacyExternalStorage", "true");
-
-            manifestEditor.addElement("uses-permission", new HashMap<String, String>() {{
-                  put("android:name", "android.permission.READ_EXTERNAL_STORAGE");
-               }
-            });
-            
-            manifestEditor.addElement("uses-permission", new HashMap<String, String>() {{
-                  put("android:name", "android.permission.WRITE_EXTERNAL_STORAGE");
-               }
-            });
-            
-            manifestEditor.writeToFile();
+            manifestEditor.updateForExternalStorageReadWrite();
          } catch (Exception ex) {
             ex.printStackTrace();
          }
