@@ -71,8 +71,8 @@ public class MeasureStarter extends PairProcessor {
 
       staticTestSelection.getCommits().keySet().forEach(commit -> commits.add(commit));
 
-      startindex = getStartVersionIndex();
-      endindex = getEndVersion();
+      startindex = getStartCommitIndex();
+      endindex = getEndCommitIndex();
 
       processCommandline();
       return null;
@@ -99,26 +99,26 @@ public class MeasureStarter extends PairProcessor {
     * 
     * @return index of the start commit
     */
-   private int getStartVersionIndex() {
+   private int getStartCommitIndex() {
       int currentStartindex = startcommit != null ? commits.indexOf(startcommit) : 0;
       // Only bugfix if static selection file and execution file do not fully match
       if (executionData != null) {
          if (startcommit != null && currentStartindex == -1) {
             String potentialStart = "";
             if (executionData.getCommits().containsKey(startcommit)) {
-               for (final String executionVersion : executionData.getCommits().keySet()) {
-                  for (final String dependencyVersion : staticTestSelection.getCommits().keySet()) {
-                     if (dependencyVersion.equals(executionVersion)) {
-                        potentialStart = dependencyVersion;
+               for (final String executionCommit : executionData.getCommits().keySet()) {
+                  for (final String dependencyCommit : staticTestSelection.getCommits().keySet()) {
+                     if (dependencyCommit.equals(executionCommit)) {
+                        potentialStart = dependencyCommit;
                         break;
                      }
                   }
-                  if (executionVersion.equals(startcommit)) {
+                  if (executionCommit.equals(startcommit)) {
                      break;
                   }
                }
             }
-            LOG.debug("Version only in executefile, next commit in static selection file: {}", potentialStart);
+            LOG.debug("Commit only in executefile, next commit in static selection file: {}", potentialStart);
             currentStartindex = commits.indexOf(potentialStart);
             if (currentStartindex == -1) {
                throw new RuntimeException("Did not find " + startcommit + " in given PRONTO-files!");
@@ -133,25 +133,25 @@ public class MeasureStarter extends PairProcessor {
     * 
     * @return index of the end commit
     */
-   private int getEndVersion() {
+   private int getEndCommitIndex() {
       int currentEndindex = endcommit != null ? commits.indexOf(endcommit) : commits.size();
       // Only bugfix if static selection file and execution file do not fully match
       if (executionData != null) {
          if (endcommit != null && currentEndindex == -1) {
             String potentialStart = "";
             if (executionData.getCommits().containsKey(endcommit)) {
-               for (final String executionVersion : executionData.getCommits().keySet()) {
+               for (final String executionCommit : executionData.getCommits().keySet()) {
                   boolean next = false;
-                  for (final String dependencyVersion : staticTestSelection.getCommits().keySet()) {
+                  for (final String dependencyCommit : staticTestSelection.getCommits().keySet()) {
                      if (next) {
-                        potentialStart = dependencyVersion;
+                        potentialStart = dependencyCommit;
                         break;
                      }
-                     if (dependencyVersion.equals(executionVersion)) {
+                     if (dependencyCommit.equals(executionCommit)) {
                         next = true;
                      }
                   }
-                  if (executionVersion.equals(endcommit)) {
+                  if (executionCommit.equals(endcommit)) {
                      break;
                   }
                }
@@ -164,20 +164,20 @@ public class MeasureStarter extends PairProcessor {
    }
 
    @Override
-   protected void processVersion(final String commit, final CommitStaticSelection commitinfo) {
+   protected void processCommit(final String commit, final CommitStaticSelection commitinfo) {
       LOG.debug("Configuration: VMs: {} Warmup: {} Iterations: {} Repetitions: {}", measurementConfigMixin.getVms(),
             measurementConfigMixin.getWarmup(), measurementConfigMixin.getIterations(), measurementConfigMixin.getRepetitions());
       try {
          final int currentIndex = commits.indexOf(commit);
-         final boolean executeThisVersion = currentIndex >= startindex && currentIndex <= endindex;
+         final boolean executeThisCommit = currentIndex >= startindex && currentIndex <= endindex;
 
-         LOG.trace("Processing Version {} Executing Tests: {}", commit, executeThisVersion);
+         LOG.trace("Processing Commit {} Executing Tests: {}", commit, executeThisCommit);
 
          final Set<TestMethodCall> testcases = commitinfo.getTests().getTestMethods();
          final String commitOld = commitinfo.getPredecessor();
 
          for (final TestMethodCall testcase : testcases) {
-            if (executeThisVersion) {
+            if (executeThisCommit) {
                if (lastTestcaseCalls.containsKey(testcase)) {
                   boolean executeThisTest = true;
                   if (test != null) {
@@ -188,7 +188,7 @@ public class MeasureStarter extends PairProcessor {
                      executeThisTest = checkExecutionData(commit, testcase, executeThisTest);
                   }
                   if (executeThisTest) {
-                     tester.setVersions(commit, commitOld);
+                     tester.setCommits(commit, commitOld);
                      tester.evaluate((TestMethodCall) testcase);
                   }
                }

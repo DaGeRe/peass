@@ -67,7 +67,7 @@ public abstract class CommitIterator {
 	public abstract boolean hasNextCommit();
 
 	/**
-	 * Goes to next commit, also checking out next version in the folder
+	 * Goes to next commit, also checking out next commit in the folder
 	 * @return True for success, false otherwise
 	 */
 	public abstract boolean goToNextCommit();
@@ -92,11 +92,11 @@ public abstract class CommitIterator {
       return getCommitName().equals(name);
    }
 	
-   public abstract boolean isPredecessor(String lastRunningVersion);
+   public abstract boolean isPredecessor(String lastRunningCommit);
 
    public abstract boolean goToPreviousCommit();
 
-   public abstract CommitDiff getChangedClasses(File projectFolder, List<File> genericModules, String lastVersion, ExecutionConfig config);
+   public abstract CommitDiff getChangedClasses(File projectFolder, List<File> genericModules, String lastCommit, ExecutionConfig config);
 
    public abstract List<String> getCommits();
 

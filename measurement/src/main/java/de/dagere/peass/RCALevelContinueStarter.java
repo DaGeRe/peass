@@ -63,12 +63,12 @@ public class RCALevelContinueStarter implements Callable<Void> {
          final CauseTester measurer = new CauseTester(alternateFolders, measurementConfig, data.getCauseConfig(), emptyEnv, comparator);
          final LevelCauseSearcher tester = new LevelCauseSearcher(measurer, persistenceManager, emptyEnv);
 
-         final List<CallTreeNode> currentVersionNodeList = new LinkedList<>();
+         final List<CallTreeNode> currentCommitNodeList = new LinkedList<>();
          final List<CallTreeNode> currentPredecessorNodeList = new LinkedList<>();
 
-         new LevelManager(currentVersionNodeList, currentPredecessorNodeList, reader).goToLastMeasuredLevel(data.getNodes());
+         new LevelManager(currentCommitNodeList, currentPredecessorNodeList, reader).goToLastMeasuredLevel(data.getNodes());
 
-         tester.isLevelDifferent(currentPredecessorNodeList, currentVersionNodeList);
+         tester.isLevelDifferent(currentPredecessorNodeList, currentCommitNodeList);
       }
 
       return null;

@@ -59,7 +59,7 @@ public class SearchCauseStarter extends MeasureStarter {
          throw new RuntimeException("Test needs to be defined!");
       }
 
-      initVersionProcessor();
+      initCommitProcessor();
 
       if (commit == null) {
          commit = executionData.getCommits().keySet().iterator().next();

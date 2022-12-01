@@ -28,7 +28,7 @@ public class VersionRunStarter extends CommitProcessor {
    }
 
    @Override
-   protected void processVersion(final String version, final CommitStaticSelection versioninfo) {
+   protected void processCommit(final String version, final CommitStaticSelection versioninfo) {
       GitUtils.goToCommit(version, folders.getProjectFolder());
       try {
          final Process p = Runtime.getRuntime().exec("mvn clean package -DskipTests=true", null, folders.getProjectFolder());

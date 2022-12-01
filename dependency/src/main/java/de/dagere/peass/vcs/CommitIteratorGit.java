@@ -136,13 +136,13 @@ public class CommitIteratorGit extends CommitIterator {
    }
 
    @Override
-   public boolean isPredecessor(final String lastRunningVersion) {
-      return commits.get(commitIndex - 1).equals(lastRunningVersion);
+   public boolean isPredecessor(final String lastRunningCommit) {
+      return commits.get(commitIndex - 1).equals(lastRunningCommit);
    }
    
    @Override
-   public CommitDiff getChangedClasses(final File projectFolder, final List<File> genericModules, final String lastVersion, final ExecutionConfig config) {
-      CommitDiff diff = GitUtils.getChangedClasses(projectFolder, genericModules, lastVersion, config);
+   public CommitDiff getChangedClasses(final File projectFolder, final List<File> genericModules, final String lastCommit, final ExecutionConfig config) {
+      CommitDiff diff = GitUtils.getChangedClasses(projectFolder, genericModules, lastCommit, config);
       return diff;
    }
    

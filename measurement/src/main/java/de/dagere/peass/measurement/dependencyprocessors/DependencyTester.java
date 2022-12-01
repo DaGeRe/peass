@@ -207,7 +207,7 @@ public class DependencyTester implements KiekerResultHandler {
 
    }
 
-   public void setVersions(final String commit, final String commitOld) {
+   public void setCommits(final String commit, final String commitOld) {
       configuration.getFixedCommitConfig().setCommit(commit);
       configuration.getFixedCommitConfig().setCommitOld(commitOld);
    }

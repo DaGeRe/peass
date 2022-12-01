@@ -90,24 +90,24 @@ public abstract class CommitProcessor implements Callable<Void> {
 
    public void processCommandline() {
       LOG.debug("Processing initial");
-      processInitialVersion(staticTestSelection.getInitialcommit());
+      processInitialCommit(staticTestSelection.getInitialcommit());
 
       if (threads != 1) {
          throw new RuntimeException("Parallel processing is not possible or implemented; do not set threads!");
       } else {
          for (final Map.Entry<String, CommitStaticSelection> version : staticTestSelection.getCommits().entrySet()) {
             LOG.debug("Processing {}", version.getKey());
-            processVersion(version.getKey(), version.getValue());
+            processCommit(version.getKey(), version.getValue());
          }
       }
       postEvaluate();
    }
 
-   protected void processInitialVersion(final InitialCommit version) {
+   protected void processInitialCommit(final InitialCommit version) {
 
    }
 
-   protected abstract void processVersion(String key, CommitStaticSelection version);
+   protected abstract void processCommit(String key, CommitStaticSelection version);
 
    protected void postEvaluate() {
 
@@ -115,11 +115,11 @@ public abstract class CommitProcessor implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      initVersionProcessor();
+      initCommitProcessor();
       return null;
    }
 
-   protected void initVersionProcessor() throws IOException, JsonParseException, JsonMappingException {
+   protected void initCommitProcessor() throws IOException, JsonParseException, JsonMappingException {
       if (executionMixin != null) {
          startcommit = executionMixin.getStartcommit();
          endcommit = executionMixin.getEndcommit();

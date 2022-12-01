@@ -276,11 +276,11 @@ public final class GitUtils {
       }
    }
 
-   public static CommitDiff getChangedClasses(final File projectFolder, final List<File> modules, final String lastVersion, final ExecutionConfig config) {
+   public static CommitDiff getChangedClasses(final File projectFolder, final List<File> modules, final String lastCommit, final ExecutionConfig config) {
       try {
          final Process process;
-         if (lastVersion != null) {
-            process = Runtime.getRuntime().exec("git diff --name-only " + lastVersion + " HEAD", null, projectFolder);
+         if (lastCommit != null) {
+            process = Runtime.getRuntime().exec("git diff --name-only " + lastCommit + " HEAD", null, projectFolder);
          } else {
             process = Runtime.getRuntime().exec("git diff --name-only HEAD^ HEAD", null, projectFolder);
          }
