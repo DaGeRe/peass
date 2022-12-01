@@ -36,7 +36,6 @@ public class SourceWriter {
    }
 
    public void writeSources(final GraphNode root) throws IOException {
-
       SourceReader reader = new SourceReader(manager, mainCommit);
       reader.readSources(root);
 
@@ -45,7 +44,8 @@ public class SourceWriter {
       fileWriter.write("\"old\":\n{\n ");
       SourceReader sourceReader = (SourceReader) reader;
       for (final Map.Entry<String, String> sources : sourceReader.getNameSourceOld().entrySet()) {
-         fileWriter.write("\"" + sources.getKey() + "\":\n `" + sources.getValue() + "`,");
+         String printableJS = sources.getValue().replace("${", "\\${");
+         fileWriter.write("\"" + sources.getKey() + "\":\n `" + printableJS + "`,");
       }
       fileWriter.write("},\n");
 
@@ -56,7 +56,8 @@ public class SourceWriter {
       fileWriter.write("var source = {");
       fileWriter.write("\"current\":\n{\n ");
       for (final Map.Entry<String, String> sources : reader.getNameSourceCurrent().entrySet()) {
-         fileWriter.write("\"" + sources.getKey() + "\":\n `" + sources.getValue() + "`,");
+         String printableJS = sources.getValue().replace("${", "\\${");
+         fileWriter.write("\"" + sources.getKey() + "\":\n `" + printableJS + "`,");
       }
       fileWriter.write("},\n");
    }
