@@ -199,7 +199,35 @@ public class ClazzFileFinder {
             potentialFile = candidate;
          }
       }
+
+      if (potentialFile == null) {
+         String pureName = clazzFileName.substring(0, clazzFileName.indexOf('.'));
+         potentialFile = searchNonPublicClass(sourceParentFolder, pureName);
+      }
+
       return potentialFile;
+   }
+
+   private File searchNonPublicClass(final File sourceParentFolder, String pureName) {
+      for (final String potentialFolder : executionConfig.getAllClazzFolders()) {
+         String packageName = pureName.substring(0, pureName.lastIndexOf('/'));
+         String clazzName = pureName.substring(pureName.indexOf('/') + 1);
+         File packageFolder = new File(sourceParentFolder, potentialFolder + File.separator + packageName);
+         if (packageFolder.exists()) {
+            for (File containingFileCandidate : packageFolder.listFiles()) {
+               try {
+                  CompilationUnit cu = JavaParserProvider.parse(containingFileCandidate);
+                  List<String> clazzes = ClazzFinder.getClazzes(cu);
+                  if (clazzes.contains(clazzName)) {
+                     return containingFileCandidate;
+                  }
+               } catch (FileNotFoundException e) {
+                  e.printStackTrace();
+               }
+            }
+         }
+      }
+      return null;
    }
 
    public File getSourceFile(final File folder, final ChangedEntity clazz) {
@@ -212,7 +240,7 @@ public class ClazzFileFinder {
       } else {
          moduleFolder = folder;
       }
-      
+
       // A module might be removed, than the file can just be considered not existing in the current version
       if (moduleFolder.exists()) {
          return getClazzFile(moduleFolder, sourceContainingClazz);

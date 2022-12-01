@@ -34,3 +34,15 @@ public class TestMe1 extends TestCase{
 		System.out.println("Just a teardown.");
 	}	
 }
+
+class LocalClass {
+  private int i;
+}
+
+enum LocalEnum {
+
+}
+
+interface LocalInterface { 
+
+}
