@@ -34,8 +34,28 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    public void prepareKoPeMeExecution(final File logFile) {
       super.prepareKoPeMeExecution(logFile);
 
-      adbPush();
+      updateAndroidManifest();
+      adbPush();      
       compileSources();
+   }
+
+   private void updateAndroidManifest() {
+      File projectFolder = folders.getProjectFolder();
+
+      String relativeManifestFilePath = testTransformer.getConfig().getExecutionConfig().getAndroidManifest();
+
+      if (relativeManifestFilePath != null) {
+         File manifestFile = new File(projectFolder, relativeManifestFilePath);
+
+         try {
+            ManifestEditor manifestEditor = new ManifestEditor(manifestFile);
+            manifestEditor.updateForExternalStorageReadWrite();
+         } catch (Exception ex) {
+            ex.printStackTrace();
+         }
+      } else {
+         LOG.error("Android manifest file path is not specified. Use --androidManifest switch to specify the path.");
+      }
    }
 
    private void compileSources() {

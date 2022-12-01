@@ -113,6 +113,9 @@ public class ExecutionConfigMixin {
          "--useAnbox" }, description = "Activates usage of Anbox measurement features (currently experimental)")
    protected boolean useAnbox = false;
 
+   @Option(names = { "-androidManifest", "--androidManifest" }, description = "Sets the relative path to the main Android manifest file (e.g. app/src/main/AndroidManifest.xml)")
+   protected String androidManifest;
+
    @Option(names = { "-increaseVariableValues",
          "--increaseVariableValues" }, split = ";", description = "List of variables and values to be modified (default: empty). Example: \"package.Clazz.variable:value;otherPackage.otherClazz.otherVariable:otherValue\"")
    protected String[] increaseVariableValues;
@@ -349,6 +352,14 @@ public class ExecutionConfigMixin {
       this.useAnbox = useAnbox;
    }
 
+   public String getAndroidManifest() {
+      return androidManifest;
+   }
+
+   public void setAndroidManifest(String androidManifest) {
+      this.androidManifest = androidManifest;
+   }
+
    public String[] getIncreaseVariableValues() {
       return increaseVariableValues;
    }
@@ -442,6 +453,7 @@ public class ExecutionConfigMixin {
       }
 
       config.setUseAnbox(useAnbox);
+      config.setAndroidManifest(androidManifest);
 
       if (getIncreaseVariableValues() != null) {
          for (String variable : getIncreaseVariableValues()) {
