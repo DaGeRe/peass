@@ -120,8 +120,10 @@ public class VisualizeRCAStarter implements Callable<Void> {
 
    private void visualizeSingleTree(final RCAGenerator rcaGenerator, final File treeFolder, String commit) throws IOException, StreamReadException, DatabindException {
       final File potentialCacheFile = new File(treeFolder, commit);
-      final CallTreeNode rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
-      rcaGenerator.createSingleVisualization(commit, rootPredecessor);
+      if (potentialCacheFile.exists()) {
+         final CallTreeNode rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
+         rcaGenerator.createSingleVisualization(commit, rootPredecessor);
+      }
    }
 
    private CauseSearchFolders getCauseSearchFolders(final File treeFile) {
