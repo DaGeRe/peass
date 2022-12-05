@@ -29,17 +29,19 @@ public class JavascriptDataWriter {
    public void writeJS(final CauseSearchData data, final File output, final String jsName, final GraphNode converted) throws IOException, JsonProcessingException {
       File outputJS = new File(output.getParentFile(), jsName);
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputJS))) {
+         String commit = data.getMeasurementConfig().getFixedCommitConfig().getCommit();
+         fileWriter.write("if (typeof jenkins !== 'undefined') {} else {");
          fileWriter.write("if (document.getElementById('testcaseDiv') != null) { \n   document.getElementById('testcaseDiv').innerHTML=\"Commit: <a href='"
-               + "javascript:fallbackCopyTextToClipboard(\\\"-commit " + data.getMeasurementConfig().getFixedCommitConfig().getCommit() +
+               + "javascript:fallbackCopyTextToClipboard(\\\"-commit " + commit +
                " -test " + data.getTestcase() + "\\\")'>"
-               + data.getMeasurementConfig().getFixedCommitConfig().getCommit() + "</a><br>");
+               + commit + "</a> Comitter: " + "<br>");
          fileWriter.write("Test Case: " + data.getTestcase() + "<br>\";\n");
          writeDashboardLink(data, fileWriter);
-         fileWriter.write("}\n");
+         fileWriter.write("  }\n}\n");
          fileWriter.write("\n");
 
          writeSources(data, fileWriter);
-         
+
          writeColoredTree(fileWriter);
 
          JavascriptFunctions.writeTreeDivSizes(fileWriter, root);

@@ -24,4 +24,13 @@ public class CommitList {
          }
       }
    }
+
+   public GitCommit getCommit(String commitName) {
+      for (GitCommit commit : commits) {
+         if (commit.getTag().equals(commitName)) {
+            return commit;
+         }
+      }
+      return null;
+   }
 }
