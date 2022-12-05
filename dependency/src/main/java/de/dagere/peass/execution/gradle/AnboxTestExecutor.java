@@ -13,11 +13,15 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.utils.StreamGobbler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class AnboxTestExecutor extends GradleTestExecutor {
 
    public static final String ANBOX_EMULATOR_FOLDER_BASE = "/storage/emulated/0/Documents/peass/";
    public static final String ANBOX_EMULATOR_FOLDER_TEMP_RESULT = ANBOX_EMULATOR_FOLDER_BASE + "measurementsTemp/";
+   public static final String ANDROID_RESOURCES_FOLDER = "app/src/main/resources/";
+   public static final String ANDROID_KOPEME_CONFIGURATION = "kopeme_config.json";
 
    private static final Logger LOG = LogManager.getLogger(AnboxTestExecutor.class);
 
@@ -34,9 +38,27 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    public void prepareKoPeMeExecution(final File logFile) {
       super.prepareKoPeMeExecution(logFile);
 
+      writeAndroidConfigJson();
       updateAndroidManifest();
       adbPush();      
       compileSources();
+   }
+
+   /**
+    * Writes Android configuration file inside "app/src/main/resources" to pass values for KoPeMe inside the emulator.
+    */
+   private void writeAndroidConfigJson() {
+      ObjectMapper mapper = new ObjectMapper();
+      ObjectNode androidConfig = mapper.createObjectNode();
+      androidConfig.put("KOPEME_HOME", ANBOX_EMULATOR_FOLDER_TEMP_RESULT);
+      // TODO: Change the hard coded module name 'app'.
+      androidConfig.put("kopeme.workingdir", ANBOX_EMULATOR_FOLDER_BASE + "app");
+      File kopemeConfig = new File(folders.getProjectFolder() + "/" + ANDROID_RESOURCES_FOLDER + ANDROID_KOPEME_CONFIGURATION);
+      try {
+         mapper.writerWithDefaultPrettyPrinter().writeValue(kopemeConfig, androidConfig);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    private void updateAndroidManifest() {
