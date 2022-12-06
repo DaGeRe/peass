@@ -101,7 +101,6 @@ public class VisualizeRCAStarter implements Callable<Void> {
       final CauseSearchFolders folders = getCauseSearchFolders(treeFile);
 
       final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, commitResultFolder, folders);
-      final File propertyFolder = getPropertyFolder();
       rcaGenerator.setPropertyFolder(propertyFolder);
 
       final CauseSearchData data = rcaGenerator.getData();
