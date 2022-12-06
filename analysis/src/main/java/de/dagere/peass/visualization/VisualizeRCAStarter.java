@@ -47,9 +47,6 @@ public class VisualizeRCAStarter implements Callable<Void> {
    @Option(names = { "-out", "--out" }, description = "Path for storage of results, default results", required = false)
    protected File resultFolder = new File("results");
 
-   // TODO Fix dirty hack
-   final String projectName = "commons-fileupload";
-
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final CommandLine commandLine = new CommandLine(new VisualizeRCAStarter());
       System.exit(commandLine.execute(args));
@@ -104,7 +101,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
       final CauseSearchFolders folders = getCauseSearchFolders(treeFile);
 
       final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, commitResultFolder, folders);
-      final File propertyFolder = getPropertyFolder(projectName);
+      final File propertyFolder = getPropertyFolder();
       rcaGenerator.setPropertyFolder(propertyFolder);
 
       final CauseSearchData data = rcaGenerator.getData();
@@ -137,19 +134,6 @@ public class VisualizeRCAStarter implements Callable<Void> {
          folders = new CauseSearchFolders(projectFolder);
       }
       return folders;
-   }
-
-   private File getPropertyFolder(final String projectName) {
-      final File generatedPropertyFolder;
-      if (propertyFolder != null) {
-         if (!propertyFolder.exists()) {
-            throw new RuntimeException("Property folder " + propertyFolder + " was defined, but did not exist!");
-         }
-         generatedPropertyFolder = propertyFolder;
-      } else {
-         throw new RuntimeException("Property folder was not defined!");
-      }
-      return generatedPropertyFolder;
    }
 
    public File[] getData() {
