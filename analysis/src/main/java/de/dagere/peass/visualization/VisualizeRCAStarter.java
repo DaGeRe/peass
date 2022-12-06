@@ -46,6 +46,9 @@ public class VisualizeRCAStarter implements Callable<Void> {
 
    @Option(names = { "-out", "--out" }, description = "Path for storage of results, default results", required = false)
    protected File resultFolder = new File("results");
+   
+   @Option(names = { "-commit", "--commit" }, description = "Limit to the given commit", required = false)
+   private String commit;
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final CommandLine commandLine = new CommandLine(new VisualizeRCAStarter());
@@ -141,6 +144,14 @@ public class VisualizeRCAStarter implements Callable<Void> {
 
    public void setData(final File[] data) {
       this.data = data;
+   }
+   
+   public String getCommit() {
+      return commit;
+   }
+   
+   public void setCommit(String commit) {
+      this.commit = commit;
    }
 
    public File getPropertyFolder() {

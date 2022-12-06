@@ -3,6 +3,7 @@ package de.dagere.peass.visualization;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,13 +17,16 @@ import de.dagere.peass.folders.PeassFolders;
 public class RCAFolderSearcher {
 
    private File[] data;
+   private final List<String> commits;
 
-   public RCAFolderSearcher(final File data) {
+   public RCAFolderSearcher(final File data, String... commits) {
       this.data = new File[] { data };
+      this.commits = Arrays.asList(commits);
    }
 
-   public RCAFolderSearcher(final File[] data) {
+   public RCAFolderSearcher(final File[] data, String... commits) {
       this.data = data;
+      this.commits = Arrays.asList(commits);
    }
 
    public List<File> searchPeassFiles() {
@@ -62,6 +66,8 @@ public class RCAFolderSearcher {
             }
          } else if (!source.exists()) {
             throw new RuntimeException("Source " + source + " did not exist");
+         } else if (!source.getName().toLowerCase().endsWith(".json")) {
+            throw new RuntimeException("Source file " + source + " was not a directory, but also no JSON file - not allowed!");
          } else {
             rcaFilesToHandle.add(source);
          }
@@ -103,10 +109,12 @@ public class RCAFolderSearcher {
    private List<File> handleTreeMeasurementResultFolder(final File rcaFolder) {
       List<File> rcaFiles = new LinkedList<>();
       for (final File commitFolder : rcaFolder.listFiles()) {
-         for (final File testcaseFolder : commitFolder.listFiles()) {
-            for (final File treeFile : testcaseFolder.listFiles()) {
-               if (treeFile.getName().endsWith(".json")) {
-                  rcaFiles.add(treeFile);
+         if (commits.size() == 0 || commits.contains(commitFolder.getName())) {
+            for (final File testcaseFolder : commitFolder.listFiles()) {
+               for (final File treeFile : testcaseFolder.listFiles()) {
+                  if (treeFile.getName().endsWith(".json")) {
+                     rcaFiles.add(treeFile);
+                  }
                }
             }
          }
