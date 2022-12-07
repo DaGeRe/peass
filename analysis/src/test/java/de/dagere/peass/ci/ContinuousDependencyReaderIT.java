@@ -51,7 +51,7 @@ public class ContinuousDependencyReaderIT {
    @Order(1)
    @Test
    public void testBasicVersionReading() throws Exception {
-      builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/normal_change"), "test 1");
+      builder.addCommit(new File("../dependency/src/test/resources/dependencyIT/normal_change"), "test 1");
 
       CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
       iterator.goToFirstCommit();
@@ -79,7 +79,7 @@ public class ContinuousDependencyReaderIT {
       final String prevTag = builder.getTags().get(builder.getTags().size() - 1);
       GitUtils.goToCommit(prevTag, TestConstants.CURRENT_FOLDER);
 
-      String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/basic_state"), "test 2");
+      String newVersion = builder.addCommit(new File("../dependency/src/test/resources/dependencyIT/basic_state"), "test 2");
 
       CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
 
@@ -105,7 +105,7 @@ public class ContinuousDependencyReaderIT {
       final String prevTag = builder.getTags().get(builder.getTags().size() - 1);
       GitUtils.goToCommit(prevTag, TestConstants.CURRENT_FOLDER);
 
-      String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/only_comment_change"), "test 2");
+      String newVersion = builder.addCommit(new File("../dependency/src/test/resources/dependencyIT/only_comment_change"), "test 2");
 
       CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
 

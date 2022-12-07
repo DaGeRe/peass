@@ -14,16 +14,16 @@ import org.junit.rules.TemporaryFolder;
 
 import de.dagere.peass.utils.StreamGobbler;
 
-public class TestGitVersionBuilder {
+public class TestGitCommitBuilder {
    
-   private static final Logger LOG = LogManager.getLogger(TestGitVersionBuilder.class);
+   private static final Logger LOG = LogManager.getLogger(TestGitCommitBuilder.class);
 
    @Rule
    public TemporaryFolder folder = new TemporaryFolder();
 
    @Test
    public void testBuilding() throws InterruptedException, IOException {
-      LOG.debug("Starting TestGitVersionBuilder");
+      LOG.debug("Starting TestGitCommitBuilder");
       File tempFolder = folder.newFolder("testproject");
 
       GitProjectBuilder builder = new GitProjectBuilder(tempFolder, new File("src/test/resources/peass-demo/version1"));
@@ -31,7 +31,7 @@ public class TestGitVersionBuilder {
 
       testLogContains(tempFolder, "Initial Commit");
 
-      builder.addVersion(new File("src/test/resources/peass-demo/version2"), "Slower Version");
+      builder.addCommit(new File("src/test/resources/peass-demo/version2"), "Slower Version");
 
       testLogContains(tempFolder, "Initial Commit", "Slower Version");
       

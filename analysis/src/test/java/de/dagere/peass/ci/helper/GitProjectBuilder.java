@@ -23,7 +23,7 @@ public class GitProjectBuilder {
    private final File gitFolder;
    private final List<String> tags = new LinkedList<>();
    
-   public GitProjectBuilder(final File destination, final File firstVersionFolder) throws InterruptedException, IOException {
+   public GitProjectBuilder(final File destination, final File firstCommitFolder) throws InterruptedException, IOException {
       this.gitFolder = destination;
       if (!gitFolder.exists()) {
          gitFolder.mkdirs();
@@ -35,7 +35,7 @@ public class GitProjectBuilder {
       
       configLocalUser(destination);
 
-      addVersion(firstVersionFolder, "Initial Commit");
+      addCommit(firstCommitFolder, "Initial Commit");
    }
 
    private void configLocalUser(final File destination) throws IOException {
@@ -48,13 +48,13 @@ public class GitProjectBuilder {
    }
    
    /**
-    * Adds a version to the project, replacing all contents of the repository with the contents of the given folder
-    * @param version
+    * Adds a commit to the project, replacing all contents of the repository with the contents of the given folder
+    * @param commit
     * @throws IOException 
     * @throws InterruptedException 
     */
-   public String addVersion(final File versionFolder, final String commitMessage) throws IOException, InterruptedException {
-      FileUtils.copyDirectory(versionFolder, gitFolder);
+   public String addCommit(final File commitFolder, final String commitMessage) throws IOException, InterruptedException {
+      FileUtils.copyDirectory(commitFolder, gitFolder);
       
       final Process addProcess = Runtime.getRuntime().exec("git add -A", new String[0], gitFolder);
       String addOutput = StreamGobbler.getFullProcess(addProcess, false);
@@ -70,7 +70,7 @@ public class GitProjectBuilder {
       String headOutput = StreamGobbler.getFullProcess(headProcess, false).replaceAll("\n", "");
       tags.add(headOutput);
       
-      LOG.debug("HEAD version: {}", headOutput);
+      LOG.debug("HEAD commit: {}", headOutput);
       
       return headOutput;
    }

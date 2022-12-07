@@ -57,7 +57,7 @@ public class DependenciesOnlyStartversionIT {
    @Order(1)
    @Test
    public void testBasicVersionReading() throws Exception {
-      builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/changed_class"), "test 1");
+      builder.addCommit(new File("../dependency/src/test/resources/dependencyIT/changed_class"), "test 1");
 
       CommitIteratorGit iterator = new CommitIteratorGit(TestConstants.CURRENT_FOLDER);
       iterator.goToFirstCommit();
