@@ -129,7 +129,7 @@ public class DependencyManager extends KiekerResultManager {
    private List<String> getIncludedModules() throws IOException {
       List<String> includedModules;
       if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
-         includedModules = MavenPomUtil.getDependentModules(folders.getProjectFolder(), testTransformer.getConfig().getExecutionConfig().getPl());
+         includedModules = MavenPomUtil.getDependentModules(folders.getProjectFolder(), testTransformer.getConfig().getExecutionConfig().getPl(), executor.getEnv());
          LOG.debug("Included modules: {}", includedModules);
       } else {
          includedModules = null;

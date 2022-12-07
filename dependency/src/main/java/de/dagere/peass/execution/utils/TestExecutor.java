@@ -226,4 +226,8 @@ public abstract class TestExecutor {
    public TestTransformer getTestTransformer() {
       return testTransformer;
    }
+
+   public EnvironmentVariables getEnv() {
+      return env;
+   }
 }
