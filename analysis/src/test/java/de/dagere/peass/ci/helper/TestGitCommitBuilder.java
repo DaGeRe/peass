@@ -31,9 +31,9 @@ public class TestGitCommitBuilder {
 
       testLogContains(tempFolder, "Initial Commit");
 
-      builder.addCommit(new File("src/test/resources/peass-demo/version2"), "Slower Version");
+      builder.addCommit(new File("src/test/resources/peass-demo/version2"), "Slower Commit");
 
-      testLogContains(tempFolder, "Initial Commit", "Slower Version");
+      testLogContains(tempFolder, "Initial Commit", "Slower Commit");
       
       Assert.assertEquals(2, builder.getTags().size());
       MatcherAssert.assertThat(builder.getTags().get(0), Matchers.not(Matchers.is(builder.getTags().get(1))));
