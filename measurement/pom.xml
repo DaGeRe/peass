@@ -8,7 +8,7 @@
   <parent>
     <groupId>de.dagere.peass</groupId>
     <artifactId>peass-parent</artifactId>
-    <version>0.3.4-SNAPSHOT</version>
+    <version>0.3.4</version>
   </parent>
 
   <build>
