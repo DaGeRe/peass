@@ -105,7 +105,7 @@
     <dependency>
       <groupId>de.dagere.peass</groupId>
       <artifactId>peass-jmh</artifactId>
-      <version>0.3.1-SNAPSHOT</version>
+      <version>0.3.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>de.dagere.peass</groupId>
