@@ -33,6 +33,24 @@ public class EnvironmentVariables implements Serializable {
       return properties;
    }
 
+   public String fetchMavenCall(File file) {
+      if (file != null) {
+         if (!isWindows()) {
+            File potentialWrapper = new File(file, "mvnw");
+            if (potentialWrapper.exists() && potentialWrapper.canExecute()) {
+               return "./mvnw";
+            }
+         } else {
+            File potentialWrapper = new File(file, "mvnw.cmd");
+            if (potentialWrapper.exists()) {
+               return "mvnw.cmd";
+            }
+         }
+      }
+
+      return fetchMavenCall();
+   }
+
    public String fetchMavenCall() {
       String mvnCall;
       if (environmentVariables.containsKey("MVN_CMD")) {
