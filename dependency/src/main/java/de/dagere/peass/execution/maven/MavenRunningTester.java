@@ -23,7 +23,6 @@ public class MavenRunningTester {
    private final EnvironmentVariables env;
    private final MeasurementConfig measurementConfig;
    private final ProjectModules modules;
-   private boolean buildfileExists;
 
    public MavenRunningTester(final PeassFolders folders, final MeasurementConfig measurementConfig, final EnvironmentVariables env, final ProjectModules modules) {
       this.folders = folders;
