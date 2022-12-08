@@ -43,7 +43,8 @@ public class MavenRunningTester {
                new MavenUpdater(folders, modules, measurementConfig).updateJava();
                String goal = getGoal();
                MavenPomUtil.cleanType(potentialPom);
-               String[] basicParameters = new String[] { env.fetchMavenCall(),
+               String mvnCall = env.fetchMavenCall(folders.getProjectFolder());
+               String[] basicParameters = new String[] { mvnCall,
                      "--batch-mode",
                      "clean", goal,
                      "-DskipTests",

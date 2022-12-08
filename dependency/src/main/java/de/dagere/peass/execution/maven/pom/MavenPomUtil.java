@@ -162,7 +162,7 @@ public class MavenPomUtil {
     * @throws IOException
     */
    public static List<String> getDependentModules(final File projectFolder, final String pl, EnvironmentVariables env) throws IOException {
-      ProcessBuilder pb = new ProcessBuilder(env.fetchMavenCall(),
+      ProcessBuilder pb = new ProcessBuilder(env.fetchMavenCall(projectFolder),
             "-B", "pre-clean", "-pl", pl, "-am");
       pb.directory(projectFolder);
       String output = StreamGobbler.getFullProcess(pb.start(), false);

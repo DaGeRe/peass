@@ -65,7 +65,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
 
    protected Process buildMavenProcess(final File logFile, TestMethodCall test, final String... commandLineAddition) throws IOException, InterruptedException {
       final String testGoal = getTestGoal();
-      String mvnCall = env.fetchMavenCall();
+      String mvnCall = env.fetchMavenCall(getProjectFolder());
       final String[] originals = new String[] { mvnCall,
             "--batch-mode",
             testGoal,

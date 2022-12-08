@@ -33,7 +33,8 @@ public class MavenCleaner {
    }
 
    private ProcessBuilder buildProcess(final File logFile) {
-      final String[] originalsClean = new String[] { env.fetchMavenCall(), "--batch-mode", "clean" };
+      String mvnCall = env.fetchMavenCall(folders.getProjectFolder());
+      final String[] originalsClean = new String[] { mvnCall, "--batch-mode", "clean" };
       final ProcessBuilder pbClean = new ProcessBuilder(originalsClean);
       pbClean.directory(folders.getProjectFolder());
       if (logFile != null) {
