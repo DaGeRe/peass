@@ -43,7 +43,7 @@ public class EnvironmentVariables implements Serializable {
          } else {
             File potentialWrapper = new File(projectFolder, "mvnw.cmd");
             if (potentialWrapper.exists()) {
-               return "mvnw.cmd";
+               return potentialWrapper.getAbsolutePath();
             }
          }
       }

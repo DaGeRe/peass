@@ -2,6 +2,8 @@ package de.dagere.peass.execution.util;
 
 import java.io.File;
 
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +22,7 @@ public class TestWrapperExecution {
       if (EnvironmentVariables.isLinux()) {
          Assert.assertEquals("./mvnw", mvnCall);
       } else {
-         Assert.assertEquals("mvnw.cmd", mvnCall);
+         MatcherAssert.assertThat(mvnCall, Matchers.endsWith("mvnw.cmd"));
       }
    }
 
