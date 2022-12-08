@@ -51,7 +51,7 @@ public class EnvironmentVariables implements Serializable {
       return fetchMavenCall();
    }
 
-   public String fetchMavenCall() {
+   private String fetchMavenCall() {
       String mvnCall;
       if (environmentVariables.containsKey("MVN_CMD")) {
          mvnCall = environmentVariables.get("MVN_CMD");

@@ -42,7 +42,7 @@ public class JmhTestExecutor extends TestExecutor {
       AllModulePomPreparer allModulePomPreparer = new AllModulePomPreparer(testTransformer, getModules(), folders);
       allModulePomPreparer.preparePom();
 
-      String[] basicParameters = new String[] { env.fetchMavenCall(),
+      String[] basicParameters = new String[] { env.fetchMavenCall(folders.getProjectFolder()),
             "--batch-mode",
             "clean", "package",
             "-DskipTests",
@@ -151,7 +151,7 @@ public class JmhTestExecutor extends TestExecutor {
 
    @Override
    public boolean isCommitRunning(final String version) {
-      MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), getModules());
+      MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, testTransformer.getConfig(), env, getModules());
       boolean isRunning = mavenRunningTester.isCommitRunning(version);
       return isRunning;
    }
