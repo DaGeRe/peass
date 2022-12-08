@@ -1,4 +1,4 @@
-package de.dagere.peass.execution.processutils;
+package de.dagere.peass.execution.maven;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.folders.PeassFolders;
 
-public class TestProcessSuccessTester {
+public class TestMavenRunningTester {
 
    @BeforeEach
    public void clearFolder() {
