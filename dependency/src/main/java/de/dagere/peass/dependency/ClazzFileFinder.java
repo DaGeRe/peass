@@ -1,6 +1,7 @@
 package de.dagere.peass.dependency;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
@@ -214,12 +215,14 @@ public class ClazzFileFinder {
          String clazzName = pureName.substring(pureName.indexOf(File.separator) + 1);
          File packageFolder = new File(sourceParentFolder, potentialFolder + File.separator + packageName);
          if (packageFolder.exists()) {
-            for (File containingFileCandidate : packageFolder.listFiles()) {
+            for (File containingFileCandidate : packageFolder.listFiles((FileFilter) new WildcardFileFilter("*.java"))) {
                try {
-                  CompilationUnit cu = JavaParserProvider.parse(containingFileCandidate);
-                  List<String> clazzes = ClazzFinder.getClazzes(cu);
-                  if (clazzes.contains(clazzName)) {
-                     return containingFileCandidate;
+                  if (containingFileCandidate.isFile()) {
+                     CompilationUnit cu = JavaParserProvider.parse(containingFileCandidate);
+                     List<String> clazzes = ClazzFinder.getClazzes(cu);
+                     if (clazzes.contains(clazzName)) {
+                        return containingFileCandidate;
+                     }
                   }
                } catch (FileNotFoundException e) {
                   e.printStackTrace();
