@@ -637,8 +637,8 @@ public class JUnitTestTransformer implements TestTransformer {
          } else {
             newMethod = clazz.addMethod("_peass_initializeMockito", Keyword.PUBLIC);
          }
-         NormalAnnotationExpr beforeWithMeasurementAnnotation = newMethod.addAndGetAnnotation("de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement");
-         beforeWithMeasurementAnnotation.addPair("priority", Integer.toString(5));
+         NormalAnnotationExpr afterWithMeasurementAnnotation = newMethod.addAndGetAnnotation("de.dagere.kopeme.junit.rule.annotations.AfterWithMeasurement");
+         afterWithMeasurementAnnotation.addPair("priority", Integer.toString(5));
          newMethod.setBody(new BlockStmt());
          newMethod.getBody().get().addAndGetStatement(new MethodCallExpr("org.mockito.Mockito.clearAllCaches"));
       }
