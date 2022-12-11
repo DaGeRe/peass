@@ -74,7 +74,7 @@ public final class GitUtils {
             VersionComparator.setVersions(commits);
          }
       }
-      if (repoFound == false && System.getenv(Constants.PEASS_REPOS) != null) {
+      if (!repoFound && System.getenv(Constants.PEASS_REPOS) != null) {
          final String repofolderName = System.getenv(Constants.PEASS_REPOS);
          File repoFolder = new File(repofolderName);
          File dependencyFolder = new File(repoFolder, "dependencies-final");
@@ -100,13 +100,13 @@ public final class GitUtils {
       return comparator;
    }
 
-   public static void clone(final PeassFolders folders, final File projectFolderTemp, final String gitCryptKey) throws InterruptedException, IOException {
+   public static void clone(final PeassFolders folders, final File projectFolderTemp, final String gitCryptKey) throws IOException {
       // TODO Branches klonen
       final File projectFolder = folders.getProjectFolder();
       clone(projectFolderTemp, projectFolder, gitCryptKey);
    }
 
-   private static void clone(final File projectFolderDest, final File projectFolderSource, final String gitCryptKey) throws InterruptedException, IOException {
+   private static void clone(final File projectFolderDest, final File projectFolderSource, final String gitCryptKey) throws IOException {
       if (projectFolderDest.exists()) {
          throw new RuntimeException("Can not clone to existing folder: " + projectFolderDest.getAbsolutePath());
       }
@@ -122,7 +122,7 @@ public final class GitUtils {
    public static void downloadProject(final String url, final File folder) {
       try {
          ProcessBuilder pb = new ProcessBuilder("git", "clone", url, folder.getAbsolutePath());
-         LOG.debug("Command: " + pb.command());
+         LOG.debug("Command: {}", pb.command());
          final Process p = pb.start();
          StreamGobbler.showFullProcess(p);
       } catch (final IOException e) {
@@ -131,19 +131,19 @@ public final class GitUtils {
    }
 
    /**
-    * Removes all commits from a list that are before the given start version or after the given end version.
+    * Removes all commits from a list that are before the given start commit or after the given end commit.
     * 
-    * @param startcommit Version to start
-    * @param endcommit Version to end
+    * @param startcommit Commit to start
+    * @param endcommit Commit to end
     * @param commits List of commits for filtering, sorted from older to newer
     */
    public static void filterList(final String startcommit, final String endcommit, final List<String> commits) {
       LOG.info("Count of Commits: {}", commits.size());
-      boolean beforeStart = startcommit == null ? false : true;
+      boolean beforeStart = startcommit != null;
       boolean afterEnd = false;
       final List<String> notRelevantCommits = new LinkedList<>();
       for (final String commit : commits) {
-         LOG.debug("Processing " + commit + " " + beforeStart + " " + afterEnd);
+         LOG.debug("Processing {} {} {}", commit, beforeStart, afterEnd);
          if (startcommit != null && commit.startsWith(startcommit)) {
             beforeStart = false;
          }
@@ -152,7 +152,7 @@ public final class GitUtils {
          }
          if (endcommit != null && commit.startsWith(endcommit)) {
             afterEnd = true;
-            if (beforeStart == true) {
+            if (beforeStart) {
                boolean startCommitExists = commits.stream().anyMatch(potentialStart -> potentialStart.startsWith(startcommit));
                if (startCommitExists) {
                   throw new RuntimeException("Startcommit " + startcommit + " after endcommit " + endcommit);
@@ -162,7 +162,7 @@ public final class GitUtils {
             }
          }
       }
-      LOG.debug("Removing: " + notRelevantCommits.size());
+      LOG.debug("Removing: {}", notRelevantCommits.size());
       commits.removeAll(notRelevantCommits);
    }
 
@@ -369,7 +369,7 @@ public final class GitUtils {
 
    public static void pull(final File projectFolder) {
       synchronized (projectFolder) {
-         LOG.debug("Pulling", projectFolder.getAbsolutePath());
+         LOG.debug("Pulling {}", projectFolder.getAbsolutePath());
          try {
             Process pullProcess = Runtime.getRuntime().exec("git pull origin HEAD", new String[0], projectFolder);
             final String out = StreamGobbler.getFullProcess(pullProcess, false);
@@ -469,7 +469,7 @@ public final class GitUtils {
       return null;
    }
 
-   public synchronized static String getPrevious(final String gitCommit, final File projectFolder) {
+   public static synchronized String getPrevious(final String gitCommit, final File projectFolder) {
       return getName(gitCommit + "~1", projectFolder);
    }
 
