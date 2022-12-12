@@ -201,6 +201,7 @@ public class GradleBuildfileEditor {
                      "        exclude group: '" + "net.kieker-monitoring" + "', module: '" + "kieker'",
                      "        exclude group: '" + "org.hamcrest" + "', module: '" + "hamcrest'",
                      "        exclude group: '" + "org.aspectj" + "', module: '" + "aspectjrt'",
+                     "        exclude group: '" + "org.aspectj" + "', module: '" + "aspectjweaver'",
                      "        exclude group: '" + "org.apache.logging.log4j" + "', module: '" + "log4j-core'",
                      "    }",
                };
