@@ -68,6 +68,9 @@ public class ExecutionConfig implements Serializable {
    private String testExecutor = DEFAULT_TEST_EXECUTOR;
    private String gitCryptKey;
    private boolean useAnbox = false;
+   private String androidCompileSdkVersion;
+   private String androidMinSdkVersion;
+   private String androidTargetSdkVersion;
    private String androidManifest;
    private List<String> androidGradleTasks = new LinkedList<>();
 
@@ -125,6 +128,9 @@ public class ExecutionConfig implements Serializable {
       this.testClazzFolders = other.testClazzFolders;
 
       this.useAnbox = other.useAnbox;
+      this.androidCompileSdkVersion = other.androidCompileSdkVersion;
+      this.androidMinSdkVersion = other.androidMinSdkVersion;
+      this.androidTargetSdkVersion = other.androidTargetSdkVersion;
       this.androidManifest = other.androidManifest;
       this.androidGradleTasks = other.androidGradleTasks;
 
@@ -444,6 +450,33 @@ public class ExecutionConfig implements Serializable {
    @JsonInclude(value = JsonInclude.Include.NON_DEFAULT)
    public void setUseAnbox(boolean useAnbox) {
       this.useAnbox = useAnbox;
+   }
+
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   public String getAndroidCompileSdkVersion() {
+      return androidCompileSdkVersion;
+   }
+
+   public void setAndroidCompileSdkVersion(String androidCompileSdkVersion) {
+      this.androidCompileSdkVersion = androidCompileSdkVersion;
+   }
+   
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   public String getAndroidMinSdkVersion() {
+      return androidMinSdkVersion;
+   }
+
+   public void setAndroidMinSdkVersion(String androidMinSdkVersion) {
+      this.androidMinSdkVersion = androidMinSdkVersion;
+   }
+   
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   public String getAndroidTargetSdkVersion() {
+      return androidTargetSdkVersion;
+   }
+   
+   public void setAndroidTargetSdkVersion(String androidTargetSdkVersion) {
+      this.androidTargetSdkVersion = androidTargetSdkVersion;
    }
 
    @JsonInclude(JsonInclude.Include.NON_NULL)

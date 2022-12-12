@@ -113,6 +113,15 @@ public class ExecutionConfigMixin {
          "--useAnbox" }, description = "Activates usage of Anbox measurement features (currently experimental)")
    protected boolean useAnbox = false;
 
+   @Option(names = { "-androidCompileSdkVersion", "--androidCompileSdkVersion" }, description = "Overrides compileSdkVersion specidifed in gradle file")
+   protected String androidCompileSdkVersion;
+
+   @Option(names = { "-androidMinSdkVersion", "--androidMinSdkVersion" }, description = "Overrides minSdkVersion specidifed in gradle file")
+   protected String androidMinSdkVersion;
+
+   @Option(names = { "-androidTargetSdkVersion", "--androidTargetSdkVersion" }, description = "Overrides targetSdkVersion specidifed in gradle file")
+   protected String androidTargetSdkVersion;
+
    @Option(names = { "-androidManifest", "--androidManifest" }, description = "Sets the relative path to the main Android manifest file (e.g. app/src/main/AndroidManifest.xml)")
    protected String androidManifest;
 
@@ -356,6 +365,30 @@ public class ExecutionConfigMixin {
       this.useAnbox = useAnbox;
    }
 
+   public String getAndroidCompileSdkVersion() {
+      return androidCompileSdkVersion;
+   }
+
+   public void setAndroidCompileSdkVersion(String androidCompileSdkVersion) {
+      this.androidCompileSdkVersion = androidCompileSdkVersion;
+   }
+
+   public String getAndroidMinSdkVersion() {
+      return androidMinSdkVersion;
+   }
+
+   public void setAndroidMinSdkVersion(String androidMinSdkVersion) {
+      this.androidMinSdkVersion = androidMinSdkVersion;
+   }
+
+   public String getAndroidTargetSdkVersion() {
+      return androidTargetSdkVersion;
+   }
+
+   public void setAndroidTargetSdkVersion(String androidTargetSdkVersion) {
+      this.androidTargetSdkVersion = androidTargetSdkVersion;
+   }
+
    public String getAndroidManifest() {
       return androidManifest;
    }
@@ -465,6 +498,9 @@ public class ExecutionConfigMixin {
       }
 
       config.setUseAnbox(useAnbox);
+      config.setAndroidCompileSdkVersion(androidCompileSdkVersion);
+      config.setAndroidMinSdkVersion(androidMinSdkVersion);
+      config.setAndroidTargetSdkVersion(androidTargetSdkVersion);
       config.setAndroidManifest(androidManifest);
 
       if (getAndroidGradleTasks() != null) {

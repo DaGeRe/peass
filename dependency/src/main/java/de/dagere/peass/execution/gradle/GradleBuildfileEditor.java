@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -94,30 +95,41 @@ public class GradleBuildfileEditor {
          LOG.info("Did not find spring boot");
       }
 
-      if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()){
-         final String COMPILE_SDK_VERSION = "    compileSdkVersion 29";
-         final String MIN_SDK_VERSION     = "        minSdkVersion 26";
-         final String TARGET_SDK_VERSION  = "        targetSdkVersion 29";
-         final String MULTIDEX_ENABLED    = "        multiDexEnabled = true";
+      if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()) {
+         final String COMPILE_SDK_VERSION = "    compileSdkVersion ";
+         final String MIN_SDK_VERSION     = "        minSdkVersion ";
+         final String TARGET_SDK_VERSION  = "        targetSdkVersion ";
+         final String MULTIDEX_ENABLED = "        multiDexEnabled = true";
+         
+         ExecutionConfig executionConfig = testTransformer.getConfig().getExecutionConfig();
 
-         if (visitor.getCompileSdkVersion() != -1) {
+         if (executionConfig.getAndroidCompileSdkVersion() != null && visitor.getCompileSdkVersion() != -1) {
             // assumption: compileSdkVersion always exists
+            String versionText = COMPILE_SDK_VERSION + executionConfig.getAndroidCompileSdkVersion();
             final int lineIndex = visitor.getCompileSdkVersion() - 1;
-            visitor.getLines().set(lineIndex, COMPILE_SDK_VERSION);
+            visitor.getLines().set(lineIndex, versionText);
          }
 
-         if (visitor.getMinSdkVersion() != -1) {
-            final int lineIndex = visitor.getMinSdkVersion() - 1;
-            visitor.getLines().set(lineIndex, MIN_SDK_VERSION);
-         } else {
-            addLineWithinDefaultConfig(visitor, MIN_SDK_VERSION);
+         if (executionConfig.getAndroidMinSdkVersion() != null) {
+            String versionText = MIN_SDK_VERSION + executionConfig.getAndroidMinSdkVersion();
+
+            if (visitor.getMinSdkVersion() != -1) {
+               final int lineIndex = visitor.getMinSdkVersion() - 1;
+               visitor.getLines().set(lineIndex, versionText);
+            } else {
+               addLineWithinDefaultConfig(visitor, versionText);
+            }
          }
 
-         if (visitor.getTargetSdkVersion() != -1) {
-            final int lineIndex = visitor.getTargetSdkVersion() - 1;
-            visitor.getLines().set(lineIndex, TARGET_SDK_VERSION);
-         } else {
-            addLineWithinDefaultConfig(visitor, TARGET_SDK_VERSION);
+         if (executionConfig.getAndroidTargetSdkVersion() != null) {
+            String versionText = TARGET_SDK_VERSION + executionConfig.getAndroidTargetSdkVersion();
+
+            if (visitor.getTargetSdkVersion() != -1) {
+               final int lineIndex = visitor.getTargetSdkVersion() - 1;
+               visitor.getLines().set(lineIndex, versionText);
+            } else {
+               addLineWithinDefaultConfig(visitor, versionText);
+            }
          }
 
          if (visitor.getMultiDexEnabled() != -1) {

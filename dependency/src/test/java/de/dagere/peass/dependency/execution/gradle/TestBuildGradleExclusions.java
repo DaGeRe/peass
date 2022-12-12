@@ -183,6 +183,9 @@ public class TestBuildGradleExclusions {
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
 
       mockedTransformer.getConfig().getExecutionConfig().setUseAnbox(true);
+      mockedTransformer.getConfig().getExecutionConfig().setAndroidCompileSdkVersion("31");
+      mockedTransformer.getConfig().getExecutionConfig().setAndroidMinSdkVersion("27");
+      mockedTransformer.getConfig().getExecutionConfig().setAndroidTargetSdkVersion("30");
 
       final String gradleFileContentsBefore = FileUtils.readFileToString(destFile, Charset.defaultCharset());
 
@@ -196,12 +199,12 @@ public class TestBuildGradleExclusions {
 
       System.out.println(gradleFileContentsAfter);
 
-      // should be in the file anymore
+      // should not be in the file anymore
       MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.not(Matchers.containsString("compileSdkVersion 19")));
 
-      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("compileSdkVersion 29"));
-      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("minSdkVersion 26"));
-      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("targetSdkVersion 29"));
+      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("compileSdkVersion 31"));
+      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("minSdkVersion 27"));
+      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("targetSdkVersion 30"));
    }
 
    @Test
