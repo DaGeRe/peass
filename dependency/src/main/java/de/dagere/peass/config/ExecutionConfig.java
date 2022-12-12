@@ -69,6 +69,7 @@ public class ExecutionConfig implements Serializable {
    private String gitCryptKey;
    private boolean useAnbox = false;
    private String androidManifest;
+   private List<String> androidGradleTasks = new LinkedList<>();
 
    private String xmx = null;
 
@@ -125,6 +126,8 @@ public class ExecutionConfig implements Serializable {
 
       this.useAnbox = other.useAnbox;
       this.androidManifest = other.androidManifest;
+      this.androidGradleTasks = other.androidGradleTasks;
+
       this.xmx = other.xmx;
 
       this.increaseVariableValues = other.getIncreaseVariableValues();
@@ -464,6 +467,15 @@ public class ExecutionConfig implements Serializable {
       if (xmx != null && !xmx.isEmpty()) {
          this.xmx = xmx;
       }
+   }
+   
+   @JsonInclude(Include.NON_EMPTY)
+   public List<String> getAndroidGradleTasks() {
+      return androidGradleTasks;
+   }
+
+   public void setAndroidGradleTasks(final List<String> androidGradleTasks) {
+      this.androidGradleTasks = androidGradleTasks;
    }
 
    @JsonInclude(Include.NON_EMPTY)

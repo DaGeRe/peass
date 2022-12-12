@@ -2,6 +2,7 @@ package de.dagere.peass.execution.gradle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,8 +83,11 @@ public class AnboxTestExecutor extends GradleTestExecutor {
 
    private void compileSources() {
       String wrapper = new File(folders.getProjectFolder(), EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
+      List<String> gradleTasks = testTransformer.getConfig().getExecutionConfig().getAndroidGradleTasks();
 
-      ProcessBuilder builder = new ProcessBuilder(wrapper, "installDebug", "installDebugAndroidTest");
+      String[] processArgs = toMergedArray(wrapper, gradleTasks);
+
+      ProcessBuilder builder = new ProcessBuilder(processArgs);
       builder.directory(folders.getProjectFolder());
 
       try {
@@ -92,6 +96,22 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
+   }
+
+   private String[] toMergedArray(String first, List<String> remaining)
+   {
+      String[] mergedArray = new String[1 + (remaining != null ? remaining.size() : 0)];
+      mergedArray[0] = first;
+
+      if (remaining != null) {
+         int index = 1;
+
+         for (String element : remaining) {
+            mergedArray[index++] = element;
+         }
+      }
+
+      return mergedArray;
    }
 
    /**

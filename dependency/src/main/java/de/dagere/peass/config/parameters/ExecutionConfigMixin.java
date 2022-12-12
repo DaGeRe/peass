@@ -116,6 +116,10 @@ public class ExecutionConfigMixin {
    @Option(names = { "-androidManifest", "--androidManifest" }, description = "Sets the relative path to the main Android manifest file (e.g. app/src/main/AndroidManifest.xml)")
    protected String androidManifest;
 
+   @Option(names = { "-androidGradleTasks",
+         "--androidGradleTasks" }, split = ";", description = "List of tasks that will be executed to compile and install the Android tests")
+   protected String[] androidGradleTasks;
+
    @Option(names = { "-increaseVariableValues",
          "--increaseVariableValues" }, split = ";", description = "List of variables and values to be modified (default: empty). Example: \"package.Clazz.variable:value;otherPackage.otherClazz.otherVariable:otherValue\"")
    protected String[] increaseVariableValues;
@@ -360,6 +364,14 @@ public class ExecutionConfigMixin {
       this.androidManifest = androidManifest;
    }
 
+   public String[] getAndroidGradleTasks() {
+      return androidGradleTasks;
+   }
+
+   public void setAndroidGradleTasks(String[] androidGradleTasks) {
+      this.androidGradleTasks = androidGradleTasks;
+   }
+
    public String[] getIncreaseVariableValues() {
       return increaseVariableValues;
    }
@@ -454,6 +466,12 @@ public class ExecutionConfigMixin {
 
       config.setUseAnbox(useAnbox);
       config.setAndroidManifest(androidManifest);
+
+      if (getAndroidGradleTasks() != null) {
+         for (String variable : getAndroidGradleTasks()) {
+            config.getAndroidGradleTasks().add(variable);
+         }
+      }
 
       if (getIncreaseVariableValues() != null) {
          for (String variable : getIncreaseVariableValues()) {
