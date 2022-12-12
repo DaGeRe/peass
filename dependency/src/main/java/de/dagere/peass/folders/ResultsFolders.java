@@ -134,7 +134,7 @@ public class ResultsFolders {
       return logFile;
    }
 
-   public File getVersionFullResultsFolder(final String commit, final String commitOld) {
+   public File getCommitFullResultsFolder(final String commit, final String commitOld) {
       if (commit == null) {
          throw new RuntimeException("Commit must not be null!");
       }
@@ -155,7 +155,7 @@ public class ResultsFolders {
       return new File(getPropertiesFolder(), "properties.json");
    }
 
-   public File getVersionDiffFolder(final String commit) {
+   public File getCommitDiffFolder(final String commit) {
       File diffsFolder = new File(getCommitViewFolder(commit), "diffs");
       diffsFolder.mkdirs();
       return diffsFolder;
@@ -198,8 +198,8 @@ public class ResultsFolders {
       return propertyFolder;
    }
 
-   public File getVersionFullResultsFolder(final MeasurementConfig measurementConfig) {
-      return getVersionFullResultsFolder(measurementConfig.getFixedCommitConfig().getCommit(), measurementConfig.getFixedCommitConfig().getCommitOld());
+   public File getCommitFullResultsFolder(final MeasurementConfig measurementConfig) {
+      return getCommitFullResultsFolder(measurementConfig.getFixedCommitConfig().getCommit(), measurementConfig.getFixedCommitConfig().getCommitOld());
    }
 
    /**

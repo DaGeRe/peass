@@ -277,7 +277,7 @@ public class DependencyReader {
       TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, commit, traceFileMapping, kiekerConfig, testSelectionConfig);
       traceViewGenerator.generateViews(resultsFolders, newCommitInfo.getTests());
 
-      DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(commit));
+      DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getCommitDiffFolder(commit));
       diffGenerator.generateAllDiffs(commit, newCommitInfo, traceFileMapping, executionResult);
    }
 

@@ -162,7 +162,7 @@ public class ContinuousExecutor {
    }
 
    protected File executeMeasurement(final Set<TestMethodCall> tests) throws IOException, InterruptedException, XmlPullParserException {
-      final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(commit, commitOld);
+      final File fullResultsVersion = resultsFolders.getCommitFullResultsFolder(commit, commitOld);
       File logFile = resultsFolders.getMeasurementLogFile(commit, commitOld);
       final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(folders, measurementConfig, env, comparator);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion, logFile);
