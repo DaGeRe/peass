@@ -31,7 +31,7 @@ public class TemporaryProjectFolderUtil {
          GitUtils.clone(originalFolders, dest, gitCryptKey);
          final PeassFolders folders = new TempPeassFolders(dest, originalFolders.getProjectName(), logFolders);
          return folders;
-      } catch (IOException | InterruptedException e) {
+      } catch (IOException e) {
          throw new RuntimeException(e);
       }
    }
