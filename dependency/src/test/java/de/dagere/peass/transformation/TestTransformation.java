@@ -248,7 +248,7 @@ public class TestTransformation {
       MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("repetitions"));
       MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), Matchers.not(TestTransformation.hasAnnotation("warmupExecutions")));
 
-      FieldDeclaration declaration = clazz.getFieldByName("mRuntimePermissionRule").get();
+      FieldDeclaration declaration = clazz.getFieldByName("mRuntimePermissionRulePeass").get();
       Assert.assertNotNull(declaration);
    }
 

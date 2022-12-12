@@ -67,7 +67,7 @@ public class JUnit4Helper {
       
       FieldDeclaration fieldDeclaration = new FieldDeclaration();
       
-      VariableDeclarator variable = new VariableDeclarator(type, "mRuntimePermissionRule");
+      VariableDeclarator variable = new VariableDeclarator(type, "mRuntimePermissionRulePeass");
       fieldDeclaration.getVariables().add(variable);
       fieldDeclaration.setModifiers(Modifier.createModifierList(Keyword.PUBLIC, Keyword.STATIC));
       clazz.getMembers().add(0, fieldDeclaration);
