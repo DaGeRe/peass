@@ -41,6 +41,9 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private int integrationTestLine = -1;
 
    private int androidLine = -1;
+   private int compileOptionsLine = -1;
+   private int sourceCompatibilityLine = -1;
+   private int targetCompatibilityLine = -1;
    private int testOptionsAndroid = -1;
    private int unitTestsAll = -1;
    private int buildTools = -1;
@@ -103,6 +106,12 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             }
          } else if (call.getMethodAsString().equals("android")) {
             androidLine = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("compileOptions")) {
+            compileOptionsLine = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("sourceCompatibility")) {
+            sourceCompatibilityLine = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("targetCompatibility")) {
+            targetCompatibilityLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("testOptions")) {
             testOptionsAndroid = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("unitTests.all")) {
@@ -220,6 +229,22 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       return androidLine;
    }
 
+   public int getCompileOptionsLine() {
+      return compileOptionsLine;
+   }
+
+   public void setCompileOptionsLine(int compileOptionsLine) {
+      this.compileOptionsLine = compileOptionsLine;
+   }
+
+   public int getSourceCompatibilityLine() {
+      return sourceCompatibilityLine;
+   }
+
+   public int getTargetCompatibilityLine() {
+      return targetCompatibilityLine;
+   }
+
    public int getTestOptionsAndroid() {
       return testOptionsAndroid;
    }
@@ -330,6 +355,15 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
       if (lineIndex < androidLine && androidLine != -1) {
          androidLine++;
+      }
+      if (lineIndex < compileOptionsLine && compileOptionsLine != -1) {
+         compileOptionsLine++;
+      }
+      if (lineIndex < sourceCompatibilityLine && sourceCompatibilityLine != -1) {
+         sourceCompatibilityLine++;
+      }
+      if (lineIndex < targetCompatibilityLine && targetCompatibilityLine != -1) {
+         targetCompatibilityLine++;
       }
       if (lineIndex < testOptionsAndroid && testOptionsAndroid != -1) {
          testOptionsAndroid++;
