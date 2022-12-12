@@ -2,6 +2,7 @@ package de.dagere.peass.execution.gradle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,8 +82,20 @@ public class AnboxTestExecutor extends GradleTestExecutor {
 
    private void compileSources() {
       String wrapper = new File(folders.getProjectFolder(), EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
+      List<String> gradleTasks = testTransformer.getConfig().getExecutionConfig().getAndroidGradleTasks();
 
-      ProcessBuilder builder = new ProcessBuilder(wrapper, "installDebug", "installDebugAndroidTest");
+      String[] processArgs = new String[1 + (gradleTasks != null ? gradleTasks.size() : 0)];
+      processArgs[0] = wrapper;
+
+      if (gradleTasks != null) {
+         int index = 1;
+
+         for (String task : gradleTasks) {
+            processArgs[index++] = task;
+         }
+      }
+
+      ProcessBuilder builder = new ProcessBuilder(processArgs);
       builder.directory(folders.getProjectFolder());
 
       try {
