@@ -128,6 +128,7 @@ public class GradleBuildfileEditor {
          }
 
          addAndroidPackagingOptions(visitor);
+         addJavaVersionCompatibilityOptions(visitor);
       }
 
       GradleParseUtil.removeExclusions(visitor);
@@ -158,6 +159,39 @@ public class GradleBuildfileEditor {
          visitor.addLine(androidPackagingOptionsEnd - 1, "    }");
 
          visitor.setAndroidPackagingOptions(androidPackagingOptionsEnd);
+      }
+   }
+
+   private void addJavaVersionCompatibilityOptions(final GradleBuildfileVisitor visitor) {
+      final String SOURCE_COMPATIBILITY = "sourceCompatibility JavaVersion.VERSION_1_8";
+      final String TARGET_COMPATIBILITY = "targetCompatibility JavaVersion.VERSION_1_8";
+
+      if (visitor.getSourceCompatibilityLine() != -1) {
+         final int lineIndex = visitor.getSourceCompatibilityLine() - 1;
+         visitor.getLines().set(lineIndex, SOURCE_COMPATIBILITY);
+      } else {
+         addLineWithinCompileOptions(visitor, SOURCE_COMPATIBILITY);
+      }
+
+      if (visitor.getTargetCompatibilityLine() != -1) {
+         final int lineIndex = visitor.getTargetCompatibilityLine() - 1;
+         visitor.getLines().set(lineIndex, TARGET_COMPATIBILITY);
+      } else {
+         addLineWithinCompileOptions(visitor, TARGET_COMPATIBILITY);
+      }
+   }
+
+   private void addLineWithinCompileOptions(GradleBuildfileVisitor visitor, String textForAdding) {
+      if (visitor.getCompileOptionsLine() != -1) {
+         visitor.addLine(visitor.getCompileOptionsLine() - 1, textForAdding);
+      } else {
+         visitor.addLine(visitor.getAndroidLine() - 1, "    compileOptions {");
+         visitor.addLine(visitor.getAndroidLine() - 1, textForAdding);
+
+         int compileOptionsEnd = visitor.getAndroidLine();
+         visitor.addLine(compileOptionsEnd - 1, "    }");
+
+         visitor.setCompileOptionsLine(compileOptionsEnd);
       }
    }
 
