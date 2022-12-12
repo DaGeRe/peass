@@ -84,16 +84,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       String wrapper = new File(folders.getProjectFolder(), EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
       List<String> gradleTasks = testTransformer.getConfig().getExecutionConfig().getAndroidGradleTasks();
 
-      String[] processArgs = new String[1 + (gradleTasks != null ? gradleTasks.size() : 0)];
-      processArgs[0] = wrapper;
-
-      if (gradleTasks != null) {
-         int index = 1;
-
-         for (String task : gradleTasks) {
-            processArgs[index++] = task;
-         }
-      }
+      String[] processArgs = toMergedArray(wrapper, gradleTasks);
 
       ProcessBuilder builder = new ProcessBuilder(processArgs);
       builder.directory(folders.getProjectFolder());
@@ -104,6 +95,22 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
+   }
+
+   private String[] toMergedArray(String first, List<String> remaining)
+   {
+      String[] mergedArray = new String[1 + (remaining != null ? remaining.size() : 0)];
+      mergedArray[0] = first;
+
+      if (remaining != null) {
+         int index = 1;
+
+         for (String element : remaining) {
+            mergedArray[index++] = element;
+         }
+      }
+
+      return mergedArray;
    }
 
    /**
