@@ -137,6 +137,26 @@ public class TestBuildGradleExclusions {
    }
 
    @Test
+   public void testKopemeExclusionsForAndroid() throws IOException {
+      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "androidlib.gradle");
+
+      final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
+
+      mockedTransformer.getConfig().getExecutionConfig().setUseAnbox(true);
+
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
+
+      final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("exclude group: 'net.kieker-monitoring', module: 'kieker'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("exclude group: 'org.hamcrest', module: 'hamcrest'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("exclude group: 'org.aspectj', module: 'aspectjrt'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("exclude group: 'org.aspectj', module: 'aspectjweaver'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("exclude group: 'org.apache.logging.log4j', module: 'log4j-core'"));
+   }
+
+   @Test
    public void testConflictingFileExclusion() throws IOException {
       final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "androidlib.gradle");
 
