@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
-import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -111,12 +110,6 @@ public class GradleBuildfileEditor {
 
       addKiekerLine(tempFolder, visitor, taskAnalyzer);
    }
-
-   
-
-   
-
-  
 
    private void addDependencies(final GradleBuildfileVisitor visitor) {
       JUnitVersions versions = testTransformer.getJUnitVersions();
