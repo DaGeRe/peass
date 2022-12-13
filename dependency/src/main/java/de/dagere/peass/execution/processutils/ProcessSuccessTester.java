@@ -65,7 +65,7 @@ public class ProcessSuccessTester {
    private Process startProcess(final String[] vars, final File logFile) throws IOException, InterruptedException {
       ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
       Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, vars);
-      LOG.debug("Waiting for {} minutes", measurementConfig.getTimeoutInSeconds());
+      LOG.debug("Waiting for {} seconds", measurementConfig.getTimeoutInSeconds());
 
       process.waitFor(measurementConfig.getTimeoutInSeconds(), TimeUnit.SECONDS);
       return process;
