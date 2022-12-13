@@ -13,7 +13,7 @@ import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 
 /**
- * Saves the measurement data of one testclass in every version and every run.
+ * Saves the measurement data of one testclass in every commit and every run.
  * 
  * @author reichelt
  *
@@ -34,12 +34,12 @@ public class TestData {
 	}
 	
 	public void addMeasurement(final String commitOfPair, final String currentCommit, final String predecessor, final Kopemedata resultData) {
-	   LOG.trace("Pair-Version: {} Class: {} Method: {}", commitOfPair, testcase.getClazz(), testcase.getMethod());
+	   LOG.trace("Pair-Commit: {} Class: {} Method: {}", commitOfPair, testcase.getClazz(), testcase.getMethod());
       EvaluationPair currentPair = data.get(commitOfPair);
       // LOG.debug(currentPair);
       if (currentPair == null) {
 //         final String predecessor = VersionComparator.getPreviousVersionForTestcase(testcase, versionOfPair);
-         LOG.debug("Version: {} Predecessor: {}", commitOfPair, predecessor);
+         LOG.debug("Commit: {} Predecessor: {}", commitOfPair, predecessor);
          // TODO Workaround if data are incomplete, e.g. because of build error
          if (commitOfPair != null){
             currentPair = new EvaluationPair(commitOfPair, predecessor, new TestMethodCall(resultData));
