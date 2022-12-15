@@ -246,4 +246,31 @@ public class TestBuildGradleExclusions {
       MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("sourceCompatibility JavaVersion.VERSION_1_8"));
       MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("targetCompatibility JavaVersion.VERSION_1_8"));
    }
+
+   @Test
+   public void testGradleVersionUpdate() throws IOException {
+      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "androidlib.gradle");
+
+      final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
+
+      final String GRADLE_VERSION = "4.2.2";
+
+      mockedTransformer.getConfig().getExecutionConfig().setUseAnbox(true);
+      mockedTransformer.getConfig().getExecutionConfig().setAndroidGradleVersion(GRADLE_VERSION);
+
+      final String gradleFileContentsBefore = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+
+      MatcherAssert.assertThat(gradleFileContentsBefore, Matchers.containsString("com.android.tools.build:gradle:4.2.1"));
+      MatcherAssert.assertThat(gradleFileContentsBefore, Matchers.not(Matchers.containsString("com.android.tools.build:gradle:" + GRADLE_VERSION)));
+
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
+
+      final String gradleFileContentsAfter = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+
+      System.out.println(gradleFileContentsAfter);
+
+      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.not(Matchers.containsString("com.android.tools.build:gradle:4.2.1")));
+      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("com.android.tools.build:gradle:" + GRADLE_VERSION));
+   }
 }
