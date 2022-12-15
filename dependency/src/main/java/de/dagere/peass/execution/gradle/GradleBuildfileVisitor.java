@@ -53,6 +53,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private int minSdkVersion = -1;
    private int targetSdkVersion = -1;
    private int multiDexEnabled = -1;
+   private int gradleVersionLine = -1;
    private int androidPackagingOptions = -1;
    private int allConfigurationsLine = -1;
    private MethodCallExpression configurations = null;
@@ -91,7 +92,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             // System.out.println(call);
             dependencyLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("buildscript")) {
-            return; // never change buildscript entries
+            // continue parsing
          } else if (call.getMethodAsString().equals("test")) {
             testLine = call.getLastLineNumber() + offset;
             if (call.getArguments() instanceof ArgumentListExpression) {
@@ -116,6 +117,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             testOptionsAndroid = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("unitTests.all")) {
             unitTestsAll = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("classpath")) {
+            if (isGradleVersionLine(call)) {
+               gradleVersionLine = call.getLastLineNumber() + offset;
+            }
          } else if (call.getMethodAsString().equals("buildToolsVersion")) {
             buildToolsVersion = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("compileSdkVersion")) {
@@ -149,6 +154,24 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       }
 
       super.visitMethodCallExpression(call);
+   }
+   
+   private boolean isGradleVersionLine(MethodCallExpression call) {
+      Expression expression = call.getArguments();
+
+      if (expression instanceof ArgumentListExpression) {
+         ArgumentListExpression argumentList = (ArgumentListExpression) expression;
+
+         boolean isGradleVersionNode = false;
+
+         for (Expression e : argumentList.getExpressions()) {
+            isGradleVersionNode |= e.getText().startsWith("com.android.tools.build:gradle");
+         }
+
+         return isGradleVersionNode;
+      }
+
+      return false;
    }
 
    private void parseExcludes(final MethodCallExpression call) {
@@ -307,6 +330,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
    public int getMultiDexEnabled() {
       return multiDexEnabled;
+   }
+
+   public int getGradleVersionLine() {
+       return gradleVersionLine;
    }
    
    public int getAndroidPackagingOptions() {
