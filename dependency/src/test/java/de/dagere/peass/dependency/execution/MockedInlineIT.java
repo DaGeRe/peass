@@ -33,6 +33,7 @@ public class MockedInlineIT {
 
    }
 
+   @Disabled
    @Test
    public void testStaticExecution() throws IOException {
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
