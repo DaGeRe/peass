@@ -21,19 +21,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class MockedInline {
+public class MockedInlineIT {
 
    @BeforeEach
    public void prepareFolder() throws IOException {
       TestUtil.deleteContents(TestConstants.CURRENT_FOLDER);
       TestUtil.deleteContents(TestConstants.CURRENT_PEASS);
 
-      File projectFolder = new File("src/test/resources/execution/mockedInline");
+      File projectFolder = new File("src/test/resources/executionIT/mockedInline");
       FileUtils.copyDirectory(projectFolder, TestConstants.CURRENT_FOLDER);
 
    }
 
-   @Disabled
    @Test
    public void testStaticExecution() throws IOException {
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);

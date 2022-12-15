@@ -33,11 +33,5 @@
       <artifactId>kopeme-junit5</artifactId>
       <version>1.2.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.25</version>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
 </project>
