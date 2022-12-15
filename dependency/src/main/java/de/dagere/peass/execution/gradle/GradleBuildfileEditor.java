@@ -95,7 +95,7 @@ public class GradleBuildfileEditor {
       }
 
       if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()) {
-         GradleBuildfileEditorAnbox anboxEditor = new GradleBuildfileEditorAnbox(testTransformer);
+         GradleBuildfileEditorAnbox anboxEditor = new GradleBuildfileEditorAnbox(testTransformer, buildfile, modules);
          anboxEditor.executeAnboxSpecificTransformations(visitor);
       }
 

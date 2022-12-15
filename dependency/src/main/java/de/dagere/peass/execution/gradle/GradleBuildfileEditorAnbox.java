@@ -1,9 +1,22 @@
 package de.dagere.peass.execution.gradle;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 public class GradleBuildfileEditorAnbox {
+
+   private static final Logger LOG = LogManager.getLogger(GradleBuildfileEditorAnbox.class);
 
    private final String COMPILE_SDK_VERSION = "    compileSdkVersion ";
    private final String MIN_SDK_VERSION = "        minSdkVersion ";
@@ -11,12 +24,17 @@ public class GradleBuildfileEditorAnbox {
    private final String MULTIDEX_ENABLED = "        multiDexEnabled = true";
 
    private final TestTransformer testTransformer;
+   private final ProjectModules modules;
+   private final File buildfile;
 
-   public GradleBuildfileEditorAnbox(TestTransformer testTransformer) {
+   public GradleBuildfileEditorAnbox(TestTransformer testTransformer, final File buildfile, final ProjectModules modules) {
       this.testTransformer = testTransformer;
+      this.buildfile = buildfile;
+      this.modules = modules;
    }
 
    public void executeAnboxSpecificTransformations(final GradleBuildfileVisitor visitor) {
+      updateGradleVersion(visitor);
       adaptSdkVersions(visitor);
 
       if (visitor.getMultiDexEnabled() != -1) {
@@ -28,6 +46,37 @@ public class GradleBuildfileEditorAnbox {
 
       addAndroidPackagingOptions(visitor);
       addJavaVersionCompatibilityOptions(visitor);
+   }
+
+   private void updateGradleVersion(final GradleBuildfileVisitor visitor) {
+      String gradleVersion = testTransformer.getConfig().getExecutionConfig().getAndroidGradleVersion();
+
+      if (gradleVersion != null) {
+         // update in the current build file, if definition exists
+         if (visitor.getGradleVersionLine() != -1) {
+            visitor.getLines().set(visitor.getGradleVersionLine() - 1, "classpath 'com.android.tools.build:gradle:" + gradleVersion + "'");
+            // no need to write changes to file here, since the caller updates file whenever necessary
+         }
+
+         // update in the build files of parent projects, if definition exists
+         List<File> parentProjects = modules.getParents(buildfile.getParentFile());
+
+         for (File parentProject : parentProjects) {
+            File parentBuildfile = GradleParseHelper.findGradleFile(parentProject);
+
+            try {
+               GradleBuildfileVisitor parentVisitor = GradleParseUtil.parseBuildfile(parentBuildfile, testTransformer.getConfig().getExecutionConfig());
+
+               if (parentVisitor.getGradleVersionLine() != -1) {
+                  parentVisitor.getLines().set(parentVisitor.getGradleVersionLine() - 1, "classpath 'com.android.tools.build:gradle:" + gradleVersion + "'");
+                  Files.write(parentBuildfile.toPath(), parentVisitor.getLines(), StandardCharsets.UTF_8);
+               }
+
+            } catch (IOException e) {
+               LOG.warn("Gradle file cannot be found");
+            }
+         }
+      }
    }
 
    private void adaptSdkVersions(final GradleBuildfileVisitor visitor) {
