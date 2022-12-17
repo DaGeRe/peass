@@ -63,7 +63,7 @@ public class SearchCauseStarter extends MeasureStarter {
 
       if (commit == null) {
          commit = executionData.getCommits().keySet().iterator().next();
-         LOG.info("Commit was not defined, using " + commit);
+         LOG.info("Commit was not defined, using {}", commit);
       }
 
       TestMethodCall test = determineTest();

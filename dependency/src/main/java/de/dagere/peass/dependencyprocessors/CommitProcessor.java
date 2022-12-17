@@ -145,20 +145,20 @@ public abstract class CommitProcessor implements Callable<Void> {
       folders = new PeassFolders(projectFolder);
 
       if (startcommit != null || endcommit != null) {
-         LOG.info("Version: " + startcommit + " - " + endcommit);
+         LOG.info("Commit: {} - {}", startcommit, endcommit);
       }
 
       if (fixedCommitMixin.getCommitOld() != null && startcommit == null) {
-         throw new RuntimeException("If versionOld is specified, always specify version!");
+         throw new RuntimeException("If commitOld is specified, always specify commit!");
       }
 
       if (commit != null) {
          if (startcommit != null || endcommit != null) {
-            throw new RuntimeException("Both, version and (startversion or endversion), are defined - define version, or startversion/endversion!");
+            throw new RuntimeException("Both, commit and (startcommit or endcommit), are defined - define either commit or startcommit/endcommit!");
          }
          startcommit = commit;
          endcommit = commit;
-         LOG.info("Version: " + startcommit + " - " + endcommit);
+         LOG.info("Commit: {} - {}", startcommit, endcommit);
       }
 
       VersionComparator.setDependencies(staticTestSelection);
