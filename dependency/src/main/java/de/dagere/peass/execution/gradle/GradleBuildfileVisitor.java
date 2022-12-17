@@ -41,6 +41,9 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private int integrationTestLine = -1;
 
    private int androidLine = -1;
+   private int compileOptionsLine = -1;
+   private int sourceCompatibilityLine = -1;
+   private int targetCompatibilityLine = -1;
    private int testOptionsAndroid = -1;
    private int unitTestsAll = -1;
    private int buildTools = -1;
@@ -50,6 +53,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private int minSdkVersion = -1;
    private int targetSdkVersion = -1;
    private int multiDexEnabled = -1;
+   private int gradleVersionLine = -1;
    private int androidPackagingOptions = -1;
    private int allConfigurationsLine = -1;
    private MethodCallExpression configurations = null;
@@ -88,7 +92,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             // System.out.println(call);
             dependencyLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("buildscript")) {
-            return; // never change buildscript entries
+            // continue parsing
          } else if (call.getMethodAsString().equals("test")) {
             testLine = call.getLastLineNumber() + offset;
             if (call.getArguments() instanceof ArgumentListExpression) {
@@ -103,10 +107,20 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             }
          } else if (call.getMethodAsString().equals("android")) {
             androidLine = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("compileOptions")) {
+            compileOptionsLine = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("sourceCompatibility")) {
+            sourceCompatibilityLine = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("targetCompatibility")) {
+            targetCompatibilityLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("testOptions")) {
             testOptionsAndroid = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("unitTests.all")) {
             unitTestsAll = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("classpath")) {
+            if (isGradleVersionLine(call)) {
+               gradleVersionLine = call.getLastLineNumber() + offset;
+            }
          } else if (call.getMethodAsString().equals("buildToolsVersion")) {
             buildToolsVersion = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("compileSdkVersion")) {
@@ -140,6 +154,24 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       }
 
       super.visitMethodCallExpression(call);
+   }
+   
+   private boolean isGradleVersionLine(MethodCallExpression call) {
+      Expression expression = call.getArguments();
+
+      if (expression instanceof ArgumentListExpression) {
+         ArgumentListExpression argumentList = (ArgumentListExpression) expression;
+
+         boolean isGradleVersionNode = false;
+
+         for (Expression e : argumentList.getExpressions()) {
+            isGradleVersionNode |= e.getText().startsWith("com.android.tools.build:gradle");
+         }
+
+         return isGradleVersionNode;
+      }
+
+      return false;
    }
 
    private void parseExcludes(final MethodCallExpression call) {
@@ -220,6 +252,22 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       return androidLine;
    }
 
+   public int getCompileOptionsLine() {
+      return compileOptionsLine;
+   }
+
+   public void setCompileOptionsLine(int compileOptionsLine) {
+      this.compileOptionsLine = compileOptionsLine;
+   }
+
+   public int getSourceCompatibilityLine() {
+      return sourceCompatibilityLine;
+   }
+
+   public int getTargetCompatibilityLine() {
+      return targetCompatibilityLine;
+   }
+
    public int getTestOptionsAndroid() {
       return testOptionsAndroid;
    }
@@ -283,6 +331,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    public int getMultiDexEnabled() {
       return multiDexEnabled;
    }
+
+   public int getGradleVersionLine() {
+       return gradleVersionLine;
+   }
    
    public int getAndroidPackagingOptions() {
       return androidPackagingOptions;
@@ -330,6 +382,15 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
       if (lineIndex < androidLine && androidLine != -1) {
          androidLine++;
+      }
+      if (lineIndex < compileOptionsLine && compileOptionsLine != -1) {
+         compileOptionsLine++;
+      }
+      if (lineIndex < sourceCompatibilityLine && sourceCompatibilityLine != -1) {
+         sourceCompatibilityLine++;
+      }
+      if (lineIndex < targetCompatibilityLine && targetCompatibilityLine != -1) {
+         targetCompatibilityLine++;
       }
       if (lineIndex < testOptionsAndroid && testOptionsAndroid != -1) {
          testOptionsAndroid++;

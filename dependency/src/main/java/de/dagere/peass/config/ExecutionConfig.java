@@ -73,6 +73,7 @@ public class ExecutionConfig implements Serializable {
    private String androidTargetSdkVersion;
    private String androidManifest;
    private List<String> androidGradleTasks = new LinkedList<>();
+   private String androidGradleVersion;
 
    private String xmx = null;
 
@@ -133,6 +134,7 @@ public class ExecutionConfig implements Serializable {
       this.androidTargetSdkVersion = other.androidTargetSdkVersion;
       this.androidManifest = other.androidManifest;
       this.androidGradleTasks = other.androidGradleTasks;
+      this.androidGradleVersion = other.androidGradleVersion;
 
       this.xmx = other.xmx;
 
@@ -509,6 +511,15 @@ public class ExecutionConfig implements Serializable {
 
    public void setAndroidGradleTasks(final List<String> androidGradleTasks) {
       this.androidGradleTasks = androidGradleTasks;
+   }
+
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   public String getAndroidGradleVersion() {
+      return androidGradleVersion;
+   }
+
+   public void setAndroidGradleVersion(String androidGradleVersion) {
+      this.androidGradleVersion = androidGradleVersion;
    }
 
    @JsonInclude(Include.NON_EMPTY)

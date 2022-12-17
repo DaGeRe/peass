@@ -129,6 +129,9 @@ public class ExecutionConfigMixin {
          "--androidGradleTasks" }, split = ";", description = "List of tasks that will be executed to compile and install the Android tests")
    protected String[] androidGradleTasks;
 
+   @Option(names = { "-androidGradleVersion", "--androidGradleVersion" }, description = "Overrides the existing Gradle version with the specified version")
+   protected String androidGradleVersion;
+
    @Option(names = { "-increaseVariableValues",
          "--increaseVariableValues" }, split = ";", description = "List of variables and values to be modified (default: empty). Example: \"package.Clazz.variable:value;otherPackage.otherClazz.otherVariable:otherValue\"")
    protected String[] increaseVariableValues;
@@ -405,6 +408,14 @@ public class ExecutionConfigMixin {
       this.androidGradleTasks = androidGradleTasks;
    }
 
+   public String getAndroidGradleVersion() {
+       return androidGradleVersion;
+   }
+
+   public void setAndroidGradleVersion(String androidGradleVersion) {
+       this.androidGradleVersion = androidGradleVersion;
+   }
+
    public String[] getIncreaseVariableValues() {
       return increaseVariableValues;
    }
@@ -508,6 +519,8 @@ public class ExecutionConfigMixin {
             config.getAndroidGradleTasks().add(variable);
          }
       }
+
+      config.setAndroidGradleVersion(androidGradleVersion);
 
       if (getIncreaseVariableValues() != null) {
          for (String variable : getIncreaseVariableValues()) {
