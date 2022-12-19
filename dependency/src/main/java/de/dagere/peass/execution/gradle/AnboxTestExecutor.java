@@ -56,6 +56,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       androidConfig.put("kopeme.workingdir", ANBOX_EMULATOR_FOLDER_BASE + "app");
       File kopemeConfig = new File(folders.getProjectFolder() + "/" + ANDROID_RESOURCES_FOLDER + ANDROID_KOPEME_CONFIGURATION);
       try {
+         kopemeConfig.getParentFile().mkdirs();
          Constants.OBJECTMAPPER.writerWithDefaultPrettyPrinter().writeValue(kopemeConfig, androidConfig);
       } catch (IOException e) {
          throw new RuntimeException(e);
