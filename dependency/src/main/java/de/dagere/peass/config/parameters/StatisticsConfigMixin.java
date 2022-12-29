@@ -25,7 +25,7 @@ public class StatisticsConfigMixin {
    protected double type2error = PEASS_DEFAULT_TYPE_2_ERROR;
    
    @Option(names = { "-statisticTest", "--statisticTest" }, description = "Statistic test to use for comparison, default t-test", required = false)
-   private StatisticalTests statisticTest = StatisticalTests.T_TEST;
+   private StatisticalTests statisticTest = StatisticalTests.MANN_WHITNEY_TEST;
 
    public double getOutlierFactor() {
       return outlierFactor;

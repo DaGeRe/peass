@@ -19,7 +19,7 @@ public class StatisticsConfig implements Serializable {
     */
    private double type2error = StatisticsConfigMixin.PEASS_DEFAULT_TYPE_2_ERROR;
    private double outlierFactor = DEFAULT_OUTLIER_FACTOR;
-   private StatisticalTests statisticTest = StatisticalTests.T_TEST;
+   private StatisticalTests statisticTest = StatisticalTests.MANN_WHITNEY_TEST;
    private double maximumRelativeDeviation = Double.MAX_VALUE;
 
    public static final double DEFAULT_OUTLIER_FACTOR = 3.29; // Does not remove 99% of all values in gaussian distribution
