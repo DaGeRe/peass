@@ -54,10 +54,6 @@ public class TestClazzFileFinder {
       File sourceFileInterface = new ClazzFileFinder(config).getSourceFile(SOURCE, new ChangedEntity("de.LocalInterface"));
       Assert.assertNotNull(sourceFileInterface);
       
-      File cookieNameValidator = new ClazzFileFinder(config).getSourceFile(SOURCE, new ChangedEntity("de.CookieNameValidator"));
-      Assert.assertNotNull(cookieNameValidator);
-      
-      
       ChangedEntity exampleEntity = new ChangedEntity("de.LocalClass#myMethod(int)");
       String text = FileComparisonUtil.getMethodSource(SOURCE, exampleEntity, exampleEntity.getMethod(), config);
       MatcherAssert.assertThat(text, Matchers.containsString("this.i = i;"));
