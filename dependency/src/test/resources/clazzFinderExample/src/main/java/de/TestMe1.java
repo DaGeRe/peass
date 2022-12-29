@@ -37,6 +37,10 @@ public class TestMe1 extends TestCase{
 
 class LocalClass {
   private int i;
+  
+  void myMethod(int i){
+     this.i = i;
+  }
 }
 
 enum LocalEnum {
