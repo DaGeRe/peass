@@ -1,6 +1,7 @@
 package de.dagere.peass.dependency.analysis;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,14 +63,18 @@ public class ModuleClassMapping {
 
    public static String getModuleName(final File baseFolder, final File module) {
       String moduleName;
-      final int pathIndex = baseFolder.getAbsolutePath().length() + 1;
-      final String modulePath = module.getAbsolutePath();
-      if (modulePath.length() > pathIndex) {
-         moduleName = modulePath.substring(pathIndex);
-      } else {
-         moduleName = "";
+      try {
+         int pathIndex = baseFolder.getCanonicalPath().length() + 1 ;
+         final String modulePath = module.getCanonicalPath();
+         if (modulePath.length() > pathIndex) {
+            moduleName = modulePath.substring(pathIndex);
+         } else {
+            moduleName = "";
+         }
+         return moduleName;
+      } catch (IOException e) {
+         throw new RuntimeException(e);
       }
-      return moduleName;
    }
 
    public List<String> getAllClasses() {
