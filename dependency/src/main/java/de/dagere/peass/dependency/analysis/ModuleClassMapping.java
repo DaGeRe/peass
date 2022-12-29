@@ -64,7 +64,7 @@ public class ModuleClassMapping {
    public static String getModuleName(final File baseFolder, final File module) {
       String moduleName;
       try {
-         int pathIndex = baseFolder.getCanonicalPath().length() + 1 ;
+         final int pathIndex = baseFolder.getCanonicalPath().length() + 1 ;
          final String modulePath = module.getCanonicalPath();
          if (modulePath.length() > pathIndex) {
             moduleName = modulePath.substring(pathIndex);
