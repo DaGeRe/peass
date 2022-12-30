@@ -102,18 +102,22 @@ public class KiekerEnvironmentPreparer {
       boolean adaptiveInstrumentation = config.getKiekerConfig().isAdaptiveInstrumentation();
       int repetitions = config.getRepetitions();
       boolean extractMethod = config.getKiekerConfig().isExtractMethod();
+      boolean strictMode = false;
 
+      if (config.getExecutionConfig().isUseAnbox()) {
+         strictMode = true;
+      }
       if (!config.getKiekerConfig().isUseSelectiveInstrumentation()) {
          InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(record, false,
                createDefaultConstructor,
                adaptiveInstrumentation, includedMethodPattern, excludedPatterns, false, repetitions,
-               extractMethod);
+               extractMethod, strictMode);
          instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
       } else {
          InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(record, config.getKiekerConfig().isUseAggregation(),
                createDefaultConstructor,
                adaptiveInstrumentation, includedMethodPattern, excludedPatterns, true, repetitions,
-               extractMethod);
+               extractMethod, strictMode);
          instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
       }
       return instrumentKiekerSource;
