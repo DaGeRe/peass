@@ -35,7 +35,7 @@ public class JavascriptDataWriter {
          fileWriter.write("if (document.getElementById('testcaseDiv') != null) { \n   document.getElementById('testcaseDiv').innerHTML=\"Commit: <a href='"
                + "javascript:fallbackCopyTextToClipboard(\\\"-commit " + commit +
                " -test " + data.getTestcase() + "\\\")'>"
-               + commit + "</a> Predecessor: " + commitOld + " Comitter: " + "<br>");
+               + commit + "</a><br>Predecessor: " + commitOld + "<br>Comitter: " + "<br>");
          fileWriter.write("Test Case: " + data.getTestcase() + "<br>\";\n");
          writeDashboardLink(data, fileWriter);
          fileWriter.write("  }\n}\n");
