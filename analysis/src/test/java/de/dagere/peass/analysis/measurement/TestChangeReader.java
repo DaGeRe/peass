@@ -35,7 +35,7 @@ public class TestChangeReader {
             .get("com.example.android_example.ExampleUnitTest");
       Assert.assertEquals(1, methodChanges.size());
       Assert.assertEquals("test_TestMe", methodChanges.get(0).getMethod());
-      Assert.assertEquals(15087.66, methodChanges.get(0).getOldTime(), 0.1);
+      Assert.assertEquals(14903.13, methodChanges.get(0).getOldTime(), 0.1);
 
    }
 
@@ -47,7 +47,7 @@ public class TestChangeReader {
       System.out.println(Constants.OBJECTMAPPER.writeValueAsString(changes));
 
       List<Change> methodChanges = checkParameterizedResult(changes);
-      Assert.assertEquals(4232151.27, methodChanges.get(0).getOldTime(), 0.1);
+      Assert.assertEquals(4233722.8, methodChanges.get(0).getOldTime(), 0.1);
    }
 
    @Test

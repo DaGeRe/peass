@@ -102,6 +102,70 @@
           "date" : 1645289321181,
           "failure" : true,
           "error" : true
+        }, {
+          "value" : 4236080.166666667,
+          "deviation" : 203540.93107816594,
+          "min" : 4144429.0,
+          "max" : 4651406.0,
+          "warmup" : 0,
+          "iterations" : 6,
+          "repetitions" : 2,
+          "commit" : "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "1"
+          },
+          "date" : 1645289314205,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 4.0223037333333336E7,
+          "deviation" : 142697.30498459592,
+          "min" : 4.0161181E7,
+          "max" : 4.0514248E7,
+          "warmup" : 0,
+          "iterations" : 6,
+          "repetitions" : 2,
+          "commit" : "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "1"
+          },
+          "date" : 1645289321181,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 4236080.166666667,
+          "deviation" : 203540.93107816594,
+          "min" : 4144429.0,
+          "max" : 4651406.0,
+          "warmup" : 0,
+          "iterations" : 6,
+          "repetitions" : 2,
+          "commit" : "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "1"
+          },
+          "date" : 1645289314205,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 4.0223037333333336E7,
+          "deviation" : 142697.30498459592,
+          "min" : 4.0161181E7,
+          "max" : 4.0514248E7,
+          "warmup" : 0,
+          "iterations" : 6,
+          "repetitions" : 2,
+          "commit" : "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "1"
+          },
+          "date" : 1645289321181,
+          "failure" : true,
+          "error" : true
         } ]
       } ],
       "results" : [ ]

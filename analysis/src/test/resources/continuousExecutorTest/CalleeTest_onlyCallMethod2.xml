@@ -60,6 +60,90 @@
       <min>4.8310403E7</min>
       <max>4.9388725E7</max>
      </result>
+     <result date="1621608512478">
+      <value>8666668.5</value>
+      <deviation>585231.9777015777</deviation>
+      <warmupExecutions>0</warmupExecutions>
+      <executionTimes>0</executionTimes>
+      <warmup>0</warmup>
+      <iterations>2</iterations>
+      <repetitions>2</repetitions>
+      <version>
+       <gitversion>33ce17c04b5218c25c40137d4d09f40fbb3e4f0f</gitversion>
+      </version>
+      <min>8252847.0</min>
+      <max>9080490.0</max>
+     </result>
+     <result date="1621608517891">
+      <value>4.8849564E7</value>
+      <deviation>762488.7985026403</deviation>
+      <warmupExecutions>0</warmupExecutions>
+      <executionTimes>0</executionTimes>
+      <warmup>0</warmup>
+      <iterations>2</iterations>
+      <repetitions>2</repetitions>
+      <version>
+       <gitversion>a23e385264c31def8dcda86c3cf64faa698c62d8</gitversion>
+      </version>
+      <min>4.8310403E7</min>
+      <max>4.9388725E7</max>
+     </result>
+     <result date="1621608512478">
+      <value>8666668.5</value>
+      <deviation>585231.9777015777</deviation>
+      <warmupExecutions>0</warmupExecutions>
+      <executionTimes>0</executionTimes>
+      <warmup>0</warmup>
+      <iterations>2</iterations>
+      <repetitions>2</repetitions>
+      <version>
+       <gitversion>33ce17c04b5218c25c40137d4d09f40fbb3e4f0f</gitversion>
+      </version>
+      <min>8252847.0</min>
+      <max>9080490.0</max>
+     </result>
+     <result date="1621608517891">
+      <value>4.8849564E7</value>
+      <deviation>762488.7985026403</deviation>
+      <warmupExecutions>0</warmupExecutions>
+      <executionTimes>0</executionTimes>
+      <warmup>0</warmup>
+      <iterations>2</iterations>
+      <repetitions>2</repetitions>
+      <version>
+       <gitversion>a23e385264c31def8dcda86c3cf64faa698c62d8</gitversion>
+      </version>
+      <min>4.8310403E7</min>
+      <max>4.9388725E7</max>
+     </result>
+     <result date="1621608512478">
+      <value>8666668.5</value>
+      <deviation>585231.9777015777</deviation>
+      <warmupExecutions>0</warmupExecutions>
+      <executionTimes>0</executionTimes>
+      <warmup>0</warmup>
+      <iterations>2</iterations>
+      <repetitions>2</repetitions>
+      <version>
+       <gitversion>33ce17c04b5218c25c40137d4d09f40fbb3e4f0f</gitversion>
+      </version>
+      <min>8252847.0</min>
+      <max>9080490.0</max>
+     </result>
+     <result date="1621608517891">
+      <value>4.8849564E7</value>
+      <deviation>762488.7985026403</deviation>
+      <warmupExecutions>0</warmupExecutions>
+      <executionTimes>0</executionTimes>
+      <warmup>0</warmup>
+      <iterations>2</iterations>
+      <repetitions>2</repetitions>
+      <version>
+       <gitversion>a23e385264c31def8dcda86c3cf64faa698c62d8</gitversion>
+      </version>
+      <min>4.8310403E7</min>
+      <max>4.9388725E7</max>
+     </result>
     </chunk>
    </datacollector>
   </testcase>

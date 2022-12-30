@@ -84,6 +84,58 @@
           "date" : 1612275451546,
           "failure" : true,
           "error" : true
+        }, {
+          "value" : 14626.333333333334,
+          "deviation" : 2221.450051955554,
+          "min" : 13270.0,
+          "max" : 17190.0,
+          "warmup" : 5,
+          "iterations" : 3,
+          "repetitions" : 10,
+          "commit" : "fd79b2039667c09167c721b2823425629fad6d11",
+          "vmRunConfiguration" : { },
+          "date" : 1612275443091,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 799103.3333333334,
+          "deviation" : 14978.410474190288,
+          "min" : 781857.0,
+          "max" : 808856.0,
+          "warmup" : 5,
+          "iterations" : 3,
+          "repetitions" : 10,
+          "commit" : "946e4318267b56838aa35da0a2a4e5c0528bfe04",
+          "vmRunConfiguration" : { },
+          "date" : 1612275451546,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 14626.333333333334,
+          "deviation" : 2221.450051955554,
+          "min" : 13270.0,
+          "max" : 17190.0,
+          "warmup" : 5,
+          "iterations" : 3,
+          "repetitions" : 10,
+          "commit" : "fd79b2039667c09167c721b2823425629fad6d11",
+          "vmRunConfiguration" : { },
+          "date" : 1612275443091,
+          "failure" : true,
+          "error" : true
+        }, {
+          "value" : 799103.3333333334,
+          "deviation" : 14978.410474190288,
+          "min" : 781857.0,
+          "max" : 808856.0,
+          "warmup" : 5,
+          "iterations" : 3,
+          "repetitions" : 10,
+          "commit" : "946e4318267b56838aa35da0a2a4e5c0528bfe04",
+          "vmRunConfiguration" : { },
+          "date" : 1612275451546,
+          "failure" : true,
+          "error" : true
         } ]
       } ],
       "results" : [ ]

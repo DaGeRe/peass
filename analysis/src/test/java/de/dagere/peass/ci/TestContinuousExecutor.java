@@ -58,7 +58,7 @@ public class TestContinuousExecutor {
       initRepo();
 
       TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false);
-      MeasurementConfig measurementConfig = new MeasurementConfig(2);
+      MeasurementConfig measurementConfig = new MeasurementConfig(4);
       ContinuousExecutor executor = new ContinuousExecutor(DependencyTestConstants.CURRENT, measurementConfig, dependencyConfig, new EnvironmentVariables());
 
       Assert.assertEquals(COMMIT_CURRENT, executor.getIterator().getCommitName());
