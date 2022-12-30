@@ -30,11 +30,12 @@ public class JavascriptDataWriter {
       File outputJS = new File(output.getParentFile(), jsName);
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputJS))) {
          String commit = data.getMeasurementConfig().getFixedCommitConfig().getCommit();
+         String commitOld = data.getMeasurementConfig().getFixedCommitConfig().getCommitOld();
          fileWriter.write("if (typeof jenkins !== 'undefined') {} else {");
          fileWriter.write("if (document.getElementById('testcaseDiv') != null) { \n   document.getElementById('testcaseDiv').innerHTML=\"Commit: <a href='"
                + "javascript:fallbackCopyTextToClipboard(\\\"-commit " + commit +
                " -test " + data.getTestcase() + "\\\")'>"
-               + commit + "</a> Comitter: " + "<br>");
+               + commit + "</a> Predecessor: " + commitOld + " Comitter: " + "<br>");
          fileWriter.write("Test Case: " + data.getTestcase() + "<br>\";\n");
          writeDashboardLink(data, fileWriter);
          fileWriter.write("  }\n}\n");
