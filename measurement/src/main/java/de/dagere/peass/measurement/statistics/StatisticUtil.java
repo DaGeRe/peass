@@ -317,7 +317,7 @@ public class StatisticUtil {
    }
 
    public static double getMannWhitneyUStatistic(double[] dataOld, double[] dataCurrent) {
-      return new MannWhitneyUTest().mannWhitneyU(dataOld, dataCurrent);
+      return new MannWhitneyUTest().mannWhitneyUTest(dataOld, dataCurrent);
    }
 
    public static Double getMannWhitneyUStatistic(DescriptiveStatistics statisticsOld, DescriptiveStatistics statisticsCurrent) {
