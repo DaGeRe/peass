@@ -42,7 +42,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
 
       writeAndroidConfigJson();
       updateAndroidManifest();
-      adbPush();      
+      adbPush();
       compileSources();
    }
 
