@@ -13,27 +13,27 @@ public class EarlyBreakDecider {
 
    private static final Logger LOG = LogManager.getLogger(EarlyBreakDecider.class);
 
-   private final StatisticalSummary statisticsBefore;
-   private final StatisticalSummary statisticsAfter;
+   private final StatisticalSummary statisticsPredecessor;
+   private final StatisticalSummary statisticsCurrent;
 
    private final double type1error;
    private final double type2error;
 
-   public EarlyBreakDecider(final MeasurementConfig config, final StatisticalSummary statisticsBefore, final StatisticalSummary statisticsAfter)  {
+   public EarlyBreakDecider(final MeasurementConfig config, final StatisticalSummary statisticsPredecessor, final StatisticalSummary statisticsCurrent)  {
       this.type1error = config.getStatisticsConfig().getType1error();
       this.type2error = config.getStatisticsConfig().getType2error();
-      this.statisticsBefore = statisticsBefore;
-      this.statisticsAfter = statisticsAfter;
+      this.statisticsPredecessor = statisticsPredecessor;
+      this.statisticsCurrent = statisticsCurrent;
    }
 
    public boolean isBreakPossible(final int vmid) {
       boolean savelyDecidable = false;
       if (vmid > 3) {
-         LOG.debug("T: {} {}", statisticsBefore.getN(), statisticsAfter.getN());
-         if ((statisticsBefore.getN() > 3 && statisticsAfter.getN() > 3)) {
+         LOG.debug("T: {} {}", statisticsPredecessor.getN(), statisticsCurrent.getN());
+         if ((statisticsPredecessor.getN() > 3 && statisticsCurrent.getN() > 3)) {
             savelyDecidable = isSavelyDecidableBothHypothesis(vmid);
          } else if (vmid > 10) {
-            LOG.debug("More than 10 executions and only {} / {} measurements - aborting", statisticsBefore.getN(), statisticsAfter.getN());
+            LOG.debug("More than 10 executions and only {} / {} measurements - aborting", statisticsPredecessor.getN(), statisticsCurrent.getN());
             return true;
          }
          // T statistic can not be determined if less than 2 values (produces exception..)
@@ -43,8 +43,8 @@ public class EarlyBreakDecider {
 
    public boolean isSavelyDecidableBothHypothesis(final int vmid) {
       boolean savelyDecidable = false;
-      if (statisticsBefore.getN() > 30 && statisticsAfter.getN() > 30) {
-         final Relation relation = StatisticUtil.agnosticTTest(statisticsBefore, statisticsAfter, type1error, type2error);
+      if (statisticsPredecessor.getN() > 30 && statisticsCurrent.getN() > 30) {
+         final Relation relation = StatisticUtil.agnosticTTest(statisticsPredecessor, statisticsCurrent, type1error, type2error);
          if (relation == Relation.EQUAL || relation == Relation.UNEQUAL) {
             LOG.info("Can savely decide: {}", relation);
             savelyDecidable = true;

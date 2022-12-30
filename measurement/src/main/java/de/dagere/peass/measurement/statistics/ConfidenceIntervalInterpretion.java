@@ -40,29 +40,29 @@ public class ConfidenceIntervalInterpretion {
       if (percentage < 1 || percentage > 99) {
          throw new RuntimeException("Percentage between 1 and 99 expected");
       }
-      final ConfidenceInterval intervalBefore = getConfidenceInterval(data.getPredecessor(), percentage);
-      final ConfidenceInterval intervalAfter = getConfidenceInterval(data.getCurrent(), percentage);
+      final ConfidenceInterval intervalPredecessor = getConfidenceInterval(data.getPredecessor(), percentage);
+      final ConfidenceInterval intervalCurrent = getConfidenceInterval(data.getCurrent(), percentage);
 
-      final double avgBefore = data.getAvgPredecessor();
-      final double avgAfter = data.getAvgCurrent();
+      final double avgPredecessor = data.getAvgPredecessor();
+      final double avgCurrent = data.getAvgCurrent();
 
-      LOG.trace("Intervalle: {} ({}) vs. vorher {} ({})", intervalAfter, avgAfter, intervalBefore, avgBefore);
-      final PerformanceChange change = new PerformanceChange(intervalBefore, intervalAfter, "", "", "0", "1");
+      LOG.trace("Intervalle: {} ({}) vs. vorher {} ({})", intervalCurrent, avgCurrent, intervalPredecessor, avgPredecessor);
+      final PerformanceChange change = new PerformanceChange(intervalPredecessor, intervalCurrent, "", "", "0", "1");
       final double diff = change.getDifference();
-      if (intervalBefore.getMax() < intervalAfter.getMin()) {
+      if (intervalPredecessor.getMax() < intervalCurrent.getMin()) {
          // if (change.getNormedDifference() > MeasurementAnalysationUtil.MIN_NORMED_DISTANCE && diff > MeasurementAnalysationUtil.MIN_ABSOLUTE_PERCENTAGE_DISTANCE *
          // intervalAfter.getMax()) {
          LOG.trace("Änderung: {} {} Diff: {}", change.getRevisionOld(), change.getTestMethod(), diff);
-         LOG.trace("Ist kleiner geworden: {} vs. vorher {}", intervalAfter, intervalBefore);
+         LOG.trace("Ist kleiner geworden: {} vs. vorher {}", intervalCurrent, intervalPredecessor);
          LOG.trace("Abstand: {} Versionen: {}:{}", diff);
          return Relation.LESS_THAN;
          // }
       }
-      if (intervalBefore.getMin() > intervalAfter.getMax()) {
+      if (intervalPredecessor.getMin() > intervalCurrent.getMax()) {
          // if (change.getNormedDifference() > MeasurementAnalysationUtil.MIN_NORMED_DISTANCE && diff > MeasurementAnalysationUtil.MIN_ABSOLUTE_PERCENTAGE_DISTANCE *
          // intervalAfter.getMax()) {
          LOG.trace("Änderung: {} {} Diff: {}", change.getRevisionOld(), change.getTestMethod(), diff);
-         LOG.trace("Ist größer geworden: {} vs. vorher {}", intervalAfter, intervalBefore);
+         LOG.trace("Ist größer geworden: {} vs. vorher {}", intervalCurrent, intervalPredecessor);
          LOG.trace("Abstand: {}", diff);
          return Relation.GREATER_THAN;
          // }
@@ -74,7 +74,7 @@ public class ConfidenceIntervalInterpretion {
    private static final int BOOTSTRAP_SIZE = 100;
    private static ThreadLocal<double[]> threadLocalValues = new ThreadLocal<>();
 
-   public static ConfidenceInterval getConfidenceInterval(final double[] valuesBefore, final int percentage) {
+   public static ConfidenceInterval getConfidenceInterval(final double[] rawValues, final int percentage) {
       // LOG.info(valuesBefore + " " + valuesBefore.length);
       
       double[] values = threadLocalValues.get();
@@ -82,7 +82,7 @@ public class ConfidenceIntervalInterpretion {
          values = new double[BOOTSTRAP_SIZE];
          threadLocalValues.set(values);
       }
-      final ConfidenceInterval intervalBefore = MeasurementAnalysationUtil.getBootstrapConfidenceInterval(valuesBefore, valuesBefore.length, values, percentage);
-      return intervalBefore;
+      final ConfidenceInterval interval = MeasurementAnalysationUtil.getBootstrapConfidenceInterval(rawValues, rawValues.length, values, percentage);
+      return interval;
    }
 }

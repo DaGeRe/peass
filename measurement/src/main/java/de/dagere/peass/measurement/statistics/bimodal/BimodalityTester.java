@@ -43,7 +43,7 @@ public class BimodalityTester {
       }
    }
    
-   public IsBimodal getDataBefore() {
+   public IsBimodal getDataPredecessor() {
       return dataPredecessor;
    }
    

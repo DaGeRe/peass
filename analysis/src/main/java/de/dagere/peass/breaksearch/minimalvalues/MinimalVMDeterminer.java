@@ -31,32 +31,32 @@ public class MinimalVMDeterminer extends MinimalValueDeterminer {
 	}
 
 	@Override
-	int analyzeMeasurement(final int oldResult, final List<VMResult> current, final List<VMResult> before) {
+	int analyzeMeasurement(final int oldResult, final List<VMResult> current, final List<VMResult> predecessor) {
 		final List<Double> allStatistics = getValues(current);
-		final List<Double> allStatisticsBefore = getValues(before);
+		final List<Double> allStatisticsPredecessor = getValues(predecessor);
 
 		int localMinValue = current.size();
 
 		vmloop: for (; localMinValue > 2; localMinValue--) {
 			for (int start = 0; start < current.size() - localMinValue; start++) {
 				final boolean significant;
-				final List<Double> shortenedResult, shortenedBeforeResult;
+				final List<Double> shortenedResult, shortenedPredecessorResult;
 				if (start + localMinValue <= current.size()) {
 					shortenedResult = allStatistics.subList(start, start + localMinValue);
-					shortenedBeforeResult = allStatisticsBefore.subList(start, start + localMinValue);
+					shortenedPredecessorResult = allStatisticsPredecessor.subList(start, start + localMinValue);
 				} else {
 					final int altStart = (start + localMinValue) % allStatistics.size();
 					shortenedResult = allStatistics.subList(altStart, start);
-					shortenedBeforeResult = allStatisticsBefore.subList(altStart, start);
+					shortenedPredecessorResult = allStatisticsPredecessor.subList(altStart, start);
 				}
-				significant = FindLowestPossibleIterations.isStillSignificant(shortenedResult, shortenedBeforeResult, oldResult);
+				significant = FindLowestPossibleIterations.isStillSignificant(shortenedResult, shortenedPredecessorResult, oldResult);
 				// final boolean significant = isStillSignificant(statistics.subList(start, start + localMinVmTry), statisticsBefore.subList(start, start + localMinVmTry), oldResult);
 				if (!significant) {
 					final File f = new File("results/measure_" + FindLowestPossibleIterations.fileindex + "_" + localMinValue + ".csv");
 					try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
 						LOG.info("Break at " + localMinValue);
-						for (int i = 0; i < shortenedBeforeResult.size(); i++) {
-							bw.write(shortenedResult.get(i) + ";" + shortenedBeforeResult.get(i) + "\n");
+						for (int i = 0; i < shortenedPredecessorResult.size(); i++) {
+							bw.write(shortenedResult.get(i) + ";" + shortenedPredecessorResult.get(i) + "\n");
 						}
 					} catch (final IOException e) {
 						e.printStackTrace();

@@ -67,14 +67,14 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
          final String version = entry.getKey();
          count++;
          System.out.println("Analyze: " + entry.getValue().getTestcase());
-         final List<double[]> beforeMeasurements = getMeasurements(entry.getValue().getPrevius());
-         final List<double[]> afterMeasurements = getMeasurements(entry.getValue().getCurrent());
+         final List<double[]> predecessorMeasurements = getMeasurements(entry.getValue().getPrevius());
+         final List<double[]> currentMeasurements = getMeasurements(entry.getValue().getCurrent());
 
          // final List<double[]> shortenedMeasurements = new LinkedList<>();
-         final double[] valsBefore = getShortenedValues(beforeMeasurements);
-         final double[] valsAfter = getShortenedValues(afterMeasurements);
+         final double[] valsPredecessor = getShortenedValues(predecessorMeasurements);
+         final double[] valsCurrent = getShortenedValues(currentMeasurements);
 
-         final boolean tNew = TestUtils.tTest(valsBefore, valsAfter, 0.01);
+         final boolean tNew = TestUtils.tTest(valsPredecessor, valsCurrent, 0.01);
 
          if (!isChange && tNew) {
             additionalFound++;
@@ -93,24 +93,24 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
       }
    }
 
-   private List<double[]> getMeasurements(final List<VMResult> previusValues) {
-      final List<double[]> beforeMeasurements = new LinkedList<>();
-      for (final VMResult result : previusValues) {
+   private List<double[]> getMeasurements(final List<VMResult> values) {
+      final List<double[]> measurements = new LinkedList<>();
+      for (final VMResult result : values) {
          final double[] vals = new double[result.getFulldata().getValues().size()];
          int index = 0;
          for (final MeasuredValue value : result.getFulldata().getValues()) {
             vals[index] = value.getValue();
             index++;
          }
-         beforeMeasurements.add(vals);
+         measurements.add(vals);
       }
-      return beforeMeasurements;
+      return measurements;
    }
    
-   private static double[] getShortenedValues(final List<double[]> beforeMeasurements) {
-      final double[] valsBefore = new double[beforeMeasurements.size()];
+   private static double[] getShortenedValues(final List<double[]> measurements) {
+      final double[] valsShortened = new double[measurements.size()];
       int index = 0;
-      for (final double[] values : beforeMeasurements) {
+      for (final double[] values : measurements) {
          final int breakcount = getBreakCount(values);
          if (values.length == 1000) {
             avgcount += breakcount;
@@ -119,10 +119,10 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
          System.out.println("Break: " + breakcount);
          final double[] shortened = new double[breakcount];
          System.arraycopy(values, 0, shortened, 0, breakcount);
-         valsBefore[index] = new DescriptiveStatistics(shortened).getMean();
+         valsShortened[index] = new DescriptiveStatistics(shortened).getMean();
          index++;
       }
-      return valsBefore;
+      return valsShortened;
    }
 
    private static int getBreakCount(final double[] values) {

@@ -33,17 +33,17 @@ abstract class MinimalValueDeterminer {
 
 	abstract int getChange(List<VMResult> results);
  
-	abstract int analyzeMeasurement(int oldResult, List<VMResult> current, List<VMResult> before);
+	abstract int analyzeMeasurement(int oldResult, List<VMResult> current, List<VMResult> predecessor);
 
 	public void processTestdata(final TestData measurementEntry) {
 		LOG.debug(measurementEntry.getTestCase());
 		for (final Map.Entry<String, EvaluationPair> entry : measurementEntry.getMeasurements().entrySet()) {
 			if (entry.getValue().getCurrent().size() == entry.getValue().getPrevius().size()) {
 				final List<Double> allStatistics = getValues(entry.getValue().getCurrent());
-				final List<Double> allStatisticsBefore = getValues(entry.getValue().getPrevius());
+				final List<Double> allStatisticsPredecessor = getValues(entry.getValue().getPrevius());
 
-				LOG.debug(allStatistics.size() + " " + allStatisticsBefore.size());
-				final int oldResult = MultipleVMTestUtil.compareDouble(allStatistics, allStatisticsBefore);
+				LOG.debug(allStatistics.size() + " " + allStatisticsPredecessor.size());
+				final int oldResult = MultipleVMTestUtil.compareDouble(allStatistics, allStatisticsPredecessor);
 
 				final int localMinValue = analyzeMeasurement(oldResult, entry.getValue().getCurrent(), entry.getValue().getPrevius());
 

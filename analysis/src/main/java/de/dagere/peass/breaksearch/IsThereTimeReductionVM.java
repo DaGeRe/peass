@@ -85,22 +85,22 @@ public class IsThereTimeReductionVM {
          LOG.info(data.get(versionOld).stream().map(value -> value.getValue()).collect(Collectors.toList()));
          for (int vmid = 3; vmid <= executionCount - 1; vmid++) {
             // System.out.println("Test: " + xmlFile.getName() + " VM: " + vmid + " Version: " + version + " " + versionOld);
-            final List<Double> before = new LinkedList<>();
-            final List<Double> after = new LinkedList<>();
+            final List<Double> predecessor = new LinkedList<>();
+            final List<Double> current = new LinkedList<>();
             for (int resultIndex = 0; resultIndex < vmid; resultIndex++) {
-               before.add(data.get(version).get(resultIndex).getValue());
-               after.add(data.get(versionOld).get(resultIndex).getValue());
+               predecessor.add(data.get(version).get(resultIndex).getValue());
+               current.add(data.get(versionOld).get(resultIndex).getValue());
             }
 
-            final double[] valsBefore = ArrayUtils.toPrimitive(before.toArray(new Double[0]));
-            final double[] valsAfter = ArrayUtils.toPrimitive(after.toArray(new Double[0]));
+            final double[] valsPredecessor = ArrayUtils.toPrimitive(predecessor.toArray(new Double[0]));
+            final double[] valsCurrent = ArrayUtils.toPrimitive(current.toArray(new Double[0]));
             boolean decidable = false;
 //            final boolean decidable = EarlyBreakDecider.isSavelyDecidable2(vmid - 1, valsBefore, valsAfter);
             // AdaptiveDependencyTester.isBreakPossible(measurementFolder, version, versionOld, testcase, vmid)
 
             if (decidable) {
-               final boolean tNew = TestUtils.tTest(valsBefore, valsAfter, 0.01);
-               System.out.println("VM: " + (vmid + 1) + " " + before.size() + " Speedup: " + decidable + " " + xmlFile.getAbsolutePath() + " " + version);
+               final boolean tNew = TestUtils.tTest(valsPredecessor, valsCurrent, 0.01);
+               System.out.println("VM: " + (vmid + 1) + " " + predecessor.size() + " Speedup: " + decidable + " " + xmlFile.getAbsolutePath() + " " + version);
 
                speedups++;
                if (tNew != isChange) {

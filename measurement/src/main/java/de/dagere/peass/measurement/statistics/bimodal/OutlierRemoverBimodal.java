@@ -71,29 +71,29 @@ public class OutlierRemoverBimodal {
    
    public static CompareData removeOutliersSimple(final CompareData data, final double outlierFactor) {
       CompareData result;
-      double[] valuesBefore = removeOutliers(data.getPredecessor(), data.getPredecessorStat(), outlierFactor);
-      double[] valuesAfter = removeOutliers(data.getCurrent(), data.getCurrentStat(), outlierFactor);
-      result = new CompareData(valuesBefore, valuesAfter);
+      double[] valuesPredecessor = removeOutliers(data.getPredecessor(), data.getPredecessorStat(), outlierFactor);
+      double[] valuesCurrent = removeOutliers(data.getCurrent(), data.getCurrentStat(), outlierFactor);
+      result = new CompareData(valuesPredecessor, valuesCurrent);
       return result;
    }
 
    private static CompareData removeOutlierBimodal(final CompareData data, final double outlierFactor, final BimodalityTester isBismodal) {
-      double[] valuesBefore = removeOutliersBimodal(data.getPredecessor(), isBismodal.getDataBefore(), outlierFactor);
-      double[] valuesAfter = removeOutliersBimodal(data.getCurrent(), isBismodal.getDataAfter(), outlierFactor);
-      CompareData result = new CompareData(valuesBefore, valuesAfter);
+      double[] valuesPredecessor = removeOutliersBimodal(data.getPredecessor(), isBismodal.getDataPredecessor(), outlierFactor);
+      double[] valuesCurrent = removeOutliersBimodal(data.getCurrent(), isBismodal.getDataAfter(), outlierFactor);
+      CompareData result = new CompareData(valuesPredecessor, valuesCurrent);
       return result;
    }
 
-   private static double[] removeOutliersBimodal(final double[] values, final IsBimodal beforeData, final double outlierFactor) {
+   private static double[] removeOutliersBimodal(final double[] values, final IsBimodal data, final double outlierFactor) {
       List<Double> containedValues = new ArrayList<>(values.length);
       for (double value : values) {
-         if (value < beforeData.getAvgValue()) {
-            double zscore = Math.abs(value - beforeData.getStat1().getMean()) / beforeData.getStat1().getStandardDeviation();
+         if (value < data.getAvgValue()) {
+            double zscore = Math.abs(value - data.getStat1().getMean()) / data.getStat1().getStandardDeviation();
             if (!(zscore > outlierFactor)) {
                containedValues.add(value);
             }
          } else {
-            double zscore = Math.abs(value - beforeData.getStat2().getMean()) / beforeData.getStat2().getStandardDeviation();
+            double zscore = Math.abs(value - data.getStat2().getMean()) / data.getStat2().getStandardDeviation();
             if (!(zscore > outlierFactor)) {
                containedValues.add(value);
             }

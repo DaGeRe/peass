@@ -19,14 +19,14 @@ public class MinimalExecutionDeterminer extends MinimalValueDeterminer {
 	private static final Logger LOG = LogManager.getLogger(MinimalExecutionDeterminer.class);
 
 	@Override
-	int analyzeMeasurement(final int oldResult, final List<VMResult> current, final List<VMResult> before) {
+	int analyzeMeasurement(final int oldResult, final List<VMResult> current, final List<VMResult> predecessor) {
 		int localMinValue = current.get(0).getFulldata().getValues().size();
 
 		executionloop: for (; localMinValue > 1000; localMinValue -= 500) {
 			final boolean significant;
 			final List<VMResult> reduced = StatisticUtil.shortenValues(current, 0, localMinValue);
-			final List<VMResult> reducedBefore = StatisticUtil.shortenValues(before, 0, localMinValue);
-			significant = FindLowestPossibleIterations.isStillSignificant(getValues(reduced), getValues(reducedBefore), oldResult);
+			final List<VMResult> reducedPredecessor = StatisticUtil.shortenValues(predecessor, 0, localMinValue);
+			significant = FindLowestPossibleIterations.isStillSignificant(getValues(reduced), getValues(reducedPredecessor), oldResult);
 			// final boolean significant = isStillSignificant(statistics.subList(start, start + localMinVmTry), statisticsBefore.subList(start, start + localMinVmTry), oldResult);
 			if (!significant) {
 				LOG.info("Break at " + localMinValue);

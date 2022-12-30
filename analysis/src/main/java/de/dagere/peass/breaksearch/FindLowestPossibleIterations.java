@@ -84,8 +84,8 @@ public class FindLowestPossibleIterations implements Callable<Void> {
       // exDeterminer.processTestdata(measurementEntry);
    }
 
-   public static boolean isStillSignificant(final List<Double> before, final List<Double> after, final int oldResult) {
-      final int result = MultipleVMTestUtil.compareDouble(before, after);
+   public static boolean isStillSignificant(final List<Double> predecessor, final List<Double> current, final int oldResult) {
+      final int result = MultipleVMTestUtil.compareDouble(predecessor, current);
       if (result == oldResult) {
          return true;
       } else {
