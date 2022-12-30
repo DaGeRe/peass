@@ -71,15 +71,15 @@ public class OutlierRemoverBimodal {
    
    public static CompareData removeOutliersSimple(final CompareData data, final double outlierFactor) {
       CompareData result;
-      double[] valuesBefore = removeOutliers(data.getBefore(), data.getBeforeStat(), outlierFactor);
-      double[] valuesAfter = removeOutliers(data.getAfter(), data.getAfterStat(), outlierFactor);
+      double[] valuesBefore = removeOutliers(data.getPredecessor(), data.getPredecessorStat(), outlierFactor);
+      double[] valuesAfter = removeOutliers(data.getCurrent(), data.getCurrentStat(), outlierFactor);
       result = new CompareData(valuesBefore, valuesAfter);
       return result;
    }
 
    private static CompareData removeOutlierBimodal(final CompareData data, final double outlierFactor, final BimodalityTester isBismodal) {
-      double[] valuesBefore = removeOutliersBimodal(data.getBefore(), isBismodal.getDataBefore(), outlierFactor);
-      double[] valuesAfter = removeOutliersBimodal(data.getAfter(), isBismodal.getDataAfter(), outlierFactor);
+      double[] valuesBefore = removeOutliersBimodal(data.getPredecessor(), isBismodal.getDataBefore(), outlierFactor);
+      double[] valuesAfter = removeOutliersBimodal(data.getCurrent(), isBismodal.getDataAfter(), outlierFactor);
       CompareData result = new CompareData(valuesBefore, valuesAfter);
       return result;
    }

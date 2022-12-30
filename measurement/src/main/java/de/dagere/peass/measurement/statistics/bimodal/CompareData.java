@@ -8,51 +8,51 @@ import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.measurement.rca.data.OneVMResult;
 
 public final class CompareData {
-   private final double[] before;
-   private final double[] after;
-   private final SummaryStatistics beforeStat;
-   private final SummaryStatistics afterStat;
+   private final double[] predecessor;
+   private final double[] current;
+   private final SummaryStatistics predecessorStat;
+   private final SummaryStatistics currentStat;
 
-   public CompareData(final double[] before, final double[] after) {
-      this.before = before;
-      this.after = after;
-      if (before != null) {
-         beforeStat = new SummaryStatistics();
-         for (double beforeVal : before) {
-            beforeStat.addValue(beforeVal);
+   public CompareData(final double[] predecessor, final double[] current) {
+      this.predecessor = predecessor;
+      this.current = current;
+      if (predecessor != null) {
+         predecessorStat = new SummaryStatistics();
+         for (double predecessorVal : predecessor) {
+            predecessorStat.addValue(predecessorVal);
          }
       } else {
-         beforeStat = null;
+         predecessorStat = null;
       }
-      if (after != null) {
-         afterStat = new SummaryStatistics();
-         for (double afterVal : after) {
-            afterStat.addValue(afterVal);
+      if (current != null) {
+         currentStat = new SummaryStatistics();
+         for (double currentVal : current) {
+            currentStat.addValue(currentVal);
          }
       } else {
-         afterStat = null;
+         currentStat = null;
       }
    }
 
-   public CompareData(final List<VMResult> beforeShortened, final List<VMResult> afterShortened) {
+   public CompareData(final List<VMResult> predecessorShortened, final List<VMResult> currentShortened) {
       {
-         beforeStat = new SummaryStatistics();
-         before = new double[beforeShortened.size()];
+         predecessorStat = new SummaryStatistics();
+         predecessor = new double[predecessorShortened.size()];
          int index = 0;
-         for (VMResult result : beforeShortened) {
-            before[index] = result.getValue();
-            getBeforeStat().addValue(before[index]);
+         for (VMResult result : predecessorShortened) {
+            predecessor[index] = result.getValue();
+            getPredecessorStat().addValue(predecessor[index]);
             index++;
          }
       }
 
       {
-         afterStat = new SummaryStatistics();
-         after = new double[afterShortened.size()];
+         currentStat = new SummaryStatistics();
+         current = new double[currentShortened.size()];
          int index = 0;
-         for (VMResult result : afterShortened) {
-            after[index] = result.getValue();
-            getAfterStat().addValue(after[index]);
+         for (VMResult result : currentShortened) {
+            current[index] = result.getValue();
+            getCurrentStat().addValue(current[index]);
             index++;
          }
       }
@@ -61,9 +61,9 @@ public final class CompareData {
    /**
     * Creates a CompareData instance from Lists of OneVMResults. Can't be a constructor, since it is not possible to have constructors with the same erasure (i.e. List, List)
     */
-   public static CompareData createCompareDataFromOneVMResults(final List<OneVMResult> beforeVals, final List<OneVMResult> afterVals) {
-      final double[] before = getDoubleArray(beforeVals);
-      final double[] after = getDoubleArray(afterVals);
+   public static CompareData createCompareDataFromOneVMResults(final List<OneVMResult> predecessorVals, final List<OneVMResult> currentVals) {
+      final double[] before = getDoubleArray(predecessorVals);
+      final double[] after = getDoubleArray(currentVals);
 
       return new CompareData(before, after);
    }
@@ -86,26 +86,26 @@ public final class CompareData {
    }
 
    public double getAvgAfter() {
-      return getAfterStat().getMean();
+      return getCurrentStat().getMean();
    }
 
    public double getAvgBefore() {
-      return getBeforeStat().getMean();
+      return getPredecessorStat().getMean();
    }
 
-   public double[] getBefore() {
-      return before;
+   public double[] getPredecessor() {
+      return predecessor;
    }
 
-   public double[] getAfter() {
-      return after;
+   public double[] getCurrent() {
+      return current;
    }
 
-   public SummaryStatistics getBeforeStat() {
-      return beforeStat;
+   public SummaryStatistics getPredecessorStat() {
+      return predecessorStat;
    }
 
-   public SummaryStatistics getAfterStat() {
-      return afterStat;
+   public SummaryStatistics getCurrentStat() {
+      return currentStat;
    }
 }

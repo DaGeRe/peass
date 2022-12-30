@@ -39,8 +39,8 @@ public class StatisticUtil {
       }
    }
 
-   public static boolean isBimodal(final List<VMResult> valuesPrev, final List<VMResult> valuesVersion) {
-      CompareData data = new CompareData(valuesPrev, valuesVersion);
+   public static boolean isBimodal(final List<VMResult> valuesPredecessor, final List<VMResult> valuesCurrent) {
+      CompareData data = new CompareData(valuesPredecessor, valuesCurrent);
       final BimodalityTester tester = new BimodalityTester(data);
       return tester.isBimodal();
    }
@@ -48,10 +48,10 @@ public class StatisticUtil {
    /**
     * Agnostic T-Test from Coscrato et al.: Agnostic tests can control the type I and type II errors simultaneously
     */
-   public static Relation agnosticTTest(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final double type1error, final double type2error) {
-      final double tValue = getTValue(statisticsPrev, statisticsVersion, 0);
+   public static Relation agnosticTTest(final StatisticalSummary statisticsPredecessor, final StatisticalSummary statisticsCurrent, final double type1error, final double type2error) {
+      final double tValue = getTValue(statisticsPredecessor, statisticsCurrent, 0);
       System.out.println(tValue);
-      return agnosticTTest(tValue, statisticsPrev.getN() + statisticsVersion.getN() - 2, type1error, type2error);
+      return agnosticTTest(tValue, statisticsPredecessor.getN() + statisticsCurrent.getN() - 2, type1error, type2error);
    }
 
    public static Relation agnosticTTest(final double tValue, final long degreesOfFreedom, final double type1error, final double type2error) {
@@ -111,13 +111,13 @@ public class StatisticUtil {
    /**
     * Determines whether there is a change, no change or no decission can be made. Usually, first the predecessor and than the current commit are given.
     * 
-    * @param statisticsPrev
-    * @param statisticsVersion
+    * @param statisticsPredecessor
+    * @param statisticsCurrent
     * @param measurementConfig
     * @return
     */
-   public static Relation agnosticTTest(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final StatisticsConfig statisticsConfig) {
-      return agnosticTTest(statisticsPrev, statisticsVersion, statisticsConfig.getType1error(), statisticsConfig.getType2error());
+   public static Relation agnosticTTest(final StatisticalSummary statisticsPredecessor, final StatisticalSummary statisticsCurrent, final StatisticsConfig statisticsConfig) {
+      return agnosticTTest(statisticsPredecessor, statisticsCurrent, statisticsConfig.getType1error(), statisticsConfig.getType2error());
    }
 
    public static Relation isChange(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final StatisticsConfig statisticsConfig) {
@@ -207,7 +207,7 @@ public class StatisticUtil {
    }
 
    public static Relation getTTestRelation(final CompareData cd, final double type1error) {
-      final boolean tchange = new TTest().homoscedasticTTest(cd.getBefore(), cd.getAfter(), type1error);
+      final boolean tchange = new TTest().homoscedasticTTest(cd.getPredecessor(), cd.getCurrent(), type1error);
       if (tchange) {
          return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
       } else {
@@ -216,7 +216,7 @@ public class StatisticUtil {
    }
 
    public static Relation getMannWhitneyRelation(final CompareData cd, final double type1error) {
-      final double statistic = new MannWhitneyUTest().mannWhitneyUTest(cd.getBefore(), cd.getAfter());
+      final double statistic = new MannWhitneyUTest().mannWhitneyUTest(cd.getPredecessor(), cd.getCurrent());
       LOG.trace("Mann-Whitney-Statistic: {}", statistic);
       final boolean mannchange = statistic < type1error;
       if (mannchange) {
@@ -226,15 +226,15 @@ public class StatisticUtil {
       }
    }
 
-   public static Relation isDifferent(final List<VMResult> valuesPrev, final List<VMResult> valuesVersion, final StatisticsConfig statisticsConfig) {
-      CompareData data = new CompareData(valuesPrev, valuesVersion);
+   public static Relation isDifferent(final List<VMResult> valuesPredecessor, final List<VMResult> valuesCommit, final StatisticsConfig statisticsConfig) {
+      CompareData data = new CompareData(valuesPredecessor, valuesCommit);
       return isDifferent(data, statisticsConfig);
    }
 
    public static Relation isDifferent(final CompareData cd, final StatisticsConfig statisticsConfig) {
       switch (statisticsConfig.getStatisticTest()) {
       case AGNOSTIC_T_TEST:
-         return agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), statisticsConfig);
+         return agnosticTTest(cd.getPredecessorStat(), cd.getCurrentStat(), statisticsConfig);
       case BIMODAL_T_TEST:
          return bimodalTTest(cd, statisticsConfig.getType1error());
       case T_TEST:
@@ -244,13 +244,13 @@ public class StatisticUtil {
       case CONFIDENCE_INTERVAL:
          return ConfidenceIntervalInterpretion.compare(cd, statisticsConfig.getType1error());
       case ANY:
-         boolean isChange = agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), statisticsConfig) != Relation.EQUAL
+         boolean isChange = agnosticTTest(cd.getPredecessorStat(), cd.getCurrentStat(), statisticsConfig) != Relation.EQUAL
                || bimodalTTest(cd, statisticsConfig.getType1error()) != Relation.EQUAL
                || getTTestRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL
                || getMannWhitneyRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL
                || ConfidenceIntervalInterpretion.compare(cd) != Relation.EQUAL;
          LOG.info("Test results ");
-         LOG.info("Agnostic t: {}", agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), statisticsConfig) != Relation.EQUAL);
+         LOG.info("Agnostic t: {}", agnosticTTest(cd.getPredecessorStat(), cd.getCurrentStat(), statisticsConfig) != Relation.EQUAL);
          LOG.info("Bimodal T: {}", bimodalTTest(cd, statisticsConfig.getType1error()) != Relation.EQUAL);
          LOG.info("T Test: {}", getTTestRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL);
          LOG.info("Mann-Whitney: {}", getMannWhitneyRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL);

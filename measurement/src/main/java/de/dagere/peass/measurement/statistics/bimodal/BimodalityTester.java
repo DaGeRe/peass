@@ -18,8 +18,8 @@ public class BimodalityTester {
    public BimodalityTester(final CompareData data) {
       this.data = data;
 
-      dataBefore = new IsBimodal(data.getBefore(), data.getBeforeStat());
-      dataAfter = new IsBimodal(data.getAfter(), data.getAfterStat());
+      dataBefore = new IsBimodal(data.getPredecessor(), data.getPredecessorStat());
+      dataAfter = new IsBimodal(data.getCurrent(), data.getCurrentStat());
 
       isBimodal = dataBefore.isBimodal()
             && dataAfter.isBimodal();
@@ -61,7 +61,7 @@ public class BimodalityTester {
          boolean isChange = firstChanged && secondChanged && sameDirection;
          return isChange;
       } else {
-         return new TTest().homoscedasticTTest(data.getBefore(), data.getAfter(), significance);
+         return new TTest().homoscedasticTTest(data.getPredecessor(), data.getCurrent(), significance);
       }
    }
    

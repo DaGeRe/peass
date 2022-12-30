@@ -43,19 +43,19 @@ public abstract class DifferentNodeDeterminer {
    }
 
    private void calculateNodeDifference(final CallTreeNode currentPredecessorNode, final CompareData cd) {
-      if (cd.getBeforeStat() == null || cd.getAfterStat() == null) {
-         LOG.debug("Statistics is null, is different: {} vs {}", cd.getBeforeStat(), cd.getAfterStat());
+      if (cd.getPredecessorStat() == null || cd.getCurrentStat() == null) {
+         LOG.debug("Statistics is null, is different: {} vs {}", cd.getPredecessorStat(), cd.getCurrentStat());
          levelDifferentPrecessor.add(currentPredecessorNode);
       } else {
          final CompareData cleaned = removeOutliers(cd);
-         printComparisonInfos(currentPredecessorNode, cleaned.getBeforeStat(), cleaned.getAfterStat());
+         printComparisonInfos(currentPredecessorNode, cleaned.getPredecessorStat(), cleaned.getCurrentStat());
          checkNodeDiffering(currentPredecessorNode, cleaned);
       }
    }
 
    private CompareData removeOutliers(final CompareData cd) {
       final CompareData cleaned;
-      if (measurementConfig.getStatisticsConfig().getOutlierFactor() != 0 && cd.getAfter().length > 1 && cd.getBefore().length > 1) {
+      if (measurementConfig.getStatisticsConfig().getOutlierFactor() != 0 && cd.getCurrent().length > 1 && cd.getPredecessor().length > 1) {
          cleaned = OutlierRemoverBimodal.removeOutliers(cd, measurementConfig.getStatisticsConfig().getOutlierFactor());
       } else {
          cleaned = cd;
@@ -64,12 +64,12 @@ public abstract class DifferentNodeDeterminer {
    }
 
    private void checkNodeDiffering(final CallTreeNode currentPredecessorNode, final CompareData cleaned) {
-      if (cleaned.getBeforeStat().getN() > 0 && cleaned.getAfterStat().getN() > 0) {
+      if (cleaned.getPredecessorStat().getN() > 0 && cleaned.getCurrentStat().getN() > 0) {
          final Relation relation = StatisticUtil.isDifferent(cleaned, measurementConfig.getStatisticsConfig());
-         boolean needsEnoughTime = needsEnoughTime(cleaned.getBeforeStat(), cleaned.getAfterStat());
+         boolean needsEnoughTime = needsEnoughTime(cleaned.getPredecessorStat(), cleaned.getCurrentStat());
          LOG.debug("Relation: {} Needs enough time: {}", relation, needsEnoughTime);
          if ((relation == Relation.UNEQUAL || relation == Relation.GREATER_THAN || relation == Relation.LESS_THAN)) {
-            addChildsToMeasurement(currentPredecessorNode, cleaned.getBeforeStat(), cleaned.getAfterStat());
+            addChildsToMeasurement(currentPredecessorNode, cleaned.getPredecessorStat(), cleaned.getCurrentStat());
          } else {
             LOG.info("No remeasurement");
          }

@@ -40,8 +40,8 @@ public class ConfidenceIntervalInterpretion {
       if (percentage < 1 || percentage > 99) {
          throw new RuntimeException("Percentage between 1 and 99 expected");
       }
-      final ConfidenceInterval intervalBefore = getConfidenceInterval(data.getBefore(), percentage);
-      final ConfidenceInterval intervalAfter = getConfidenceInterval(data.getAfter(), percentage);
+      final ConfidenceInterval intervalBefore = getConfidenceInterval(data.getPredecessor(), percentage);
+      final ConfidenceInterval intervalAfter = getConfidenceInterval(data.getCurrent(), percentage);
 
       final double avgBefore = data.getAvgBefore();
       final double avgAfter = data.getAvgAfter();
