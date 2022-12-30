@@ -70,14 +70,14 @@ public class TestContinuousMeasurementExecutor {
          Set<TestMethodCall> tests = buildTestSet();
 
          File logFile = new File(parentFile, "log.txt");
-         File fullResultsVersion = new File(parentFile, "fullResultsVersion");
+         File fullResultsCommit = new File(parentFile, "fullResultsCommit");
 
          Answer<Void> answerOnceRunner = mockOnceRunner(folders);
 
          Answer<Object> answerResultLoader = mockResultLoader();
          try (MockedConstruction<OnceRunner> onceRunncerConstruction = Mockito.mockConstructionWithAnswer(OnceRunner.class, answerOnceRunner);
                MockedConstruction<ResultLoader> resultLoaderConstruction = Mockito.mockConstructionWithAnswer(ResultLoader.class, answerResultLoader)) {
-            File measurementResultFolder = cme.executeMeasurements(tests, fullResultsVersion, logFile);
+            File measurementResultFolder = cme.executeMeasurements(tests, fullResultsCommit, logFile);
 
             checkResults(executorCreatorMock, measurementConfig, measurementResultFolder);
          }
@@ -153,9 +153,9 @@ public class TestContinuousMeasurementExecutor {
          @Override
          public Void answer(InvocationOnMock invocation) throws Throwable {
             TestMethodCall testcase = invocation.getArgument(0);
-            String version = invocation.getArgument(1);
+            String commit = invocation.getArgument(1);
             int vmId = invocation.getArgument(2);
-            System.out.println("Running test " + testcase + " for version " + version + " and vmId " + vmId);
+            System.out.println("Running test " + testcase + " for commit " + commit + " and vmId " + vmId);
 
             if (testcase.equals(TEST1) || testcase.equals(TEST3)) {
                Kopemedata data = new Kopemedata("");
@@ -165,7 +165,7 @@ public class TestContinuousMeasurementExecutor {
                result.setIterations(ITERATIONS);
                dataCollector.getResults().add(result);
 
-               File resultFile = folders.getResultFile(testcase, vmId, version, "000001");
+               File resultFile = folders.getResultFile(testcase, vmId, commit, "000001");
                resultFile.getParentFile().mkdirs();
                JSONDataStorer.storeData(resultFile, data);
             }
