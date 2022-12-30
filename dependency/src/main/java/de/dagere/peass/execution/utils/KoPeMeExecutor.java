@@ -50,10 +50,15 @@ public abstract class KoPeMeExecutor extends TestExecutor {
       try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, test.toEntity(), test.getMethod())) {
          if (testTransformer.getConfig().isDirectlyMeasureKieker()) {
             File fileToInstrument = shortener.getCalleeClazzFile();
+            boolean strictMode = false;
+
+            if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()) {
+               strictMode = true;
+            }
             
             HashSet<String> includedPatterns = new HashSet<>();
             includedPatterns.add("* " + test.getClazz() + "." + test.getMethod() + "()");
-            InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.DURATION, true, false, false, includedPatterns, null, false, testTransformer.getConfig().getRepetitions(), false);
+            InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.DURATION, true, false, false, includedPatterns, null, false, testTransformer.getConfig().getRepetitions(), false, strictMode);
             InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(configuration);
             instrumenter.instrument(fileToInstrument);
          }
