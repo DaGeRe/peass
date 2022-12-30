@@ -2,7 +2,9 @@ package de.dagere.peass.execution.gradle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -196,13 +198,26 @@ public class AnboxTestExecutor extends GradleTestExecutor {
 
       String[] anboxOriginals = new String[] { adbCall, "shell", "am", "instrument", "-w", "-e", "class" };
 
+      final String testPackageName = getTestPackageName(test);
+
       final String[] vars = CommandConcatenator.concatenateCommandArrays(anboxOriginals,
-            new String[] { test.getExecutable(), test.getPackage() + ".test" + "/androidx.test.runner.AndroidJUnitRunner" });
+            new String[] { test.getExecutable(), testPackageName + "/androidx.test.runner.AndroidJUnitRunner" });
       ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
       processBuilderHelper.parseParams(test.getParams());
 
       LOG.debug("Executing gradle test in moduleFolder: {}", moduleFolder);
       return processBuilderHelper.buildFolderProcess(moduleFolder, logFile, vars);
+   }
+
+   public static String getTestPackageName(TestMethodCall test) {
+      final String testPackageName;
+
+      if (test.getPackage().endsWith(".test")) {
+         testPackageName = test.getPackage();
+      } else {
+         testPackageName = test.getPackage() + ".test";
+      }
+      return testPackageName;
    }
 
    /**
