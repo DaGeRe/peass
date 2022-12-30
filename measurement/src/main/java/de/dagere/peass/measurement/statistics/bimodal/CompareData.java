@@ -62,10 +62,10 @@ public final class CompareData {
     * Creates a CompareData instance from Lists of OneVMResults. Can't be a constructor, since it is not possible to have constructors with the same erasure (i.e. List, List)
     */
    public static CompareData createCompareDataFromOneVMResults(final List<OneVMResult> predecessorVals, final List<OneVMResult> currentVals) {
-      final double[] before = getDoubleArray(predecessorVals);
-      final double[] after = getDoubleArray(currentVals);
+      final double[] predecessor = getDoubleArray(predecessorVals);
+      final double[] current = getDoubleArray(currentVals);
 
-      return new CompareData(before, after);
+      return new CompareData(predecessor, current);
    }
 
    private static double[] getDoubleArray(final List<OneVMResult> sourceVals) {
@@ -85,11 +85,11 @@ public final class CompareData {
       return valueArray;
    }
 
-   public double getAvgAfter() {
+   public double getAvgCurrent() {
       return getCurrentStat().getMean();
    }
 
-   public double getAvgBefore() {
+   public double getAvgPredecessor() {
       return getPredecessorStat().getMean();
    }
 

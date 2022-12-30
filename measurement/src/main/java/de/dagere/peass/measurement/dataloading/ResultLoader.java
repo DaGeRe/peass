@@ -25,8 +25,8 @@ public class ResultLoader {
 
    private final MeasurementConfig config;
 
-   private final List<Double> before = new LinkedList<>();
-   private final List<Double> after = new LinkedList<>();
+   private final List<Double> predecessor = new LinkedList<>();
+   private final List<Double> current = new LinkedList<>();
 
    public ResultLoader(final MeasurementConfig config) {
       this.config = config;
@@ -48,29 +48,29 @@ public class ResultLoader {
          if (result.getIterations() + result.getWarmup() == config.getAllIterations() &&
                result.getRepetitions() == config.getRepetitions()) {
             if (result.getCommit().equals(config.getFixedCommitConfig().getCommitOld())) {
-               before.add(result.getValue());
+               predecessor.add(result.getValue());
             }
             if (result.getCommit().equals(config.getFixedCommitConfig().getCommit())) {
-               after.add(result.getValue());
+               current.add(result.getValue());
             }
          }
       }
    }
 
-   public DescriptiveStatistics getStatisticsBefore() {
-      return new DescriptiveStatistics(getValsBefore());
+   public DescriptiveStatistics getStatisticsPredecessor() {
+      return new DescriptiveStatistics(getValsPredecessor());
    }
 
-   public DescriptiveStatistics getStatisticsAfter() {
-      return new DescriptiveStatistics(getValsAfter());
+   public DescriptiveStatistics getStatisticsCurrent() {
+      return new DescriptiveStatistics(getValsCurrent());
    }
 
-   public double[] getValsBefore() {
-      return ArrayUtils.toPrimitive(before.toArray(new Double[0]));
+   public double[] getValsPredecessor() {
+      return ArrayUtils.toPrimitive(predecessor.toArray(new Double[0]));
    }
 
-   public double[] getValsAfter() {
-      return ArrayUtils.toPrimitive(after.toArray(new Double[0]));
+   public double[] getValsCurrent() {
+      return ArrayUtils.toPrimitive(current.toArray(new Double[0]));
    }
 
    public static List<VMResult> removeResultsWithWrongConfiguration(final List<VMResult> results) {

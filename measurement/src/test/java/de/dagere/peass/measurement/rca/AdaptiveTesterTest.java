@@ -88,8 +88,8 @@ public class AdaptiveTesterTest {
    @Test
    public void testEarlyDecision() throws Exception {
       ResultLoader loader = Mockito.mock(ResultLoader.class);
-      Mockito.when(loader.getStatisticsAfter()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
-      Mockito.when(loader.getStatisticsBefore()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
+      Mockito.when(loader.getStatisticsCurrent()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
+      Mockito.when(loader.getStatisticsPredecessor()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
 
       final MeasurementConfig config = new MeasurementConfig(100, "A", "B");
       config.setIterations(1000);

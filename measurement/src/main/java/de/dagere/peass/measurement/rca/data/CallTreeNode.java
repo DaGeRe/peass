@@ -159,10 +159,10 @@ public class CallTreeNode extends BasicNode {
    }
 
    public CompareData getComparableStatistics(final String commitOld, final String commit) {
-      List<OneVMResult> before = data.get(commitOld) != null ? data.get(commitOld).getResults() : null;
-      List<OneVMResult> after = data.get(commit) != null ? data.get(commit).getResults() : null;
+      List<OneVMResult> dataOld = data.get(commitOld) != null ? data.get(commitOld).getResults() : null;
+      List<OneVMResult> dataCurrent = data.get(commit) != null ? data.get(commit).getResults() : null;
 
-      CompareData cd = CompareData.createCompareDataFromOneVMResults(before, after);
+      CompareData cd = CompareData.createCompareDataFromOneVMResults(dataOld, dataCurrent);
       return cd;
    }
 

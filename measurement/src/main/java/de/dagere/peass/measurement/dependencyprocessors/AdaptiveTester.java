@@ -72,11 +72,11 @@ public class AdaptiveTester extends DependencyTester {
       if (configuration.isEarlyStop()) {
          final ResultLoader loader = new ResultLoader(configuration);
          loader.loadData(folders, testcase, currentChunkStart);
-         LOG.debug(loader.getStatisticsAfter());
-         DescriptiveStatistics statisticsBefore = loader.getStatisticsBefore();
-         DescriptiveStatistics statisticsAfter = loader.getStatisticsAfter();
+         LOG.debug(loader.getStatisticsCurrent());
+         DescriptiveStatistics statisticsPredecessor = loader.getStatisticsPredecessor();
+         DescriptiveStatistics statisticsCurrent = loader.getStatisticsCurrent();
 
-         final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsAfter, statisticsBefore);
+         final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsCurrent, statisticsPredecessor);
          savelyDecidable = decider.isBreakPossible(vmid);
       } else {
          savelyDecidable = false;

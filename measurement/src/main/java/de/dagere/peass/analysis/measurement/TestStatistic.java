@@ -54,18 +54,18 @@ public class TestStatistic {
       statisticsPrevious = ConfidenceIntervalInterpretion.getStatistics(previous);
       statisticsCurrent = ConfidenceIntervalInterpretion.getStatistics(current);
 
-      final List<Double> previous_double = MultipleVMTestUtil.getAverages(previous);
-      final List<Double> after_double = MultipleVMTestUtil.getAverages(current);
+      final List<Double> predecessor_double = MultipleVMTestUtil.getAverages(previous);
+      final List<Double> current_double = MultipleVMTestUtil.getAverages(current);
 
-      final double[] dataBefore = ArrayUtils.toPrimitive(previous_double.toArray(new Double[0]));
-      final double[] dataAfter = ArrayUtils.toPrimitive(after_double.toArray(new Double[0]));
-      final DescriptiveStatistics dsBefore = new DescriptiveStatistics(dataBefore);
-      final DescriptiveStatistics dsAfter = new DescriptiveStatistics(dataAfter);
-      LOG.trace(dsBefore.getMean() + " " + dsAfter.getMean() + " " + dsBefore.getStandardDeviation() + " " + dsAfter.getStandardDeviation());
+      final double[] dataPredecessor = ArrayUtils.toPrimitive(predecessor_double.toArray(new Double[0]));
+      final double[] dataCurrent = ArrayUtils.toPrimitive(current_double.toArray(new Double[0]));
+      final DescriptiveStatistics dsPredecessor = new DescriptiveStatistics(dataPredecessor);
+      final DescriptiveStatistics dsCurrent = new DescriptiveStatistics(dataCurrent);
+      LOG.trace(dsPredecessor.getMean() + " " + dsCurrent.getMean() + " " + dsPredecessor.getStandardDeviation() + " " + dsCurrent.getStandardDeviation());
 
-      tValue = TestUtils.t(dataBefore, dataAfter);
-      mannWhitneyUStatistic = StatisticUtil.getMannWhitneyUStatistic(dataBefore, dataAfter);
-      change = TestUtils.homoscedasticTTest(dataBefore, dataAfter, type1error);
+      tValue = TestUtils.t(dataPredecessor, dataCurrent);
+      mannWhitneyUStatistic = StatisticUtil.getMannWhitneyUStatistic(dataPredecessor, dataCurrent);
+      change = TestUtils.homoscedasticTTest(dataPredecessor, dataCurrent, type1error);
       
       // Achtung, dupliziert!
       diff = (int) (((statisticsPrevious.getMean() - statisticsCurrent.getMean()) * 10000) / statisticsPrevious.getMean());

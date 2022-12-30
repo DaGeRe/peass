@@ -214,11 +214,11 @@ public class MultipleVMTestUtil {
       return st2;
    }
 
-   public static List<Double> getAverages(final List<VMResult> before) {
-      return before.stream()
-            .mapToDouble(beforeVal -> beforeVal.getFulldata().getValues().stream()
+   public static List<Double> getAverages(final List<VMResult> values) {
+      return values.stream()
+            .mapToDouble(vmVal -> vmVal.getFulldata().getValues().stream()
                   .mapToDouble(val -> val.getValue()).sum()
-                  / beforeVal.getFulldata().getValues().size())
+                  / vmVal.getFulldata().getValues().size())
             .boxed().sorted().collect(Collectors.toList());
    }
 
@@ -228,15 +228,15 @@ public class MultipleVMTestUtil {
       return statistisc;
    }
 
-   public static int compareDouble(final List<Double> before, final List<Double> after) {
-      final boolean change = TestUtils.tTest(ArrayUtils.toPrimitive(before.toArray(new Double[0])), ArrayUtils.toPrimitive(after.toArray(new Double[0])), 0.05);
-      final SummaryStatistics statisticBefore = new SummaryStatistics();
-      before.forEach(result -> statisticBefore.addValue(result));
+   public static int compareDouble(final List<Double> predecessor, final List<Double> current) {
+      final boolean change = TestUtils.tTest(ArrayUtils.toPrimitive(predecessor.toArray(new Double[0])), ArrayUtils.toPrimitive(current.toArray(new Double[0])), 0.05);
+      final SummaryStatistics statisticPredecessor = new SummaryStatistics();
+      predecessor.forEach(result -> statisticPredecessor.addValue(result));
 
-      final SummaryStatistics statisticAfter = new SummaryStatistics();
-      after.forEach(result -> statisticAfter.addValue(result));
+      final SummaryStatistics statisticCurrent = new SummaryStatistics();
+      current.forEach(result -> statisticCurrent.addValue(result));
       if (change) {
-         if (statisticBefore.getMean() < statisticAfter.getMean())
+         if (statisticPredecessor.getMean() < statisticCurrent.getMean())
             return -1;
          else
             return 1;

@@ -43,8 +43,8 @@ public class ConfidenceIntervalInterpretion {
       final ConfidenceInterval intervalBefore = getConfidenceInterval(data.getPredecessor(), percentage);
       final ConfidenceInterval intervalAfter = getConfidenceInterval(data.getCurrent(), percentage);
 
-      final double avgBefore = data.getAvgBefore();
-      final double avgAfter = data.getAvgAfter();
+      final double avgBefore = data.getAvgPredecessor();
+      final double avgAfter = data.getAvgCurrent();
 
       LOG.trace("Intervalle: {} ({}) vs. vorher {} ({})", intervalAfter, avgAfter, intervalBefore, avgBefore);
       final PerformanceChange change = new PerformanceChange(intervalBefore, intervalAfter, "", "", "0", "1");

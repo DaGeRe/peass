@@ -97,13 +97,13 @@ public class StatisticUtil {
       return criticalValueEqual;
    }
 
-   public static double getTValue(final StatisticalSummary statisticsAfter, final StatisticalSummary statisticsBefore, final double omega) {
-      final double n = statisticsAfter.getN();
-      final double m = statisticsBefore.getN();
+   public static double getTValue(final StatisticalSummary statisticsCurrent, final StatisticalSummary statisticsPredecessor, final double omega) {
+      final double n = statisticsCurrent.getN();
+      final double m = statisticsPredecessor.getN();
       final double sizeFactor = Math.sqrt(m * n / (m + n));
-      final double upperPart = (m - 1) * Math.pow(statisticsBefore.getStandardDeviation(), 2) + (n - 1) * Math.pow(statisticsAfter.getStandardDeviation(), 2);
+      final double upperPart = (m - 1) * Math.pow(statisticsPredecessor.getStandardDeviation(), 2) + (n - 1) * Math.pow(statisticsCurrent.getStandardDeviation(), 2);
       final double s = Math.sqrt(upperPart / (m + n - 2));
-      final double difference = (statisticsAfter.getMean() - statisticsBefore.getMean() - omega);
+      final double difference = (statisticsCurrent.getMean() - statisticsPredecessor.getMean() - omega);
       final double tAlternative = sizeFactor * difference / s;
       return tAlternative;
    }
@@ -209,7 +209,7 @@ public class StatisticUtil {
    public static Relation getTTestRelation(final CompareData cd, final double type1error) {
       final boolean tchange = new TTest().homoscedasticTTest(cd.getPredecessor(), cd.getCurrent(), type1error);
       if (tchange) {
-         return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
+         return cd.getAvgPredecessor() < cd.getAvgCurrent() ? Relation.LESS_THAN : Relation.GREATER_THAN;
       } else {
          return Relation.EQUAL;
       }
@@ -220,7 +220,7 @@ public class StatisticUtil {
       LOG.trace("Mann-Whitney-Statistic: {}", statistic);
       final boolean mannchange = statistic < type1error;
       if (mannchange) {
-         return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
+         return cd.getAvgPredecessor() < cd.getAvgCurrent() ? Relation.LESS_THAN : Relation.GREATER_THAN;
       } else {
          return Relation.EQUAL;
       }
@@ -257,7 +257,7 @@ public class StatisticUtil {
          LOG.info("Confidence interval: {}", ConfidenceIntervalInterpretion.compare(cd, statisticsConfig.getType1error()) != Relation.EQUAL);
          LOG.info("isChange: {}", isChange);
          if (isChange) {
-            return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
+            return cd.getAvgPredecessor() < cd.getAvgCurrent() ? Relation.LESS_THAN : Relation.GREATER_THAN;
          } else {
             return Relation.EQUAL;
          }
@@ -273,7 +273,7 @@ public class StatisticUtil {
          LOG.info("Confidence interval: {}", ConfidenceIntervalInterpretion.compare(cd, statisticsConfig.getType1error()) != Relation.EQUAL);
          LOG.info("isChange: {}", isChangeNoAgnostic);
          if (isChangeNoAgnostic) {
-            return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
+            return cd.getAvgPredecessor() < cd.getAvgCurrent() ? Relation.LESS_THAN : Relation.GREATER_THAN;
          } else {
             return Relation.EQUAL;
          }

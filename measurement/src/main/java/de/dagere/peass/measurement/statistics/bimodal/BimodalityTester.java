@@ -8,8 +8,8 @@ public class BimodalityTester {
 
    private final CompareData data;
 
-   final IsBimodal dataBefore;
-   final IsBimodal dataAfter;
+   final IsBimodal dataPredecessor;
+   final IsBimodal dataCurrent;
 
    private final boolean isBimodal;
 
@@ -18,15 +18,15 @@ public class BimodalityTester {
    public BimodalityTester(final CompareData data) {
       this.data = data;
 
-      dataBefore = new IsBimodal(data.getPredecessor(), data.getPredecessorStat());
-      dataAfter = new IsBimodal(data.getCurrent(), data.getCurrentStat());
+      dataPredecessor = new IsBimodal(data.getPredecessor(), data.getPredecessorStat());
+      dataCurrent = new IsBimodal(data.getCurrent(), data.getCurrentStat());
 
-      isBimodal = dataBefore.isBimodal()
-            && dataAfter.isBimodal();
+      isBimodal = dataPredecessor.isBimodal()
+            && dataCurrent.isBimodal();
 
       if (isBimodal) {
-         final boolean firstSmaller = dataBefore.getStat1().getMean() < dataAfter.getStat1().getMean();
-         final boolean secondSmaller = dataBefore.getStat2().getMean() < dataAfter.getStat2().getMean();
+         final boolean firstSmaller = dataPredecessor.getStat1().getMean() < dataCurrent.getStat1().getMean();
+         final boolean secondSmaller = dataPredecessor.getStat2().getMean() < dataCurrent.getStat2().getMean();
          if (firstSmaller && secondSmaller) {
             relation = Relation.LESS_THAN;
          } else if (!firstSmaller && !secondSmaller) {
@@ -35,7 +35,7 @@ public class BimodalityTester {
             relation = Relation.EQUAL;
          }
       } else {
-         if (data.getAvgBefore() < data.getAvgAfter()) {
+         if (data.getAvgPredecessor() < data.getAvgCurrent()) {
             relation = Relation.LESS_THAN;
          } else {
             relation = Relation.GREATER_THAN;
@@ -44,19 +44,19 @@ public class BimodalityTester {
    }
    
    public IsBimodal getDataBefore() {
-      return dataBefore;
+      return dataPredecessor;
    }
    
    public IsBimodal getDataAfter() {
-      return dataAfter;
+      return dataCurrent;
    }
 
    public boolean isTChange(final double significance) {
       if (isBimodal) {
-         final boolean firstChanged = new TTest().homoscedasticTTest(dataBefore.getStat1(), dataAfter.getStat1()) < significance;
-         final boolean secondChanged = new TTest().homoscedasticTTest(dataBefore.getStat2(), dataAfter.getStat2()) < significance;
-         final boolean firstSmaller = dataBefore.getStat1().getMean() < dataAfter.getStat1().getMean();
-         final boolean secondSmaller = dataBefore.getStat2().getMean() < dataAfter.getStat2().getMean();
+         final boolean firstChanged = new TTest().homoscedasticTTest(dataPredecessor.getStat1(), dataCurrent.getStat1()) < significance;
+         final boolean secondChanged = new TTest().homoscedasticTTest(dataPredecessor.getStat2(), dataCurrent.getStat2()) < significance;
+         final boolean firstSmaller = dataPredecessor.getStat1().getMean() < dataCurrent.getStat1().getMean();
+         final boolean secondSmaller = dataPredecessor.getStat2().getMean() < dataCurrent.getStat2().getMean();
          final boolean sameDirection = (firstSmaller == secondSmaller);
          boolean isChange = firstChanged && secondChanged && sameDirection;
          return isChange;
