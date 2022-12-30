@@ -217,7 +217,7 @@ public class StatisticUtil {
 
    public static Relation getMannWhitneyRelation(final CompareData cd, final double type1error) {
       final double statistic = new MannWhitneyUTest().mannWhitneyUTest(cd.getBefore(), cd.getAfter());
-      LOG.trace(statistic);
+      LOG.trace("Mann-Whitney-Statistic: {}", statistic);
       final boolean mannchange = statistic < type1error;
       if (mannchange) {
          return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;

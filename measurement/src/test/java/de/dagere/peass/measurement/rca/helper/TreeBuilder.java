@@ -47,7 +47,7 @@ public class TreeBuilder {
    }
 
    public TreeBuilder() {
-      this(new MeasurementConfig(3));
+      this(new MeasurementConfig(5));
       config.setIterations(3);
    }
 
