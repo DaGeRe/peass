@@ -109,6 +109,7 @@ public class AnalyseFullData extends DataAnalyser {
       projectChanges.addChange(currentTest, version,
             teststatistic.getConfidenceResult(), tRelation, mean,
             diffPercent, teststatistic.getTValue(),
+            teststatistic.getMannWhitneyUStatistic(),
             teststatistic.getCurrentStatistic().getN());
       projectChanges.setCommitCount(versions.size());
       projectChanges.setTestcaseCount(testcases);

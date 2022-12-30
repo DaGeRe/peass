@@ -15,7 +15,7 @@ import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 public class TestNodePreperatorColor {
 
    private CauseSearchData data = new CauseSearchData();
-   private final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true, 5, 3);
+   private final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, 0.001, true, 5, 3);
    private final MeasuredNode root = new MeasuredNode("Test.testMethod", "public void Test.testMethod()", "public void Test.testMethod()");
 
    @BeforeEach
@@ -100,7 +100,7 @@ public class TestNodePreperatorColor {
    }
 
    private void prepareTree() {
-      final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true, 3, 5);
+      final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, 0.001, true, 3, 5);
 
       final MeasuredNode child1 = new MeasuredNode("ClassA.method1", "public void ClassA.method1()", "public void ClassA.method1()");
       final MeasuredNode child2 = new MeasuredNode("ClassA.method2", "public void ClassA.method2()", "public void ClassA.method2()");

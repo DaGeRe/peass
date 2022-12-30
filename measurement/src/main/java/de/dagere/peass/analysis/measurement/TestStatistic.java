@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
 import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,7 @@ public class TestStatistic {
 
    private final int diff;
    private final double tValue;
+   private final double mannWhitneyUStatistic;
    private final boolean change;
    private final Relation confidenceResult;
 
@@ -62,6 +64,7 @@ public class TestStatistic {
       LOG.trace(dsBefore.getMean() + " " + dsAfter.getMean() + " " + dsBefore.getStandardDeviation() + " " + dsAfter.getStandardDeviation());
 
       tValue = TestUtils.t(dataBefore, dataAfter);
+      mannWhitneyUStatistic = StatisticUtil.getMannWhitneyUStatistic(dataBefore, dataAfter);
       change = TestUtils.homoscedasticTTest(dataBefore, dataAfter, type1error);
       
       // Achtung, dupliziert!
@@ -129,5 +132,9 @@ public class TestStatistic {
 
    private String getStatisticString(final DescriptiveStatistics statistics) {
       return statistics.getMean() + " " + (statistics.getStandardDeviation() / statistics.getMean());
+   }
+
+   public Double getMannWhitneyUStatistic() {
+      return mannWhitneyUStatistic;
    }
 }

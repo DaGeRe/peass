@@ -52,12 +52,14 @@ public class Changes implements Serializable {
     * @param viewName view-file where trace-diff should be saved
     * @param method Testmethod where performance changed
     * @param percent How much the performance was changed
+    * @param mannWhitheyUStatistic 
     * @return Added Change
     */
-   public Change addChange(final TestMethodCall testcase, final String viewName, final double oldTime, final double percent, final double tvalue, final long vms) {
+   public Change addChange(final TestMethodCall testcase, final String viewName, final double oldTime, final double percent, final double tvalue, Double mannWhitheyUStatistic, final long vms) {
       Change change = new Change();
       change.setDiff(viewName);
       change.setTvalue(tvalue);
+      change.setMannWhitneyUStatistic(mannWhitheyUStatistic);
       change.setOldTime(oldTime);
       change.setChangePercent(percent);
       change.setVms(vms);

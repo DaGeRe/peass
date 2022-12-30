@@ -22,6 +22,9 @@ public class Change implements Serializable {
    private double oldTime;
    private double changePercent;
    private double tvalue;
+   
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Double mannWhitneyUStatistic;
    private long vms;
    
    public Change() {
@@ -80,6 +83,14 @@ public class Change implements Serializable {
 
    public void setTvalue(final double tvalue) {
       this.tvalue = tvalue;
+   }
+   
+   public Double getMannWhitneyUStatistic() {
+      return mannWhitneyUStatistic;
+   }
+   
+   public void setMannWhitneyUStatistic(Double mannWhitneyUStatistic) {
+      this.mannWhitneyUStatistic = mannWhitneyUStatistic;
    }
 
    public String getMethod() {

@@ -94,12 +94,13 @@ public class ProjectChanges implements Serializable {
    public void addChange(final TestMethodCall testCase, final String commit,
          final Relation confidenceResult,
          final Relation tTestResult, final double oldTime,
-         final double diffPercent, final double tvalue,
+         final double diffPercent, 
+         final double tvalue, double mannWhitheyUStatistic,
          final long vms) {
       final Changes changeList = getCommitChanges(commit);
       final String viewName = "view_" + commit + "/diffs/" + testCase.getShortClazz() + "#" + testCase.getMethod() + ".txt";
       LOG.debug("Adding change: {} to {}", testCase, commit);
-      changeList.addChange(testCase, viewName, oldTime, diffPercent, tvalue, vms);
+      changeList.addChange(testCase, viewName, oldTime, diffPercent, tvalue, mannWhitheyUStatistic, vms);
 
       changeCount++;
    }

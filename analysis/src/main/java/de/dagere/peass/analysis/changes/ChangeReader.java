@@ -257,6 +257,7 @@ public class ChangeReader {
                statistic.isChange() ? Relation.GREATER_THAN : Relation.EQUAL,
                describedChunk.getDescPrevious().getMean(), diff,
                statistic.getTvalue(),
+               statistic.getMannWhitneyUStatistic(),
                statistic.getVMs());
 
          writeRunCommands(commits, describedChunk, testcase);

@@ -315,4 +315,12 @@ public class StatisticUtil {
          LOG.trace("Overall mean: {}", StatisticUtil.getMean(statistic));
       }
    }
+
+   public static double getMannWhitneyUStatistic(double[] dataOld, double[] dataCurrent) {
+      return new MannWhitneyUTest().mannWhitneyU(dataOld, dataCurrent);
+   }
+
+   public static Double getMannWhitneyUStatistic(DescriptiveStatistics statisticsOld, DescriptiveStatistics statisticsCurrent) {
+      return getMannWhitneyUStatistic(statisticsOld.getValues(), statisticsCurrent.getValues());
+   }
 }

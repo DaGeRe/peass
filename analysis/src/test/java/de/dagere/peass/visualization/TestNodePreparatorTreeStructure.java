@@ -18,7 +18,7 @@ public class TestNodePreparatorTreeStructure {
    @BeforeEach
    public void init() {
       csd.setConfig(new MeasurementConfig(15));
-      rootNode.setStatistic(new TestcaseStatistic(5.0, 6.0, 0.01, 0.01, 15, -3, true, 10, 10));
+      rootNode.setStatistic(new TestcaseStatistic(5.0, 6.0, 0.01, 0.01, 15, -3, 0.001, true, 10, 10));
       rootNode.setValues(new MeasuredValues());
       rootNode.setValuesPredecessor(new MeasuredValues());
       csd.setNodes(rootNode);
@@ -37,7 +37,7 @@ public class TestNodePreparatorTreeStructure {
    @Test
    public void testColorSettingRemoved(){
       final MeasuredNode childNode = new MeasuredNode("Call#myMethod", CauseSearchData.ADDED, "public void Call.myMethod()");
-      childNode.setStatistic(new TestcaseStatistic(5.0, Double.NaN, 0.01, Double.NaN, 15, -3, true, 10, 0));
+      childNode.setStatistic(new TestcaseStatistic(5.0, Double.NaN, 0.01, Double.NaN, 15, -3, 0.001, true, 10, 0));
       childNode.setValues(new MeasuredValues());
       childNode.setValuesPredecessor(new MeasuredValues());
       
@@ -56,7 +56,7 @@ public class TestNodePreparatorTreeStructure {
    @Test
    public void testColorSettingAdded(){
       final MeasuredNode childNode = new MeasuredNode("Call#myMethod", "public void Call.myMethod()", CauseSearchData.ADDED);
-      childNode.setStatistic(new TestcaseStatistic(Double.NaN, 6.0, Double.NaN, 0.01, 15, -3, true, 0, 10));
+      childNode.setStatistic(new TestcaseStatistic(Double.NaN, 6.0, Double.NaN, 0.01, 15, -3, 0.001, true, 0, 10));
       childNode.setValues(new MeasuredValues());
       childNode.setValuesPredecessor(new MeasuredValues());
       rootNode.getChildren().add(childNode);

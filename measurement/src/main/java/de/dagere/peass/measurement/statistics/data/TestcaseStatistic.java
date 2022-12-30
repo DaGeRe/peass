@@ -1,12 +1,16 @@
 package de.dagere.peass.measurement.statistics.data;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
+import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
 import org.apache.commons.math3.stat.inference.TestUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import de.dagere.peass.measurement.statistics.StatisticUtil;
 
 public class TestcaseStatistic {
    private double meanOld, meanCurrent;
@@ -16,6 +20,10 @@ public class TestcaseStatistic {
    private long vms;
    private long callsOld, calls;
    private double tvalue;
+   
+   @JsonInclude(Include.NON_NULL)
+   private Double mannWhitneyUStatistic = null;
+   
    @JsonInclude(Include.NON_NULL)
    private String predecessor;
    private Boolean isChange, isBimodal;
@@ -24,6 +32,32 @@ public class TestcaseStatistic {
 
    }
 
+   public TestcaseStatistic(final DescriptiveStatistics statisticsOld, final DescriptiveStatistics statisticsCurrent, final long callsOld, final long calls) {
+      boolean oldHasValues = (statisticsOld != null && statisticsOld.getN() > 0);
+      boolean currentHasValues = (statisticsCurrent != null && statisticsCurrent.getN() > 0);
+      this.meanCurrent = currentHasValues ? statisticsCurrent.getMean() : Double.NaN;
+      this.meanOld = oldHasValues ? statisticsOld.getMean() : Double.NaN;
+      this.deviationCurrent = currentHasValues ? statisticsCurrent.getStandardDeviation() : Double.NaN;
+      this.deviationOld = oldHasValues ? statisticsOld.getStandardDeviation() : Double.NaN;
+      if (currentHasValues && oldHasValues) {
+         this.vms = (statisticsCurrent.getN() + statisticsOld.getN()) / 2;
+      } else if (oldHasValues) {
+         this.vms = statisticsOld.getN();
+      } else if (currentHasValues) {
+         this.vms = statisticsCurrent.getN();
+      } else {
+         vms = 0;
+      }
+      this.tvalue = (oldHasValues && currentHasValues) ? TestUtils.t(statisticsOld, statisticsCurrent) : -1;
+      this.mannWhitneyUStatistic = (oldHasValues && currentHasValues) ? StatisticUtil.getMannWhitneyUStatistic(statisticsOld, statisticsCurrent) : null;
+      this.isChange = null;
+      this.calls = calls;
+      this.callsOld = callsOld;
+
+      check();
+   }
+   
+   
    public TestcaseStatistic(final StatisticalSummary statisticsOld, final StatisticalSummary statisticsCurrent, final long callsOld, final long calls) {
       boolean oldHasValues = (statisticsOld != null && statisticsOld.getN() > 0);
       boolean currentHasValues = (statisticsCurrent != null && statisticsCurrent.getN() > 0);
@@ -51,6 +85,7 @@ public class TestcaseStatistic {
    public TestcaseStatistic(final double meanOld, final double meanCurrent,
          final double deviationOld, final double deviationCurrent,
          final long executions, final double tvalue,
+         final double mannWhitneyUStatistic,
          final boolean isChange,
          final long callsOld, final long calls) {
       super();
@@ -60,6 +95,7 @@ public class TestcaseStatistic {
       this.deviationCurrent = deviationCurrent;
       this.vms = executions;
       this.tvalue = tvalue;
+      this.mannWhitneyUStatistic = mannWhitneyUStatistic;
       this.isChange = isChange;
       this.calls = calls;
       this.callsOld = callsOld;
@@ -149,6 +185,14 @@ public class TestcaseStatistic {
 
    public void setTvalue(final double tvalue) {
       this.tvalue = tvalue;
+   }
+   
+   public Double getMannWhitneyUStatistic() {
+      return mannWhitneyUStatistic;
+   }
+   
+   public void setMannWhitneyUStatistic(Double mannWhitneyUStatistic) {
+      this.mannWhitneyUStatistic = mannWhitneyUStatistic;
    }
 
    @Override
