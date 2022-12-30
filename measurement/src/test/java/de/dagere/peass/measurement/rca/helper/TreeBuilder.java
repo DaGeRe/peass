@@ -20,8 +20,8 @@ public class TreeBuilder {
    private CallTreeNode d;
    private CallTreeNode e;
 
-   protected String versionPredecessor = COMMIT_OLD;
-   protected String version = COMMIT;
+   protected String commitPredecessor = COMMIT_OLD;
+   protected String commit = COMMIT;
 
    private boolean useFullLogAPI = true;
    private boolean addOutlier = false;
@@ -69,43 +69,43 @@ public class TreeBuilder {
    protected void buildBasicChunks(final CallTreeNode[] nodes) {
       List<CallTreeNode> nodeList = Arrays.asList(nodes);
       if (nodeList.contains(root)) {
-         buildChunks(root, version, 95);
-         buildChunks(root, versionPredecessor, 105);
+         buildChunks(root, commit, 95);
+         buildChunks(root, commitPredecessor, 105);
       }
 
       if (nodeList.contains(a)) {
-         buildChunks(a, version, 95);
-         buildChunks(a, versionPredecessor, 105);
+         buildChunks(a, commit, 95);
+         buildChunks(a, commitPredecessor, 105);
       }
 
       if (nodeList.contains(b)) {
-         buildChunks(b, version, 95);
-         buildChunks(b, versionPredecessor, 105);
+         buildChunks(b, commit, 95);
+         buildChunks(b, commitPredecessor, 105);
       }
 
       if (nodeList.contains(c)) {
-         buildChunks(c, version, 100);
-         buildChunks(c, versionPredecessor, 100);
+         buildChunks(c, commit, 100);
+         buildChunks(c, commitPredecessor, 100);
       }
 
       if (nodeList.contains(constructor)) {
-         buildChunks(constructor, version, 95);
-         buildChunks(constructor, versionPredecessor, 95);
+         buildChunks(constructor, commit, 95);
+         buildChunks(constructor, commitPredecessor, 95);
       }
 
       if (nodeList.contains(d) || (c.getChildren().size() > 0 && nodeList.contains(c.getChildren().get(0)))) {
-         buildChunks(c.getChildren().get(0), version, 95);
+         buildChunks(c.getChildren().get(0), commit, 95);
       }
 
       if (nodeList.contains(e) || (c.getChildren().size() > 1 && nodeList.contains(c.getChildren().get(1)))) {
-         buildChunks(c.getChildren().get(1), version, 95);
+         buildChunks(c.getChildren().get(1), commit, 95);
       }
    }
 
    protected void buildStatistics(final CallTreeNode[] nodes) {
       for (final CallTreeNode node : nodes) {
-         node.createStatistics(version);
-         node.createStatistics(versionPredecessor);
+         node.createStatistics(commit);
+         node.createStatistics(commitPredecessor);
       }
    }
 
@@ -115,16 +115,16 @@ public class TreeBuilder {
       }
    }
 
-   protected void buildChunks(final CallTreeNode node, final String version, final long average) {
+   protected void buildChunks(final CallTreeNode node, final String commit, final long average) {
       if (useFullLogAPI) {
-         writeFullLogData(node, version, average);
+         writeFullLogData(node, commit, average);
       } else {
-         writeAggregatedData(node, version, average);
+         writeAggregatedData(node, commit, average);
       }
 
    }
 
-   private void writeAggregatedData(final CallTreeNode node, final String version, final long average) {
+   private void writeAggregatedData(final CallTreeNode node, final String commit, final long average) {
       final List<StatisticalSummary> statistics = new LinkedList<>();
       for (int vm = 0; vm < config.getVms(); vm++) {
          final long deltaVM = (config.getVms() / 2) + vm * 2;
@@ -135,7 +135,7 @@ public class TreeBuilder {
             statistic.addValue(value);
             statistics.add(statistic);
          }
-         node.addAggregatedMeasurement(version, statistics);
+         node.addAggregatedMeasurement(commit, statistics);
       }
    }
 

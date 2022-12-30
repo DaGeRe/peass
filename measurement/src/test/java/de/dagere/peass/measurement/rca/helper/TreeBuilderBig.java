@@ -15,12 +15,12 @@ public class TreeBuilderBig extends TreeBuilder {
    public void buildMeasurements(final CallTreeNode... nodes) {
 //      final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c, constructor, b2 };
       initVersions(nodes);
-      buildChunks(b2, version, 95);
+      buildChunks(b2, commit, 95);
       buildBasicChunks(nodes);
       if (secondBDiffering) {
-         buildChunks(b2, versionPredecessor, 105);
+         buildChunks(b2, commitPredecessor, 105);
       } else {
-         buildChunks(b2, versionPredecessor, 95);
+         buildChunks(b2, commitPredecessor, 95);
       }
 
       buildStatistics(nodes);

@@ -16,15 +16,15 @@ public class TreeBuilderLeafs extends TreeBuilder {
    public void buildMeasurements(CallTreeNode... nodes) {
 //      final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c, b2, b3, b4, c2 };
       initVersions(nodes);
-      buildChunks(b2, version, 95);
-      buildChunks(b3, version, 95);
-      buildChunks(b4, version, 95);
-      buildChunks(c2, version, 95);
+      buildChunks(b2, commit, 95);
+      buildChunks(b3, commit, 95);
+      buildChunks(b4, commit, 95);
+      buildChunks(c2, commit, 95);
       buildBasicChunks(nodes);
-      buildChunks(b2, versionPredecessor, 105);
-      buildChunks(b3, versionPredecessor, 105);
-      buildChunks(b4, versionPredecessor, 105);
-      buildChunks(c2, versionPredecessor, 95);
+      buildChunks(b2, commitPredecessor, 105);
+      buildChunks(b3, commitPredecessor, 105);
+      buildChunks(b4, commitPredecessor, 105);
+      buildChunks(c2, commitPredecessor, 95);
 
       buildStatistics(nodes);
    }
