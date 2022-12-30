@@ -90,6 +90,10 @@ public class AnboxTestExecutor extends GradleTestExecutor {
 
       ProcessBuilder builder = new ProcessBuilder(processArgs);
       builder.directory(folders.getProjectFolder());
+      for (Map.Entry<String, String> entry : env.getEnvironmentVariables().entrySet()) {
+         LOG.trace("Environment: {} = {}", entry.getKey(), entry.getValue());
+         builder.environment().put(entry.getKey(), entry.getValue());
+      }
 
       try {
          Process process = builder.start();
