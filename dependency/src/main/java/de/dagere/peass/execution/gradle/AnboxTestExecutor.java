@@ -55,10 +55,12 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       // TODO: Change the hard coded module name 'app'.
       androidConfig.put("kopeme.workingdir", ANBOX_EMULATOR_FOLDER_BASE + "app");
       File kopemeConfig = new File(folders.getProjectFolder() + "/" + ANDROID_RESOURCES_FOLDER + ANDROID_KOPEME_CONFIGURATION);
+      LOG.debug("Creating file: {} with content: {}", kopemeConfig, androidConfig.toString());
       try {
          kopemeConfig.getParentFile().mkdirs();
          Constants.OBJECTMAPPER.writerWithDefaultPrettyPrinter().writeValue(kopemeConfig, androidConfig);
       } catch (IOException e) {
+         LOG.error(e.getMessage());
          throw new RuntimeException(e);
       }
    }
@@ -87,6 +89,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       List<String> gradleTasks = testTransformer.getConfig().getExecutionConfig().getAndroidGradleTasks();
 
       String[] processArgs = toMergedArray(wrapper, gradleTasks);
+      LOG.debug("Command: {}", Arrays.toString(processArgs));
 
       ProcessBuilder builder = new ProcessBuilder(processArgs);
       builder.directory(folders.getProjectFolder());
@@ -97,8 +100,10 @@ public class AnboxTestExecutor extends GradleTestExecutor {
 
       try {
          Process process = builder.start();
-         StreamGobbler.showFullProcess(process);
+         String processOutput = StreamGobbler.getFullProcess(process, true);
+         LOG.debug(processOutput);
       } catch (IOException e) {
+         LOG.error(e.getMessage());
          throw new RuntimeException(e);
       }
    }
@@ -159,8 +164,10 @@ public class AnboxTestExecutor extends GradleTestExecutor {
 
       try {
          Process process = builder.start();
-         StreamGobbler.showFullProcess(process);
+         String processOutput = StreamGobbler.getFullProcess(process, true);
+         LOG.debug(processOutput);
       } catch (IOException e) {
+         LOG.error(e.getMessage());
          throw new RuntimeException(e);
       }
    }
@@ -174,8 +181,10 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       LOG.debug("ADB: Pulling {} to {}", ANBOX_EMULATOR_FOLDER_TEMP_RESULT, folders.getPeassFolder());
       try {
          Process process = builder.start();
-         StreamGobbler.showFullProcess(process);
+         String processOutput = StreamGobbler.getFullProcess(process, true);
+         LOG.debug(processOutput);
       } catch (IOException e) {
+         LOG.error(e.getMessage());
          throw new RuntimeException(e);
       }
    }
