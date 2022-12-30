@@ -1,7 +1,7 @@
 Peass
 ===================
 
-Peass (from Performance analysis of software system versions) is a tool to analyse the evolution of performance over its commit history. Peass currently supports two sources for performance measurement workloads: JMH Benchmarks and JUnit tests, which are transformed into performance tests. Since performance measurements need to be repeated often in order to produce statistically reliable results, they need much time. In order to reduce measurement time as far as possible, the regression test selection PRONTO (PeRfOrmance regressiON Test selectiOn) should be executed first. This is done in the `dependency`-module. Afterwards, the `measurement`-module supports execution of the measurements in the selected tests and commits. This measurements can be analyzed using the `analysis`-module later.
+Peass (short for Performance analysis of software systems) is a tool to analyse the evolution of performance over its commit history. Peass currently supports two sources for performance measurement workloads: JMH Benchmarks and JUnit tests, which are transformed into performance tests. Since performance measurements need to be repeated often in order to produce statistically reliable results, they need much time. In order to reduce measurement time as far as possible, the regression test selection PRONTO (PeRfOrmance regressiON Test selectiOn) should be executed first. This is done in the `dependency`-module. Afterwards, the `measurement`-module supports execution of the measurements in the selected tests and commits. This measurements can be analyzed using the `analysis`-module later.
 
 # Building
 
