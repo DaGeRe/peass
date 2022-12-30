@@ -125,14 +125,14 @@ public class TestContinuousMeasurementExecutor {
          @Override
          public Object answer(InvocationOnMock invocation) throws Throwable {
             System.out.println("Mocking " + invocation.getMethod().getName() + " for " + lastTest);
-            if (invocation.getMethod().getName().equals("getStatisticsAfter")) {
+            if (invocation.getMethod().getName().equals("getStatisticsPredecessor")) {
                if (lastTest.equals(TEST1) || lastTest.equals(TEST3)) {
                   return new DescriptiveStatistics(new double[] { 1, 2, 3 });
                } else {
                   return null;
                }
             }
-            if (invocation.getMethod().getName().equals("getStatisticsBefore")) {
+            if (invocation.getMethod().getName().equals("getStatisticsCurrent")) {
                if (lastTest.equals(TEST1) || lastTest.equals(TEST3)) {
                   return new DescriptiveStatistics(new double[] { 1, 2, 3 });
                } else {
