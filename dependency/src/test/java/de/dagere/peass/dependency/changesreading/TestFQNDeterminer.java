@@ -20,7 +20,7 @@ public class TestFQNDeterminer {
 
    @Test
    public void testInnerClass() throws FileNotFoundException {
-      File file = new File("src/test/resources/clazzFinderExample/src/main/java/de/TestMe2.java");
+      File file = new File("src/test/resources/clazzFinderExample/src/main/java/de/dagere/TestMe2.java");
       CompilationUnit unit = JavaParserProvider.parse(file);
 
       String fqnTest = FQNDeterminer.getParameterFQN(unit, "TestMe2");
