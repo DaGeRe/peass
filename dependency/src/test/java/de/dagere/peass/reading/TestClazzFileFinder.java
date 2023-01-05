@@ -28,14 +28,14 @@ public class TestClazzFileFinder {
       
       System.out.println(clazzes);
       
-      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.TestMe1"));
-      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.TestMe2"));
-      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.Second"));
-      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$Inner"));
-      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$Inner$InnerInner"));
-      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.LocalClass"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.dagere.TestMe1"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.dagere.TestMe2"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.dagere.Second"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.dagere.TestMe2$Inner"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.dagere.TestMe2$Inner$InnerInner"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.dagere.LocalClass"));
       
-      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$InnerEnum"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.dagere.TestMe2$InnerEnum"));
    }
    
    @Test
@@ -45,16 +45,16 @@ public class TestClazzFileFinder {
       config.getClazzFolders().add("src/main/java");
       config.getClazzFolders().add("src/java");
       
-      File sourceFileClass = new ClazzFileFinder(config).getSourceFile(SOURCE, new ChangedEntity("de.LocalClass"));
+      File sourceFileClass = new ClazzFileFinder(config).getSourceFile(SOURCE, new ChangedEntity("de.dagere.LocalClass"));
       Assert.assertNotNull(sourceFileClass);
       
-      File sourceFileEnum = new ClazzFileFinder(config).getSourceFile(SOURCE, new ChangedEntity("de.LocalEnum"));
+      File sourceFileEnum = new ClazzFileFinder(config).getSourceFile(SOURCE, new ChangedEntity("de.dagere.LocalEnum"));
       Assert.assertNotNull(sourceFileEnum);
       
-      File sourceFileInterface = new ClazzFileFinder(config).getSourceFile(SOURCE, new ChangedEntity("de.LocalInterface"));
+      File sourceFileInterface = new ClazzFileFinder(config).getSourceFile(SOURCE, new ChangedEntity("de.dagere.LocalInterface"));
       Assert.assertNotNull(sourceFileInterface);
       
-      ChangedEntity exampleEntity = new ChangedEntity("de.LocalClass#myMethod(int)");
+      ChangedEntity exampleEntity = new ChangedEntity("de.dagere.LocalClass#myMethod(int)");
       String text = FileComparisonUtil.getMethodSource(SOURCE, exampleEntity, exampleEntity.getMethod(), config);
       MatcherAssert.assertThat(text, Matchers.containsString("this.i = i;"));
    }

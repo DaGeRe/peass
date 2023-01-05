@@ -212,7 +212,7 @@ public class ClazzFileFinder {
    private File searchNonPublicClass(final File sourceParentFolder, String pureName) {
       for (final String potentialFolder : executionConfig.getAllClazzFolders()) {
          String packageName = pureName.substring(0, pureName.lastIndexOf(File.separator));
-         String clazzName = pureName.substring(pureName.indexOf(File.separator) + 1);
+         String clazzName = pureName.substring(pureName.lastIndexOf(File.separator) + 1);
          File packageFolder = new File(sourceParentFolder, potentialFolder + File.separator + packageName);
          if (packageFolder.exists()) {
             for (File containingFileCandidate : packageFolder.listFiles((FileFilter) new WildcardFileFilter("*.java"))) {
