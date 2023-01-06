@@ -52,19 +52,17 @@ public class ClearMockitoCacheTransformer {
       }
 
       MethodDeclaration firstBeforeEachMethod = getBeforeEachMethod();
+      addInitializers(toAddBeforeEachInitializers, firstBeforeEachMethod);
+      
+      MethodDeclaration firstBeforeAllMethod = getBeforeAllMethod();
+      addInitializers(toAddBeforeAllInitializers, firstBeforeAllMethod);
+   }
 
+   private void addInitializers(List<String> toAddBeforeEachInitializers, MethodDeclaration firstBeforeEachMethod) {
       BlockStmt beforeEachMethodBody = firstBeforeEachMethod.getBody().get();
       for (String initialization : toAddBeforeEachInitializers) {
          Statement initStatement = StaticJavaParser.parseStatement(initialization);
          beforeEachMethodBody.addStatement(0, initStatement);
-      }
-      
-      MethodDeclaration firstBeforeAllMethod = getBeforeAllMethod();
-
-      BlockStmt beforeAllMethodBody = firstBeforeAllMethod.getBody().get();
-      for (String initialization : toAddBeforeAllInitializers) {
-         Statement initStatement = StaticJavaParser.parseStatement(initialization);
-         beforeAllMethodBody.addStatement(0, initStatement);
       }
    }
 
