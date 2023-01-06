@@ -16,7 +16,7 @@ import de.dagere.peass.dependency.traces.TraceReadUtils;
 
 public class TestSourceReading {
 
-   private static final File baseFolder = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "methodFinding");
+   private static final File baseFolder = new File(TestConstants.TEST_RESOURCES, "methodFinding");
 
    @Test
    public void testGenericClass() throws FileNotFoundException {

@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -32,13 +30,11 @@ public class TestOnlyMeasureWorkload {
    @TempDir
    public static File testFolder;
 
-   private static final URL SOURCE = Thread.currentThread().getContextClassLoader().getResource("transformation");
-   private static File RESOURCE_FOLDER;
+   private static final File RESOURCE_FOLDER = new File(TestConstants.TEST_RESOURCES, "transformation");
    private static File SOURCE_FOLDER;
 
    @BeforeAll
    public static void initFolder() throws URISyntaxException, IOException {
-      RESOURCE_FOLDER = Paths.get(SOURCE.toURI()).toFile();
       SOURCE_FOLDER = new File(testFolder, "src" + File.separator + "test" + File.separator + "java");
       FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder, "pom.xml"));
    }

@@ -3,8 +3,6 @@ package de.dagere.peass;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,13 +31,11 @@ public class TestRepetitionTransforming {
    @TempDir
    public static File testFolder;
 
-   private static final URL SOURCE = Thread.currentThread().getContextClassLoader().getResource("transformation");
-   private static File RESOURCE_FOLDER;
+   private static File RESOURCE_FOLDER = new File(TestConstants.TEST_RESOURCES, "transformation");
    private static File SOURCE_FOLDER;
 
    @BeforeAll
    public static void initFolder() throws URISyntaxException, IOException {
-      RESOURCE_FOLDER = Paths.get(SOURCE.toURI()).toFile();
       SOURCE_FOLDER = new File(testFolder, "src" + File.separator + "test" + File.separator + "java");
       FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder, "pom.xml"));
    }
