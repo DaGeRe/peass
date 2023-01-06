@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import com.github.javaparser.StaticJavaParser;
@@ -34,11 +35,16 @@ public class ClearMockitoCacheTransformer {
       createClearCacheMethod();
 
       List<String> toAddBeforeEachInitializers = new LinkedList<>();
+      List<String> toAddBeforeAllInitializers = new LinkedList<>();
       for (FieldDeclaration field : clazz.getFields()) {
          for (VariableDeclarator variable : field.getVariables()) {
             Optional<Expression> initializer = variable.getInitializer();
             if (initializer.isPresent()) {
-               toAddBeforeEachInitializers.add(variable.getNameAsString() + "=" + variable.getInitializer().get() + ";");
+               if (field.isStatic()) {
+                  toAddBeforeAllInitializers.add(variable.getNameAsString() + "=" + variable.getInitializer().get() + ";");
+               } else {
+                  toAddBeforeEachInitializers.add(variable.getNameAsString() + "=" + variable.getInitializer().get() + ";");
+               }
                variable.setInitializer((Expression) null);
                field.setFinal(false);
             }
@@ -46,12 +52,19 @@ public class ClearMockitoCacheTransformer {
       }
 
       MethodDeclaration firstBeforeEachMethod = getBeforeEachMethod();
-      
-      BlockStmt methodBody = firstBeforeEachMethod.getBody().get();
+
+      BlockStmt beforeEachMethodBody = firstBeforeEachMethod.getBody().get();
       for (String initialization : toAddBeforeEachInitializers) {
-         System.out.println(initialization);
          Statement initStatement = StaticJavaParser.parseStatement(initialization);
-         methodBody.addStatement(0, initStatement);
+         beforeEachMethodBody.addStatement(0, initStatement);
+      }
+      
+      MethodDeclaration firstBeforeAllMethod = getBeforeAllMethod();
+
+      BlockStmt beforeAllMethodBody = firstBeforeAllMethod.getBody().get();
+      for (String initialization : toAddBeforeAllInitializers) {
+         Statement initStatement = StaticJavaParser.parseStatement(initialization);
+         beforeAllMethodBody.addStatement(0, initStatement);
       }
    }
 
@@ -62,9 +75,22 @@ public class ClearMockitoCacheTransformer {
             return method;
          }
       }
-      firstBeforeEachMethod = clazz.addMethod("_peass_setup", Keyword.PUBLIC);
+      firstBeforeEachMethod = clazz.addMethod("_peass_setup_each", Keyword.PUBLIC);
       firstBeforeEachMethod.setBody(new BlockStmt());
       firstBeforeEachMethod.addAnnotation("org.junit.jupiter.api.BeforeEach");
+      return firstBeforeEachMethod;
+   }
+   
+   private MethodDeclaration getBeforeAllMethod() {
+      MethodDeclaration firstBeforeEachMethod = null;
+      for (MethodDeclaration method : clazz.getMethods()) {
+         if (method.getAnnotationByClass(BeforeAll.class).isPresent()) {
+            return method;
+         }
+      }
+      firstBeforeEachMethod = clazz.addMethod("_peass_setup_all", Keyword.PUBLIC);
+      firstBeforeEachMethod.setBody(new BlockStmt());
+      firstBeforeEachMethod.addAnnotation("org.junit.jupiter.api.BeforeAll");
       return firstBeforeEachMethod;
    }
 

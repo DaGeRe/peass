@@ -48,35 +48,51 @@ public class TestMockTransformation {
    @Test
    public void testMockedSimple() throws IOException {
       final ClassOrInterfaceDeclaration clazz = transform("TestMockedSimple");
-      
       System.out.println("Transformed clazz: " + clazz);
 
-      final List<MethodDeclaration> beforeMethods = clazz.getMethodsByName("setUp");
-      MatcherAssert.assertThat(beforeMethods, Matchers.hasSize(1));
-
-      final MethodDeclaration beforeMethod = beforeMethods.get(0);
-
-      MatcherAssert.assertThat(beforeMethod.toString(), StringContains.containsString("myMock = Mockito.mock(Object.class)"));
+      checkBeforeMethodContainsMockInitialization(clazz, "setUp");
       
-      FieldDeclaration fieldDeclaration = clazz.getFieldByName("myMock").get();
-      MatcherAssert.assertThat(fieldDeclaration.toString(), Matchers.not(StringContains.containsString("myMock = Mockito.mock(Object.class))")));
-      MatcherAssert.assertThat(fieldDeclaration.toString(), Matchers.not(StringContains.containsString("=")));
-      Assert.assertFalse(fieldDeclaration.isFinal());
+      checkNoMockInitialization(clazz);
    }
    
    @Test
    public void testMockedNoBefore() throws IOException {
       final ClassOrInterfaceDeclaration clazz = transform("TestMockedNoBefore");
-      
       System.out.println("Transformed clazz: " + clazz);
 
-      final List<MethodDeclaration> beforeMethods = clazz.getMethodsByName("_peass_setup");
-      MatcherAssert.assertThat(beforeMethods, Matchers.hasSize(1));
-
-      final MethodDeclaration beforeMethod = beforeMethods.get(0);
-
-      MatcherAssert.assertThat(beforeMethod.toString(), StringContains.containsString("myMock = Mockito.mock(Object.class)"));
+      checkBeforeMethodContainsMockInitialization(clazz, "_peass_setup_each");
       
+      checkNoMockInitialization(clazz);
+   }
+   
+   @Test
+   public void testMockedStatic() throws IOException {
+      final ClassOrInterfaceDeclaration clazz = transform("TestMockedStatic");
+      System.out.println("Transformed clazz: " + clazz);
+
+      checkBeforeMethodContainsMockInitialization(clazz, "setUp");
+      
+      checkNoMockInitialization(clazz);
+   }
+   
+   @Test
+   public void testMockedStaticNoBefore() throws IOException {
+      final ClassOrInterfaceDeclaration clazz = transform("TestMockedStaticNoBefore");
+      System.out.println("Transformed clazz: " + clazz);
+
+      checkBeforeMethodContainsMockInitialization(clazz, "_peass_setup_all");
+      
+      checkNoMockInitialization(clazz);
+   }
+
+   private void checkBeforeMethodContainsMockInitialization(final ClassOrInterfaceDeclaration clazz, String methodName) {
+      final List<MethodDeclaration> beforeMethods = clazz.getMethodsByName(methodName);
+      MatcherAssert.assertThat(beforeMethods, Matchers.hasSize(1));
+      final MethodDeclaration beforeMethod = beforeMethods.get(0);
+      MatcherAssert.assertThat(beforeMethod.toString(), StringContains.containsString("myMock = Mockito.mock(Object.class)"));
+   }
+
+   private void checkNoMockInitialization(final ClassOrInterfaceDeclaration clazz) {
       FieldDeclaration fieldDeclaration = clazz.getFieldByName("myMock").get();
       MatcherAssert.assertThat(fieldDeclaration.toString(), Matchers.not(StringContains.containsString("myMock = Mockito.mock(Object.class))")));
       MatcherAssert.assertThat(fieldDeclaration.toString(), Matchers.not(StringContains.containsString("=")));
