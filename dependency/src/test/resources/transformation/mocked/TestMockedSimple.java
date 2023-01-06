@@ -24,6 +24,7 @@ import org.mockito.Mockito;
 public class TestMockedSimple {
 
    public final Object myMock = Mockito.mock(Object.class);
+   private final int myValue = 5;
    
    @BeforeEach
    public void setUp() {

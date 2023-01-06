@@ -40,13 +40,16 @@ public class ClearMockitoCacheTransformer {
          for (VariableDeclarator variable : field.getVariables()) {
             Optional<Expression> initializer = variable.getInitializer();
             if (initializer.isPresent()) {
-               if (field.isStatic()) {
-                  toAddBeforeAllInitializers.add(variable.getNameAsString() + "=" + variable.getInitializer().get() + ";");
-               } else {
-                  toAddBeforeEachInitializers.add(variable.getNameAsString() + "=" + variable.getInitializer().get() + ";");
+               String initializerText = variable.getInitializer().get().toString();
+               if (initializerText.contains(".mock(")) {
+                  if (field.isStatic()) {
+                     toAddBeforeAllInitializers.add(variable.getNameAsString() + "=" + initializerText + ";");
+                  } else {
+                     toAddBeforeEachInitializers.add(variable.getNameAsString() + "=" + initializerText + ";");
+                  }
+                  variable.setInitializer((Expression) null);
+                  field.setFinal(false);
                }
-               variable.setInitializer((Expression) null);
-               field.setFinal(false);
             }
          }
       }

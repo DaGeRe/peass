@@ -55,6 +55,9 @@ public class TestMockTransformation {
       checkNoMockInitialization(clazz);
       
       Assert.assertEquals(0, clazz.getMethodsByName("_peass_setup_all").size());
+      
+      FieldDeclaration fieldDeclaration = clazz.getFieldByName("myValue").get();
+      MatcherAssert.assertThat(fieldDeclaration.toString(), Matchers.containsString("myValue = 5"));
    }
    
    @Test
