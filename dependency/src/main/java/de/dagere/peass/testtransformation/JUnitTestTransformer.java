@@ -36,8 +36,10 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
@@ -49,11 +51,15 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.ClassExpr;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.Name;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
@@ -633,7 +639,7 @@ public class JUnitTestTransformer implements TestTransformer {
          final MethodDeclaration newMethod;
          if (config.getExecutionConfig().isExecuteBeforeClassInMeasurement()) {
             newMethod = clazz.addMethod("_peass_initializeMockito", Keyword.PUBLIC, Keyword.STATIC);
-            
+
          } else {
             newMethod = clazz.addMethod("_peass_initializeMockito", Keyword.PUBLIC);
          }
@@ -641,6 +647,32 @@ public class JUnitTestTransformer implements TestTransformer {
          afterWithMeasurementAnnotation.addPair("priority", Integer.toString(5));
          newMethod.setBody(new BlockStmt());
          newMethod.getBody().get().addAndGetStatement(new MethodCallExpr("org.mockito.Mockito.clearAllCaches"));
+
+         List<String> toAdd = new LinkedList<>();
+         for (FieldDeclaration field : clazz.getFields()) {
+            for (VariableDeclarator variable : field.getVariables()) {
+               Optional<Expression> initializer = variable.getInitializer();
+               if (initializer.isPresent()) {
+                  toAdd.add(variable.getNameAsString() + "=" + variable.getInitializer().get() + ";");
+                  variable.setInitializer((Expression) null);
+                  field.setFinal(false);
+               }
+            }
+         }
+
+         MethodDeclaration firstMethod = null;
+         for (MethodDeclaration method : clazz.getMethods()) {
+            if (method.getAnnotationByClass(BeforeEach.class).isPresent()) {
+               firstMethod = method;
+               continue;
+            }
+         }
+         BlockStmt methodBody = firstMethod.getBody().get();
+         for (String initialization : toAdd) {
+            System.out.println(initialization);
+            Statement initStatement = StaticJavaParser.parseStatement(initialization);
+            methodBody.addStatement(0, initStatement);
+         }
       }
    }
 

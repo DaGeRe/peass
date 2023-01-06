@@ -44,7 +44,6 @@ public class TestMockTransformation {
       FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder, "pom.xml"));
    }
 
-   @Disabled
    @Test
    public void testMocked() throws IOException {
       final File old2 = new File(RESOURCE_FOLDER, "TestMocked.java");
@@ -63,15 +62,21 @@ public class TestMockTransformation {
 
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMocked").get();
       Assert.assertNotNull(clazz);
+      
+      System.out.println("Transformed clazz: " + clazz);
 
       final List<MethodDeclaration> beforeMethods = clazz.getMethodsByName("setUp");
       MatcherAssert.assertThat(beforeMethods, Matchers.hasSize(1));
 
       final MethodDeclaration beforeMethod = beforeMethods.get(0);
 
-      MatcherAssert.assertThat(beforeMethod.toString(), StringContains.containsString("myMock = Mockito.mock(Object.class))"));
+      MatcherAssert.assertThat(beforeMethod.toString(), StringContains.containsString("myMock = Mockito.mock(Object.class)"));
       
       FieldDeclaration fieldDeclaration = clazz.getFieldByName("myMock").get();
       MatcherAssert.assertThat(fieldDeclaration.toString(), Matchers.not(StringContains.containsString("myMock = Mockito.mock(Object.class))")));
+      MatcherAssert.assertThat(fieldDeclaration.toString(), Matchers.not(StringContains.containsString("=")));
+      Assert.assertFalse(fieldDeclaration.isFinal());
+      
+      
    }
 }
