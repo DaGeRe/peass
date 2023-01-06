@@ -636,43 +636,8 @@ public class JUnitTestTransformer implements TestTransformer {
 
    private void eventuallyClearMockitoCache(ClassOrInterfaceDeclaration clazz) {
       if (config.getExecutionConfig().isClearMockitoCaches()) {
-         final MethodDeclaration newMethod;
-         if (config.getExecutionConfig().isExecuteBeforeClassInMeasurement()) {
-            newMethod = clazz.addMethod("_peass_initializeMockito", Keyword.PUBLIC, Keyword.STATIC);
-
-         } else {
-            newMethod = clazz.addMethod("_peass_initializeMockito", Keyword.PUBLIC);
-         }
-         NormalAnnotationExpr afterWithMeasurementAnnotation = newMethod.addAndGetAnnotation("de.dagere.kopeme.junit.rule.annotations.AfterWithMeasurement");
-         afterWithMeasurementAnnotation.addPair("priority", Integer.toString(5));
-         newMethod.setBody(new BlockStmt());
-         newMethod.getBody().get().addAndGetStatement(new MethodCallExpr("org.mockito.Mockito.clearAllCaches"));
-
-         List<String> toAdd = new LinkedList<>();
-         for (FieldDeclaration field : clazz.getFields()) {
-            for (VariableDeclarator variable : field.getVariables()) {
-               Optional<Expression> initializer = variable.getInitializer();
-               if (initializer.isPresent()) {
-                  toAdd.add(variable.getNameAsString() + "=" + variable.getInitializer().get() + ";");
-                  variable.setInitializer((Expression) null);
-                  field.setFinal(false);
-               }
-            }
-         }
-
-         MethodDeclaration firstMethod = null;
-         for (MethodDeclaration method : clazz.getMethods()) {
-            if (method.getAnnotationByClass(BeforeEach.class).isPresent()) {
-               firstMethod = method;
-               continue;
-            }
-         }
-         BlockStmt methodBody = firstMethod.getBody().get();
-         for (String initialization : toAdd) {
-            System.out.println(initialization);
-            Statement initStatement = StaticJavaParser.parseStatement(initialization);
-            methodBody.addStatement(0, initStatement);
-         }
+         ClearMockitoCacheTransformer clearMockitoCacheTransformer = new ClearMockitoCacheTransformer(config.getExecutionConfig(), clazz);
+         clearMockitoCacheTransformer.transform();
       }
    }
 
