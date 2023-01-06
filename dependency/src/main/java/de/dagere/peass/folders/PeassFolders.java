@@ -238,24 +238,24 @@ public class PeassFolders {
       return fullResultFile;
    }
 
-   public File getFullResultFolder(final TestCase testcase, final String mainVersion, final String commit) {
+   public File getFullResultFolder(final TestCase testcase, final String mainCommit, final String commit) {
       final File destFolder = new File(getDetailResultFolder(), testcase.getClazz());
-      LOG.debug("Creating: " + destFolder + " " + mainVersion + " " + testcase.getClazz());
-      final File currentVersionFolder = new File(destFolder, mainVersion);
-      if (!currentVersionFolder.exists()) {
-         currentVersionFolder.mkdir();
+      LOG.trace("Creating: {} Commit: {} Class: {} ", destFolder, mainCommit, testcase.getClazz());
+      final File currentCommitFolder = new File(destFolder, mainCommit);
+      if (!currentCommitFolder.exists()) {
+         currentCommitFolder.mkdir();
       }
-      final File compareVersionFolder = new File(currentVersionFolder, commit);
-      if (!compareVersionFolder.exists()) {
-         compareVersionFolder.mkdir();
+      final File compareCommitFolder = new File(currentCommitFolder, commit);
+      if (!compareCommitFolder.exists()) {
+         compareCommitFolder.mkdir();
       }
-      return compareVersionFolder;
+      return compareCommitFolder;
    }
 
-   public File getResultFile(final TestMethodCall testcase, final int vmid, final String commit, final String mainVersion) {
-      final File compareVersionFolder = getFullResultFolder(testcase, mainVersion, commit);
+   public File getResultFile(final TestMethodCall testcase, final int vmid, final String commit, final String mainCommit) {
+      final File compareCommitFolder = getFullResultFolder(testcase, mainCommit, commit);
       String xmlFileName = getXMLFileName(testcase, commit, vmid);
-      final File destFile = new File(compareVersionFolder, xmlFileName);
+      final File destFile = new File(compareCommitFolder, xmlFileName);
       return destFile;
    }
 
