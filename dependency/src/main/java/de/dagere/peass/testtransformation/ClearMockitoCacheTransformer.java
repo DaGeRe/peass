@@ -59,10 +59,12 @@ public class ClearMockitoCacheTransformer {
       MethodDeclaration firstBeforeEachMethod = null;
       for (MethodDeclaration method : clazz.getMethods()) {
          if (method.getAnnotationByClass(BeforeEach.class).isPresent()) {
-            firstBeforeEachMethod = method;
-            continue;
+            return method;
          }
       }
+      firstBeforeEachMethod = clazz.addMethod("_peass_setup", Keyword.PUBLIC);
+      firstBeforeEachMethod.setBody(new BlockStmt());
+      firstBeforeEachMethod.addAnnotation("org.junit.jupiter.api.BeforeEach");
       return firstBeforeEachMethod;
    }
 
