@@ -53,6 +53,8 @@ public class TestMockTransformation {
       checkBeforeMethodContainsMockInitialization(clazz, "setUp");
       
       checkNoMockInitialization(clazz);
+      
+      Assert.assertEquals(0, clazz.getMethodsByName("_peass_setup_all").size());
    }
    
    @Test
@@ -63,6 +65,8 @@ public class TestMockTransformation {
       checkBeforeMethodContainsMockInitialization(clazz, "_peass_setup_each");
       
       checkNoMockInitialization(clazz);
+      
+      Assert.assertEquals(0, clazz.getMethodsByName("_peass_setup_all").size());
    }
    
    @Test
@@ -73,6 +77,8 @@ public class TestMockTransformation {
       checkBeforeMethodContainsMockInitialization(clazz, "setUp");
       
       checkNoMockInitialization(clazz);
+      
+      Assert.assertEquals(0, clazz.getMethodsByName("_peass_setup_each").size());
    }
    
    @Test
@@ -83,6 +89,8 @@ public class TestMockTransformation {
       checkBeforeMethodContainsMockInitialization(clazz, "_peass_setup_all");
       
       checkNoMockInitialization(clazz);
+      
+      Assert.assertEquals(0, clazz.getMethodsByName("_peass_setup_each").size());
    }
 
    private void checkBeforeMethodContainsMockInitialization(final ClassOrInterfaceDeclaration clazz, String methodName) {

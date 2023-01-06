@@ -51,11 +51,15 @@ public class ClearMockitoCacheTransformer {
          }
       }
 
-      MethodDeclaration firstBeforeEachMethod = getBeforeEachMethod();
-      addInitializers(toAddBeforeEachInitializers, firstBeforeEachMethod);
+      if (toAddBeforeEachInitializers.size() > 0) {
+         MethodDeclaration firstBeforeEachMethod = getBeforeEachMethod();
+         addInitializers(toAddBeforeEachInitializers, firstBeforeEachMethod);
+      }
       
-      MethodDeclaration firstBeforeAllMethod = getBeforeAllMethod();
-      addInitializers(toAddBeforeAllInitializers, firstBeforeAllMethod);
+      if (toAddBeforeAllInitializers.size() > 0) {
+         MethodDeclaration firstBeforeAllMethod = getBeforeAllMethod();
+         addInitializers(toAddBeforeAllInitializers, firstBeforeAllMethod);
+      }
    }
 
    private void addInitializers(List<String> toAddBeforeEachInitializers, MethodDeclaration firstBeforeEachMethod) {
