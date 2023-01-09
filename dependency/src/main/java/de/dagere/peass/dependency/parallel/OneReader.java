@@ -20,15 +20,15 @@ public final class OneReader implements Runnable {
 
    private final String minimumCommit;
    private final CommitIterator reserveIterator;
-   final RunningCommitFinder firstRunningVersionFinder;
+   final RunningCommitFinder firstRunningCommitFinder;
    private final DependencyReader reader;
    private final CommitComparatorInstance comparator;
 
    public OneReader(final String minimumCommit, final CommitIterator reserveIterator, final DependencyReader reader,
-         final RunningCommitFinder firstRunningVersionFinder, CommitComparatorInstance comparator) {
+         final RunningCommitFinder firstRunningCommitFinder, CommitComparatorInstance comparator) {
       this.minimumCommit = minimumCommit;
       this.reserveIterator = reserveIterator;
-      this.firstRunningVersionFinder = firstRunningVersionFinder;
+      this.firstRunningCommitFinder = firstRunningCommitFinder;
       this.reader = reader;
       this.comparator = comparator;
    }
@@ -36,7 +36,7 @@ public final class OneReader implements Runnable {
    @Override
    public void run() {
       try {
-         boolean init = firstRunningVersionFinder.searchFirstRunningCommit();
+         boolean init = firstRunningCommitFinder.searchFirstRunningCommit();
          if (init) {
             LOG.debug("Reader initalized: " + reader + " This: " + this);
             if (!reader.readInitialCommit()) {
