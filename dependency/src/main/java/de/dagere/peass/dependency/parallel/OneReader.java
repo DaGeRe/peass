@@ -62,5 +62,15 @@ public final class OneReader implements Runnable {
          reader.readCommit();
          newest = reader.getDependencies().getNewestCommit();
       }
+      serializeNotRunningCommits(reader);
+   }
+
+   private void serializeNotRunningCommits(final DependencyReader reader) {
+      reader.getDependencies().getCommits().entrySet().stream()
+         .filter(commit -> !commit.getValue().isRunning())
+         .map(entry -> entry.getKey())
+         .forEach(commit -> {
+            firstRunningCommitFinder.getNonRunning().addCommit(commit, "Commit was not executable during analysis.");
+         });
    }
 }

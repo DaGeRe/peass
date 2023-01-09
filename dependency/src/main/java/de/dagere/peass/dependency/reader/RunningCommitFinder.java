@@ -95,4 +95,8 @@ public class RunningCommitFinder {
          LOG.info("Found first commit: " + iterator.getCommitName());
       }
    }
+   
+   public CommitKeeper getNonRunning() {
+      return nonRunning;
+   }
 }
