@@ -17,7 +17,6 @@ import de.dagere.peass.dependency.RunnableTestInformation;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestIgnoredMethodBuilding {
 

@@ -1,5 +1,15 @@
 package de.dagere.peass.dependency.execution;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
@@ -11,15 +21,6 @@ import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.utils.Constants;
-import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 
 public class MockedInlineIT {
 

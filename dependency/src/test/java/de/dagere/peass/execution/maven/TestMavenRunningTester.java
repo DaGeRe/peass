@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.execution.maven.MavenRunningTester;
 import de.dagere.peass.execution.util.TestWrapperExecution;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;

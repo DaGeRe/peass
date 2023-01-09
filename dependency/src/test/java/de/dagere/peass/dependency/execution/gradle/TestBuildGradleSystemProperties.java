@@ -1,12 +1,9 @@
 package de.dagere.peass.dependency.execution.gradle;
 
-import de.dagere.peass.TestConstants;
-import de.dagere.peass.TestUtil;
-import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
-import de.dagere.peass.execution.utils.EnvironmentVariables;
-import de.dagere.peass.execution.utils.ProjectModules;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -14,9 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
+import de.dagere.peass.TestConstants;
+import de.dagere.peass.TestUtil;
+import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
+import de.dagere.peass.execution.utils.ProjectModules;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestBuildGradleSystemProperties {
 

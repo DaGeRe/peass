@@ -24,8 +24,6 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
-import de.dagere.peass.testtransformation.ParseUtil;
 
 public class TestRepetitionTransforming {
    @TempDir

@@ -17,8 +17,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.testtransformation.JUnitTestShortener;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestShortening {
 

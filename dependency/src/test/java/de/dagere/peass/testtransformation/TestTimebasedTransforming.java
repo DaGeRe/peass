@@ -24,9 +24,6 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
-import de.dagere.peass.testtransformation.ParseUtil;
-import de.dagere.peass.testtransformation.TimeBasedTestTransformer;
 
 public class TestTimebasedTransforming {
    
