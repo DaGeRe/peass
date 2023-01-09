@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.dagere.peass.transformation;
+package de.dagere.peass.testtransformation;
 
 import java.io.File;
 import java.io.FileNotFoundException;

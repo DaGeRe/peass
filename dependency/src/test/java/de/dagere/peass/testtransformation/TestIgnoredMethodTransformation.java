@@ -1,4 +1,4 @@
-package de.dagere.peass.transformation;
+package de.dagere.peass.testtransformation;
 
 import java.io.File;
 import java.io.IOException;
