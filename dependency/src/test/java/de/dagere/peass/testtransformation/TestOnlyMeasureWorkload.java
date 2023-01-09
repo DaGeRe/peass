@@ -1,4 +1,4 @@
-package de.dagere.peass;
+package de.dagere.peass.testtransformation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,6 +21,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 
+import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
