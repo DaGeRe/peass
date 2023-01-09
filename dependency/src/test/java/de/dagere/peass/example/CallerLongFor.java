@@ -1,4 +1,4 @@
-package de.peass.example;
+package de.dagere.peass.example;
 
 import java.io.File;
 

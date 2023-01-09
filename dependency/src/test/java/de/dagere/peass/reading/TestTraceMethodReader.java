@@ -74,7 +74,7 @@ public class TestTraceMethodReader {
             "-javaagent:" + agentPath,
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
             "-cp", jarPath,
-            "de.peass.example.CallerSimpleFor");
+            "de.dagere.peass.example.CallerSimpleFor");
       System.out.println("Command: " + builder.command());
       final Process process = builder.start();
 
@@ -133,7 +133,7 @@ public class TestTraceMethodReader {
             "-javaagent:" + agentPath,
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
             "-cp", jarPath,
-            "de.peass.example.CallerLongFor");
+            "de.dagere.peass.example.CallerLongFor");
       final Process process = builder.start();
 
       StreamGobbler.showFullProcess(process);
