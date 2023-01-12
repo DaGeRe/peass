@@ -103,7 +103,7 @@ public class OneTraceGenerator {
 
                   success = true;
                } else {
-                  LOG.error("Trace empty!");
+                  LOG.warn("Trace is empty! (Which is ok for first execution of a parameterized test.)");
                }
             }
          } else {
