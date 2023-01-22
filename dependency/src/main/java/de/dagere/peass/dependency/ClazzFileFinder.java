@@ -211,21 +211,23 @@ public class ClazzFileFinder {
 
    private File searchNonPublicClass(final File sourceParentFolder, String pureName) {
       for (final String potentialFolder : executionConfig.getAllClazzFolders()) {
-         String packageName = pureName.substring(0, pureName.lastIndexOf(File.separator));
-         String clazzName = pureName.substring(pureName.lastIndexOf(File.separator) + 1);
-         File packageFolder = new File(sourceParentFolder, potentialFolder + File.separator + packageName);
-         if (packageFolder.exists()) {
-            for (File containingFileCandidate : packageFolder.listFiles((FileFilter) new WildcardFileFilter("*.java"))) {
-               try {
-                  if (containingFileCandidate.isFile()) {
-                     CompilationUnit cu = JavaParserProvider.parse(containingFileCandidate);
-                     List<String> clazzes = ClazzFinder.getClazzes(cu);
-                     if (clazzes.contains(clazzName)) {
-                        return containingFileCandidate;
+         if (pureName.contains(File.separator)) {
+            String packageName = pureName.substring(0, pureName.lastIndexOf(File.separator));
+            String clazzName = pureName.substring(pureName.lastIndexOf(File.separator) + 1);
+            File packageFolder = new File(sourceParentFolder, potentialFolder + File.separator + packageName);
+            if (packageFolder.exists()) {
+               for (File containingFileCandidate : packageFolder.listFiles((FileFilter) new WildcardFileFilter("*.java"))) {
+                  try {
+                     if (containingFileCandidate.isFile()) {
+                        CompilationUnit cu = JavaParserProvider.parse(containingFileCandidate);
+                        List<String> clazzes = ClazzFinder.getClazzes(cu);
+                        if (clazzes.contains(clazzName)) {
+                           return containingFileCandidate;
+                        }
                      }
+                  } catch (FileNotFoundException e) {
+                     e.printStackTrace();
                   }
-               } catch (FileNotFoundException e) {
-                  e.printStackTrace();
                }
             }
          }
