@@ -31,21 +31,22 @@ import de.dagere.peass.utils.StreamGobbler;
  */
 public class TestTraceMethodReader {
 
+   private static final String LOG4J_VERSION = "2.19.0";
    private final File tmpFolder = new File("target" + File.separator + "kieker_results_test");
    private static final String REPO = System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository";
    private static final String KOPEME_JAR = REPO + File.separator + "de" + File.separator + "dagere" + File.separator + "kopeme" + File.separator + "kopeme-core" + File.separator
          + MavenPomUtil.KOPEME_VERSION + File.separator + "kopeme-core-" + MavenPomUtil.KOPEME_VERSION + ".jar";
-   private static final String SLF4J_IMPL_VERSION = "2.14.0";
+   private static final String SLF4J_IMPL_VERSION = "2.19.0";
    private static final String SLF4J_IMPL_JAR = REPO + File.separator + "org" + File.separator + "apache" + File.separator + "logging" + File.separator + "log4j" + File.separator
          + "log4j-slf4j-impl" + File.separator + SLF4J_IMPL_VERSION + File.separator + "log4j-slf4j-impl-" + SLF4J_IMPL_VERSION + ".jar";
    private static final String SLF4J_API_VERSION = "1.7.30";
    private static final String SLF4J_API_JAR = REPO + File.separator + "org" + File.separator + "slf4j" + File.separator + "slf4j-api" + File.separator + SLF4J_API_VERSION
          + File.separator + "slf4j-api-" + SLF4J_API_VERSION + ".jar";
    private static final String LOG4J_FOLDER = REPO + File.separator + "org" + File.separator + "apache" + File.separator + "logging" + File.separator + "log4j";
-   private static final String LOG4J_IMPL_JAR = LOG4J_FOLDER + File.separator + "log4j-core" + File.separator + "2.14.0" + File.separator + File.separator
-         + "log4j-core-2.14.0.jar";
-   private static final String LOG4J_API_JAR = LOG4J_FOLDER + File.separator + "log4j-api" + File.separator + "2.14.0" + File.separator + "log4j-api-2.14.0.jar";
-
+   private static final String LOG4J_IMPL_JAR = LOG4J_FOLDER + File.separator + "log4j-core" + File.separator + LOG4J_VERSION + File.separator + File.separator
+         + "log4j-core-" + LOG4J_VERSION + ".jar";
+   private static final String LOG4J_API_JAR = LOG4J_FOLDER + File.separator + "log4j-api" + File.separator + LOG4J_VERSION + File.separator + "log4j-api-" + LOG4J_VERSION
+         + ".jar";
 
    @BeforeEach
    public void init() {
@@ -110,7 +111,7 @@ public class TestTraceMethodReader {
    private String getJarPath() {
       String jarPath;
       if (!System.getProperty("os.name").startsWith("Windows")) {
-         jarPath = KOPEME_JAR + File.pathSeparator + SLF4J_API_JAR + File.pathSeparator + SLF4J_IMPL_JAR + File.pathSeparator + 
+         jarPath = KOPEME_JAR + File.pathSeparator + SLF4J_API_JAR + File.pathSeparator + SLF4J_IMPL_JAR + File.pathSeparator +
                LOG4J_IMPL_JAR + File.pathSeparator + LOG4J_API_JAR + File.pathSeparator + "target" + File.separator + "test-classes";
       } else {
          jarPath = "\"" + KOPEME_JAR + "\"" + File.pathSeparator +
@@ -128,7 +129,7 @@ public class TestTraceMethodReader {
    public void testTraceLengthLongFor() throws ParseException, IOException {
       String jarPath = getJarPath();
       String agentPath = getAgentPath();
-      
+
       final ProcessBuilder builder = new ProcessBuilder("java",
             "-javaagent:" + agentPath,
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
