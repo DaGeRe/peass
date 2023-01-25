@@ -209,7 +209,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       return processBuilderHelper.buildFolderProcess(moduleFolder, logFile, vars);
    }
 
-   public static String getTestPackageName(TestMethodCall test) {
+   public String getTestPackageName(TestMethodCall test) {
       final String testPackageName;
 
       if (test.getPackage().endsWith(".test")) {
