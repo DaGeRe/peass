@@ -210,13 +210,21 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    }
 
    public String getTestPackageName(TestMethodCall test) {
-      final String testPackageName;
+      String testPackageName = getTestPackageName();
 
+      if (testPackageName != null) {
+         return testPackageName;
+      }
       if (test.getPackage().endsWith(".test")) {
          testPackageName = test.getPackage();
       } else {
          testPackageName = test.getPackage() + ".test";
       }
+      return testPackageName;
+   }
+
+   public String getTestPackageName() {
+      final String testPackageName = getTestTransformer().getConfig().getExecutionConfig().getAndroidTestPackageName();
       return testPackageName;
    }
 
