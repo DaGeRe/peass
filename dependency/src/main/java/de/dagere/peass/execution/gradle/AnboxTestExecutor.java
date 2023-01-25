@@ -196,7 +196,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
     */
    private Process buildGradleProcess(final File moduleFolder, final File logFile, TestMethodCall test) {
 
-      String[] anboxOriginals = new String[] { adbCall, "shell", "am", "instrument", "-w", "-e", "class" };
+      String[] anboxOriginals = new String[] { adbCall, "shell", "am", "instrument", "-w", "-m", "-e", "class" };
 
       final String testPackageName = getTestPackageName(test);
 
@@ -209,14 +209,22 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       return processBuilderHelper.buildFolderProcess(moduleFolder, logFile, vars);
    }
 
-   public static String getTestPackageName(TestMethodCall test) {
-      final String testPackageName;
+   public String getTestPackageName(TestMethodCall test) {
+      String testPackageName = getTestPackageName();
 
+      if (testPackageName != null) {
+         return testPackageName;
+      }
       if (test.getPackage().endsWith(".test")) {
          testPackageName = test.getPackage();
       } else {
          testPackageName = test.getPackage() + ".test";
       }
+      return testPackageName;
+   }
+
+   public String getTestPackageName() {
+      final String testPackageName = getTestTransformer().getConfig().getExecutionConfig().getAndroidTestPackageName();
       return testPackageName;
    }
 
