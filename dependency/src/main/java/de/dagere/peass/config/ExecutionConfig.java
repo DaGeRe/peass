@@ -47,6 +47,7 @@ public class ExecutionConfig implements Serializable {
 
    protected String startcommit;
    protected String endcommit;
+   private boolean linearizeHistory;
    private String pl;
 
    private boolean redirectSubprocessOutputToFile = true;
@@ -109,6 +110,7 @@ public class ExecutionConfig implements Serializable {
       this.forbiddenMethods = other.getForbiddenMethods();
       this.startcommit = other.getStartcommit();
       this.endcommit = other.getEndcommit();
+      this.linearizeHistory = other.linearizeHistory;
       this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
       this.removeSnapshots = other.removeSnapshots;
       this.useAlternativeBuildfile = other.useAlternativeBuildfile;
@@ -262,6 +264,14 @@ public class ExecutionConfig implements Serializable {
 
    public void setEndcommit(final String endCommit) {
       this.endcommit = endCommit;
+   }
+
+   public void setLinearizeHistory(final boolean linearizeHistory) {
+      this.linearizeHistory = linearizeHistory;
+   }
+
+   public boolean isLinearizeHistory() {
+      return linearizeHistory;
    }
 
    @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -91,9 +91,9 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       final File dependencyFileIn = getDependencyInFile();
 
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, StaticTestSelection.class);
-      CommitComparatorInstance comparator = new CommitComparatorInstance(GitUtils.getCommits(projectFolder, false));
+      CommitComparatorInstance comparator = new CommitComparatorInstance(GitUtils.getCommits(projectFolder, false, executionConfigMixin.isLinearizeHistory()));
       
-      VersionComparator.setVersions(GitUtils.getCommits(projectFolder, false));
+      VersionComparator.setVersions(GitUtils.getCommits(projectFolder, false, executionConfigMixin.isLinearizeHistory()));
 
       String previousCommit = getPreviousCommit(executionConfigMixin.getStartcommit(), projectFolder, dependencies, comparator);
 
@@ -162,7 +162,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
    }
 
    private CommitIterator createIterator(final TestSelectionConfigMixin config, final String previousCommit) {
-      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
+      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder(), executionConfigMixin.isLinearizeHistory());
       commits.add(0, previousCommit);
       final CommitIterator iterator = new CommitIteratorGit(config.getProjectFolder(), commits, previousCommit);
       return iterator;

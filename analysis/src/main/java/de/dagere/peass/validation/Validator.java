@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,6 +26,7 @@ import de.dagere.peass.validation.data.ProjectValidation;
 import de.dagere.peass.validation.data.Validation;
 import de.dagere.peass.validation.data.ValidationChange;
 import de.dagere.peass.vcs.GitUtils;
+import picocli.CommandLine;
 
 public class Validator {
 
@@ -38,6 +40,9 @@ public class Validator {
    private int before = 0;
    private final ProjectChanges changes;
    private final ProjectStatistics statistics;
+
+   @CommandLine.Mixin
+   private static ExecutionConfigMixin executionConfigMixin;
 
    public Validator(final File dependencyFolder, final File changeFolder, final String project) throws JsonParseException, JsonMappingException, IOException {
       final File executionFile = new File(dependencyFolder, ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");
@@ -91,7 +96,7 @@ public class Validator {
 
       LOG.info("Project: " + projectName);
 
-      CommitComparatorInstance comparator = GitUtils.getCommitsForURL(changedTests.getUrl());
+      CommitComparatorInstance comparator = GitUtils.getCommitsForURL(changedTests.getUrl(), executionConfigMixin.isLinearizeHistory());
 
       Map<String, String> sortedCommits = VersionComparator.INSTANCE.sort(commits);
       for (final Map.Entry<String, String> commit : sortedCommits.entrySet()) {

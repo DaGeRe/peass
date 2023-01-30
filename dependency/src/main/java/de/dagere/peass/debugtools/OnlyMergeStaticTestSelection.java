@@ -35,7 +35,7 @@ public class OnlyMergeStaticTestSelection implements Callable<Void>{
    @Override
    public Void call() throws Exception {
       final File projectFolder = config.getProjectFolder();
-      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), projectFolder);
+      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), projectFolder, executionConfigMixin.isLinearizeHistory());
       
       final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("staticTestSelection_*.json"));
       CommitComparatorInstance instance = new CommitComparatorInstance(commits);

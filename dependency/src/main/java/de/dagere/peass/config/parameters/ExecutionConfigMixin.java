@@ -38,6 +38,10 @@ public class ExecutionConfigMixin {
    @Option(names = { "-endcommit", "--endcommit" }, description = "Last commit that should be analysed - do not use together with commit and commitOld! ")
    protected String endcommit;
 
+   @Option(names = { "-linearizeHistory",
+         "--linearizeHistory" }, description = "Set tracking-model of commit history - by default is linearized (true). For Non-linear model, change it to false")
+   protected boolean linearizeHistory = true;
+
    @Option(names = { "-testGoal", "--testGoal" }, description = "Test goal that should be used; default testRelease for Android projects and test for all others. "
          + "If you want to use test<VariantName> for Android, please specify a goal (i.e. task name) here."
          + "If you want to run integration tests in maven e.g. by calling failsafe, also specify it here. ")
@@ -201,6 +205,14 @@ public class ExecutionConfigMixin {
 
    public void setEndcommit(String endcommit) {
       this.endcommit = endcommit;
+   }
+
+   public void setLinearizeHistory(boolean linearizeHistory) {
+      this.linearizeHistory = linearizeHistory;
+   }
+
+   public boolean isLinearizeHistory() {
+      return linearizeHistory;
    }
 
    public void setPl(final String pl) {
@@ -440,6 +452,7 @@ public class ExecutionConfigMixin {
 
       config.setStartcommit(getStartcommit());
       config.setEndcommit(getEndcommit());
+      config.setLinearizeHistory(linearizeHistory);
       config.setTestGoal(getTestGoal());
       config.setCleanGoal(getCleanGoal());
 

@@ -19,11 +19,13 @@ package de.dagere.peass.vcs;
 import java.io.File;
 import java.util.List;
 
+import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
+import picocli.CommandLine.Mixin;
 
 /**
  * Allows iteration over git-versions
@@ -39,10 +41,13 @@ public class CommitIteratorGit extends CommitIterator {
    private final String previous;
    private final int previousIndex;
 
+   @Mixin
+   private ExecutionConfigMixin executionConfigMixin;
+
    public CommitIteratorGit(final File projectFolder) {
       super(projectFolder);
       previous = GitUtils.getName("HEAD~1", projectFolder);
-      commits = GitUtils.getCommits(projectFolder, false);
+      commits = GitUtils.getCommits(projectFolder, false, executionConfigMixin.isLinearizeHistory());
       previousIndex = commits.indexOf(previous);
    }
    

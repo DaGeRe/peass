@@ -65,7 +65,7 @@ public class SelectStarter implements Callable<Void>{
    public Void call() throws Exception {
       final String project = config.getProjectFolder().getName();
       
-      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
+      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder(), executionConfigMixin.isLinearizeHistory());
       VersionComparator.setVersions(commits);
 
       CommitComparatorInstance comparator = new CommitComparatorInstance(commits);
