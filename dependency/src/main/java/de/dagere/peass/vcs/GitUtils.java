@@ -60,7 +60,7 @@ public final class GitUtils {
 
    }
 
-   public static CommitComparatorInstance getCommitsForURL(final String url) throws IOException {
+   public static CommitComparatorInstance getCommitsForURL(final String url, final boolean linearizeHistory) throws IOException {
       CommitComparatorInstance comparator = null;
       boolean repoFound = false;
       if (System.getenv(Constants.PEASS_PROJECTS) != null) {
@@ -69,7 +69,7 @@ public final class GitUtils {
          File candidate = new File(System.getenv(Constants.PEASS_PROJECTS), project);
          if (candidate.exists()) {
             repoFound = true;
-            final List<String> commits = GitUtils.getCommits(candidate, false);
+            final List<String> commits = GitUtils.getCommits(candidate, false, linearizeHistory);
             comparator = new CommitComparatorInstance(commits);
             VersionComparator.setVersions(commits);
          }
@@ -92,7 +92,7 @@ public final class GitUtils {
       if (!repoFound) {
          final File tempDir = Files.createTempDirectory("gitTemp").toFile();
          GitUtils.downloadProject(url, tempDir);
-         final List<String> commits = GitUtils.getCommits(tempDir, false);
+         final List<String> commits = GitUtils.getCommits(tempDir, false, linearizeHistory);
          comparator = new CommitComparatorInstance(commits);
          VersionComparator.setVersions(commits);
          FileUtils.deleteDirectory(tempDir);
@@ -166,14 +166,10 @@ public final class GitUtils {
       commits.removeAll(notRelevantCommits);
    }
 
-   public static List<String> getCommits(final File folder, final String startcommit, final String endcommit) {
-      final List<String> commits = getCommits(folder, true);
+   public static List<String> getCommits(final File folder, final String startcommit, final String endcommit, final boolean linearizeHistory) {
+      final List<String> commits = getCommits(folder, true, linearizeHistory);
       GitUtils.filterList(startcommit, endcommit, commits);
       return commits;
-   }
-
-   public static List<String> getCommits(final File folder, final boolean includeAllBranches) {
-      return getCommits(folder, includeAllBranches, true);
    }
 
    /**

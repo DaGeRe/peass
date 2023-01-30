@@ -80,7 +80,7 @@ public class ContinuousExecutor {
 
       LOG.debug("Commit: {} Predecessor Commit: {}", commit, userDefinedCommitOld);
 
-      List<String> commits = GitUtils.getCommits(projectFolderLocal, false, true);
+      List<String> commits = GitUtils.getCommits(projectFolderLocal, false, measurementConfig.getExecutionConfig().isLinearizeHistory());
       comparator = new CommitComparatorInstance(commits);
 
       commitOld = getLatestRunnableCommit(measurementConfig, env, userDefinedCommitOld);
