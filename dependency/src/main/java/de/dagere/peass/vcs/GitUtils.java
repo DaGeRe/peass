@@ -259,7 +259,7 @@ public final class GitUtils {
    }
 
    private static List<String> getCommitNames(final File folder, final boolean includeAllBranches) throws IOException {
-      String command = includeAllBranches ? "git log --oneline --all" : "git log --oneline";
+      String command = includeAllBranches ? "git log --oneline --all --no-abbrev-commit" : "git log --oneline --no-abbrev-commit";
       final Process p = Runtime.getRuntime().exec(command, new String[0], folder);
       try (final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
          String line;
