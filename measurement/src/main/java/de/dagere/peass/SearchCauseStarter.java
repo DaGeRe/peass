@@ -82,6 +82,10 @@ public class SearchCauseStarter extends MeasureStarter {
       if (kiekerConfigMixin.isNotUseAggregation() && measurementConfiguration.getKiekerConfig().getRecord() == AllowedKiekerRecord.DURATION) {
          throw new RuntimeException("Non-aggregation and duration record cannot be combined, since duration records make it impossible to detect place in call tree");
       }
+      // Only AGGREGATED_WRITER is currently implemented with Anbox. See `AOPXMLHelper.writeKiekerMonitoringProperties()`
+      if (kiekerConfigMixin.isNotUseAggregation() && measurementConfiguration.getExecutionConfig().isUseAnbox()) {
+         throw new RuntimeException("Non-aggregation and Anbox cannot be combined");
+      }
 
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders,
