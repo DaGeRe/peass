@@ -8,6 +8,7 @@ import java.util.List;
 
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.execution.gradle.AnboxTestExecutor;
 import de.dagere.peass.execution.maven.pom.MavenTestExecutor;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -69,7 +70,13 @@ public class AOPXMLHelper {
             writer.write("kieker.monitoring.adaptiveMonitoring.readInterval=15\n");
          }
          if (kiekerConfig.isUseAggregation()) {
-            String tempFolderPath = folders.getTempMeasurementFolder().getAbsolutePath();
+            // TODO: Handle CONFIG_PATH for CHANGEABLE_WRITER and ONE_CALL_WRITER
+            String tempFolderPath;
+            if (transformer.getConfig().getExecutionConfig().isUseAnbox()) {
+               tempFolderPath = AnboxTestExecutor.ANBOX_EMULATOR_FOLDER_TEMP_RESULT;
+            } else {
+               tempFolderPath = folders.getTempMeasurementFolder().getAbsolutePath();
+            }
             if (EnvironmentVariables.isWindows()) {
                // To avoid problems with escape signs on windows, also use / on windows for the path
                tempFolderPath = tempFolderPath.replace('\\', '/');
