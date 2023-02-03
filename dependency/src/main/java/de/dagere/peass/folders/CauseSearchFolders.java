@@ -33,7 +33,8 @@ public class CauseSearchFolders extends PeassFolders {
       // Due to renaming tree to treeMeasurementResults (for understandability), we need to try whether a folder with the old name exists
       File candidate = new File(rcaFolder, "tree");
       if (candidate.exists()) {
-         treeMeasurementResultsFolder = candidate;
+         treeMeasurementResultsFolder = new File(rcaFolder, RCA_RESULT_FOLDERNAME);
+         candidate.renameTo(treeMeasurementResultsFolder);
       } else {
          treeMeasurementResultsFolder = new File(rcaFolder, RCA_RESULT_FOLDERNAME);
          treeMeasurementResultsFolder.mkdir();
