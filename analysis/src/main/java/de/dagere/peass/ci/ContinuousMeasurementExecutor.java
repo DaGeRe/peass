@@ -7,7 +7,6 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.ci.logHandling.LogRedirector;
 import de.dagere.peass.config.MeasurementConfig;
@@ -16,7 +15,6 @@ import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dependencyprocessors.AdaptiveTester;
-
 
 public class ContinuousMeasurementExecutor {
 
@@ -35,7 +33,7 @@ public class ContinuousMeasurementExecutor {
       this.comparator = comparator;
    }
 
-   public File executeMeasurements(final Set<TestMethodCall> tests, final File fullResultsVersion, final File logFile) throws IOException, InterruptedException,  XmlPullParserException {
+   public File executeMeasurements(final Set<TestMethodCall> tests, final File fullResultsVersion, final File logFile) throws IOException {
       if (!fullResultsVersion.exists()) {
          if (measurementConfig.getExecutionConfig().isRedirectSubprocessOutputToFile()) {
             LOG.info("Executing measurement - Log goes to {}", logFile.getAbsolutePath());
@@ -53,9 +51,9 @@ public class ContinuousMeasurementExecutor {
       return measurementFolder;
    }
 
-   private void doMeasurement(final Set<TestMethodCall> tests, final File fullResultsVersion) throws IOException, InterruptedException, XmlPullParserException {
+   private void doMeasurement(final Set<TestMethodCall> tests, final File fullResultsVersion) throws IOException {
       cleanTemporaryFolders();
-      
+
       for (final TestMethodCall test : tests) {
          MeasurementConfig copied = createCopiedConfiguration();
          final AdaptiveTester tester = new AdaptiveTester(folders, copied, env, comparator);
