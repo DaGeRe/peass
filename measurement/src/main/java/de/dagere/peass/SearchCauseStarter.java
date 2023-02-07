@@ -105,7 +105,7 @@ public class SearchCauseStarter extends MeasureStarter {
       for (TestMethodCall selectedTest : commitInfo.getTests().getTestMethods()) {
          if (selectedTest.getClazz().equals(test.getClazz()) && selectedTest.getMethodWithParams().equals(test.getMethodWithParams())) {
             found = true;
-            test = (TestMethodCall) selectedTest; // required to add module
+            test = selectedTest; // required to add module
          }
       }
       if (!found) {
