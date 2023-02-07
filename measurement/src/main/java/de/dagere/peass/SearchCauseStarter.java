@@ -109,7 +109,7 @@ public class SearchCauseStarter extends MeasureStarter {
          }
       }
       if (!found) {
-         LOG.error("Test " + test + " is not contained in regression test selection result, therefore it is unlikely to have a performance change!");
+         LOG.error("Test {} is not contained in regression test selection result, therefore it is unlikely to have a performance change!", test);
       }
       return test;
    }
