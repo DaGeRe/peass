@@ -78,7 +78,7 @@ public class MeasureStarter extends PairProcessor {
       return null;
    }
 
-   private void createTester(final MeasurementConfig measurementConfiguration) throws IOException {
+   private void createTester(final MeasurementConfig measurementConfiguration) {
       if (measurementConfigMixin.getDuration() != 0) {
          throw new RuntimeException("Time-based running currently not supported; eventually fix commented-out code to get it running again");
       } else {
@@ -236,7 +236,7 @@ public class MeasureStarter extends PairProcessor {
       return executeThisTest;
    }
 
-   public static void main(final String[] args) throws  IOException {
+   public static void main(final String[] args) {
       final MeasureStarter command = new MeasureStarter();
       final CommandLine commandLine = new CommandLine(command);
       System.exit(commandLine.execute(args));
