@@ -217,7 +217,7 @@ public class MeasureStarter extends PairProcessor {
             }
          }
          if (!hasChanges) {
-            LOG.debug("Skipping " + testcase + " because of execution-JSON in " + commit);
+            LOG.debug("Skipping {} because of execution-JSON in {}", testcase, commit);
             executeThisTest = false;
          }
       }
@@ -225,10 +225,10 @@ public class MeasureStarter extends PairProcessor {
    }
 
    public boolean checkTestName(final TestCase testcase, boolean executeThisTest) {
-      LOG.debug("Checking " + test + " " + testcase);
+      LOG.debug("Checking {} + {}", test, testcase);
       if (!test.equals(testcase)) {
          executeThisTest = false;
-         LOG.debug("Skipping: " + testcase);
+         LOG.debug("Skipping: {}", testcase);
       } else {
          LOG.debug("Success!");
       }
