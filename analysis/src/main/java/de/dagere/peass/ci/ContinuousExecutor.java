@@ -60,7 +60,7 @@ public class ContinuousExecutor {
       localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);
       String projectName = ContinuousFolderUtil.getSubFolderPath(projectFolder);
       File projectFolderLocal = new File(localFolder, projectName);
-      getGitRepo(projectFolder, measurementConfig, projectFolderLocal);
+      getGitRepo(projectFolder, projectFolderLocal);
       resultsFolders = new ResultsFolders(localFolder, projectName);
 
       folders = new PeassFolders(projectFolderLocal);
@@ -113,7 +113,7 @@ public class ContinuousExecutor {
       return iterator;
    }
 
-   private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws IOException {
+   private void getGitRepo(final File projectFolder, final File projectFolderLocal) throws IOException {
       if (projectFolderLocal.exists()) {
          FileUtils.deleteDirectory(projectFolderLocal);
       }
