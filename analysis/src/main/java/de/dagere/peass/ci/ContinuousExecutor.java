@@ -9,7 +9,6 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.changes.ProjectChanges;
@@ -134,12 +133,12 @@ public class ContinuousExecutor {
       try {
          File measurementFolder = executeMeasurement(tests);
          analyzeMeasurements(measurementFolder);
-      } catch (IOException | InterruptedException | XmlPullParserException e) {
+      } catch (IOException e) {
          throw new RuntimeException(e);
       }
    }
 
-   public void execute() throws Exception {
+   public void execute() {
       Set<TestMethodCall> tests = executeRTS().getTests();
       measure(tests);
    }
@@ -158,7 +157,7 @@ public class ContinuousExecutor {
       return tests;
    }
 
-   protected File executeMeasurement(final Set<TestMethodCall> tests) throws IOException, InterruptedException, XmlPullParserException {
+   protected File executeMeasurement(final Set<TestMethodCall> tests) throws IOException {
       final File fullResultsVersion = resultsFolders.getCommitFullResultsFolder(commit, commitOld);
       File logFile = resultsFolders.getMeasurementLogFile(commit, commitOld);
       final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(folders, measurementConfig, env, comparator);
