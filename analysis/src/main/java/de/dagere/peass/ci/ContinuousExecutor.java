@@ -11,9 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
@@ -52,7 +49,7 @@ public class ContinuousExecutor {
    private final EnvironmentVariables env;
 
    public ContinuousExecutor(final File projectFolder, final MeasurementConfig measurementConfig, final TestSelectionConfig dependencyConfig, final EnvironmentVariables env)
-         throws InterruptedException, IOException {
+         throws IOException {
       this.originalProjectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
       this.dependencyConfig = dependencyConfig;
@@ -116,7 +113,7 @@ public class ContinuousExecutor {
       return iterator;
    }
 
-   private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
+   private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws IOException {
       if (projectFolderLocal.exists()) {
          FileUtils.deleteDirectory(projectFolderLocal);
       }
@@ -170,7 +167,7 @@ public class ContinuousExecutor {
    }
 
    private void analyzeMeasurements(final File measurementFolder)
-         throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
+         throws IOException {
       StaticTestSelection selectedTests = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
 
       ProjectChanges changes = resultsFolders.getChangeFile().exists() ? Constants.OBJECTMAPPER.readValue(resultsFolders.getChangeFile(), ProjectChanges.class)
