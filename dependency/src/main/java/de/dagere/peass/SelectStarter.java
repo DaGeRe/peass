@@ -9,9 +9,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
@@ -74,7 +71,7 @@ public class SelectStarter implements Callable<Void> {
    }
 
    public void readExecutions(final String project, final CommitComparatorInstance comparator)
-         throws InterruptedException, IOException, JsonGenerationException, JsonMappingException {
+         throws InterruptedException, IOException {
       KiekerConfig kiekerConfig = kiekerConfigMixin.getKiekerConfig();
       ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
 
