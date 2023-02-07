@@ -31,16 +31,15 @@ import picocli.CommandLine.Option;
 /**
  * Runs the dependency test by running the test, where something could have changed, pairwise for every new commit. This makes it faster to get potential change candidates, but it
  * takes longer for a whole project.
- * 
- * @author reichelt
  *
+ * @author reichelt
  */
 @Command(description = "Measures the defined tests and commits until the number of VMs is reached", name = "measure")
 public class MeasureStarter extends PairProcessor {
 
    @Mixin
    MeasurementConfigurationMixin measurementConfigMixin;
-   
+
    @Mixin
    protected StatisticsConfigMixin statisticConfigMixin;
 
@@ -89,14 +88,14 @@ public class MeasureStarter extends PairProcessor {
    }
 
    private MeasurementConfig createConfig() {
-      final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, 
+      final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin,
             statisticConfigMixin, new KiekerConfigMixin());
       return measurementConfiguration;
    }
 
    /**
     * Calculates the index of the start commit
-    * 
+    *
     * @return index of the start commit
     */
    private int getStartCommitIndex() {
@@ -130,7 +129,7 @@ public class MeasureStarter extends PairProcessor {
 
    /**
     * Calculates the index of the end commit.
-    * 
+    *
     * @return index of the end commit
     */
    private int getEndCommitIndex() {
@@ -195,7 +194,7 @@ public class MeasureStarter extends PairProcessor {
             }
             lastTestcaseCalls.put(testcase, commit);
          }
-      } catch (IOException | InterruptedException  | XmlPullParserException e) {
+      } catch (IOException | InterruptedException | XmlPullParserException e) {
          e.printStackTrace();
       }
    }
