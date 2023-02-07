@@ -43,13 +43,13 @@ public class SearchCauseStarter extends MeasureStarter {
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
 
-   public static void main(final String[] args) throws IOException {
+   public static void main(final String[] args) {
       final SearchCauseStarter command = new SearchCauseStarter();
       final CommandLine commandLine = new CommandLine(command);
       System.exit(commandLine.execute(args));
    }
 
-   public SearchCauseStarter() throws IOException {
+   public SearchCauseStarter() {
       super();
    }
 
