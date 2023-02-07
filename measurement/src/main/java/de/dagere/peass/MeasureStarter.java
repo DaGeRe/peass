@@ -188,7 +188,7 @@ public class MeasureStarter extends PairProcessor {
                   }
                   if (executeThisTest) {
                      tester.setCommits(commit, commitOld);
-                     tester.evaluate((TestMethodCall) testcase);
+                     tester.evaluate( testcase);
                   }
                }
             }
