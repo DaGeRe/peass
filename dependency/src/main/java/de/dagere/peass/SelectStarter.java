@@ -34,21 +34,20 @@ import picocli.CommandLine.Mixin;
 /**
  * First reads all dependencies and afterwards determines the views and creates the execution file. Both is parallelized. This is the class that should be used if a project as a
  * whole should be analyzed.
- * 
- * @author reichelt
  *
+ * @author reichelt
  */
 @Command(description = "Executes the regression test selection. Creates the executionfile, which defines the tests-commit-pairs that need to be executed in each commit", name = "select")
-public class SelectStarter implements Callable<Void>{
+public class SelectStarter implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(SelectStarter.class);
 
    @Mixin
    private TestSelectionConfigMixin config;
-   
+
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
-   
+
    @Mixin
    private ExecutionConfigMixin executionConfigMixin;
 
@@ -60,12 +59,13 @@ public class SelectStarter implements Callable<Void>{
          t.printStackTrace();
       }
    }
-   
+
    @Override
    public Void call() throws Exception {
       final String project = config.getProjectFolder().getName();
-      
-      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder(), executionConfigMixin.isLinearizeHistory());
+
+      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder(),
+            executionConfigMixin.isLinearizeHistory());
       VersionComparator.setVersions(commits);
 
       CommitComparatorInstance comparator = new CommitComparatorInstance(commits);
@@ -73,18 +73,19 @@ public class SelectStarter implements Callable<Void>{
       return null;
    }
 
-   public void readExecutions(final String project, final CommitComparatorInstance comparator) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException {
+   public void readExecutions(final String project, final CommitComparatorInstance comparator)
+         throws InterruptedException, IOException, JsonGenerationException, JsonMappingException {
       KiekerConfig kiekerConfig = kiekerConfigMixin.getKiekerConfig();
       ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
-      
-      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, comparator, 
+
+      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, comparator,
             config.getDependencyConfig(), executionConfig, kiekerConfig, new EnvironmentVariables(executionConfig.getProperties()));
       final ResultsFolders[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);
 
       ResultsFolders mergedFolders = new ResultsFolders(config.getResultBaseFolder(), project);
-      
+
       final File out = mergedFolders.getStaticTestSelectionFile();
       PartialSelectionResultsMerger.mergeSelectionResults(out, outFiles, comparator);
 
@@ -93,9 +94,9 @@ public class SelectStarter implements Callable<Void>{
       FileUtils.moveDirectory(folders.getTempProjectFolder(), dependencyTempFiles);
 
       ExecutionData executionData = PartialSelectionResultsMerger.mergeExecutions(mergedFolders, outFiles);
-      
+
       mergeViews(outFiles, mergedFolders);
-      
+
       if (!config.isDoNotGenerateProperties()) {
          generateProperties(project, executionConfig, folders, executionData);
       }
