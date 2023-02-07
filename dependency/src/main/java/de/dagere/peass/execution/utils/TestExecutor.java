@@ -27,9 +27,8 @@ import de.dagere.peass.testtransformation.TestTransformer;
 /**
  * Base functionality for executing performance tests, both instrumented and not instrumented. The executor automates changing the buildfile, changing the tests both with and
  * without Kieker.
- * 
- * @author reichelt
  *
+ * @author reichelt
  */
 public abstract class TestExecutor {
 
@@ -67,7 +66,7 @@ public abstract class TestExecutor {
 
    /**
     * Deletes files which are bigger than sizeInMb Mb, since they pollute the disc space and will not be analyzable
-    * 
+    *
     * @param folderToClean
     */
    public void cleanAboveSize(final File folderToClean, final String ending) {
@@ -80,7 +79,7 @@ public abstract class TestExecutor {
          }
       }
    }
-   
+
    protected File getCleanLogFile(final File logFolder, final TestMethodCall test) {
       File clazzLogFolder = getClazzLogFolder(logFolder, test);
       final File logFile = new File(clazzLogFolder, "clean" + File.separator + test.getMethodWithParams() + ".txt");
@@ -152,7 +151,7 @@ public abstract class TestExecutor {
 
    /**
     * Tells whether currently checkout out version has a buildfile
-    * 
+    *
     * @return
     */
    public abstract boolean doesBuildfileExist();
@@ -181,6 +180,7 @@ public abstract class TestExecutor {
 
    /**
     * Returns the {@link ProjectModules} of the current project; if null is returned, then the project is not parseable in the current commit.
+    *
     * @return {@link ProjectModules} of the current project or null.
     */
    public abstract ProjectModules getModules();
@@ -210,7 +210,7 @@ public abstract class TestExecutor {
    public File getProjectFolder() {
       return folders.getProjectFolder();
    }
-   
+
    public PeassFolders getFolders() {
       return folders;
    }
