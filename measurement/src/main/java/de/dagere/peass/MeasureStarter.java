@@ -176,21 +176,21 @@ public class MeasureStarter extends PairProcessor {
          final String commitOld = commitinfo.getPredecessor();
 
          for (final TestMethodCall testcase : testcases) {
-            if (executeThisCommit) {
-               if (lastTestcaseCalls.containsKey(testcase)) {
-                  boolean executeThisTest = true;
-                  if (test != null) {
-                     executeThisTest = checkTestName(testcase, executeThisTest);
-                  }
+            if (executeThisCommit && lastTestcaseCalls.containsKey(testcase)) {
 
-                  if (executeThisTest) {
-                     executeThisTest = checkExecutionData(commit, testcase, executeThisTest);
-                  }
-                  if (executeThisTest) {
-                     tester.setCommits(commit, commitOld);
-                     tester.evaluate( testcase);
-                  }
+               boolean executeThisTest = true;
+               if (test != null) {
+                  executeThisTest = checkTestName(testcase, executeThisTest);
                }
+
+               if (executeThisTest) {
+                  executeThisTest = checkExecutionData(commit, testcase, executeThisTest);
+               }
+               if (executeThisTest) {
+                  tester.setCommits(commit, commitOld);
+                  tester.evaluate(testcase);
+               }
+
             }
             lastTestcaseCalls.put(testcase, commit);
          }
