@@ -92,23 +92,6 @@ public class ExecutionData extends SelectedTests {
    }
 
    @JsonIgnore
-   public void sort() {
-      final Map<String, TestSet> unsorted = new LinkedHashMap<>();
-      synchronized (commits) {
-         unsorted.putAll(commits);
-         commits.clear();
-
-         final List<String> commitNames = new LinkedList<>();
-         commitNames.addAll(unsorted.keySet());
-         Collections.sort(commitNames, new VersionComparator());
-
-         for (final String commit : commitNames) {
-            commits.put(commit, unsorted.get(commit));
-         }
-      }
-   }
-   
-   @JsonIgnore
    public void sort(CommitComparatorInstance comparator) {
       final Map<String, TestSet> unsorted = new LinkedHashMap<>();
       synchronized (commits) {

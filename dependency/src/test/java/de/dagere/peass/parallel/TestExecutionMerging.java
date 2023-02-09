@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.TestUtil;
-import de.dagere.peass.debugtools.OnlyMergeStaticTestSelection;
+import de.dagere.peass.debugtools.OnlyMergeTestSelection;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.parallel.PartialSelectionResultsMerger;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -59,7 +59,7 @@ public class TestExecutionMerging {
          mockedStatic.when(() -> CommitUtil.getGitCommits(null, null, projectFolder, true))
                .thenReturn(COMMIT_NAMES);
 
-         OnlyMergeStaticTestSelection.main(new String[] { "-baseFolder", basicFolder.getAbsolutePath(), "-mergedFolder", mergedFolder.getAbsolutePath(),
+         OnlyMergeTestSelection.main(new String[] { "-baseFolder", basicFolder.getAbsolutePath(), "-mergedFolder", mergedFolder.getAbsolutePath(),
                "-folder", projectFolder.getAbsolutePath() });
       }
       

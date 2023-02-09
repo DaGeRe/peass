@@ -17,7 +17,13 @@ import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
-public class OnlyMergeStaticTestSelection implements Callable<Void> {
+/**
+ * This merges all test selection data, if they are in different folders (e.g. results-0, results-1, results-2) and writes the merged data
+ * into the folder given by -mergedFolder. A project folder with the commits needs to be passed as well.
+ * @author DaGeRe
+ *
+ */
+public class OnlyMergeTestSelection implements Callable<Void> {
 
    @Mixin
    private TestSelectionConfigMixin config;
@@ -33,7 +39,7 @@ public class OnlyMergeStaticTestSelection implements Callable<Void> {
 
    public static void main(final String[] args) {
       try {
-         final CommandLine commandLine = new CommandLine(new OnlyMergeStaticTestSelection());
+         final CommandLine commandLine = new CommandLine(new OnlyMergeTestSelection());
          commandLine.execute(args);
       } catch (final Throwable t) {
          t.printStackTrace();
