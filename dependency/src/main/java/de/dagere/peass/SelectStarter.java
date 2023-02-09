@@ -9,6 +9,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
@@ -83,21 +87,17 @@ public class SelectStarter implements Callable<Void> {
 
       ResultsFolders mergedFolders = new ResultsFolders(config.getResultBaseFolder(), project);
 
-      final File out = mergedFolders.getStaticTestSelectionFile();
-      PartialSelectionResultsMerger.mergeSelectionResults(out, outFiles, comparator);
+      ExecutionData executionData = PartialSelectionResultsMerger.mergePartialData(comparator, outFiles, mergedFolders);
 
       final PeassFolders folders = new PeassFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
       FileUtils.moveDirectory(folders.getTempProjectFolder(), dependencyTempFiles);
-
-      ExecutionData executionData = PartialSelectionResultsMerger.mergeExecutions(mergedFolders, outFiles);
-
-      mergeViews(outFiles, mergedFolders);
-
       if (!config.isDoNotGenerateProperties()) {
          generateProperties(project, executionConfig, folders, executionData);
       }
    }
+
+   
 
    private void generateProperties(final String project, ExecutionConfig executionConfig, final PeassFolders folders, ExecutionData executionData) throws IOException {
       ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
@@ -107,14 +107,5 @@ public class SelectStarter implements Callable<Void> {
       FileUtils.forceDelete(propertyFolder.getProjectFolder());
    }
 
-   private void mergeViews(final ResultsFolders[] outFiles, final ResultsFolders mergedFolders) throws IOException {
-      for (ResultsFolders resultsFolders : outFiles) {
-         for (File viewFolder : resultsFolders.getViewFolder().listFiles()) {
-            File dest = new File(mergedFolders.getViewFolder(), viewFolder.getName());
-            if (!dest.exists()) {
-               FileUtils.moveDirectory(viewFolder, dest);
-            }
-         }
-      }
-   }
+   
 }

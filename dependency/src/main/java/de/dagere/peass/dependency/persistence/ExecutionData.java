@@ -14,6 +14,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 
 /**
@@ -100,6 +101,23 @@ public class ExecutionData extends SelectedTests {
          final List<String> commitNames = new LinkedList<>();
          commitNames.addAll(unsorted.keySet());
          Collections.sort(commitNames, new VersionComparator());
+
+         for (final String commit : commitNames) {
+            commits.put(commit, unsorted.get(commit));
+         }
+      }
+   }
+   
+   @JsonIgnore
+   public void sort(CommitComparatorInstance comparator) {
+      final Map<String, TestSet> unsorted = new LinkedHashMap<>();
+      synchronized (commits) {
+         unsorted.putAll(commits);
+         commits.clear();
+
+         final List<String> commitNames = new LinkedList<>();
+         commitNames.addAll(unsorted.keySet());
+         Collections.sort(commitNames, comparator);
 
          for (final String commit : commitNames) {
             commits.put(commit, unsorted.get(commit));

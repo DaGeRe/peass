@@ -11,18 +11,26 @@ import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialSelectionResultsMerger;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.vcs.CommitUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Option;
 
-public class OnlyMergeStaticTestSelection implements Callable<Void>{
-   
+public class OnlyMergeStaticTestSelection implements Callable<Void> {
+
    @Mixin
    private TestSelectionConfigMixin config;
-   
+
    @Mixin
    private ExecutionConfigMixin executionConfigMixin;
-   
+
+   @Option(names = { "-baseFolder", "--baseFolder" }, description = "Folder of the results that should be merged")
+   private File baseFolder;
+
+   @Option(names = { "-mergedFolder", "--mergedFolder" }, description = "Folder of the merged results")
+   private File mergedFolder;
+
    public static void main(final String[] args) {
       try {
          final CommandLine commandLine = new CommandLine(new OnlyMergeStaticTestSelection());
@@ -30,16 +38,31 @@ public class OnlyMergeStaticTestSelection implements Callable<Void>{
       } catch (final Throwable t) {
          t.printStackTrace();
       }
-   }  
-   
+   }
+
    @Override
    public Void call() throws Exception {
       final File projectFolder = config.getProjectFolder();
-      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), projectFolder, executionConfigMixin.isLinearizeHistory());
-      
-      final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("staticTestSelection_*.json"));
+
+      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), projectFolder,
+            executionConfigMixin.isLinearizeHistory());
       CommitComparatorInstance instance = new CommitComparatorInstance(commits);
-      PartialSelectionResultsMerger.mergePartFiles(new File(config.getResultBaseFolder(), "merged.json"), files, instance);
+
+      if (baseFolder == null) {
+         final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("staticTestSelection_*.json"));
+         PartialSelectionResultsMerger.mergePartFiles(new File(config.getResultBaseFolder(), "staticTestSelection_merged.json"), files, instance);
+      } else {
+         File[] resultsFolders = baseFolder.listFiles();
+         ResultsFolders[] outFiles = new ResultsFolders[resultsFolders.length];
+         for (int i = 0; i < outFiles.length; i++) {
+            outFiles[i] = new ResultsFolders(resultsFolders[i], projectFolder.getName());
+         }
+
+         ResultsFolders mergedFolders = new ResultsFolders(mergedFolder, projectFolder.getName());
+
+         PartialSelectionResultsMerger.mergePartialData(instance, outFiles, mergedFolders);
+      }
+
       return null;
    }
 }

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +30,29 @@ public class PartialSelectionResultsMerger {
 
    }
 
+   
+   public static ExecutionData mergePartialData(final CommitComparatorInstance comparator, final ResultsFolders[] outFiles, ResultsFolders mergedFolders)
+         throws IOException, JsonGenerationException, JsonMappingException, JsonParseException {
+      final File out = mergedFolders.getStaticTestSelectionFile();
+      PartialSelectionResultsMerger.mergeSelectionResults(out, outFiles, comparator);
+
+      ExecutionData executionData = PartialSelectionResultsMerger.mergeExecutions(mergedFolders, outFiles, comparator);
+
+      mergeViews(outFiles, mergedFolders);
+      return executionData;
+   }
+   
+   private static void mergeViews(final ResultsFolders[] outFiles, final ResultsFolders mergedFolders) throws IOException {
+      for (ResultsFolders resultsFolders : outFiles) {
+         for (File viewFolder : resultsFolders.getViewFolder().listFiles()) {
+            File dest = new File(mergedFolders.getViewFolder(), viewFolder.getName());
+            if (!dest.exists()) {
+               FileUtils.moveDirectory(viewFolder, dest);
+            }
+         }
+      }
+   }
+   
    public static StaticTestSelection mergePartFiles(final File out, final File[] partFiles, CommitComparatorInstance comparator)
          throws IOException, JsonGenerationException, JsonMappingException {
       final List<StaticTestSelection> staticTestSelection = readStaticTestSelection(partFiles);
@@ -90,7 +114,7 @@ public class PartialSelectionResultsMerger {
       return merged;
    }
 
-   public static ExecutionData mergeExecutiondata(final List<ExecutionData> executionData) {
+   public static ExecutionData mergeExecutiondata(final List<ExecutionData> executionData, CommitComparatorInstance comparator) {
       ExecutionData merged = new ExecutionData();
       for (ExecutionData data : executionData) {
          if (merged.getUrl() == null && data.getUrl() != null) {
@@ -98,10 +122,11 @@ public class PartialSelectionResultsMerger {
          }
          merged.getCommits().putAll(data.getCommits());
       }
+      merged.sort(comparator);
       return merged;
    }
 
-   public static ExecutionData mergeExecutions(final ResultsFolders mergedOut, final ResultsFolders[] outFiles) throws JsonParseException, JsonMappingException, IOException {
+   public static ExecutionData mergeExecutions(final ResultsFolders mergedOut, final ResultsFolders[] outFiles, CommitComparatorInstance comparator) throws JsonParseException, JsonMappingException, IOException {
       List<File> executionOutFiles = new LinkedList<>();
       List<File> coverageSelectionOutFiles = new LinkedList<>();
       List<File> twiceExecutableOutFiles = new LinkedList<>();
@@ -118,29 +143,29 @@ public class PartialSelectionResultsMerger {
             }
          }
       }
-      ExecutionData mergedExecutions = mergeExecutionFiles(executionOutFiles);
+      ExecutionData mergedExecutions = mergeExecutionFiles(executionOutFiles, comparator);
       Constants.OBJECTMAPPER.writeValue(mergedOut.getTraceTestSelectionFile(), mergedExecutions);
 
       if (coverageSelectionOutFiles.size() > 0) {
-         ExecutionData mergedCoverage = mergeExecutionFiles(coverageSelectionOutFiles);
+         ExecutionData mergedCoverage = mergeExecutionFiles(coverageSelectionOutFiles, comparator);
          Constants.OBJECTMAPPER.writeValue(mergedOut.getCoverageSelectionFile(), mergedCoverage);
       }
 
       if (twiceExecutableOutFiles.size() > 0) {
-         ExecutionData mergedTwiceExecutable = mergeExecutionFiles(twiceExecutableOutFiles);
+         ExecutionData mergedTwiceExecutable = mergeExecutionFiles(twiceExecutableOutFiles, comparator);
          Constants.OBJECTMAPPER.writeValue(mergedOut.getTwiceExecutableFile(), mergedTwiceExecutable);
       }
 
       return mergedExecutions;
    }
 
-   private static ExecutionData mergeExecutionFiles(final List<File> executionOutFiles) throws IOException {
+   private static ExecutionData mergeExecutionFiles(final List<File> executionOutFiles, CommitComparatorInstance comparator) throws IOException {
       List<ExecutionData> executionData = new LinkedList<>();
       for (File file : executionOutFiles) {
          ExecutionData currentData = Constants.OBJECTMAPPER.readValue(file, ExecutionData.class);
          executionData.add(currentData);
       }
-      ExecutionData merged = mergeExecutiondata(executionData);
+      ExecutionData merged = mergeExecutiondata(executionData, comparator);
       return merged;
    }
 }
