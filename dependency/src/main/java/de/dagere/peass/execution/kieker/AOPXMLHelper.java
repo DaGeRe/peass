@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
+import de.dagere.kopeme.kieker.writer.WritingType;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.execution.gradle.AnboxTestExecutor;
 import de.dagere.peass.execution.maven.pom.MavenTestExecutor;
@@ -89,6 +90,7 @@ public class AOPXMLHelper {
          if (!kiekerConfig.isUseAggregation()) {
             writer.write("kieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler\n");
          }
+         writer.write(AggregatedTreeWriter.WRITING_TYPE + "=" + kiekerConfig.getWritingType());
          writer.flush();
       }
    }

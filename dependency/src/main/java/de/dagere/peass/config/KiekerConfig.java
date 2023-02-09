@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import de.dagere.kopeme.kieker.writer.WritingType;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class KiekerConfig implements Serializable {
@@ -34,6 +35,7 @@ public class KiekerConfig implements Serializable {
    private long kiekerQueueSize = DEFAULT_KIEKER_QUEUE_SIZE;
    private boolean createDefaultConstructor = true;
    private int kiekerWaitTime = DEFAULT_KIEKER_WAIT_TIME;
+   private WritingType writingType = WritingType.BinaryAggregated;
    
    // We want a set that preserves insertion order, so we require a LinkedHashSet
    private LinkedHashSet<String> excludeForTracing = new LinkedHashSet<>();
@@ -217,5 +219,13 @@ public class KiekerConfig implements Serializable {
 
    public void setCreateDefaultConstructor(final boolean createDefaultConstructor) {
       this.createDefaultConstructor = createDefaultConstructor;
+   }
+   
+   public WritingType getWritingType() {
+      return writingType;
+   }
+   
+   public void setWritingType(WritingType writingType) {
+      this.writingType = writingType;
    }
 }

@@ -2,6 +2,7 @@ package de.dagere.peass.config.parameters;
 
 import java.util.LinkedHashSet;
 
+import de.dagere.kopeme.kieker.writer.WritingType;
 import de.dagere.peass.config.KiekerConfig;
 import picocli.CommandLine.Option;
 
@@ -56,6 +57,9 @@ public class KiekerConfigMixin {
    @Option(names = { "-kiekerWaitTime", "--kiekerWaitTime" }, description = "Time that KoPeMe should wait until Kieker writing is finshed in seconds (default: 10)")
    protected int kiekerWaitTime = KiekerConfig.DEFAULT_KIEKER_WAIT_TIME;
 
+   @Option(names = { "-writingType", "--writingType" }, description = "Writing type for RCA data. BinaryAggregated writes results in a given amount of seconds, BinarySimple writes results every individual repetition. The latter might produce big amounts of data, hence, BinaryAggregated is the default currently")
+   protected WritingType writingType = WritingType.BinaryAggregated;
+   
    public int getWriteInterval() {
       return writeInterval;
    }
@@ -125,6 +129,7 @@ public class KiekerConfigMixin {
       kiekerConfig.setTraceSizeInMb(traceSizeInMb);
       kiekerConfig.setOnlyOneCallRecording(onlyOneCallRecording);
       kiekerConfig.setCreateDefaultConstructor(!skipDefaultConstructor);
+      kiekerConfig.setWritingType(writingType);
       if (excludeForTracing != null) {
          LinkedHashSet<String> excludedForTracing = new LinkedHashSet<>();
          for (String exclude : excludeForTracing) {

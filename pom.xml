@@ -139,7 +139,7 @@
     <mockito.version>4.11.0</mockito.version>
     <junit.version>5.9.1</junit.version>
     <kieker.version>1.15.2</kieker.version>
-    <kopeme.version>1.3.2</kopeme.version>
+    <kopeme.version>1.3.3</kopeme.version>
     <zip4j.version>2.11.3</zip4j.version>
     <project.organization.name>DaGeRe</project.organization.name>
     <license.licenseName>agpl_v3</license.licenseName>
