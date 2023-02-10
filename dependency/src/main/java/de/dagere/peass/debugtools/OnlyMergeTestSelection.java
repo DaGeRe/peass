@@ -2,8 +2,13 @@ package de.dagere.peass.debugtools;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
@@ -58,7 +63,7 @@ public class OnlyMergeTestSelection implements Callable<Void> {
          final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("staticTestSelection_*.json"));
          PartialSelectionResultsMerger.mergePartFiles(new File(config.getResultBaseFolder(), "staticTestSelection_merged.json"), files, instance);
       } else {
-         File[] resultsFolders = baseFolder.listFiles();
+         File[] resultsFolders = findResultsFolder();
          ResultsFolders[] outFiles = new ResultsFolders[resultsFolders.length];
          for (int i = 0; i < outFiles.length; i++) {
             outFiles[i] = new ResultsFolders(resultsFolders[i], projectFolder.getName());
@@ -70,5 +75,20 @@ public class OnlyMergeTestSelection implements Callable<Void> {
       }
 
       return null;
+   }
+
+   private File[] findResultsFolder() {
+      File[] resultsFolders = baseFolder.listFiles();
+      List<File> result = new ArrayList<>();
+      for (int i = 0; i < resultsFolders.length; i++) {
+         if (resultsFolders[i].isDirectory()) {
+            try (Stream<Path> path = Files.walk(resultsFolders[i].toPath())) {
+               path.filter(f -> f.getFileName().toString().startsWith("staticTestSelection")).forEach(f -> result.add(f.getParent().toFile()));
+            } catch (IOException e) {
+               throw new RuntimeException("staticTestSelection was not found in result folder", e);
+            }
+         }
+      }
+      return result.toArray(new File[result.size()]);
    }
 }
