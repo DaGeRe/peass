@@ -52,10 +52,11 @@ public class Changes implements Serializable {
     * @param viewName view-file where trace-diff should be saved
     * @param method Testmethod where performance changed
     * @param percent How much the performance was changed
-    * @param mannWhitheyUStatistic 
+    * @param mannWhitheyUStatistic
     * @return Added Change
     */
-   public Change addChange(final TestMethodCall testcase, final String viewName, final double oldTime, final double percent, final double tvalue, Double mannWhitheyUStatistic, final long vms) {
+   public Change addChange(final TestMethodCall testcase, final String viewName, final double oldTime, final double percent, final double tvalue, Double mannWhitheyUStatistic,
+         final long vms) {
       Change change = new Change();
       change.setDiff(viewName);
       change.setTvalue(tvalue);
@@ -93,23 +94,28 @@ public class Changes implements Serializable {
          currentChanges = new LinkedList<>();
          testcaseChanges.put(testclazz, currentChanges);
       }
+
+      boolean detectedEqualChange = false;
       for (Change existingChange : currentChanges) {
          if (existingChange.getMethodWithParams().equals(change.getMethodWithParams())) {
             if (existingChange.getTvalue() * change.getTvalue() < 0) {
                throw new RuntimeException("Test method was measured twice: " + existingChange.getMethodWithParams()
                      + " and t-value sign was differing: " + existingChange.getTvalue() + " vs " + change.getTvalue());
             }
+            detectedEqualChange = true;
          }
       }
 
-      currentChanges.add(change);
+      if (!detectedEqualChange) {
+         currentChanges.add(change);
 
-      currentChanges.sort(new Comparator<Change>() {
-         @Override
-         public int compare(final Change o1, final Change o2) {
-            return o1.getDiff().compareTo(o2.getDiff());
-         }
-      });
+         currentChanges.sort(new Comparator<Change>() {
+            @Override
+            public int compare(final Change o1, final Change o2) {
+               return o1.getDiff().compareTo(o2.getDiff());
+            }
+         });
+      }
    }
 
    @JsonIgnore
