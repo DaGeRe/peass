@@ -36,10 +36,10 @@ public class OnlyMergeTestSelection implements Callable<Void> {
    @Mixin
    private ExecutionConfigMixin executionConfigMixin;
 
-   @Option(names = { "-baseFolder", "--baseFolder" }, description = "Folder of the results that should be merged")
+   @Option(names = { "-baseFolder", "--baseFolder" }, description = "Folder of the results that should be merged", required = true)
    private File baseFolder;
 
-   @Option(names = { "-mergedFolder", "--mergedFolder" }, description = "Folder of the merged results")
+   @Option(names = { "-mergedFolder", "--mergedFolder" }, description = "Folder of the merged results", required = true)
    private File mergedFolder;
 
    public static void main(final String[] args) {
@@ -68,7 +68,7 @@ public class OnlyMergeTestSelection implements Callable<Void> {
          for (int i = 0; i < outFiles.length; i++) {
             outFiles[i] = new ResultsFolders(resultsFolders[i], projectFolder.getName());
          }
-
+         
          ResultsFolders mergedFolders = new ResultsFolders(mergedFolder, projectFolder.getName());
 
          PartialSelectionResultsMerger.mergePartialData(instance, outFiles, mergedFolders);
