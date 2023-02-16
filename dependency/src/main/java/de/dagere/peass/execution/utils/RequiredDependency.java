@@ -43,7 +43,12 @@ public class RequiredDependency {
    }
 
    public String getGradleDependency() {
-      String gradleDependencyString = groupId + ":" + artifactId + ":" + version;
+      String gradleDependencyString;
+      if (classifier == null) {
+         gradleDependencyString = groupId + ":" + artifactId + ":" + version;
+      } else {
+         gradleDependencyString = groupId + ":" + artifactId + ":" + version + ":" + classifier;
+      }
       return gradleDependencyString;
    }
 
