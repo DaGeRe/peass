@@ -3,7 +3,11 @@
 
 name: Build Peass-JMH
 
-on: [push, workflow_dispatch]
+on:
+  pull_request:
+    branches: [ master, main, develop ]
+  workflow_dispatch:
+    branches: [ master, main, develop ]
 
 jobs:
   build:
@@ -39,15 +43,3 @@ jobs:
       run: ./mvnw -B install --file pom.xml -DskipTests && ls ~/.m2/repository/ && ls ~/.m2/repository/de/dagere/kopeme/kopeme-core
     - name: Build Peass-JMH
       run: cd peass-jmh && ../mvnw -B install --file pom.xml && cd ..
-    - name: Publish Test Report ${{ matrix.java }} OS ${{ matrix.os }}
-      if: ${{ always() }}
-      uses: scacap/action-surefire-report@v1
-      with:
-         github_token: ${{ secrets.GITHUB_TOKEN }}
-         check_name: Test Report ${{ matrix.java }} OS ${{ matrix.os }}
-    - name: Upload Unit Test Results
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v2
-      with:
-        name: Unit Test Results (Java ${{ matrix.java }} OS ${{ matrix.os }})
-        path: peass-jmh/target/surefire-reports/*
