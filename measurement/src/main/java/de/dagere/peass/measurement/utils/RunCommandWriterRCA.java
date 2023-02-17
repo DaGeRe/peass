@@ -16,10 +16,19 @@ public class RunCommandWriterRCA extends RunCommandWriter {
    @Override
    public void createSingleMethodCommand(final int versionIndex, final String commit, final String testcaseName) {
       long timeoutInMinutes = config.getTimeoutInSeconds() / 60;
+      final String measurementFileName, usableTestcaseName;
+      if (testcaseName.contains(" ") || testcaseName.contains("(")) {
+         measurementFileName = "\"measurement_" + commit.substring(0, 6) + "_" + testcaseName + ".txt\"";
+         usableTestcaseName = "\"" + testcaseName + "\"";
+      } else {
+         measurementFileName = "measurement_" + commit.substring(0, 6) + "_" + testcaseName + ".txt";
+         usableTestcaseName = testcaseName;
+      }
+      
       goal.println("./peass searchcause "
             + "-rcaStrategy " + RCAStrategy.UNTIL_SOURCE_CHANGE + " "
             + "-propertyFolder results/properties_" + name + " "
-            + "-test " + testcaseName + " "
+            + "-test " + usableTestcaseName + " "
             + "-warmup " + config.getWarmup() + " "
             + "-iterations " + config.getIterations() + " "
             + "-repetitions " + config.getRepetitions() + " "
@@ -33,7 +42,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
             + "-commit " + commit + " "
             + "-folder " + DEFAULT_PROJECT_FOLDER_LOCATION + name + "/ "
             + "-executionFile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
-            + " &> rca_" + commit.substring(0, 6) + "_" + testcaseName + ".txt");
+            + " &> " + measurementFileName);
    }
 
 }

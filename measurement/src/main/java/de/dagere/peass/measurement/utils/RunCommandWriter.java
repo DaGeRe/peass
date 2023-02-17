@@ -10,7 +10,7 @@ import de.dagere.peass.folders.ResultsFolders;
 
 public class RunCommandWriter {
    public static final String DEFAULT_PROJECT_FOLDER_LOCATION = "../projects/";
-   
+
    protected final PrintStream goal;
    protected final String experimentId;
    // final Dependencies dependencies;
@@ -47,14 +47,23 @@ public class RunCommandWriter {
          createSingleMethodCommand(commitIndex, commit, testcaseName);
       }
    }
-   
+
    public MeasurementConfig getConfig() {
       return config;
    }
 
    public void createSingleMethodCommand(final int commitIndex, final String commit, final String testcaseName) {
+      final String measurementFileName, usableTestcaseName;
+      if (testcaseName.contains(" ") || testcaseName.contains("(")) {
+         measurementFileName = "\"measurement_" + commit.substring(0, 6) + "_" + testcaseName + ".txt\"";
+         usableTestcaseName = "\"" + testcaseName + "\"";
+      } else {
+         measurementFileName = "measurement_" + commit.substring(0, 6) + "_" + testcaseName + ".txt";
+         usableTestcaseName = testcaseName;
+      }
+      
       goal.println("./peass measure "
-            + "-test " + testcaseName + " "
+            + "-test " + usableTestcaseName + " "
             + "-warmup " + config.getWarmup() + " "
             + "-iterations " + config.getIterations() + " "
             + "-repetitions " + config.getRepetitions() + " "
@@ -69,8 +78,7 @@ public class RunCommandWriter {
             + "-commit " + commit + " "
             + "-executionFile results/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + "-folder " + DEFAULT_PROJECT_FOLDER_LOCATION + name + "/ "
-            + " &> measurement_" + commit.substring(0, 6) + "_" + testcaseName
-            + ".txt");
+            + " &> " + measurementFileName);
    }
 
 }
