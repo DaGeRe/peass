@@ -85,12 +85,12 @@
     <dependency>
       <groupId>de.dagere.peass</groupId>
       <artifactId>dependency</artifactId>
-      <version>0.3.6-SNAPSHOT</version>
+      <version>0.3.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>de.dagere.peass</groupId>
       <artifactId>dependency</artifactId>
-      <version>0.3.6-SNAPSHOT</version>
+      <version>0.3.7-SNAPSHOT</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
