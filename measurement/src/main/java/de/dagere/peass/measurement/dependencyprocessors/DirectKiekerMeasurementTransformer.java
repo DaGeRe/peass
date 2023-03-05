@@ -50,28 +50,32 @@ public class DirectKiekerMeasurementTransformer {
    }
 
    private void buildMergedData(Kopemedata data, List<MeasuredValue> oneVMResult) {
-      TestMethod testMethod = data.getMethods().get(0);
-      DatacollectorResult datacollector = new DatacollectorResult(TimeDataCollectorNoGC.class.getName());
-      VMResult vmResult = new VMResult();
-      datacollector.getResults().add(vmResult);
+      if (data.getMethods().size() > 0) {
+         TestMethod testMethod = data.getMethods().get(0);
+         DatacollectorResult datacollector = new DatacollectorResult(TimeDataCollectorNoGC.class.getName());
+         VMResult vmResult = new VMResult();
+         datacollector.getResults().add(vmResult);
 
-      vmResult.setIterations(oneVMResult.size());
-      vmResult.setRepetitions(1);
-      Fulldata fulldata = new Fulldata();
-      SummaryStatistics statistics = new SummaryStatistics();
-      for (MeasuredValue value : oneVMResult) {
-         fulldata.getValues().add(value);
+         vmResult.setIterations(oneVMResult.size());
+         vmResult.setRepetitions(1);
+         Fulldata fulldata = new Fulldata();
+         SummaryStatistics statistics = new SummaryStatistics();
+         for (MeasuredValue value : oneVMResult) {
+            fulldata.getValues().add(value);
 
-         statistics.addValue(value.getValue());
+            statistics.addValue(value.getValue());
+         }
+
+         vmResult.setValue(statistics.getMean());
+         vmResult.setDeviation(statistics.getStandardDeviation());
+         vmResult.setDate(oneVMResult.get(0).getStartTime());
+
+         vmResult.setFulldata(fulldata);
+
+         testMethod.getDatacollectorResults().add(datacollector);
+      } else {
+         LOG.error("No measurement data stored in JSON file!");
       }
-
-      vmResult.setValue(statistics.getMean());
-      vmResult.setDeviation(statistics.getStandardDeviation());
-      vmResult.setDate(oneVMResult.get(0).getStartTime());
-
-      vmResult.setFulldata(fulldata);
-
-      testMethod.getDatacollectorResults().add(datacollector);
    }
 
    private List<MeasuredValue> readKiekerData(TestMethodCall test) {

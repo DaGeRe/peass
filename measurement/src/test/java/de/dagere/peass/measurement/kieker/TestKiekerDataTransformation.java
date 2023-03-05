@@ -41,6 +41,11 @@ public class TestKiekerDataTransformation {
       Assert.assertEquals(1, collectors.size());
       Assert.assertEquals(10, collectors.get(0).getResults().get(0).getFulldata().getValues().size());
       Assert.assertEquals(1656326191802823160L, collectors.get(0).getResults().get(0).getDate());
+      
+      TestMethodCall testMe2 = new TestMethodCall("defaultpackage.TestMe", "testMe2");
+
+      // Failed tests (that can, in exceptional cases, produce JSONs without methods, should not yield an exception, therefore this is checked here
+      transformer.transform(testMe2);
    }
 
    @Test
