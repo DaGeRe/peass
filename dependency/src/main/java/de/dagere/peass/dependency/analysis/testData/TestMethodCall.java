@@ -178,9 +178,6 @@ public class TestMethodCall extends TestCase {
 
    public static TestMethodCall createFromString(String testcase) {
       String clazz, module, method, params;
-      if (testcase.contains(File.separator)) {
-         throw new RuntimeException("Testcase should be full qualified name, not path!");
-      }
       final int index = testcase.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
       if (index == -1) {
          int moduleIndex = testcase.indexOf(ChangedEntity.MODULE_SEPARATOR);
