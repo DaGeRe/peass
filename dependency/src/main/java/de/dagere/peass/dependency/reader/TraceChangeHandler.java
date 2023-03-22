@@ -89,10 +89,12 @@ public class TraceChangeHandler {
 
       handleDependencyChanges(newCommitInfo, testsToRun, mapping);
 
-      if (dependencyManager.getIgnoredTests().getTestMethods().size() > 0) {
-         newCommitInfo.setIgnoredAffectedTests(dependencyManager.getIgnoredTests());
+      if (dependencyManager.getRunnableTestsInformation().getIgnoredTests().getTestMethods().size() > 0) {
+         newCommitInfo.setIgnoredAffectedTests(dependencyManager.getRunnableTestsInformation().getIgnoredTests());
       }
-
+      if (dependencyManager.getRunnableTestsInformation().getRemovedTests().getTestMethods().size() > 0) {
+         newCommitInfo.setRemovedTests(dependencyManager.getRunnableTestsInformation().getRemovedTests());
+      }
    }
 
    private void handleDependencyChanges(final CommitStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)

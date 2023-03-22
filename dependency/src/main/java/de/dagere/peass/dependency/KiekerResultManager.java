@@ -47,7 +47,7 @@ public class KiekerResultManager {
    protected final TestExecutor executor;
    protected final PeassFolders folders;
    protected final TestTransformer testTransformer;
-   private TestSet ignoredTests;
+   private RunnableTestInformation runnableTestsInformation;
 
    public KiekerResultManager(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.folders = folders;
@@ -70,9 +70,9 @@ public class KiekerResultManager {
    public ModuleClassMapping getModuleClassMapping() {
       return new ModuleClassMapping(executor);
    }
-
-   public TestSet getIgnoredTests() {
-      return ignoredTests;
+   
+   public RunnableTestInformation getRunnableTestsInformation() {
+      return runnableTestsInformation;
    }
 
    public void runTraceTests(final TestSet testsToUpdate, final String commit) {
@@ -81,9 +81,8 @@ public class KiekerResultManager {
 
       LOG.debug("Executing dependency update test, results folder: {}", folders.getTempMeasurementFolder());
       ModuleClassMapping mapping = new ModuleClassMapping(executor);
-      final RunnableTestInformation tests = testTransformer.buildTestMethodSet(testsToUpdate, mapping);
-      executeKoPeMeKiekerRun(tests.getTestsToUpdate(), commit, folders.getDependencyLogFolder());
-      ignoredTests = tests.getIgnoredTests();
+      runnableTestsInformation = testTransformer.buildTestMethodSet(testsToUpdate, mapping);
+      executeKoPeMeKiekerRun(runnableTestsInformation.getTestsToUpdate(), commit, folders.getDependencyLogFolder());
    }
 
    private void truncateKiekerResults() {

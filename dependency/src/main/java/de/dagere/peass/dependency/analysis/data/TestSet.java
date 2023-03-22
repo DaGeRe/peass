@@ -246,4 +246,12 @@ public class TestSet {
    public void setPredecessor(final String predecessor) {
       this.predecessor = predecessor;
    }
+
+   public boolean containsTest(TestMethodCall test) {
+      Set<String> methods = testcases.get(new TestClazzCall(test.getClazz(), test.getModule()));
+      if (methods != null && methods.contains(test.getMethod())) {
+         return true;
+      }
+      return false;
+   }
 }

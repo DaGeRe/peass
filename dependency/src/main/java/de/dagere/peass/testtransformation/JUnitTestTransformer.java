@@ -183,9 +183,9 @@ public class JUnitTestTransformer implements TestTransformer {
       for (final TestClazzCall clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          final File moduleFolder = new File(projectFolder, clazzname.getModule());
-         RunnableTestInformation rti = getTestRunInformation(moduleFolder, clazzname);
+         RunnableTestInformation parsedTestInformation = getTestRunInformation(moduleFolder, clazzname);
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
-            for (final TestMethodCall test : rti.getTestsToUpdate().getTestMethods()) {
+            for (final TestMethodCall test : parsedTestInformation.getTestsToUpdate().getTestMethods()) {
                addTestIfIncluded(tests, test, mapping);
             }
 
@@ -193,9 +193,12 @@ public class JUnitTestTransformer implements TestTransformer {
             for (final String method : currentClazzMethods) {
                TestMethodCall test = new TestMethodCall(clazzname.getClazz(), method, clazzname.getModule());
                addTestIfIncluded(tests, test, mapping);
+               if (!parsedTestInformation.getTestsToUpdate().containsTest(test) && !parsedTestInformation.getIgnoredTests().containsTest(test)) {
+                  tests.getRemovedTests().addTest(test);
+               }
             }
          }
-         for (final TestMethodCall test : rti.getIgnoredTests().getTestMethods()) {
+         for (final TestMethodCall test : parsedTestInformation.getIgnoredTests().getTestMethods()) {
             tests.getIgnoredTests().addTest(test);
          }
       }

@@ -58,12 +58,13 @@ public class TestIgnoredMethodBuilding {
       
       tt.determineVersions(mapping.getModules());
       
-      RunnableTestInformation tests = tt.buildTestMethodSet(new TestSet(currentClassName.split("\\.")[0]), mapping);
+      TestSet testsToUpdate = new TestSet(currentClassName.split("\\.")[0]);
+      RunnableTestInformation tests = tt.buildTestMethodSet(testsToUpdate, mapping);
 
       return tests;
    }
 
-   private static File initializeProject(final File testFolder) throws IOException {
+   public static File initializeProject(final File testFolder) throws IOException {
       File sourcesFolder = new File(testFolder, "src/test/java");
       FileUtils.copyFile(new File(RESOURCE_FOLDER, "../pom.xml"), new File(testFolder, "pom.xml"));
       return sourcesFolder;
