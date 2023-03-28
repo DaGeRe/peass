@@ -8,14 +8,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -58,9 +55,9 @@ public class ChangeManager {
     * @throws IOException
     * @throws FileNotFoundException
     */
-   private List<ChangedEntity> getChangedClasses(final String lastVersion) throws FileNotFoundException, IOException {
+   private List<ChangedEntity> getChangedClasses(final String lastCommit) throws FileNotFoundException, IOException {
       List<File> moduleFiles = testExecutor.getModules().getModules(); 
-      final CommitDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastVersion, config);
+      final CommitDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastCommit, config);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
       return diff.getChangedClasses();
    }
@@ -81,7 +78,7 @@ public class ChangeManager {
       }
    }
 
-   void saveModule(final File module) throws IOException {
+   private void saveModule(final File module) throws IOException {
       for (String path : config.getAllClazzFolders()) {
          savePath(module, path);
       }
@@ -111,11 +108,11 @@ public class ChangeManager {
       }
    }
 
-   public Map<ChangedEntity, ClazzChangeData> getChanges(final String version1, final String version2) {
-      GitUtils.goToCommit(version1, folders.getProjectFolder());
+   public Map<ChangedEntity, ClazzChangeData> getChanges(final String commit1, final String commit2) {
+      GitUtils.goToCommit(commit1, folders.getProjectFolder());
       saveOldClasses();
-      GitUtils.goToCommit(version2, folders.getProjectFolder());
-      return getChanges(version1);
+      GitUtils.goToCommit(commit2, folders.getProjectFolder());
+      return getChanges(commit1);
    }
 
    /**
@@ -145,8 +142,9 @@ public class ChangeManager {
          final List<ChangedEntity> changedClasses = getChangedClasses(lastRunningVersion);
          LOG.debug("Before Cleaning: {}", changedClasses);
          if (folders.getOldSources().exists()) {
+            ChangeDetector detector = new ChangeDetector(config, folders);
             for (final Iterator<ChangedEntity> clazzIterator = changedClasses.iterator(); clazzIterator.hasNext();) {
-               compareClazz(changedClassesMethods, clazzIterator);
+               detector.compareClazz(changedClassesMethods, clazzIterator);
             }
          } else {
             LOG.info("There is no folder for old files");
@@ -160,55 +158,8 @@ public class ChangeManager {
       return changedClassesMethods;
    }
 
-   private void compareClazz(final Map<ChangedEntity, ClazzChangeData> changedClassesMethods, final Iterator<ChangedEntity> clazzIterator) {
-      final ChangedEntity clazz = clazzIterator.next();
-      final ClazzChangeData changeData = new ClazzChangeData(clazz);
-      try {
-         ClazzFileFinder finder = new ClazzFileFinder(config);
-         final File newFile = finder.getSourceFile(folders.getProjectFolder(), clazz);
-         final File oldFile = finder.getSourceFile(folders.getOldSources(), clazz);
-         LOG.info("Comparing {}", newFile, oldFile);
-         if (newFile != null && newFile.exists() && oldFile != null) {
-            compareFiles(changedClassesMethods, clazzIterator, clazz, changeData, newFile, oldFile);
-         } else {
-            LOG.info("Class did not exist before: {}", clazz);
-            changeData.addClazzChange(clazz);
-            changedClassesMethods.put(clazz, changeData);
-         }
-      } catch (final ParseException | NoSuchElementException pe) {
-         LOG.info("Class is unparsable for java parser, so to be sure it is added to the changed classes: {}", clazz);
-         changeData.addClazzChange(clazz);
-         changedClassesMethods.put(clazz, changeData);
-         pe.printStackTrace();
-      } catch (final IOException e) {
-         LOG.info("Class is unparsable for java parser, so to be sure it is added to the changed classes: {}", clazz);
-         changeData.addClazzChange(clazz);
-         changedClassesMethods.put(clazz, changeData);
-         e.printStackTrace();
-      }
-   }
+   
 
-   private void compareFiles(final Map<ChangedEntity, ClazzChangeData> changedClassesMethods, final Iterator<ChangedEntity> clazzIterator, final ChangedEntity clazz,
-         final ClazzChangeData changeData, final File newFile, final File oldFile) throws ParseException, IOException {
-      FileComparisonUtil.getChangedMethods(newFile, oldFile, changeData);
-      boolean isImportChange = false;
-      ClazzFileFinder finder = new ClazzFileFinder(config);
-      for (ChangedEntity entity : changeData.getImportChanges()) {
-         final File entityFile = finder.getSourceFile(folders.getProjectFolder(), entity);
-         if (entityFile != null && entityFile.exists()) {
-            isImportChange = true;
-            changeData.setChange(true);
-            changeData.setOnlyMethodChange(false);
-            changeData.addClazzChange(clazz);
-         }
-      }
-      
-      if (!changeData.isChange() && !isImportChange) {
-         clazzIterator.remove();
-         LOG.debug("Files identical: {}", clazz);
-      } else {
-         changedClassesMethods.put(clazz, changeData);
-      }
-   }
+   
 
 }

@@ -9,6 +9,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.dependency.SourceCodeFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.TemporaryProjectFolderUtil;
@@ -20,7 +21,7 @@ import de.dagere.peass.vcs.VersionControlSystem;
  * @author reichelt
  *
  */
-public class PeassFolders {
+public class PeassFolders implements SourceCodeFolders {
 
    public static final String CLEAN_FOLDER_NAME = "clean";
 
