@@ -23,7 +23,7 @@ public class TestParameterComparator {
       CallableDeclaration<?> method = myInner.findAll(CallableDeclaration.class).get(0);
 
       TraceElementContent traceElementMethod = new TraceElementContent("Clazz$MyInner", "myMethod", new String[0], 0);
-      boolean isEqualMethod = new ParameterComparator(clazz).parametersEqual(traceElementMethod, method);
+      boolean isEqualMethod = new ParameterComparator(clazz).parametersEqual(traceElementMethod.toEntity(), method);
       Assert.assertTrue(isEqualMethod);
    }
 
@@ -37,7 +37,7 @@ public class TestParameterComparator {
       CallableDeclaration<?> method = myInner.findAll(CallableDeclaration.class).get(0);
 
       TraceElementContent traceElementConstructorWrong = new TraceElementContent("Clazz$MyInner", "<init>", new String[] { "Clazz" }, 0);
-      boolean isEqualConstructorWrong = new ParameterComparator(clazz).parametersEqual(traceElementConstructorWrong, method);
+      boolean isEqualConstructorWrong = new ParameterComparator(clazz).parametersEqual(traceElementConstructorWrong.toEntity(), method);
       Assert.assertTrue(isEqualConstructorWrong);
    }
    
@@ -51,7 +51,7 @@ public class TestParameterComparator {
       CallableDeclaration<?> method = myInner.findAll(CallableDeclaration.class).get(0);
 
       TraceElementContent traceElementConstructorWrong = new TraceElementContent("Clazz$MyInner", "<init>", new String[] { }, 0);
-      boolean isEqualConstructor = new ParameterComparator(clazz).parametersEqual(traceElementConstructorWrong, method);
+      boolean isEqualConstructor = new ParameterComparator(clazz).parametersEqual(traceElementConstructorWrong.toEntity(), method);
       Assert.assertFalse(isEqualConstructor);
    }
 
@@ -65,11 +65,11 @@ public class TestParameterComparator {
       CallableDeclaration<?> method = innerClass.findAll(CallableDeclaration.class).get(0);
 
       TraceElementContent wrongTraceElement = new TraceElementContent("Clazz$MyInner", "myMethod", new String[0], 0);
-      boolean isEqualWrong = new ParameterComparator(clazz).parametersEqual(wrongTraceElement, method);
+      boolean isEqualWrong = new ParameterComparator(clazz).parametersEqual(wrongTraceElement.toEntity(), method);
       Assert.assertFalse(isEqualWrong);
 
       TraceElementContent correctTraceElement = new TraceElementContent("Clazz$MyInner", "myMethod", new String[] { "int" }, 0);
-      boolean isEqualCorrect = new ParameterComparator(clazz).parametersEqual(correctTraceElement, method);
+      boolean isEqualCorrect = new ParameterComparator(clazz).parametersEqual(correctTraceElement.toEntity(), method);
       Assert.assertTrue(isEqualCorrect);
    }
 
@@ -84,7 +84,7 @@ public class TestParameterComparator {
       ClassOrInterfaceDeclaration secondInnerClass = myInner.findAll(ClassOrInterfaceDeclaration.class).get(1);
       CallableDeclaration<?> method = secondInnerClass.findAll(CallableDeclaration.class).get(0);
 
-      boolean isEqual1 = new ParameterComparator(clazz).parametersEqual(traceElement, method);
+      boolean isEqual1 = new ParameterComparator(clazz).parametersEqual(traceElement.toEntity(), method);
       Assert.assertTrue(isEqual1);
    }
 
@@ -98,7 +98,7 @@ public class TestParameterComparator {
       CallableDeclaration<?> method = myInner.findAll(CallableDeclaration.class).get(0);
 
       TraceElementContent traceElementConstructorWrong = new TraceElementContent("Clazz$MyInner", "<init>", new String[] { "Clazz", "int" }, 0);
-      boolean isEqualConstructorWrong = new ParameterComparator(clazz).parametersEqual(traceElementConstructorWrong, method);
+      boolean isEqualConstructorWrong = new ParameterComparator(clazz).parametersEqual(traceElementConstructorWrong.toEntity(), method);
       Assert.assertFalse(isEqualConstructorWrong);
    }
 
@@ -112,7 +112,7 @@ public class TestParameterComparator {
       CallableDeclaration<?> method = myInner.findAll(CallableDeclaration.class).get(0);
 
       TraceElementContent traceElementMethodWrong = new TraceElementContent("Clazz$MyInner", "doStuff", new String[] { "Clazz", "int" }, 0);
-      boolean isEqualMethodWrong = new ParameterComparator(clazz).parametersEqual(traceElementMethodWrong, method);
+      boolean isEqualMethodWrong = new ParameterComparator(clazz).parametersEqual(traceElementMethodWrong.toEntity(), method);
       Assert.assertFalse(isEqualMethodWrong);
    }
    
@@ -128,7 +128,7 @@ public class TestParameterComparator {
       CallableDeclaration<?> method = myInner.findAll(CallableDeclaration.class).get(0);
 
       TraceElementContent traceElementMethodWrong = new TraceElementContent("Clazz$MyInner", "doStuff", new String[] { "int" }, 0);
-      boolean isEqualMethodWrong = new ParameterComparator(clazz).parametersEqual(traceElementMethodWrong, method);
+      boolean isEqualMethodWrong = new ParameterComparator(clazz).parametersEqual(traceElementMethodWrong.toEntity(), method);
       Assert.assertTrue(isEqualMethodWrong);
    }
 }

@@ -23,6 +23,7 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.dependency.changesreading.SourceReadUtils;
 import de.dagere.requitur.ContentTraceExpander;
 import de.dagere.requitur.ReducedTraceElement;
 import de.dagere.requitur.RunLengthEncodingSequitur;
@@ -82,7 +83,7 @@ public class TraceMethodReader {
 
          if (clazzFile != null) {
             CompilationUnit cu = getCU(clazzFile);
-            final Node method = TraceReadUtils.getMethod(te, cu);
+            final Node method = SourceReadUtils.getMethod(te.toEntity(), cu);
 
             if (method != null) {
                final String commentedMethod = method.toString().replace("\r", "").intern();

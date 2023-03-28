@@ -22,7 +22,9 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.changesreading.SourceReadUtils;
 
 /**
  * Utility for parsing java source by javaparser
@@ -64,109 +66,6 @@ public class TraceReadUtils {
       }
       final String clazzFileName = clazzFilePart + ".java";
       return clazzFileName;
-   }
-
-   public static List<NodeList<BodyDeclaration<?>>> getAnonymusClasses(final Node parent) {
-      final List<NodeList<BodyDeclaration<?>>> foundAnonymousClasses = new LinkedList<>();
-      for (final Node child : parent.getChildNodes()) {
-         if (child instanceof ObjectCreationExpr) {
-            final ObjectCreationExpr expr = (ObjectCreationExpr) child;
-            if (expr.getAnonymousClassBody().isPresent()) {
-               foundAnonymousClasses.add(expr.getAnonymousClassBody().get());
-            } else {
-               foundAnonymousClasses.addAll(getAnonymusClasses(child));
-            }
-         } else {
-            foundAnonymousClasses.addAll(getAnonymusClasses(child));
-         }
-      }
-      return foundAnonymousClasses;
-   }
-
-   public static Map<String, TypeDeclaration<?>> getNamedClasses(final Node parent, final String alreadyReadPrefix) {
-      final Map<String, TypeDeclaration<?>> foundDeclaredClasses = new HashMap<>();
-      for (final Node child : parent.getChildNodes()) {
-         LOG.trace(child.getClass());
-         if (child instanceof ClassOrInterfaceDeclaration) {
-            ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) child;
-            final String ownName = classOrInterfaceDeclaration.getNameAsString();
-            if (alreadyReadPrefix.equals("")) {
-               foundDeclaredClasses.put(ownName, classOrInterfaceDeclaration);
-               foundDeclaredClasses.putAll(getNamedClasses(child, ownName));
-            } else {
-               foundDeclaredClasses.put(alreadyReadPrefix + "$" + ownName, classOrInterfaceDeclaration);
-               foundDeclaredClasses.putAll(getNamedClasses(child, alreadyReadPrefix + "$" + ownName));
-            }
-
-         } else if (child instanceof EnumDeclaration) {
-            EnumDeclaration enumDeclaration = (EnumDeclaration) child;
-            final String ownName = enumDeclaration.getNameAsString();
-            if (alreadyReadPrefix.equals("")) {
-               foundDeclaredClasses.put(ownName, enumDeclaration);
-               foundDeclaredClasses.putAll(getNamedClasses(child, ownName));
-            } else {
-               foundDeclaredClasses.put(alreadyReadPrefix + "$" + ownName, enumDeclaration);
-               foundDeclaredClasses.putAll(getNamedClasses(child, alreadyReadPrefix + "$" + ownName));
-            }
-         } else {
-            foundDeclaredClasses.putAll(getNamedClasses(child, alreadyReadPrefix));
-         }
-
-      }
-      return foundDeclaredClasses;
-   }
-
-   public static CallableDeclaration<?> getMethod(final TraceElementContent currentTraceElement, final CompilationUnit cu) {
-      if (currentTraceElement.getClazz().contains("$")) {
-         final String indexString = currentTraceElement.getClazz().split("\\$")[1];
-         if (indexString.matches("[0-9]+")) {
-            return getMethodAnonymousClass(currentTraceElement, cu, indexString);
-         } else {
-            return getMethodNamedInnerClass(currentTraceElement, cu);
-         }
-      }
-      CallableDeclaration<?> method = null;
-      for (final Node node : cu.getChildNodes()) {
-         if (node instanceof ClassOrInterfaceDeclaration) {
-            MethodReader reader = new MethodReader((ClassOrInterfaceDeclaration) node);
-            method = reader.getMethod(node, currentTraceElement);
-            if (method != null) {
-               break;
-            }
-         } else if (node instanceof EnumDeclaration) {
-            MethodReader reader = new MethodReader(null);
-            method = reader.getMethod(node, currentTraceElement);
-            if (method != null) {
-               break;
-            }
-         }
-      }
-      LOG.trace(currentTraceElement.getClazz() + " " + currentTraceElement.getMethod());
-      LOG.trace(method);
-      return method;
-   }
-
-   private static CallableDeclaration<?> getMethodNamedInnerClass(final TraceElementContent currentTraceElement, final CompilationUnit cu) {
-      final Map<String, TypeDeclaration<?>> namedClasses = getNamedClasses(cu, "");
-      final String clazz = currentTraceElement.getClazz().substring(currentTraceElement.getClazz().lastIndexOf('.') + 1);
-      final TypeDeclaration<?> declaration = namedClasses.get(clazz);
-      MethodReader reader = new MethodReader((ClassOrInterfaceDeclaration) null);
-      return reader.getMethod(declaration, currentTraceElement);
-   }
-
-   private static CallableDeclaration<?> getMethodAnonymousClass(final TraceElementContent currentTraceElement, final CompilationUnit cu, final String indexString) {
-      final int index = Integer.parseInt(indexString) - 1;
-      final List<NodeList<BodyDeclaration<?>>> anonymousClazzes = getAnonymusClasses(cu);
-      final NodeList<BodyDeclaration<?>> nodes = anonymousClazzes.get(index);
-      MethodReader reader = new MethodReader(null);
-      for (final Node candidate : nodes) {
-         LOG.trace(candidate);
-         final CallableDeclaration<?> ret = reader.getMethod(candidate, currentTraceElement);
-         if (ret != null) {
-            return ret;
-         }
-      }
-      return null;
    }
 
    public static boolean traceElementsEquals(final TraceElement currentTraceElement, final TraceElement samePredecessorCandidate) {

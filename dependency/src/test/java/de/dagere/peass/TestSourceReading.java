@@ -11,6 +11,7 @@ import com.github.javaparser.ast.Node;
 
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.dependency.changesreading.SourceReadUtils;
 import de.dagere.peass.dependency.traces.TraceElementContent;
 import de.dagere.peass.dependency.traces.TraceReadUtils;
 
@@ -23,12 +24,12 @@ public class TestSourceReading {
       final CompilationUnit cu = JavaParserProvider.parse(new File(baseFolder, "GenericClassExample.java"));
 
       final TraceElementContent exampleTrace = new TraceElementContent("GenericClassExample", "test1", new String[0], 1);
-      final Node exampleMethod = TraceReadUtils.getMethod(exampleTrace, cu);
+      final Node exampleMethod = SourceReadUtils.getMethod(exampleTrace.toEntity(), cu);
 
       Assert.assertNotNull(exampleMethod);
 
       final TraceElementContent genericMethod = new TraceElementContent("GenericClassExample", "myMethod", new String[] { "Comparable" }, 1);
-      final Node genericMethodNode = TraceReadUtils.getMethod(genericMethod, cu);
+      final Node genericMethodNode = SourceReadUtils.getMethod(genericMethod.toEntity(), cu);
 
       Assert.assertNotNull(genericMethodNode);
    }
@@ -39,7 +40,7 @@ public class TestSourceReading {
 
       String[] parameters = new String[] {"Map<ClassA, ClassB>", "TimeRange"};
       final TraceElementContent exampleTrace = new TraceElementContent("GenericsExample", "test1", parameters, 1);
-      final Node exampleMethod = TraceReadUtils.getMethod(exampleTrace, cu);
+      final Node exampleMethod = SourceReadUtils.getMethod(exampleTrace.toEntity(), cu);
 
       Assert.assertNotNull(exampleMethod);
 
@@ -50,17 +51,17 @@ public class TestSourceReading {
       final CompilationUnit cu = JavaParserProvider.parse(new File(baseFolder, "AnonymousClassExample.java"));
 
       final TraceElementContent anonymousTrace = new TraceElementContent("AnonymousClassExample$1", "run", new String[0], 1);
-      final Node anonymousMethod = TraceReadUtils.getMethod(anonymousTrace, cu);
+      final Node anonymousMethod = SourceReadUtils.getMethod(anonymousTrace.toEntity(), cu);
 
       Assert.assertNotNull(anonymousMethod);
 
       final TraceElementContent elementConstuctor = new TraceElementContent("AnonymousClassExample$MyPrivateClass", "<init>", new String[0], 1);
-      final Node methodConstructor = TraceReadUtils.getMethod(elementConstuctor, cu);
+      final Node methodConstructor = SourceReadUtils.getMethod(elementConstuctor.toEntity(), cu);
 
       Assert.assertNotNull(methodConstructor);
 
       final TraceElementContent elementInnerMethod = new TraceElementContent("AnonymousClassExample$MyPrivateClass", "doSomething", new String[0], 1);
-      final Node innerMethod = TraceReadUtils.getMethod(elementInnerMethod, cu);
+      final Node innerMethod = SourceReadUtils.getMethod(elementInnerMethod.toEntity(), cu);
 
       Assert.assertNotNull(innerMethod);
    }
@@ -70,7 +71,7 @@ public class TestSourceReading {
       final CompilationUnit cu = JavaParserProvider.parse(new File(baseFolder, "AnonymousClassExample.java"));
 
       final TraceElementContent anonymousTrace = new TraceElementContent("AnonymousClassExample$MyPrivateClass", "<init>", new String[] { "int" }, 1);
-      final Node anonymousMethod = TraceReadUtils.getMethod(anonymousTrace, cu);
+      final Node anonymousMethod = SourceReadUtils.getMethod(anonymousTrace.toEntity(), cu);
 
       System.out.println(anonymousMethod);
 
@@ -84,25 +85,25 @@ public class TestSourceReading {
       final TraceElement te = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       te.setParameterTypes(new String[] { "int" });
       final TraceElementContent anonymousTrace = new TraceElementContent(te);
-      final Node anonymousMethod = TraceReadUtils.getMethod(anonymousTrace, cu);
+      final Node anonymousMethod = SourceReadUtils.getMethod(anonymousTrace.toEntity(), cu);
       Assert.assertNotNull(anonymousMethod);
 
       final TraceElement te2 = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       te2.setParameterTypes(new String[] { "String" });
       final TraceElementContent anonymousTrace2 = new TraceElementContent(te2);
-      final Node anonymousMethod2 = TraceReadUtils.getMethod(anonymousTrace2, cu);
+      final Node anonymousMethod2 = SourceReadUtils.getMethod(anonymousTrace2.toEntity(), cu);
       Assert.assertNotNull(anonymousMethod2);
 
       final TraceElement te3 = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       te3.setParameterTypes(new String[] { "Long" });
       final TraceElementContent anonymousTrace3 = new TraceElementContent(te3);
-      final Node anonymousMethod3 = TraceReadUtils.getMethod(anonymousTrace3, cu);
+      final Node anonymousMethod3 = SourceReadUtils.getMethod(anonymousTrace3.toEntity(), cu);
       Assert.assertNull(anonymousMethod3);
 
       final TraceElement teSmall = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       teSmall.setParameterTypes(new String[] {});
       final TraceElementContent anonymousTraceSmall = new TraceElementContent(teSmall);
-      final Node anonymousMethodSmall = TraceReadUtils.getMethod(anonymousTraceSmall, cu);
+      final Node anonymousMethodSmall = SourceReadUtils.getMethod(anonymousTraceSmall.toEntity(), cu);
       Assert.assertNull(anonymousMethodSmall);
    }
 
@@ -113,37 +114,37 @@ public class TestSourceReading {
       final TraceElement teVarArg = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       teVarArg.setParameterTypes(new String[] { "Object", "String" });
       final TraceElementContent anonymousTraceVarArg = new TraceElementContent(teVarArg);
-      final Node anonymousMethodVarArg = TraceReadUtils.getMethod(anonymousTraceVarArg, cu);
+      final Node anonymousMethodVarArg = SourceReadUtils.getMethod(anonymousTraceVarArg.toEntity(), cu);
       Assert.assertNotNull(anonymousMethodVarArg);
 
       final TraceElement teVarArg2 = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       teVarArg2.setParameterTypes(new String[] { "Object", "String", "String" });
       final TraceElementContent anonymousTraceVarArg2 = new TraceElementContent(teVarArg2);
-      final Node anonymousMethodVarArg2 = TraceReadUtils.getMethod(anonymousTraceVarArg2, cu);
+      final Node anonymousMethodVarArg2 = SourceReadUtils.getMethod(anonymousTraceVarArg2.toEntity(), cu);
       Assert.assertNotNull(anonymousMethodVarArg2);
 
       final TraceElement teVarArg3 = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       teVarArg3.setParameterTypes(new String[] { "Object" });
       final TraceElementContent anonymousTraceVarArg3 = new TraceElementContent(teVarArg3);
-      final Node anonymousMethodVarArg3 = TraceReadUtils.getMethod(anonymousTraceVarArg3, cu);
+      final Node anonymousMethodVarArg3 = SourceReadUtils.getMethod(anonymousTraceVarArg3.toEntity(), cu);
       Assert.assertNotNull(anonymousMethodVarArg3);
 
       final TraceElement teVarArg4 = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       teVarArg4.setParameterTypes(new String[] { "Object", "String", "String", "String" });
       final TraceElementContent anonymousTraceVarArg4 = new TraceElementContent(teVarArg4);
-      final Node anonymousMethodVarArg4 = TraceReadUtils.getMethod(anonymousTraceVarArg4, cu);
+      final Node anonymousMethodVarArg4 = SourceReadUtils.getMethod(anonymousTraceVarArg4.toEntity(), cu);
       Assert.assertNotNull(anonymousMethodVarArg4);
 
       final TraceElement teVarArgWrong = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       teVarArgWrong.setParameterTypes(new String[] { "Object", "Long" });
       final TraceElementContent anonymousTraceVarArgWrong = new TraceElementContent(teVarArgWrong);
-      final Node anonymousMethodVarArgWrong = TraceReadUtils.getMethod(anonymousTraceVarArgWrong, cu);
+      final Node anonymousMethodVarArgWrong = SourceReadUtils.getMethod(anonymousTraceVarArgWrong.toEntity(), cu);
       Assert.assertNull(anonymousMethodVarArgWrong);
 
       final TraceElement teVarArgWrong2 = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       teVarArgWrong2.setParameterTypes(new String[] { "Object", "String", "Long" });
       final TraceElementContent anonymousTraceVarArgWrong2 = new TraceElementContent(teVarArgWrong2);
-      final Node anonymousMethodVarArgWrong2 = TraceReadUtils.getMethod(anonymousTraceVarArgWrong2, cu);
+      final Node anonymousMethodVarArgWrong2 = SourceReadUtils.getMethod(anonymousTraceVarArgWrong2.toEntity(), cu);
       Assert.assertNull(anonymousMethodVarArgWrong2);
    }
 }

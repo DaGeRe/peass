@@ -16,6 +16,7 @@ import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.dependency.changesreading.SourceReadUtils;
 import de.dagere.peass.dependency.traces.TraceReadUtils;
 
 public class TestSourceDetection {
@@ -25,7 +26,7 @@ public class TestSourceDetection {
    public void testAnonymousList() throws FileNotFoundException {
       final File file = new File(SOURCE, "Test1_Anonym.java");
       final CompilationUnit cu = JavaParserProvider.parse(file);
-      final List<NodeList<BodyDeclaration<?>>> anonymous = TraceReadUtils.getAnonymusClasses(cu);
+      final List<NodeList<BodyDeclaration<?>>> anonymous = SourceReadUtils.getAnonymusClasses(cu);
 
       Assert.assertEquals(3, anonymous.size());
 
@@ -38,7 +39,7 @@ public class TestSourceDetection {
    public void testNamedList() throws FileNotFoundException {
       final File file = new File(SOURCE, "Test2_Named.java");
       final CompilationUnit cu = JavaParserProvider.parse(file);
-      final Map<String, TypeDeclaration<?>> named = TraceReadUtils.getNamedClasses(cu, "");
+      final Map<String, TypeDeclaration<?>> named = SourceReadUtils.getNamedClasses(cu, "");
 
       Assert.assertEquals(3, named.size());
 
@@ -50,7 +51,7 @@ public class TestSourceDetection {
    public void testDirectoryWalker() throws FileNotFoundException {
       final File file = new File(SOURCE, "DirectoryWalkerTestCase.java");
       final CompilationUnit cu = JavaParserProvider.parse(file);
-      final Map<String, TypeDeclaration<?>> named = TraceReadUtils.getNamedClasses(cu, "");
+      final Map<String, TypeDeclaration<?>> named = SourceReadUtils.getNamedClasses(cu, "");
 
       Assert.assertEquals(4, named.size());
 

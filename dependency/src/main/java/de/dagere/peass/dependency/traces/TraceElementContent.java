@@ -1,6 +1,7 @@
 package de.dagere.peass.dependency.traces;
 
 import java.util.Arrays;
+import java.util.List;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
@@ -138,5 +139,12 @@ public class TraceElementContent extends Content {
    public String getPackage() {
       final String result = clazz.contains(".") ? clazz.substring(0, clazz.lastIndexOf('.')) : "";
       return result;
+   }
+
+   public ChangedEntity toEntity() {
+      ChangedEntity changedEntity = new ChangedEntity(clazz, module, method);
+      List<String> parameterTypeList = Arrays.asList(parameterTypes);
+      changedEntity.getParameters().addAll(parameterTypeList);
+      return changedEntity;
    }
 }
