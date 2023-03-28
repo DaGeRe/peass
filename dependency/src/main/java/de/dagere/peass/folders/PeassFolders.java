@@ -9,10 +9,10 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.SourceCodeFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.TemporaryProjectFolderUtil;
+import de.dagere.peass.nodeDiffGenerator.config.SourceCodeFolders;
 import de.dagere.peass.vcs.VersionControlSystem;
 
 /**
