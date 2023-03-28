@@ -73,7 +73,9 @@ public class TraceMethodReader {
    private void loadMethodSource(final TraceWithMethods trace, final ReducedTraceElement traceElement) throws FileNotFoundException {
       if (traceElement.getValue() instanceof TraceElementContent) {
          final TraceElementContent te = (TraceElementContent) traceElement.getValue();
-         File clazzFile = ClazzFileFinder.getClazzFile(te, clazzFolder);
+         
+         final String clazzFileName = TraceReadUtils.getClassFileName(te);
+         File clazzFile = ClazzFileFinder.getClazzFile(clazzFileName, clazzFolder);
          if (clazzFile == null) {
             clazzFile = findAlternativeClassfile(te, clazzFile);
          }

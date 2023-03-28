@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author DaGeRe
  *
  */
-public class ExecutionConfig implements Serializable {
+public class ExecutionConfig implements FolderConfig, Serializable {
 
    public static final String CLASSPATH_SEPARATOR = ":";
 
