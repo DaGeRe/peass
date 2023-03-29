@@ -15,10 +15,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.diffDetection.ChangeDetector;
+import de.dagere.nodeDiffGenerator.diffDetection.FileComparisonUtil;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
-import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.CommitIterator;
