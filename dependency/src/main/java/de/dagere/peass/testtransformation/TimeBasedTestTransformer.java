@@ -34,8 +34,8 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 
+import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 
 
 /**

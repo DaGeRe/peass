@@ -9,7 +9,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.modules.ModuleDeclaration;
 import com.github.javaparser.ast.modules.ModuleRequiresDirective;
 
-import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 
 /**
  * If a module-info exists, kieker needs to be added as required, since its used directly in the source code.

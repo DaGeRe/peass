@@ -62,13 +62,13 @@ import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
 import de.dagere.nodeDiffDetector.data.TestCase;
 import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.RunnableTestInformation;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.execution.utils.ProjectModules;
 
 /**

@@ -29,8 +29,8 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
+import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 
 public class JUnit4Helper {
 

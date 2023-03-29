@@ -23,7 +23,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
-import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 
 public class TestTimebasedTransforming {
    
