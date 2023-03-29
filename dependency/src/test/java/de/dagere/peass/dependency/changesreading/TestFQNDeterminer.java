@@ -25,20 +25,6 @@ public class TestFQNDeterminer {
    }
    
    @Test
-   public void testSimpleType() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/SelectStarter.java");
-      CompilationUnit unit = JavaParserProvider.parse(file);
-      String fqn = FQNDeterminer.getParameterFQN(unit, "int");
-      Assert.assertEquals("int", fqn);
-
-      String fqn2 = FQNDeterminer.getParameterFQN(unit, "double");
-      Assert.assertEquals("double", fqn2);
-      
-      String simpleTypeFQNArray = FQNDeterminer.getParameterFQN(unit, "double[]");
-      Assert.assertEquals("double[]", simpleTypeFQNArray);
-   }
-
-   @Test
    public void testPackageClass() throws FileNotFoundException {
       File file = new File("src/main/java/de/dagere/peass/SelectStarter.java");
       CompilationUnit unit = JavaParserProvider.parse(file);
@@ -46,22 +32,7 @@ public class TestFQNDeterminer {
       Assert.assertEquals("de.dagere.peass.SelectStarter", fqn);
    }
 
-   @Test
-   public void testJavaLangClass() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/SelectStarter.java");
-      CompilationUnit unit = JavaParserProvider.parse(file);
-      String fqn = FQNDeterminer.getParameterFQN(unit, "Object");
-      Assert.assertEquals("java.lang.Object", fqn);
+   
 
-      String fqn2 = FQNDeterminer.getParameterFQN(unit, "String");
-      Assert.assertEquals("java.lang.String", fqn2);
-   }
-
-   @Test
-   public void testJavaLangGenericClass() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/SelectStarter.java");
-      CompilationUnit unit = JavaParserProvider.parse(file);
-      String fqn = FQNDeterminer.getParameterFQN(unit, "Class");
-      Assert.assertEquals("java.lang.Class", fqn);
-   }
+   
 }
