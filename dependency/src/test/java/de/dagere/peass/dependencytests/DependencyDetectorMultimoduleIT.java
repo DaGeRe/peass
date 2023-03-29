@@ -20,12 +20,12 @@ import org.mockito.Mockito;
 import com.github.javaparser.ParseException;
 
 import co.unruly.matchers.StreamMatchers;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -59,7 +59,7 @@ public class DependencyDetectorMultimoduleIT {
       final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
       final CommitIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-      final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
+      final Map<MethodCall, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
 
       ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
@@ -102,7 +102,7 @@ public class DependencyDetectorMultimoduleIT {
    }
 
    private ChangeManager mockChangeManager() {
-      final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
+      final Map<MethodCall, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
       DependencyDetectorTestUtil.addChange(changes, "base-module", "de.dagere.base.NextBaseChangeable", "doSomething");
 
       ChangeManager changeManager = Mockito.mock(ChangeManager.class);
@@ -115,7 +115,7 @@ public class DependencyDetectorMultimoduleIT {
       final InitialCallList dependency = dependencies.getInitialcommit().getInitialDependencies()
             .get(new TestMethodCall("de.AnotherTest", "testMeAlso", "using-module"));
       LOG.debug(dependency.getEntities());
-      MatcherAssert.assertThat(dependency.getEntities(), IsIterableContaining.hasItem(new ChangedEntity("de.dagere.base.BaseChangeable", "base-module", "doSomething")));
+      MatcherAssert.assertThat(dependency.getEntities(), IsIterableContaining.hasItem(new MethodCall("de.dagere.base.BaseChangeable", "base-module", "doSomething")));
    }
 
    private void testSecondChange(final StaticTestSelection dependencies) {

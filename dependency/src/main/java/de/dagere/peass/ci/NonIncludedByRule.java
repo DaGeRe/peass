@@ -12,12 +12,12 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 
+import de.dagere.nodeDiffGenerator.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.TestClazzCall;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.changesreading.FQNDeterminer;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.ParseUtil;

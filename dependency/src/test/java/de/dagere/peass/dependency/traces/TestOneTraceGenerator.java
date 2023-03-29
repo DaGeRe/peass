@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 

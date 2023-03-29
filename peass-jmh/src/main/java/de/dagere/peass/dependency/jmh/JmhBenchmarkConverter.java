@@ -17,8 +17,8 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class JmhBenchmarkConverter {
 

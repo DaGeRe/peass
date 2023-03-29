@@ -6,11 +6,11 @@ import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestClazzCall;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.DependencyManager;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 
@@ -21,7 +21,7 @@ public class TestTraceChangeHandler {
       ExecutionConfig emptyConfig = new ExecutionConfig();
 
       CommitStaticSelection versionInfo = new CommitStaticSelection();
-      ChangedEntity onlyChange = new ChangedEntity("de.dagere.peass.TestA", "testModule", "testA");
+      MethodCall onlyChange = new MethodCall("de.dagere.peass.TestA", "testModule", "testA");
       versionInfo.getChangedClazzes().put(onlyChange, new TestSet());
 
       TestSet test = getTestSet(emptyConfig, versionInfo);
@@ -35,9 +35,9 @@ public class TestTraceChangeHandler {
       executionConfigWithBasicInclude.getIncludes().add("*Test*");
 
       CommitStaticSelection versionInfo = new CommitStaticSelection();
-      ChangedEntity testA = new ChangedEntity("de.dagere.peass.TestA", "testModule", "testA");
+      MethodCall testA = new MethodCall("de.dagere.peass.TestA", "testModule", "testA");
       versionInfo.getChangedClazzes().put(testA, new TestSet());
-      ChangedEntity myIntegrationTest = new ChangedEntity("de.dagere.peass.MyIntegrationT", "testModule", "testA");
+      MethodCall myIntegrationTest = new MethodCall("de.dagere.peass.MyIntegrationT", "testModule", "testA");
       versionInfo.getChangedClazzes().put(myIntegrationTest, new TestSet());
 
       TestSet test = getTestSet(executionConfigWithBasicInclude, versionInfo);
@@ -52,9 +52,9 @@ public class TestTraceChangeHandler {
       executionConfigWithBasicInclude.getIncludes().add("*MySpecialTestcase#myMethod");
 
       CommitStaticSelection versionInfo = new CommitStaticSelection();
-      ChangedEntity testA = new ChangedEntity("de.dagere.peass.TestA", "testModule", "testA");
+      MethodCall testA = new MethodCall("de.dagere.peass.TestA", "testModule", "testA");
       versionInfo.getChangedClazzes().put(testA, new TestSet());
-      ChangedEntity myIntegrationTest = new ChangedEntity("de.dagere.peass.MySpecialTestcase", "testModule", "myMethod");
+      MethodCall myIntegrationTest = new MethodCall("de.dagere.peass.MySpecialTestcase", "testModule", "myMethod");
       versionInfo.getChangedClazzes().put(myIntegrationTest, new TestSet());
 
       TestSet test = getTestSet(executionConfigWithBasicInclude, versionInfo);

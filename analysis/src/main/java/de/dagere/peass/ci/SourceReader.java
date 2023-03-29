@@ -7,10 +7,10 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.ci.logHandling.LogRedirector;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;

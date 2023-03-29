@@ -7,24 +7,24 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.deserializer.ChangedEntityDeserializer;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.serialization.MethodCallDeserializer;
 
 public class VersionClass {
    
-   @JsonDeserialize(keyUsing = ChangedEntityDeserializer.class)
-   private Map<ChangedEntity, TestcaseClass> testcases = new HashMap<>();
+   @JsonDeserialize(keyUsing = MethodCallDeserializer.class)
+   private Map<MethodCall, TestcaseClass> testcases = new HashMap<>();
 
-   public void setTestcases(final Map<ChangedEntity, TestcaseClass> testcases) {
+   public void setTestcases(final Map<MethodCall, TestcaseClass> testcases) {
       this.testcases = testcases;
    }
 
-   public Map<ChangedEntity, TestcaseClass> getTestcases() {
+   public Map<MethodCall, TestcaseClass> getTestcases() {
       return testcases;
    }
 
    @JsonIgnore
-   public TestcaseClass addTestcase(final ChangedEntity test, final Set<String> guessedTypes, final String direction) {
+   public TestcaseClass addTestcase(final MethodCall test, final Set<String> guessedTypes, final String direction) {
       final TestcaseClass data = new TestcaseClass();
       data.setGuessedTypes(guessedTypes);
       data.setDirection(direction);

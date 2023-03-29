@@ -10,15 +10,15 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestClazzCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
@@ -64,7 +64,7 @@ public class StaticChangeHandler {
       dependencyManager.getTestTransformer().determineVersions(dependencyManager.getExecutor().getModules().getModules());
       for (ClazzChangeData changedEntry : input.getChanges().values()) {
          if (!changedEntry.isOnlyMethodChange()) {
-            for (ChangedEntity change : changedEntry.getChanges()) {
+            for (MethodCall change : changedEntry.getChanges()) {
                File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
                TestClazzCall potentialTest = new TestClazzCall(change.getClazz(), change.getModule());
                Set<TestMethodCall> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);

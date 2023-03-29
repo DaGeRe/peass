@@ -3,8 +3,8 @@ package de.dagere.peass.measurement.rca.data;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.rca.helper.TreeBuilder;
 import de.dagere.peass.measurement.rca.helper.TreeBuilderBig;
 
@@ -12,17 +12,17 @@ public class TestCallTreeNode {
    @Test
    public void testToEntity() {
       final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", (MeasurementConfig) null);
-      Assert.assertEquals(new ChangedEntity("de.mypackage.Test", "", "callMethod"), node.toEntity());
+      Assert.assertEquals(new MethodCall("de.mypackage.Test", "", "callMethod"), node.toEntity());
       Assert.assertEquals("de.mypackage.Test#callMethod", node.toEntity().toString());
       Assert.assertEquals(0, node.toEntity().getParameterTypes().length);
    }
    
    @Test
    public void testToEntityParameter() {
-      final CallTreeNode node = new CallTreeNode("moduleA" + ChangedEntity.MODULE_SEPARATOR + "de.mypackage.Test#callMethod", "public void "+ ChangedEntity.MODULE_SEPARATOR + "de.mypackage.Test.callMethod(int)", null, (MeasurementConfig) null);
-      ChangedEntity entity = node.toEntity();
-      Assert.assertEquals(new ChangedEntity("de.mypackage.Test", "moduleA", "callMethod"), entity);
-      Assert.assertEquals("moduleA" + ChangedEntity.MODULE_SEPARATOR + "de.mypackage.Test#callMethod(int)", entity.toString());
+      final CallTreeNode node = new CallTreeNode("moduleA" + MethodCall.MODULE_SEPARATOR + "de.mypackage.Test#callMethod", "public void "+ MethodCall.MODULE_SEPARATOR + "de.mypackage.Test.callMethod(int)", null, (MeasurementConfig) null);
+      MethodCall entity = node.toEntity();
+      Assert.assertEquals(new MethodCall("de.mypackage.Test", "moduleA", "callMethod"), entity);
+      Assert.assertEquals("moduleA" + MethodCall.MODULE_SEPARATOR + "de.mypackage.Test#callMethod(int)", entity.toString());
       Assert.assertEquals("int", entity.getParameterTypes()[0]);
    }
 
@@ -48,10 +48,10 @@ public class TestCallTreeNode {
 
    @Test
    public void testModuleSeparation() {
-      String call = "moduleA" + ChangedEntity.MODULE_SEPARATOR + "ClazzA" + ChangedEntity.METHOD_SEPARATOR + "test";
+      String call = "moduleA" + MethodCall.MODULE_SEPARATOR + "ClazzA" + MethodCall.METHOD_SEPARATOR + "test";
       CallTreeNode node = new CallTreeNode(call, "public void " + call.replace("#", ".") +"()", null, new MeasurementConfig(1));
       
-      Assert.assertEquals(node.getCall(), "ClazzA" + ChangedEntity.METHOD_SEPARATOR + "test");
+      Assert.assertEquals(node.getCall(), "ClazzA" + MethodCall.METHOD_SEPARATOR + "test");
       Assert.assertEquals(node.getModule(), "moduleA");
    }
 }

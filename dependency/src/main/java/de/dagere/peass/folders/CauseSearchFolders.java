@@ -10,8 +10,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 
 public class CauseSearchFolders extends PeassFolders {
 

@@ -20,12 +20,12 @@ import org.mockito.Mockito;
 
 import com.github.javaparser.ParseException;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
@@ -52,8 +52,8 @@ public class SuperclassDetectorIT {
    public void testSuperclassChange() throws IOException, ParseException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File secondVersion = new File(VERSIONS_FOLDER, "superclass_changed");
 
-      final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      changes.put(new ChangedEntity("defaultpackage.NormalSuperclass", ""), new ClazzChangeData("defaultpackage.NormalSuperclass", false));
+      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
+      changes.put(new MethodCall("defaultpackage.NormalSuperclass", ""), new ClazzChangeData("defaultpackage.NormalSuperclass", false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
@@ -82,7 +82,7 @@ public class SuperclassDetectorIT {
    }
 
    private void checkInitialDependencies(final DependencyReader reader) {
-      List<ChangedEntity> initialDependencies = reader.getDependencies().getInitialcommit().getInitialDependencies().values().iterator().next().getEntities();
+      List<MethodCall> initialDependencies = reader.getDependencies().getInitialcommit().getInitialDependencies().values().iterator().next().getEntities();
       LOG.debug("Initial Dependencies: " + initialDependencies);
       MatcherAssert.assertThat(initialDependencies, Matchers.anyOf(Matchers.hasSize(4), Matchers.hasSize(5)));
    }

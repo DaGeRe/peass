@@ -11,9 +11,9 @@ import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
@@ -24,7 +24,7 @@ import difflib.Patch;
 
 public class PropertyChangeGuesser {
 
-   public Set<String> getGuesses(final PeassFolders folders, final Entry<ChangedEntity, ClazzChangeData> changedEntity) throws FileNotFoundException {
+   public Set<String> getGuesses(final PeassFolders folders, final Entry<MethodCall, ClazzChangeData> changedEntity) throws FileNotFoundException {
       final Set<String> guessedTypes = new HashSet<>();
       
       //TODO Here, a real config should be passed; since this is rarely used, we go with the default folders

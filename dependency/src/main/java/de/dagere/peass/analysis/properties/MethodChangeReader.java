@@ -8,8 +8,8 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
 import de.dagere.peass.dependency.traces.diff.DiffUtilJava;
 import difflib.DiffUtils;
@@ -18,13 +18,13 @@ import difflib.Patch;
 public class MethodChangeReader {
 
    private final ChangedMethodManager manager;
-   private final ChangedEntity clazz;
+   private final MethodCall clazz;
 
    private final String commit;
 
    private final String method, methodOld;
 
-   public MethodChangeReader(final File methodSourceFolder, final File sourceFolder, final File oldSourceFolder, final ChangedEntity clazz, 
+   public MethodChangeReader(final File methodSourceFolder, final File sourceFolder, final File oldSourceFolder, final MethodCall clazz, 
          final String commit, final ExecutionConfig config)
          throws FileNotFoundException {
       this.manager = new ChangedMethodManager(methodSourceFolder);
@@ -50,7 +50,7 @@ public class MethodChangeReader {
       }
    }
 
-   public Patch<String> getKeywordChanges(final ChangedEntity clazz) throws FileNotFoundException {
+   public Patch<String> getKeywordChanges(final MethodCall clazz) throws FileNotFoundException {
       final Patch<String> patch = DiffUtils.diff(Arrays.asList(method.split("\n")), Arrays.asList(methodOld.split("\n")));
       return patch;
    }

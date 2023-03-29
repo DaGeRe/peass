@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.utils.Constants;

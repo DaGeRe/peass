@@ -5,10 +5,10 @@ import java.io.File;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class ResultsFolders {
 
@@ -183,7 +183,7 @@ public class ResultsFolders {
       if (!viewResultsFolder.exists()) {
          viewResultsFolder.mkdir();
       }
-      String clazzDirName = (testcase.getModule() != null && !testcase.getModule().equals("")) ? testcase.getModule() + ChangedEntity.MODULE_SEPARATOR + testcase.getClazz()
+      String clazzDirName = (testcase.getModule() != null && !testcase.getModule().equals("")) ? testcase.getModule() + MethodCall.MODULE_SEPARATOR + testcase.getClazz()
             : testcase.getClazz();
       final File clazzDir = new File(viewResultsFolder, clazzDirName);
       if (!clazzDir.exists()) {

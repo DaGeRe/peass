@@ -13,6 +13,9 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
 import de.dagere.kopeme.parsing.JUnitParseUtil;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestClazzCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
@@ -21,10 +24,7 @@ import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.RunnableTestInformation;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.execution.utils.ProjectModules;
@@ -157,7 +157,7 @@ public class JmhTestTransformer implements TestTransformer {
       boolean hasClassParent = clazz.getParentNode().isPresent() && clazz.getParentNode().get() instanceof ClassOrInterfaceDeclaration;
       ClassOrInterfaceDeclaration parent = hasClassParent ? (ClassOrInterfaceDeclaration) clazz.getParentNode().get() : null;
       while (parent != null) {
-         parsedClassName = parent.getNameAsString() + ChangedEntity.CLAZZ_SEPARATOR + parsedClassName;
+         parsedClassName = parent.getNameAsString() + MethodCall.CLAZZ_SEPARATOR + parsedClassName;
          hasClassParent = parent.getParentNode().isPresent() && parent.getParentNode().get() instanceof ClassOrInterfaceDeclaration;
          parent = hasClassParent ? (ClassOrInterfaceDeclaration) parent.getParentNode().get() : null;
       }

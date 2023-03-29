@@ -1,26 +1,28 @@
 package de.dagere.peass.dependency.analysis.data;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+
 public class EntityUtil {
-   public static ChangedEntity determineEntity(final String clazzMethodName) {
+   public static MethodCall determineEntity(final String clazzMethodName) {
       final String module, clazz;
-      if (clazzMethodName.contains(ChangedEntity.MODULE_SEPARATOR)) {
-         module = clazzMethodName.substring(0, clazzMethodName.indexOf(ChangedEntity.MODULE_SEPARATOR));
-         clazz = clazzMethodName.substring(clazzMethodName.indexOf(ChangedEntity.MODULE_SEPARATOR) + 1, clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR));
+      if (clazzMethodName.contains(MethodCall.MODULE_SEPARATOR)) {
+         module = clazzMethodName.substring(0, clazzMethodName.indexOf(MethodCall.MODULE_SEPARATOR));
+         clazz = clazzMethodName.substring(clazzMethodName.indexOf(MethodCall.MODULE_SEPARATOR) + 1, clazzMethodName.indexOf(MethodCall.METHOD_SEPARATOR));
       } else {
          module = "";
-         clazz = clazzMethodName.substring(0, clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR));
+         clazz = clazzMethodName.substring(0, clazzMethodName.indexOf(MethodCall.METHOD_SEPARATOR));
       }
 
       final int openingParenthesis = clazzMethodName.indexOf("(");
       String method;
       if (openingParenthesis != -1) {
-         method = clazzMethodName.substring(clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR) + 1, openingParenthesis);
+         method = clazzMethodName.substring(clazzMethodName.indexOf(MethodCall.METHOD_SEPARATOR) + 1, openingParenthesis);
       } else {
-         method = clazzMethodName.substring(clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR) + 1);
+         method = clazzMethodName.substring(clazzMethodName.indexOf(MethodCall.METHOD_SEPARATOR) + 1);
       }
       System.out.println(clazzMethodName);
 
-      final ChangedEntity entity = new ChangedEntity(clazz, module, method);
+      final MethodCall entity = new MethodCall(clazz, module, method);
       if (openingParenthesis != -1) {
          final String parameterString = clazzMethodName.substring(openingParenthesis + 1, clazzMethodName.length() - 1);
          entity.createParameters(parameterString);
@@ -28,7 +30,7 @@ public class EntityUtil {
       return entity;
    }
 
-   public static ChangedEntity determineEntityWithDotSeparator(final String calledMethod) {
+   public static MethodCall determineEntityWithDotSeparator(final String calledMethod) {
       
       int parenthesisIndex = calledMethod.indexOf('(');
       String parameterString = calledMethod.substring(parenthesisIndex + 1);
@@ -39,7 +41,7 @@ public class EntityUtil {
       int dotIndex = nameWithoutModifiers.lastIndexOf('.');
       String clazz = nameWithoutModifiers.substring(0, dotIndex);
       String method = nameWithoutModifiers.substring(dotIndex + 1);
-      ChangedEntity changedEntity = new ChangedEntity(clazz, null, method);
+      MethodCall changedEntity = new MethodCall(clazz, null, method);
       changedEntity.createParameters(parameterString);
       return changedEntity;
    }

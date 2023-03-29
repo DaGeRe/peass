@@ -10,15 +10,15 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 
 public class CoverageBasedSelector {
 
    private static final Logger LOG = LogManager.getLogger(CoverageBasedSelector.class);
 
-   public static CoverageSelectionCommit selectBasedOnCoverage(final List<TraceCallSummary> summaries, final Set<ChangedEntity> changes) {
+   public static CoverageSelectionCommit selectBasedOnCoverage(final List<TraceCallSummary> summaries, final Set<MethodCall> changes) {
       List<TraceCallSummary> copiedSummaries = new LinkedList<>(summaries);
-      Set<ChangedEntity> copiedChanges = new HashSet<>(changes);
+      Set<MethodCall> copiedChanges = new HashSet<>(changes);
       boolean changed = true;
 
       CoverageSelectionCommit resultingInfo = new CoverageSelectionCommit();
@@ -54,7 +54,7 @@ public class CoverageBasedSelector {
       return resultingInfo;
    }
 
-   private static void setRemainingCallSums(final Set<ChangedEntity> changes, final List<TraceCallSummary> copiedSummaries) {
+   private static void setRemainingCallSums(final Set<MethodCall> changes, final List<TraceCallSummary> copiedSummaries) {
       for (TraceCallSummary summary : copiedSummaries) {
          int callSum = getCallSum(changes, summary);
          summary.setOverallScore(callSum);
@@ -69,9 +69,9 @@ public class CoverageBasedSelector {
       }
    }
 
-   private static boolean removeUnneededChanges(final Set<ChangedEntity> changes, boolean changed, final TraceCallSummary selected) {
-      for (Iterator<ChangedEntity> changeIterator = changes.iterator(); changeIterator.hasNext();) {
-         ChangedEntity change = changeIterator.next();
+   private static boolean removeUnneededChanges(final Set<MethodCall> changes, boolean changed, final TraceCallSummary selected) {
+      for (Iterator<MethodCall> changeIterator = changes.iterator(); changeIterator.hasNext();) {
+         MethodCall change = changeIterator.next();
          String currentChangeSignature = change.toString();
          if (change.getMethod() != null) {
             if (selected.getCallCounts().containsKey(currentChangeSignature) && selected.getCallCounts().get(currentChangeSignature) > 0) {
@@ -82,7 +82,7 @@ public class CoverageBasedSelector {
             boolean used = false;
             for (Map.Entry<String, Integer> callCount : selected.getCallCounts().entrySet()) {
                // The prefix needs to be used since otherwise inner classes are falsely selected (e.g. ChangedEntity de.Example would select de.Example$InnerClass#methodA)
-               String signaturePrefix = change.toString() + ChangedEntity.METHOD_SEPARATOR;
+               String signaturePrefix = change.toString() + MethodCall.METHOD_SEPARATOR;
                LOG.trace("Testing: {} vs {}" , signaturePrefix , callCount.getKey());
                if (callCount.getKey().startsWith(signaturePrefix)) {
                   used = true;
@@ -98,7 +98,7 @@ public class CoverageBasedSelector {
       return changed;
    }
 
-   private static TraceCallSummary selectMaximumCalled(final Set<ChangedEntity> changes, final List<TraceCallSummary> copiedSummaries) {
+   private static TraceCallSummary selectMaximumCalled(final Set<MethodCall> changes, final List<TraceCallSummary> copiedSummaries) {
       TraceCallSummary selected = copiedSummaries.get(0);
       int selectedCallSum = getCallSum(changes, selected);
       selected.setOverallScore(selectedCallSum);
@@ -118,12 +118,12 @@ public class CoverageBasedSelector {
       }
    }
 
-   private static int getCallSum(final Set<ChangedEntity> changes, final TraceCallSummary summary) {
+   private static int getCallSum(final Set<MethodCall> changes, final TraceCallSummary summary) {
       summary.getSelectedChanges().clear();
       int currentCallSum = 0;
       LOG.debug("Changes: {} Test: {}", changes.size(), summary.getTestcase());
       LOG.trace("Trace Callcounts: {}", summary.getCallCounts().keySet());
-      for (ChangedEntity change : changes) {
+      for (MethodCall change : changes) {
          String changeSignature = change.toString();
          LOG.trace("Change signature: {}", changeSignature);
          if (change.getMethod() != null) {
@@ -140,7 +140,7 @@ public class CoverageBasedSelector {
       LOG.trace("Call counts: {}", summary.getCallCounts().size());
       for (Map.Entry<String, Integer> callCount : summary.getCallCounts().entrySet()) {
          // The prefix needs to be used since otherwise inner classes are falsely selected (e.g. ChangedEntity de.Example would select de.Example$InnerClass#methodA)
-         String signaturePrefix = changeSignature + ChangedEntity.METHOD_SEPARATOR;
+         String signaturePrefix = changeSignature + MethodCall.METHOD_SEPARATOR;
          LOG.trace("Testing: {} vs {}", signaturePrefix, callCount.getKey());
          if (callCount.getKey().startsWith(signaturePrefix)) {
             currentCallSum += callCount.getValue();

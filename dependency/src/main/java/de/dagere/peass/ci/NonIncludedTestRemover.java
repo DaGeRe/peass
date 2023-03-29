@@ -9,12 +9,12 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.TestClazzCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class NonIncludedTestRemover {
 
@@ -150,8 +150,8 @@ public class NonIncludedTestRemover {
 
    private static boolean testMatch(final TestCase test, final String pattern) {
       boolean match;
-      if (pattern.contains(ChangedEntity.MODULE_SEPARATOR)) {
-         String mergedName = test.getModule() + ChangedEntity.MODULE_SEPARATOR + test.getExecutable();
+      if (pattern.contains(MethodCall.MODULE_SEPARATOR)) {
+         String mergedName = test.getModule() + MethodCall.MODULE_SEPARATOR + test.getExecutable();
          match = FilenameUtils.wildcardMatch(mergedName, pattern);
          LOG.trace("Testing {} {} {}", mergedName, pattern, match);
       } else {

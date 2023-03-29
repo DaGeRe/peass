@@ -12,8 +12,8 @@ import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.requitur.content.Content;
 
 public class TestCoverageBasedSelection {
@@ -21,8 +21,8 @@ public class TestCoverageBasedSelection {
    @Test
    public void selectNoTestSelection() {
       List<TraceCallSummary> traces = new LinkedList<>();
-      Set<ChangedEntity> changes = new HashSet<>();
-      changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
+      Set<MethodCall> changes = new HashSet<>();
+      changes.add(new MethodCall("de.dagere.peass.ExampleClazz", "", "method1"));
       Set<TestMethodCall> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
 
       MatcherAssert.assertThat(selected, IsEmptyCollection.empty());
@@ -31,8 +31,8 @@ public class TestCoverageBasedSelection {
    @Test
    public void selectOneTestSelection() {
       List<TraceCallSummary> traces = getTraceSummaryList();
-      Set<ChangedEntity> changes = new HashSet<>();
-      changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
+      Set<MethodCall> changes = new HashSet<>();
+      changes.add(new MethodCall("de.dagere.peass.ExampleClazz", "", "method1"));
       Set<TestMethodCall> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
 
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestMethodCall("ClazzA", "testA")));
@@ -41,9 +41,9 @@ public class TestCoverageBasedSelection {
    @Test
    public void testTwoTestsSelection() {
       List<TraceCallSummary> traces = getTraceSummaryList();
-      Set<ChangedEntity> changes = new HashSet<>();
-      changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
-      changes.add(new ChangedEntity("de.dagere.peass.ExampleClazzB", "", "method0"));
+      Set<MethodCall> changes = new HashSet<>();
+      changes.add(new MethodCall("de.dagere.peass.ExampleClazz", "", "method1"));
+      changes.add(new MethodCall("de.dagere.peass.ExampleClazzB", "", "method0"));
       CoverageSelectionCommit selection = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
       Set<TestMethodCall> selected = selection.getTestcases().keySet();
 
@@ -69,8 +69,8 @@ public class TestCoverageBasedSelection {
    @Test
    public void testSelectionBasedOnParameterizedChange() {
       List<TraceCallSummary> traces = getTraceSummaryList();
-      Set<ChangedEntity> changes = new HashSet<>();
-      ChangedEntity entityWithIntParameter = new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method2");
+      Set<MethodCall> changes = new HashSet<>();
+      MethodCall entityWithIntParameter = new MethodCall("de.dagere.peass.ExampleClazz", "", "method2");
       entityWithIntParameter.getParameters().add("int");
       changes.add(entityWithIntParameter);
       Set<TestMethodCall> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
@@ -81,8 +81,8 @@ public class TestCoverageBasedSelection {
    @Test
    public void testClassChangeSelection() {
       List<TraceCallSummary> traces = getTraceSummaryList();
-      Set<ChangedEntity> changes = new HashSet<>();
-      changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", null));
+      Set<MethodCall> changes = new HashSet<>();
+      changes.add(new MethodCall("de.dagere.peass.ExampleClazz", "", null));
       CoverageSelectionCommit selection = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
       Set<TestMethodCall> selected = selection.getTestcases().keySet();
 

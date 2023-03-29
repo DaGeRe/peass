@@ -9,11 +9,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.serialization.TestMethodCallKeyDeserializer;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.data.deserializer.TestMethodCallKeyDeserializer;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 
 public class InitialCommit {
 
@@ -72,7 +72,7 @@ public class InitialCommit {
       this.jdk = jdk;
    }
 
-   public void addDependency(final TestMethodCall testcase, final ChangedEntity callee) {
+   public void addDependency(final TestMethodCall testcase, final MethodCall callee) {
       InitialCallList dependency = initialDependencies.get(testcase);
       if (dependency == null) {
          dependency = new InitialCallList();

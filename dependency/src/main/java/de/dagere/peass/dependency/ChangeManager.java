@@ -14,8 +14,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
@@ -55,7 +55,7 @@ public class ChangeManager {
     * @throws IOException
     * @throws FileNotFoundException
     */
-   private List<ChangedEntity> getChangedClasses(final String lastCommit) throws FileNotFoundException, IOException {
+   private List<MethodCall> getChangedClasses(final String lastCommit) throws FileNotFoundException, IOException {
       List<File> moduleFiles = testExecutor.getModules().getModules(); 
       final CommitDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastCommit, config);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
@@ -108,7 +108,7 @@ public class ChangeManager {
       }
    }
 
-   public Map<ChangedEntity, ClazzChangeData> getChanges(final String commit1, final String commit2) {
+   public Map<MethodCall, ClazzChangeData> getChanges(final String commit1, final String commit2) {
       GitUtils.goToCommit(commit1, folders.getProjectFolder());
       saveOldClasses();
       GitUtils.goToCommit(commit2, folders.getProjectFolder());
@@ -122,7 +122,7 @@ public class ChangeManager {
     * @return
     * @throws FileNotFoundException
     */
-   public Patch<String> getKeywordChanges(final ChangedEntity clazz) throws FileNotFoundException {
+   public Patch<String> getKeywordChanges(final MethodCall clazz) throws FileNotFoundException {
       final String method = FileComparisonUtil.getMethodSource(folders.getProjectFolder(), clazz, clazz.getMethod(), config);
       final String methodOld = FileComparisonUtil.getMethodSource(folders.getOldSources(), clazz, clazz.getMethod(), config);
 
@@ -136,14 +136,14 @@ public class ChangeManager {
     * 
     * @return
     */
-   public Map<ChangedEntity, ClazzChangeData> getChanges(final String lastRunningVersion) {
-      final Map<ChangedEntity, ClazzChangeData> changedClassesMethods = new TreeMap<>();
+   public Map<MethodCall, ClazzChangeData> getChanges(final String lastRunningVersion) {
+      final Map<MethodCall, ClazzChangeData> changedClassesMethods = new TreeMap<>();
       try {
-         final List<ChangedEntity> changedClasses = getChangedClasses(lastRunningVersion);
+         final List<MethodCall> changedClasses = getChangedClasses(lastRunningVersion);
          LOG.debug("Before Cleaning: {}", changedClasses);
          if (folders.getOldSources().exists()) {
             ChangeDetector detector = new ChangeDetector(config, folders);
-            for (final Iterator<ChangedEntity> clazzIterator = changedClasses.iterator(); clazzIterator.hasNext();) {
+            for (final Iterator<MethodCall> clazzIterator = changedClasses.iterator(); clazzIterator.hasNext();) {
                detector.compareClazz(changedClassesMethods, clazzIterator);
             }
          } else {

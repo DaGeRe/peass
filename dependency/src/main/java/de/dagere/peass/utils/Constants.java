@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import de.dagere.peass.dependency.analysis.data.deserializer.TestMethodCallKeyDeserializer;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.serialization.TestMethodCallKeyDeserializer;
 
 public class Constants {
 

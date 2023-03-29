@@ -8,7 +8,7 @@ import java.nio.file.StandardOpenOption;
 
 import org.apache.commons.io.FileUtils;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 
 public class ChangedMethodManager {
 
@@ -22,23 +22,23 @@ public class ChangedMethodManager {
       this.methodSourceFolder = methodSourceFolder;
    }
 
-   public File getMethodMainFile(final String commit, final ChangedEntity methodEntity) {
+   public File getMethodMainFile(final String commit, final MethodCall methodEntity) {
       return getMethodModifierFile(commit, methodEntity, MAIN_MODIFIER);
    }
 
-   public File getMethodOldFile(final String commit, final ChangedEntity methodEntity) {
+   public File getMethodOldFile(final String commit, final MethodCall methodEntity) {
       return getMethodModifierFile(commit, methodEntity, OLD_MODIFIER);
    }
 
-   public File getMethodDiffFile(final String commit, final ChangedEntity methodEntity) {
+   public File getMethodDiffFile(final String commit, final MethodCall methodEntity) {
       return getMethodModifierFile(commit, methodEntity, DIFF_MODIFIER);
    }
 
-   private File getMethodModifierFile(final String commit, final ChangedEntity methodEntity, final String modifier) {
+   private File getMethodModifierFile(final String commit, final MethodCall methodEntity, final String modifier) {
       final File commitFolder = new File(methodSourceFolder, commit);
       commitFolder.mkdirs();
       final String clazzFolderName = (methodEntity.getModule() != null && !methodEntity.getModule().equals(""))
-            ? methodEntity.getModule() + ChangedEntity.MODULE_SEPARATOR + methodEntity.getJavaClazzName()
+            ? methodEntity.getModule() + MethodCall.MODULE_SEPARATOR + methodEntity.getJavaClazzName()
             : methodEntity.getJavaClazzName();
       final File clazzFolder = new File(commitFolder, clazzFolderName);
       clazzFolder.mkdirs();

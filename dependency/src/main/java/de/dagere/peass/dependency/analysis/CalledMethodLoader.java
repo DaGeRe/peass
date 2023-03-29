@@ -29,9 +29,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.kieker.writer.onecall.OneCallReader;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.EntityUtil;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -62,10 +62,10 @@ public class CalledMethodLoader {
     * @param kiekerTraceFolder
     * @return
     */
-   public Map<ChangedEntity, Set<String>> getCalledMethods() {
+   public Map<MethodCall, Set<String>> getCalledMethods() {
       try {
          if (kiekerConfig.isOnlyOneCallRecording()) {
-            Map<ChangedEntity, Set<String>> calledMethodResult = loadMethods();
+            Map<MethodCall, Set<String>> calledMethodResult = loadMethods();
             return calledMethodResult;
          } else {
             final CalledMethodStage peassFilter = executePeassFilter(null);
@@ -78,17 +78,17 @@ public class CalledMethodLoader {
       return null;
    }
 
-   private Map<ChangedEntity, Set<String>> loadMethods() {
+   private Map<MethodCall, Set<String>> loadMethods() {
       Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
-      Map<ChangedEntity, Set<String>> calledMethodResult = new HashMap<>();
+      Map<MethodCall, Set<String>> calledMethodResult = new HashMap<>();
       for (String calledMethod : calledMethods) {
          LOG.debug("Adding called method: {}", calledMethod);
-         ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(calledMethod);
+         MethodCall entity = EntityUtil.determineEntityWithDotSeparator(calledMethod);
 
          final String outerClazzName = ClazzFileFinder.getOuterClass(entity.getClazz());
          final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
 
-         ChangedEntity fullClassEntity = new ChangedEntity(entity.getClazz(), moduleOfClass);
+         MethodCall fullClassEntity = new MethodCall(entity.getClazz(), moduleOfClass);
          Set<String> currentMethodSet = calledMethodResult.get(fullClassEntity);
          if (currentMethodSet == null) {
             currentMethodSet = new HashSet<>();
@@ -135,7 +135,7 @@ public class CalledMethodLoader {
       ArrayList<TraceElement> result = new ArrayList<>();
       Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
       for (String calledMethod : calledMethods) {
-         ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(calledMethod);
+         MethodCall entity = EntityUtil.determineEntityWithDotSeparator(calledMethod);
          
          final String outerClazzName = ClazzFileFinder.getOuterClass(entity.getClazz());
          final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);

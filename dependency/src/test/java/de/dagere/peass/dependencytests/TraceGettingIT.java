@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
@@ -29,7 +30,6 @@ import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependency.traces.TraceMethodReader;
 import de.dagere.peass.dependency.traces.TraceWithMethods;

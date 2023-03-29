@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
+import de.dagere.nodeDiffGenerator.data.MethodCallHelper;
 import kieker.analysis.stage.DynamicEventDispatcher;
 import kieker.analysis.stage.IEventMatcher;
 import kieker.analysis.stage.ImplementsEventMatcher;
@@ -32,7 +32,7 @@ class CallCountStage extends AbstractTraceProcessingStage<Execution> {
    protected void execute(Execution execution) throws Exception {
       final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
       final String methodname = execution.getOperation().getSignature().getName().intern();
-      String methodWithParameters = methodname + ChangedEntityHelper.getParameterString(execution.getOperation().getSignature().getParamTypeList());
+      String methodWithParameters = methodname + MethodCallHelper.getParameterString(execution.getOperation().getSignature().getParamTypeList());
       String signature = fullClassname + "." + methodWithParameters;
 
       if (!signatureCounts.containsKey(signature)) {

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import de.dagere.peass.nodeDiffGenerator.config.FolderConfig;
+import de.dagere.nodeDiffGenerator.config.FolderConfig;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

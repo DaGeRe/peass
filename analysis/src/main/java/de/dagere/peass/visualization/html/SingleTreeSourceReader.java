@@ -12,8 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.javaparser.utils.Log;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.analysis.properties.ChangedMethodManager;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.rca.data.BasicNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 
@@ -42,7 +42,7 @@ public class SingleTreeSourceReader {
    private void getNodeSource(final BasicNode node) throws IOException {
       final String currentPattern = node.getKiekerPattern();
 
-      ChangedEntity methodEntity = getChangedEntity(node, currentPattern);
+      MethodCall methodEntity = getChangedEntity(node, currentPattern);
       final String key = KiekerPatternConverter.getKey(currentPattern);
 
       // TODO: We need to decide here which commit is currently analyzed and whether we want predecessor or current file
@@ -68,13 +68,13 @@ public class SingleTreeSourceReader {
       }
    }
 
-   protected ChangedEntity getChangedEntity(final BasicNode node, final String currentPattern) {
+   protected MethodCall getChangedEntity(final BasicNode node, final String currentPattern) {
       int openingParenthesis = currentPattern.lastIndexOf('(');
       final String call = currentPattern.substring(currentPattern.lastIndexOf(' ') + 1, openingParenthesis);
       final int dotIndex = call.lastIndexOf(".");
       String method = call.substring(dotIndex + 1);
       String clazz = call.substring(0, dotIndex);
-      ChangedEntity methodEntity = new ChangedEntity(clazz, node.getModule(), method);
+      MethodCall methodEntity = new MethodCall(clazz, node.getModule(), method);
       final String parameterString = currentPattern.substring(openingParenthesis + 1, currentPattern.length() - 1);
       methodEntity.createParameters(parameterString);
       return methodEntity;

@@ -10,9 +10,9 @@ import java.util.Map.Entry;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.utils.Constants;
@@ -65,10 +65,10 @@ public class CompareDependencies {
 
 	private static List<String> getDifference(final InitialCallList initialDepOld, final InitialCallList initialDepNew) {
 		final List<String> missing = new LinkedList<>();
-		for (final ChangedEntity clazz : initialDepOld.getEntities()){
+		for (final MethodCall clazz : initialDepOld.getEntities()){
 			missing.add(clazz.toString());
 		}
-		for (final ChangedEntity clazz : initialDepNew.getEntities()){
+		for (final MethodCall clazz : initialDepNew.getEntities()){
 			missing.remove(clazz.toString());
 		}
 		for (final Iterator<String> it = missing.iterator(); it.hasNext();) {

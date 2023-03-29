@@ -3,9 +3,9 @@ package de.dagere.peass.dependency.jmh;
 import java.io.File;
 import java.io.IOException;
 
+import de.dagere.nodeDiffGenerator.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementStrategy;
-import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.AllModulePomPreparer;
 import de.dagere.peass.execution.maven.MavenCleaner;

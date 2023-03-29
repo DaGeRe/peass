@@ -10,11 +10,11 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.nodeDiffGenerator.data.TestClazzCall;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
-import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;

@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionCommit;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
@@ -22,7 +22,7 @@ public class TestTestcaseSerialization {
       CoverageSelectionCommit commit = new CoverageSelectionCommit();
       TestMethodCall test = new TestMethodCall("ClazzA", "methodA2", "moduleA", "int,String");
       TraceCallSummary traceCallSummary = new TraceCallSummary();
-      traceCallSummary.addCall("app" + ChangedEntity.MODULE_SEPARATOR + "ClazzB" + ChangedEntity.METHOD_SEPARATOR + "methodB(double)");
+      traceCallSummary.addCall("app" + MethodCall.MODULE_SEPARATOR + "ClazzB" + MethodCall.METHOD_SEPARATOR + "methodB(double)");
       traceCallSummary.setTestcase(test);
       commit.getTestcases().put(test, traceCallSummary);
       info.getCommits().put("000001", commit);
@@ -45,7 +45,7 @@ public class TestTestcaseSerialization {
       CoverageSelectionCommit commit = new CoverageSelectionCommit();
       TestMethodCall test = new TestMethodCall("ClazzA", "methodA2", "moduleA");
       TraceCallSummary traceCallSummary = new TraceCallSummary();
-      traceCallSummary.addCall("app" + ChangedEntity.MODULE_SEPARATOR + "ClazzB" + ChangedEntity.METHOD_SEPARATOR + "methodB");
+      traceCallSummary.addCall("app" + MethodCall.MODULE_SEPARATOR + "ClazzB" + MethodCall.METHOD_SEPARATOR + "methodB");
       traceCallSummary.setTestcase(test);
       commit.getTestcases().put(test, traceCallSummary);
       info.getCommits().put("000001", commit);

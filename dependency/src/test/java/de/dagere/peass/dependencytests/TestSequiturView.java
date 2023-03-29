@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 
 public class TestSequiturView {
 

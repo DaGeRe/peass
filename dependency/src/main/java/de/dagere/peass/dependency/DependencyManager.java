@@ -37,18 +37,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.TestClazzCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.CalledMethods;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -232,11 +232,11 @@ public class DependencyManager extends KiekerResultManager {
          return;
       }
 
-      final Map<ChangedEntity, Set<String>> allCalledClasses = getCalledMethods(mapping, kiekerResultFolders);
+      final Map<MethodCall, Set<String>> allCalledClasses = getCalledMethods(mapping, kiekerResultFolders);
 
       removeNotExistingClazzes(allCalledClasses);
-      for (final Iterator<ChangedEntity> iterator = allCalledClasses.keySet().iterator(); iterator.hasNext();) {
-         final ChangedEntity clazz = iterator.next();
+      for (final Iterator<MethodCall> iterator = allCalledClasses.keySet().iterator(); iterator.hasNext();) {
+         final MethodCall clazz = iterator.next();
          if (clazz.getModule() == null) {
             throw new RuntimeException("Class " + clazz.getJavaClazzName() + " has no module!");
          }
@@ -261,7 +261,7 @@ public class DependencyManager extends KiekerResultManager {
       }
    }
 
-   private boolean forbiddenMethodCalled(final Map<ChangedEntity, Set<String>> allCalledClasses) {
+   private boolean forbiddenMethodCalled(final Map<MethodCall, Set<String>> allCalledClasses) {
       List<String> forbiddenMethods = testTransformer.getConfig().getExecutionConfig().getForbiddenMethods();
 
       for (String forbiddenMethod : forbiddenMethods) {
@@ -273,10 +273,10 @@ public class DependencyManager extends KiekerResultManager {
       return false;
    }
 
-   private boolean traceContainsMethod(final Map<ChangedEntity, Set<String>> allCalledClasses, final String methodToFind) {
+   private boolean traceContainsMethod(final Map<MethodCall, Set<String>> allCalledClasses, final String methodToFind) {
       String[] classAndMethod = methodToFind.split("#");
 
-      for (Entry<ChangedEntity, Set<String>> calledClass : allCalledClasses.entrySet()) {
+      for (Entry<MethodCall, Set<String>> calledClass : allCalledClasses.entrySet()) {
          if (calledClass.getKey().getClazz().equals(classAndMethod[0])) {
             Set<String> calledMethods = calledClass.getValue();
             if (calledMethods.contains(classAndMethod[1])) {
@@ -301,14 +301,14 @@ public class DependencyManager extends KiekerResultManager {
       return overallSizeInMB;
    }
 
-   private Map<ChangedEntity, Set<String>> getCalledMethods(final ModuleClassMapping mapping, final File[] kiekerResultFolders) {
-      final Map<ChangedEntity, Set<String>> allCalledClasses = new LinkedHashMap<ChangedEntity, Set<String>>();
+   private Map<MethodCall, Set<String>> getCalledMethods(final ModuleClassMapping mapping, final File[] kiekerResultFolders) {
+      final Map<MethodCall, Set<String>> allCalledClasses = new LinkedHashMap<MethodCall, Set<String>>();
       for (File kiekerResultFolder : kiekerResultFolders) {
          LOG.debug("Reading Kieker folder: {}", kiekerResultFolder.getAbsolutePath());
          
          CalledMethodLoader calledMethodLoader = new CalledMethodLoader(kiekerResultFolder, mapping, testTransformer.getConfig().getKiekerConfig());
-         final Map<ChangedEntity, Set<String>> calledMethods = calledMethodLoader.getCalledMethods();
-         for (Map.Entry<ChangedEntity, Set<String>> calledMethod : calledMethods.entrySet()) {
+         final Map<MethodCall, Set<String>> calledMethods = calledMethodLoader.getCalledMethods();
+         for (Map.Entry<MethodCall, Set<String>> calledMethod : calledMethods.entrySet()) {
             if (!allCalledClasses.containsKey(calledMethod.getKey())) {
                allCalledClasses.put(calledMethod.getKey(), calledMethod.getValue());
             } else {
@@ -320,9 +320,9 @@ public class DependencyManager extends KiekerResultManager {
       return allCalledClasses;
    }
 
-   private void removeNotExistingClazzes(final Map<ChangedEntity, Set<String>> calledClasses) {
-      for (final Iterator<ChangedEntity> iterator = calledClasses.keySet().iterator(); iterator.hasNext();) {
-         final ChangedEntity entity = iterator.next();
+   private void removeNotExistingClazzes(final Map<MethodCall, Set<String>> calledClasses) {
+      for (final Iterator<MethodCall> iterator = calledClasses.keySet().iterator(); iterator.hasNext();) {
+         final MethodCall entity = iterator.next();
          final String wholeClassName = entity.getJavaClazzName();
 
          // ignore inner class part, because it is in the same file - if the file exists, it is very likely that a subclass, which is in the logs, exists also
@@ -345,7 +345,7 @@ public class DependencyManager extends KiekerResultManager {
     * @return
     */
    public TestExistenceChanges updateDependencies(final TestSet testsToUpdate, final ModuleClassMapping mapping) {
-      final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies = dependencies.getCopiedDependencies();
+      final Map<TestMethodCall, Map<MethodCall, Set<String>>> oldDepdendencies = dependencies.getCopiedDependencies();
 
       // Remove all old dependencies where changes happened, because they may
       // have been deleted
@@ -365,7 +365,7 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private TestExistenceChanges populateExistingTests(final TestSet testsToUpdate, final ModuleClassMapping mapping,
-         final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies) {
+         final Map<TestMethodCall, Map<MethodCall, Set<String>>> oldDepdendencies) {
       final TestExistenceChanges changes = new TestExistenceChanges();
 
       for (final Entry<TestClazzCall, Set<String>> entry : testsToUpdate.entrySet()) {
@@ -409,7 +409,7 @@ public class DependencyManager extends KiekerResultManager {
       }
    }
 
-   void checkRemoved(final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes, final Entry<TestClazzCall, Set<String>> entry,
+   void checkRemoved(final Map<TestMethodCall, Map<MethodCall, Set<String>>> oldDepdendencies, final TestExistenceChanges changes, final Entry<TestClazzCall, Set<String>> entry,
          final File testclazzFolder) {
       LOG.error("Testclass {} does not exist anymore or does not create results. Folder: {}", entry.getKey(), testclazzFolder);
       final TestClazzCall testclass = new TestClazzCall(entry.getKey().getClazz(), entry.getKey().getModule());
@@ -432,19 +432,19 @@ public class DependencyManager extends KiekerResultManager {
     * @param oldDepdendencies
     * @param changes
     */
-   private void findAddedTests(final Map<TestMethodCall, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes) {
+   private void findAddedTests(final Map<TestMethodCall, Map<MethodCall, Set<String>>> oldDepdendencies, final TestExistenceChanges changes) {
       for (final Map.Entry<TestMethodCall, CalledMethods> newDependency : dependencies.getDependencyMap().entrySet()) {
          // testclass -> depending class -> method
          final TestMethodCall testcase = newDependency.getKey();
          if (!oldDepdendencies.containsKey(testcase)) {
             changes.addAddedTest(testcase.onlyClazzEntity(), testcase);
-            for (final Map.Entry<ChangedEntity, Set<String>> newCallees : newDependency.getValue().getCalledMethods().entrySet()) {
-               final ChangedEntity changedclass = newCallees.getKey();
+            for (final Map.Entry<MethodCall, Set<String>> newCallees : newDependency.getValue().getCalledMethods().entrySet()) {
+               final MethodCall changedclass = newCallees.getKey();
                for (final String changedMethod : newCallees.getValue()) {
                   // Since the testcase is new, is is always caused
                   // primarily by a change of the test class, and not of
                   // any other changed class
-                  final ChangedEntity methodEntity = changedclass.copy();
+                  final MethodCall methodEntity = changedclass.copy();
                   methodEntity.setMethod(changedMethod);
                   changes.addAddedTest(methodEntity, testcase);
                }
@@ -453,7 +453,7 @@ public class DependencyManager extends KiekerResultManager {
       }
    }
 
-   public void addDependencies(final TestMethodCall test, final Map<ChangedEntity, Set<String>> calledClasses) {
+   public void addDependencies(final TestMethodCall test, final Map<MethodCall, Set<String>> calledClasses) {
       dependencies.addDependencies(test, calledClasses);
    }
 }

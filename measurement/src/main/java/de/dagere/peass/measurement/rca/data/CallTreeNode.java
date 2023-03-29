@@ -15,9 +15,9 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
 import de.dagere.peass.measurement.statistics.bimodal.CompareData;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
@@ -184,20 +184,20 @@ public class CallTreeNode extends BasicNode {
       return kiekerPattern.toString();
    }
 
-   public ChangedEntity toEntity() {
+   public MethodCall toEntity() {
       if (call.equals(CauseSearchData.ADDED)) {
          String otherKiekerPattern = getOtherKiekerPattern();
          String otherCall = otherKiekerPattern.substring(otherKiekerPattern.lastIndexOf(' '), otherKiekerPattern.indexOf('('));
-         return new ChangedEntity(otherCall);
+         return new MethodCall(otherCall);
       } else {
-         final int index = call.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
+         final int index = call.lastIndexOf(MethodCall.METHOD_SEPARATOR);
          String method = call.substring(index + 1);
-         final ChangedEntity entity;
+         final MethodCall entity;
          if (method.contains("(")) {
-            entity = new ChangedEntity(call.substring(0, index), module, method.substring(0, method.indexOf('(')));
+            entity = new MethodCall(call.substring(0, index), module, method.substring(0, method.indexOf('(')));
             entity.createParameters(method.substring(method.indexOf('(')));
          } else {
-            entity = new ChangedEntity(call.substring(0, index), module, method);
+            entity = new MethodCall(call.substring(0, index), module, method);
          }
          entity.createParameters(getParameters());
          return entity;

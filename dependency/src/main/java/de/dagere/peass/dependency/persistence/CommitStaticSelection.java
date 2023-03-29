@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.serialization.MethodCallDeserializer;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.data.deserializer.ChangedEntityDeserializer;
 
 public class CommitStaticSelection {
 
@@ -18,8 +18,8 @@ public class CommitStaticSelection {
    private int jdk = 8;
    private String predecessor;
    
-   @JsonDeserialize(keyUsing = ChangedEntityDeserializer.class)
-   private Map<ChangedEntity, TestSet> changedClazzes = new TreeMap<>();
+   @JsonDeserialize(keyUsing = MethodCallDeserializer.class)
+   private Map<MethodCall, TestSet> changedClazzes = new TreeMap<>();
    
    private TestSet ignoredAffectedTests = null;
    private TestSet removedTests = null;
@@ -40,11 +40,11 @@ public class CommitStaticSelection {
       this.jdk = jdk;
    }
 
-   public Map<ChangedEntity, TestSet> getChangedClazzes() {
+   public Map<MethodCall, TestSet> getChangedClazzes() {
       return changedClazzes;
    }
 
-   public void setChangedClazzes(final Map<ChangedEntity, TestSet> changedClazzes) {
+   public void setChangedClazzes(final Map<MethodCall, TestSet> changedClazzes) {
       this.changedClazzes = changedClazzes;
    }
    

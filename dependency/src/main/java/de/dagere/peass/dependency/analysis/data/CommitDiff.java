@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.ExecutionConfig;
 
 /**
@@ -38,7 +39,7 @@ public class CommitDiff {
    private static final Logger LOG = LogManager.getLogger(CommitDiff.class);
 
    private boolean pomChanged;
-   private final List<ChangedEntity> changedClasses;
+   private final List<MethodCall> changedClasses;
    private final List<File> modules;
    private final File projectFolder;
 
@@ -63,7 +64,7 @@ public class CommitDiff {
       this.pomChanged = pomChanged;
    }
 
-   public List<ChangedEntity> getChangedClasses() {
+   public List<MethodCall> getChangedClasses() {
       return changedClasses;
    }
 
@@ -104,7 +105,7 @@ public class CommitDiff {
          final File moduleFile = new File(projectFolder, modulePath);
          if (modules.contains(moduleFile)) {
             LOG.trace("Create new changedentitty: {} {}", classPath, modulePath);
-            final ChangedEntity changedEntity = new ChangedEntity(classPath, modulePath);
+            final MethodCall changedEntity = new MethodCall(classPath, modulePath);
             if (!changedEntity.getJavaClazzName().contains(File.separator)) {
                changedClasses.add(changedEntity);
             } else {
@@ -117,7 +118,7 @@ public class CommitDiff {
 
       } else {
          final String classPath = replaceClazzFolderFromName(currentFileName, containedPath);
-         final ChangedEntity changedEntity = new ChangedEntity(classPath, "");
+         final MethodCall changedEntity = new MethodCall(classPath, "");
          if (!changedEntity.getJavaClazzName().contains(File.separator)) {
             changedClasses.add(changedEntity);
          } else {
@@ -142,7 +143,7 @@ public class CommitDiff {
    @Override
    public String toString() {
       String ret = "Pom: " + pomChanged + " Klassen: ";
-      for (final ChangedEntity cl : changedClasses) {
+      for (final MethodCall cl : changedClasses) {
          if (cl.getModule().length() > 0) {
             ret += cl.getClazz() + "\n";
          } else {

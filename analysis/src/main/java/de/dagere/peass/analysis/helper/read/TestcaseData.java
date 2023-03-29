@@ -3,7 +3,7 @@ package de.dagere.peass.analysis.helper.read;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 
 public class TestcaseData {
    Map<TestMethodCall, FolderValues> testcaseData = new LinkedHashMap<>();

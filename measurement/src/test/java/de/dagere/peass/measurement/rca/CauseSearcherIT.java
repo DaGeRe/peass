@@ -18,10 +18,10 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -79,7 +79,7 @@ public class CauseSearcherIT {
          final CauseTester measurer = new CauseTester(folders, measurementConfiguration, causeSearcherConfig, emptyEnv, CommitByNameComparator.INSTANCE);
 
          final CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders, emptyEnv);
-         final Set<ChangedEntity> changedEntities = searcher.search();
+         final Set<MethodCall> changedEntities = searcher.search();
 
          checkChangelistContainsChild12(changedEntities);
 
@@ -106,7 +106,7 @@ public class CauseSearcherIT {
     * 
     * @param changedEntities
     */
-   private void checkChangelistContainsChild12(final Set<ChangedEntity> changedEntities) {
+   private void checkChangelistContainsChild12(final Set<MethodCall> changedEntities) {
       LOG.debug(changedEntities);
       MatcherAssert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
       List<String> allChanged = changedEntities.stream().map(entity -> entity.toString()).collect(Collectors.toList());

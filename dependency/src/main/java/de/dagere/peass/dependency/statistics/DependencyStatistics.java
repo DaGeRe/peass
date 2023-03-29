@@ -3,7 +3,7 @@ package de.dagere.peass.dependency.statistics;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.nodeDiffGenerator.data.TestCase;
 
 /**
  * Saves information about count of dependencies, i.e. how many tests are run overall if one considers one dependency/view-file or an evaluation-file.

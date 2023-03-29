@@ -11,18 +11,18 @@ import org.mockito.Mockito;
 
 import com.google.common.io.Files;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.PropertyReadHelper;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.FixedCommitConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.EntityUtil;
 
 public class TestPropertyReadHelper {
    @Test
    public void testDetermineEntity() {
-      ChangedEntity entity = EntityUtil.determineEntity("module" + ChangedEntity.MODULE_SEPARATOR + "clazz" + ChangedEntity.METHOD_SEPARATOR + "method");
+      MethodCall entity = EntityUtil.determineEntity("module" + MethodCall.MODULE_SEPARATOR + "clazz" + MethodCall.METHOD_SEPARATOR + "method");
       
       Assert.assertEquals("module", entity.getModule());
       Assert.assertEquals("clazz", entity.getClazz());
@@ -31,7 +31,7 @@ public class TestPropertyReadHelper {
    
    @Test
    public void testDetermineEntityModuleless() {
-      ChangedEntity entity = EntityUtil.determineEntity("clazz" + ChangedEntity.METHOD_SEPARATOR + "method");
+      MethodCall entity = EntityUtil.determineEntity("clazz" + MethodCall.METHOD_SEPARATOR + "method");
       
       Assert.assertEquals("", entity.getModule());
       Assert.assertEquals("clazz", entity.getClazz());
@@ -40,7 +40,7 @@ public class TestPropertyReadHelper {
    
    @Test
    public void testDetermineEntityParameters() {
-      ChangedEntity entity = EntityUtil.determineEntity("clazz" + ChangedEntity.METHOD_SEPARATOR + "method(int,String)");
+      MethodCall entity = EntityUtil.determineEntity("clazz" + MethodCall.METHOD_SEPARATOR + "method(int,String)");
       
       Assert.assertEquals("", entity.getModule());
       Assert.assertEquals("clazz", entity.getClazz());
@@ -58,7 +58,7 @@ public class TestPropertyReadHelper {
       File projectFolder = new File("target/current");
       projectFolder.mkdirs();
       Files.touch(new File(projectFolder, "pom.xml"));
-      PropertyReadHelper helper = new PropertyReadHelper(new ExecutionConfig(), config, new ChangedEntity("Test"), changeMock, projectFolder, null, null, null);
+      PropertyReadHelper helper = new PropertyReadHelper(new ExecutionConfig(), config, new MethodCall("Test"), changeMock, projectFolder, null, null, null);
       ChangeProperty emptyProperty = helper.read();
       MatcherAssert.assertThat(emptyProperty, IsNull.notNullValue());
       Assert.assertEquals("myTestMethod", emptyProperty.getMethod());
@@ -66,7 +66,7 @@ public class TestPropertyReadHelper {
    
    @Test
    public void testDetermineEntityWithDot() {
-      ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator("public void clazz.method(int, Object, long)");
+      MethodCall entity = EntityUtil.determineEntityWithDotSeparator("public void clazz.method(int, Object, long)");
       
       Assert.assertEquals("clazz", entity.getClazz());
       Assert.assertEquals("method", entity.getMethod());

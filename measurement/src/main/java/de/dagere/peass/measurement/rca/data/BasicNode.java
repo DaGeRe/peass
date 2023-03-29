@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
 
 /**
@@ -25,12 +25,12 @@ public abstract class BasicNode {
    protected String module;
 
    public BasicNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
-      int moduleSeparatorIndex = call.lastIndexOf(ChangedEntity.MODULE_SEPARATOR);
+      int moduleSeparatorIndex = call.lastIndexOf(MethodCall.MODULE_SEPARATOR);
       if (moduleSeparatorIndex != -1) {
          this.call = call.substring(moduleSeparatorIndex + 1);
          this.module = call.substring(0, moduleSeparatorIndex);
-         this.kiekerPattern = kiekerPattern != null ? kiekerPattern.replaceFirst(module + ChangedEntity.MODULE_SEPARATOR, "") : null;
-         this.otherKiekerPattern = otherKiekerPattern != null ? otherKiekerPattern.replaceFirst(module + ChangedEntity.MODULE_SEPARATOR, "") : null;
+         this.kiekerPattern = kiekerPattern != null ? kiekerPattern.replaceFirst(module + MethodCall.MODULE_SEPARATOR, "") : null;
+         this.otherKiekerPattern = otherKiekerPattern != null ? otherKiekerPattern.replaceFirst(module + MethodCall.MODULE_SEPARATOR, "") : null;
       } else {
          this.call = call;
          this.kiekerPattern = kiekerPattern;

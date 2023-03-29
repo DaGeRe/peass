@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
 
@@ -71,7 +71,7 @@ public class CauseSearchData {
 
    @JsonIgnore
    public String getTestcase() {
-      return causeConfig.getTestCase().getClazz() + ChangedEntity.METHOD_SEPARATOR + causeConfig.getTestCase().getMethod();
+      return causeConfig.getTestCase().getClazz() + MethodCall.METHOD_SEPARATOR + causeConfig.getTestCase().getMethod();
    }
 
    @JsonIgnore

@@ -11,12 +11,12 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestClazzCall;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.FixedCommitConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
@@ -75,7 +75,7 @@ public class PropertyReader {
       final Change testcaseChange = new Change();
       testcaseChange.setMethod(testmethod);
 
-      final ChangedEntity entity = new ChangedEntity(testclazz.getKey().getClazz(), testclazz.getKey().getModule());
+      final MethodCall entity = new MethodCall(testclazz.getKey().getClazz(), testclazz.getKey().getModule());
       // TODO eventually, we need to set change the version of the config here to  version.getKey(), version.getValue().getPredecessor(),
       FixedCommitConfig copyConfig = new FixedCommitConfig();
       copyConfig.setCommit(commit.getKey());

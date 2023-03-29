@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -42,10 +42,10 @@ public class DetectUncoveredChanges implements Callable<Void> {
       int coveredCommits = 0;
       int coveredChanges = 0;
       for (String commit : commits) {
-         Set<ChangedEntity> changes = selections[0].getCommits().get(commit).getChangedClazzes().keySet();
+         Set<MethodCall> changes = selections[0].getCommits().get(commit).getChangedClazzes().keySet();
 
          boolean anyUncoveredCommit = false, anyCoveredCommit = false;
-         for (ChangedEntity entity : changes) {
+         for (MethodCall entity : changes) {
             boolean covered = isEntityCovered(selections, commit, entity);
 
             if (!covered) {
@@ -71,7 +71,7 @@ public class DetectUncoveredChanges implements Callable<Void> {
       return null;
    }
 
-   private boolean isEntityCovered(StaticTestSelection[] selections, String commit, ChangedEntity entity) {
+   private boolean isEntityCovered(StaticTestSelection[] selections, String commit, MethodCall entity) {
       boolean covered = false;
       for (StaticTestSelection selection : selections) {
          CommitStaticSelection commitStaticSelection = selection.getCommits().get(commit);

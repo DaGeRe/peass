@@ -7,8 +7,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
@@ -75,7 +75,7 @@ public class CauseSearcherComplete extends CauseSearcher {
    }
 
    @Override
-   protected Set<ChangedEntity> searchCause() {
+   protected Set<MethodCall> searchCause() {
       final TreeAnalyzer analyzer = creator.getAnalyzer(reader, causeSearchConfig);
       final List<CallTreeNode> predecessorNodeList = analyzer.getMeasurementNodesPredecessor();
       final List<CallTreeNode> includableNodes = getIncludableNodes(predecessorNodeList);

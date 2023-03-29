@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CauseTester;
@@ -50,7 +50,7 @@ public class CauseSearcherCompleteTest {
 
       CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
 
-      final Set<ChangedEntity> changes = getChanges(rootPredecessor, rootVersion);
+      final Set<MethodCall> changes = getChanges(rootPredecessor, rootVersion);
 
       StrategyTestUtil.checkChanges(changes);
    }
@@ -63,7 +63,7 @@ public class CauseSearcherCompleteTest {
 
       CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
 
-      final Set<ChangedEntity> changes = getChanges(rootPredecessor, rootVersion);
+      final Set<MethodCall> changes = getChanges(rootPredecessor, rootVersion);
 
       StrategyTestUtil.checkChanges(changes);
    }
@@ -78,10 +78,10 @@ public class CauseSearcherCompleteTest {
 
       CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
 
-      final Set<ChangedEntity> changes = getChanges(rootPredecessor, rootVersion);
+      final Set<MethodCall> changes = getChanges(rootPredecessor, rootVersion);
 
       System.out.println(changes);
-      MatcherAssert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
+      MatcherAssert.assertThat(changes, Matchers.hasItem(new MethodCall("ClassB#methodB", "")));
 //      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassD#methodD", "")));
 //      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassE#methodE", "")));
 
@@ -92,7 +92,7 @@ public class CauseSearcherCompleteTest {
       MatcherAssert.assertThat(includedNodes.getValue(), Matchers.hasItem(builderPredecessor.getC()));
    }
 
-   private Set<ChangedEntity> getChanges(final CallTreeNode rootPredecessor, final CallTreeNode rootVersion)
+   private Set<MethodCall> getChanges(final CallTreeNode rootPredecessor, final CallTreeNode rootVersion)
          throws InterruptedException, IOException, XmlPullParserException, AnalysisConfigurationException {
       final File folder = new File("target/test/");
       folder.mkdir();
@@ -105,7 +105,7 @@ public class CauseSearcherCompleteTest {
       final CauseSearcherComplete searcher = new CauseSearcherComplete(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer,
             TestConstants.SIMPLE_MEASUREMENT_CONFIG,
             new CauseSearchFolders(folder), new EnvironmentVariables());
-      final Set<ChangedEntity> changes = searcher.search();
+      final Set<MethodCall> changes = searcher.search();
 
       return changes;
    }

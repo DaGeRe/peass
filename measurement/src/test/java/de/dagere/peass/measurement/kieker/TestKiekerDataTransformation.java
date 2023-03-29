@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dependencyprocessors.DirectKiekerMeasurementTransformer;
 

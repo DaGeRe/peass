@@ -3,8 +3,8 @@ package de.dagere.peass.dependency.traces;
 import java.util.Arrays;
 import java.util.List;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.MethodCallHelper;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.requitur.content.Content;
 
@@ -82,14 +82,14 @@ public class TraceElementContent extends Content {
       final StringBuffer result = new StringBuffer();
       if (module != null && !module.equals("")) {
          result.append(module);
-         result.append(ChangedEntity.MODULE_SEPARATOR);
+         result.append(MethodCall.MODULE_SEPARATOR);
       }
       result.append(clazz);
-      result.append(ChangedEntity.METHOD_SEPARATOR);
+      result.append(MethodCall.METHOD_SEPARATOR);
       result.append(method);
 
       if (parameterTypes.length != 0) {
-         result.append(ChangedEntityHelper.getParameterString(parameterTypes));
+         result.append(MethodCallHelper.getParameterString(parameterTypes));
       }
 
       return result.toString();
@@ -113,8 +113,8 @@ public class TraceElementContent extends Content {
    }
 
    public String getSimpleClazz() {
-      if (clazz.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
-         return clazz.substring(clazz.lastIndexOf(ChangedEntity.CLAZZ_SEPARATOR) + 1);
+      if (clazz.contains(MethodCall.CLAZZ_SEPARATOR)) {
+         return clazz.substring(clazz.lastIndexOf(MethodCall.CLAZZ_SEPARATOR) + 1);
       }
       final String simpleClazz = clazz.substring(clazz.lastIndexOf('.') + 1);
       return simpleClazz;
@@ -129,11 +129,11 @@ public class TraceElementContent extends Content {
    }
 
    public boolean isInnerClassCall() {
-      return clazz.contains(ChangedEntity.CLAZZ_SEPARATOR);
+      return clazz.contains(MethodCall.CLAZZ_SEPARATOR);
    }
 
    public String getOuterClass() {
-      return clazz.substring(0, clazz.lastIndexOf(ChangedEntity.CLAZZ_SEPARATOR));
+      return clazz.substring(0, clazz.lastIndexOf(MethodCall.CLAZZ_SEPARATOR));
    }
 
    public String getPackage() {
@@ -141,8 +141,8 @@ public class TraceElementContent extends Content {
       return result;
    }
 
-   public ChangedEntity toEntity() {
-      ChangedEntity changedEntity = new ChangedEntity(clazz, module, method);
+   public MethodCall toEntity() {
+      MethodCall changedEntity = new MethodCall(clazz, module, method);
       List<String> parameterTypeList = Arrays.asList(parameterTypes);
       changedEntity.getParameters().addAll(parameterTypeList);
       return changedEntity;

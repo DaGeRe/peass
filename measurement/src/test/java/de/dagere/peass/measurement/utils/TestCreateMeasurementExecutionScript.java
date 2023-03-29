@@ -8,10 +8,10 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -39,10 +39,10 @@ public class TestCreateMeasurementExecutionScript {
       StaticTestSelection dependencies = TestExecutionData.buildExampleDependencies();
 
       CommitStaticSelection version2 = dependencies.getCommits().get("000002");
-      version2.getChangedClazzes().put(new ChangedEntity("Test1#testMe"), new TestSet(new TestMethodCall("Test1", "testMe")));
+      version2.getChangedClazzes().put(new MethodCall("Test1#testMe"), new TestSet(new TestMethodCall("Test1", "testMe")));
       
       CommitStaticSelection version5 = dependencies.getCommits().get("000005");
-      version5.getChangedClazzes().put(new ChangedEntity("Test5#testMe"), new TestSet(new TestMethodCall("Test5", "testMe")));
+      version5.getChangedClazzes().put(new MethodCall("Test5#testMe"), new TestSet(new TestMethodCall("Test5", "testMe")));
 
       ExecutionData executiondata = new ExecutionData(dependencies);
       return executiondata;

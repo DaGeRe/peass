@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 
 public class Classification {
    private static final Logger LOG = LogManager.getLogger(Classification.class);
@@ -26,7 +26,7 @@ public class Classification {
    }
 
    @JsonIgnore
-   public TestcaseClass addChange(final String version, final ChangedEntity test, final Set<String> guessedTypes, final String direction) {
+   public TestcaseClass addChange(final String version, final MethodCall test, final Set<String> guessedTypes, final String direction) {
       VersionClass versionClazz = versions.get(version);
       if (versionClazz == null) {
          versionClazz = new VersionClass();
@@ -42,7 +42,7 @@ public class Classification {
          }
          final VersionClass mergedVersion = versions.get(otherVersion.getKey());
          if (mergedVersion != null) {
-            for (final Entry<ChangedEntity, TestcaseClass> testcase : otherVersion.getValue().getTestcases().entrySet()) {
+            for (final Entry<MethodCall, TestcaseClass> testcase : otherVersion.getValue().getTestcases().entrySet()) {
                final TestcaseClass data = mergedVersion.getTestcases().get(testcase.getKey());
                if (data != null) {
                   if (data.getDirection() != null) {
@@ -64,7 +64,7 @@ public class Classification {
       for (final Map.Entry<String, VersionClass> otherVersion : other.getVersions().entrySet()) {
          final VersionClass mergedVersion = versions.get(otherVersion.getKey());
          if (mergedVersion != null) {
-            for (final Entry<ChangedEntity, TestcaseClass> testcase : otherVersion.getValue().getTestcases().entrySet()) {
+            for (final Entry<MethodCall, TestcaseClass> testcase : otherVersion.getValue().getTestcases().entrySet()) {
                final TestcaseClass data = mergedVersion.getTestcases().get(testcase.getKey());
                if (data != null) {
                   if (data.getDirection() != null) {

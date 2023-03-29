@@ -16,6 +16,9 @@
  */
 package de.dagere.peass.dependency.analysis.data;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.MethodCallHelper;
+
 /**
  * Represents an element of a trace, i.e. one call with its parameters and the depth in the stack of the call
  * 
@@ -98,13 +101,13 @@ public class TraceElement {
       StringBuffer result = new StringBuffer();
       if (module != null && !module.equals("")) {
          result.append(module);
-         result.append(ChangedEntity.MODULE_SEPARATOR);
+         result.append(MethodCall.MODULE_SEPARATOR);
       }
       result.append(clazz);
-      result.append(ChangedEntity.METHOD_SEPARATOR);
+      result.append(MethodCall.METHOD_SEPARATOR);
       result.append(method);
       if (parameterTypes.length != 0) {
-         result.append(ChangedEntityHelper.getParameterString(parameterTypes));
+         result.append(MethodCallHelper.getParameterString(parameterTypes));
       }
       return result.toString();
    }

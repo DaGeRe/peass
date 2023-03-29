@@ -27,8 +27,8 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.dependency.ClazzFileFinder;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 
@@ -38,7 +38,7 @@ public class JUnitTestShortener implements AutoCloseable {
 
    private JUnitTestTransformer transformer;
    private final File module;
-   private final ChangedEntity callee;
+   private final MethodCall callee;
    private final String method;
 
    private final Map<File, File> lastShortenedMap = new HashMap<>();
@@ -46,7 +46,7 @@ public class JUnitTestShortener implements AutoCloseable {
    
    final File calleeClazzFile;
 
-   public JUnitTestShortener(final JUnitTestTransformer transformer, final File module, final ChangedEntity callee, final String method) {
+   public JUnitTestShortener(final JUnitTestTransformer transformer, final File module, final MethodCall callee, final String method) {
       this.transformer = transformer;
       this.module = module;
       this.callee = callee;
@@ -70,7 +70,7 @@ public class JUnitTestShortener implements AutoCloseable {
             for (final File superclass : superclasses) {
                if (!lastShortenedMap.containsValue(superclass)) {
                   // A rather dirty hack..
-                  final ChangedEntity callee = new ChangedEntity(superclass.getName().replaceAll(".java", ""), this.callee.getModule());
+                  final MethodCall callee = new MethodCall(superclass.getName().replaceAll(".java", ""), this.callee.getModule());
                   LOG.debug("Shortening: " + callee);
                   shortenTestClazz(callee, superclass);
                }
@@ -87,7 +87,7 @@ public class JUnitTestShortener implements AutoCloseable {
       return calleeClazzFile;
    }
 
-   private void shortenTestClazz(final ChangedEntity callee, final File calleeClazzFile) throws IOException {
+   private void shortenTestClazz(final MethodCall callee, final File calleeClazzFile) throws IOException {
       final int version = transformer.getVersion(calleeClazzFile);
 
       if (version != 0) {
@@ -113,11 +113,11 @@ public class JUnitTestShortener implements AutoCloseable {
       lastShortenedMap.put(tempFile, calleeClazzFile);
    }
 
-   public void shortenParent(final File module, final ChangedEntity callee, final File calleeClazzFile, final CompilationUnit calleeUnit, final ClassOrInterfaceDeclaration clazz)
+   public void shortenParent(final File module, final MethodCall callee, final File calleeClazzFile, final CompilationUnit calleeUnit, final ClassOrInterfaceDeclaration clazz)
          throws IOException {
       LOG.debug("Shortening: {}", callee);
       if (clazz.getExtendedTypes().size() > 0) {
-         final ChangedEntity parentEntity = getParentEntity(callee, calleeUnit, clazz);
+         final MethodCall parentEntity = getParentEntity(callee, calleeUnit, clazz);
          ClazzFileFinder finder = new ClazzFileFinder(transformer.getConfig().getExecutionConfig());
          final File parentClazzFile = finder.getClazzFile(module, parentEntity);
          if (parentClazzFile != null) {
@@ -144,8 +144,8 @@ public class JUnitTestShortener implements AutoCloseable {
       }
    }
 
-   public ChangedEntity getParentEntity(final ChangedEntity callee, final CompilationUnit calleeUnit, final ClassOrInterfaceDeclaration clazz) {
-      ChangedEntity parentEntity = null;
+   public MethodCall getParentEntity(final MethodCall callee, final CompilationUnit calleeUnit, final ClassOrInterfaceDeclaration clazz) {
+      MethodCall parentEntity = null;
       for (final ClassOrInterfaceType parent : clazz.getExtendedTypes()) {
          LOG.debug("Must also shorten {} Package: {}", parent, callee.getPackage());
          final String parentName = parent.getName().toString();
@@ -157,7 +157,7 @@ public class JUnitTestShortener implements AutoCloseable {
                fqn = callee.getPackage() + "." + parentName;
             }
          }
-         parentEntity = new ChangedEntity(fqn, callee.getModule());
+         parentEntity = new MethodCall(fqn, callee.getModule());
       }
       return parentEntity;
    }

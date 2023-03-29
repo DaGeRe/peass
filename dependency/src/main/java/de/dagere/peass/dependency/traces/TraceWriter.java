@@ -15,8 +15,8 @@ import java.util.zip.ZipOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.TestSelectionConfig;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
 import de.dagere.peass.dependency.traces.coverage.TraceSummaryTransformer;
 import de.dagere.peass.folders.ResultsFolders;

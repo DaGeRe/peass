@@ -32,8 +32,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
@@ -306,7 +306,7 @@ public final class GitUtils {
       return diff;
    }
 
-   public static int getChangedLines(final File projectFolder, final String commit, final List<ChangedEntity> entities, ExecutionConfig config) {
+   public static int getChangedLines(final File projectFolder, final String commit, final List<MethodCall> entities, ExecutionConfig config) {
       try {
 
          final File folderTemp = new File(FilenameUtils.normalize(projectFolder.getAbsolutePath()));
@@ -328,7 +328,7 @@ public final class GitUtils {
                final int count = Integer.parseInt(countString);
                String clazzName = getClazz(clazz, config);
                if (clazzName != null) {
-                  final ChangedEntity changedEntity = new ChangedEntity(clazzName, "");
+                  final MethodCall changedEntity = new MethodCall(clazzName, "");
                   if (entities.contains(changedEntity)) {
                      size += count;
                   }

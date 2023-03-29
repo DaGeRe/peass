@@ -9,8 +9,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.organize.FolderDeterminer;
@@ -58,7 +58,7 @@ public class LevelCauseSearcher extends CauseSearcher {
    }
 
    @Override
-   protected Set<ChangedEntity> searchCause() {
+   protected Set<MethodCall> searchCause() {
       reader.getRootPredecessor().setOtherCommitNode(reader.getRootVersion());
       reader.getRootVersion().setOtherCommitNode(reader.getRootPredecessor());
       reader.getRootPredecessor().setOtherKiekerPattern(reader.getRootVersion().getKiekerPattern());

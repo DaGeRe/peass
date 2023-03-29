@@ -12,13 +12,13 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.ci.helper.GitProjectBuilder;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -87,7 +87,7 @@ public class DependenciesOnlyStartversionIT {
    private TestSet getTestset(final StaticTestSelection dependencies, final String newestVersion) {
       final TestSet testSet = dependencies.getCommits().get(newestVersion)
             .getChangedClazzes()
-            .get(new ChangedEntity("defaultpackage.NormalDependency", "", ""));
+            .get(new MethodCall("defaultpackage.NormalDependency", "", ""));
       return testSet;
    }
 }

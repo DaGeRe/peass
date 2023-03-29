@@ -8,8 +8,8 @@ import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CausePersistenceManager;
@@ -50,7 +50,7 @@ public abstract class CauseSearcher {
 
    }
 
-   public Set<ChangedEntity> search() {
+   public Set<MethodCall> search() {
       reader.readTrees();
 
       LOG.info("Tree size: {}", reader.getRootPredecessor().getTreeSize());
@@ -58,10 +58,10 @@ public abstract class CauseSearcher {
       return searchCause();
    }
 
-   protected abstract Set<ChangedEntity> searchCause();
+   protected abstract Set<MethodCall> searchCause();
 
-   protected Set<ChangedEntity> convertToChangedEntitites() {
-      final Set<ChangedEntity> changed = new TreeSet<>();
+   protected Set<MethodCall> convertToChangedEntitites() {
+      final Set<MethodCall> changed = new TreeSet<>();
       differingNodes.forEach(node -> {
          changed.add(node.toEntity());
       });

@@ -13,9 +13,9 @@ import org.junit.jupiter.api.condition.JRE;
 
 import com.github.javaparser.ParseException;
 
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.CommitIterator;

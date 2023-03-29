@@ -11,16 +11,16 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestClazzCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestClazzCall;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
@@ -73,8 +73,8 @@ public class TraceChangeHandler {
    }
 
    public void addAddedTests(final CommitStaticSelection newCommitInfo, final TestSet testsToRun) {
-      for (final ChangedEntity testName : newCommitInfo.getChangedClazzes().keySet()) {
-         ChangedEntity simplyClazz = testName.getSourceContainingClazz();
+      for (final MethodCall testName : newCommitInfo.getChangedClazzes().keySet()) {
+         MethodCall simplyClazz = testName.getSourceContainingClazz();
          TestClazzCall potentialTest = new TestClazzCall(simplyClazz.getClazz(), testName.getModule());
          if (NonIncludedTestRemover.isTestClassIncluded(potentialTest, executionConfig)) {
             testsToRun.addTest(potentialTest, null);
@@ -100,7 +100,7 @@ public class TraceChangeHandler {
    private void handleDependencyChanges(final CommitStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)
          throws IOException {
       final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, mapping);
-      final Map<ChangedEntity, Set<TestMethodCall>> addedTestcases = testExistenceChanges.getAddedTests();
+      final Map<MethodCall, Set<TestMethodCall>> addedTestcases = testExistenceChanges.getAddedTests();
 
       if (DETAIL_DEBUG) {
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "add_" + commit + ".json"), addedTestcases);

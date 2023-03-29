@@ -13,8 +13,8 @@ import org.mockito.Mockito;
 
 import com.github.javaparser.ParseException;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
@@ -47,7 +47,7 @@ public class DependencyDetectorParametersIT {
    }
 
    public static ChangeManager changeManagerWithParameter() {
-      final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("", "defaultpackage.NormalDependency", "innerMethod(java.lang.Integer)");
+      final Map<MethodCall, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("", "defaultpackage.NormalDependency", "innerMethod(java.lang.Integer)");
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);

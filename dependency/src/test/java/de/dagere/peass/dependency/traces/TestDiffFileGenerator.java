@@ -11,9 +11,9 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.traces.diff.DiffFileGenerator;
@@ -41,7 +41,7 @@ public class TestDiffFileGenerator {
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
-      staticSelection.getChangedClazzes().put(new ChangedEntity("de.SomeClass"), new TestSet(test));
+      staticSelection.getChangedClazzes().put(new MethodCall("de.SomeClass"), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
 
@@ -66,7 +66,7 @@ public class TestDiffFileGenerator {
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
-      staticSelection.getChangedClazzes().put(new ChangedEntity("de.SomeClass"), new TestSet(test));
+      staticSelection.getChangedClazzes().put(new MethodCall("de.SomeClass"), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
 
@@ -91,7 +91,7 @@ public class TestDiffFileGenerator {
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
-      staticSelection.getChangedClazzes().put(new ChangedEntity("de.SomeClass"), new TestSet(test));
+      staticSelection.getChangedClazzes().put(new MethodCall("de.SomeClass"), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
 
@@ -105,7 +105,7 @@ public class TestDiffFileGenerator {
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
-      staticSelection.getChangedClazzes().put(new ChangedEntity("de.SomeClass"), new TestSet(test));
+      staticSelection.getChangedClazzes().put(new MethodCall("de.SomeClass"), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
 

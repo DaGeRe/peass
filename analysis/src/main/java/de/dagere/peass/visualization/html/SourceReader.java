@@ -10,8 +10,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.analysis.properties.ChangedMethodManager;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 import de.dagere.peass.visualization.GraphNode;
@@ -45,7 +45,7 @@ public class SourceReader extends SingleTreeSourceReader {
    }
 
    private void readMethod(final GraphNode node, final String currentPattern) throws IOException {
-      ChangedEntity methodEntity = getChangedEntity(node, currentPattern);
+      MethodCall methodEntity = getChangedEntity(node, currentPattern);
 
       final String key = KiekerPatternConverter.getKey(currentPattern);
 

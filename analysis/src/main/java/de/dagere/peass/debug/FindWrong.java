@@ -9,10 +9,10 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.analysis.groups.Classification;
 import de.dagere.peass.analysis.groups.TestcaseClass;
 import de.dagere.peass.analysis.groups.VersionClass;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.utils.RunCommandWriter;
 import de.dagere.peass.measurement.utils.RunCommandWriterSlurm;
 import de.dagere.peass.utils.Constants;
@@ -34,7 +34,7 @@ public class FindWrong {
             if (url != null) {
                final Classification data = Constants.OBJECTMAPPER.readValue(project, Classification.class);
                for (final Map.Entry<String, VersionClass> version : data.getVersions().entrySet()) {
-                  for (final Map.Entry<ChangedEntity, TestcaseClass> method : version.getValue().getTestcases().entrySet()) {
+                  for (final Map.Entry<MethodCall, TestcaseClass> method : version.getValue().getTestcases().entrySet()) {
                      if (method.getValue().getTypes().contains("WRONG") || method.getValue().getTypes().contains("WRONGTEST")) {
 //                        System.out.println(version.getKey() + " " + method.getKey());
 

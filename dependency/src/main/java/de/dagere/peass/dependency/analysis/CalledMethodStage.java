@@ -13,9 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.MethodCallHelper;
 import de.dagere.peass.dependency.ClazzFileFinder;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import kieker.analysis.trace.AbstractTraceProcessingStage;
 import kieker.model.repository.SystemModelRepository;
@@ -30,7 +30,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
 
    private static final Logger LOG = LogManager.getLogger(CalledMethodStage.class);
 
-   private final Map<ChangedEntity, Set<String>> calledMethods = new HashMap<>();
+   private final Map<MethodCall, Set<String>> calledMethods = new HashMap<>();
    private final ArrayList<TraceElement> calls = new ArrayList<>();
    private final String prefix;
    private final ModuleClassMapping mapping;
@@ -71,7 +71,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
                final TraceElement traceelement = buildTraceElement(execution, fullClassname, methodname);
 
                calls.add(traceelement);
-               String methodWithParameters = methodname + ChangedEntityHelper.getParameterString(execution.getOperation().getSignature().getParamTypeList());
+               String methodWithParameters = methodname + MethodCallHelper.getParameterString(execution.getOperation().getSignature().getParamTypeList());
                addCalledMethod(fullClassname, methodWithParameters, traceelement);
             }
          }
@@ -82,7 +82,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
    private void addCalledMethod(final String fullClassname, final String methodname, final TraceElement traceelement) {
       final String outerClazzName = ClazzFileFinder.getOuterClass(fullClassname);
       final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
-      final ChangedEntity fullClassEntity = new ChangedEntity(fullClassname, moduleOfClass);
+      final MethodCall fullClassEntity = new MethodCall(fullClassname, moduleOfClass);
       traceelement.setModule(moduleOfClass);
       Set<String> currentMethodSet = calledMethods.get(fullClassEntity);
       if (currentMethodSet == null) {
@@ -134,7 +134,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
       return calls;
    }
 
-   public Map<ChangedEntity, Set<String>> getCalledMethods() {
+   public Map<MethodCall, Set<String>> getCalledMethods() {
       return calledMethods;
    }
 }

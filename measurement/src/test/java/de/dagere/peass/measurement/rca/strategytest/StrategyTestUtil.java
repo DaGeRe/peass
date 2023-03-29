@@ -6,10 +6,10 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 
 public class StrategyTestUtil {
-   public static void checkChanges(final Set<ChangedEntity> changes) {
+   public static void checkChanges(final Set<MethodCall> changes) {
       System.out.println(changes);
       Assert.assertEquals(3, changes.size());
       MatcherAssert.assertThat(changes.toString(), Matchers.containsString("ClassB#methodB"));

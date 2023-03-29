@@ -3,7 +3,7 @@ package de.dagere.peass.dependency.traces.coverage;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 
 public class CoverageSelectionCommit {
    public Map<TestMethodCall, TraceCallSummary> testcases = new LinkedHashMap<>();

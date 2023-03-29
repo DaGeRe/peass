@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.utils.Constants;
 
 public class TestStaticTestSelection {
@@ -99,7 +99,7 @@ public class TestStaticTestSelection {
    public void testSerialization() throws JsonProcessingException {
       StaticTestSelection selection = new StaticTestSelection();
       selection.getInitialcommit().setCommit("asdasd");
-      selection.getInitialcommit().addDependency(new TestMethodCall("TestA", "methodA2"), new ChangedEntity("TestA#methodA2"));
+      selection.getInitialcommit().addDependency(new TestMethodCall("TestA", "methodA2"), new MethodCall("TestA#methodA2"));
       selection.getCommits().put("bsdbsd", new CommitStaticSelection());
       selection.getCommits().get("bsdbsd").setRunning(false);
 

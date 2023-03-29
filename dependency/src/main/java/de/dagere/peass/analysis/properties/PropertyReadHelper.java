@@ -16,6 +16,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty.TraceChange;
 import de.dagere.peass.config.ExecutionConfig;
@@ -24,7 +25,6 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.RTSTestTransformerBuilder;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.analysis.data.EntityUtil;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
@@ -60,7 +60,7 @@ public class PropertyReadHelper {
          "System.out.println", "System.gc", "Thread.sleep" };
 
    private final ExecutionData changedTests;
-   private final ChangedEntity testClazz;
+   private final MethodCall testClazz;
    private final ExecutionConfig config;
    private final String commit, commitOld;
    private final Change change;
@@ -80,7 +80,7 @@ public class PropertyReadHelper {
     * @throws IOException
     */
    public static void main(final String[] args) throws IOException {
-      final ChangedEntity ce = new ChangedEntity("org.apache.commons.fileupload.StreamingTest", "");
+      final MethodCall ce = new MethodCall("org.apache.commons.fileupload.StreamingTest", "");
       final Change change = new Change();
       change.setChangePercent(-8.0);
       change.setMethod("testFILEUPLOAD135");
@@ -95,7 +95,7 @@ public class PropertyReadHelper {
       propertyReadHelper.read();
    }
 
-   public PropertyReadHelper(final ExecutionConfig config, FixedCommitConfig commitConfig, final ChangedEntity clazz,
+   public PropertyReadHelper(final ExecutionConfig config, FixedCommitConfig commitConfig, final MethodCall clazz,
          final Change change, final File projectFolder, final File viewFolder, final File methodSourceFolder, final ExecutionData changedTests) {
       this.commit = commitConfig.getCommit();
       this.commitOld = commitConfig.getCommitOld();
@@ -201,7 +201,7 @@ public class PropertyReadHelper {
 
    private void analyzeTraceFiles(final ChangeProperty property, final File traceFileCurrent, final File traceFileOld) throws IOException, FileNotFoundException {
       final PeassFolders folders = new PeassFolders(projectFolder);
-      final Map<ChangedEntity, ClazzChangeData> changes = getChanges(folders);
+      final Map<MethodCall, ClazzChangeData> changes = getChanges(folders);
 
       final List<String> traceCurrent = Sequitur.getExpandedTrace(TraceFileUtil.getText(traceFileCurrent));
       final List<String> traceOld = Sequitur.getExpandedTrace(TraceFileUtil.getText(traceFileOld));
@@ -218,18 +218,18 @@ public class PropertyReadHelper {
       getTestSourceAffection(property, merged, folders, changes);
    }
 
-   private Map<ChangedEntity, ClazzChangeData> getChanges(final PeassFolders folders) {
+   private Map<MethodCall, ClazzChangeData> getChanges(final PeassFolders folders) {
       List<String> commits = Arrays.asList(new String[] { commit, commitOld });
       final CommitIteratorGit iterator = new CommitIteratorGit(projectFolder, commits, commitOld);
       final ChangeManager changeManager = new ChangeManager(folders, iterator, config, testExecutor);
-      final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(commitOld, commit);
+      final Map<MethodCall, ClazzChangeData> changes = changeManager.getChanges(commitOld, commit);
       return changes;
    }
 
    private void readMethodSources(final ChangeProperty property, final PeassFolders folders, final Set<String> merged) throws FileNotFoundException, IOException {
       for (final String calledInOneMethod : merged) {
          LOG.debug("Loading: " + calledInOneMethod);
-         final ChangedEntity entity = EntityUtil.determineEntity(calledInOneMethod);
+         final MethodCall entity = EntityUtil.determineEntity(calledInOneMethod);
          final MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, folders.getProjectFolder(), folders.getOldSources(), entity, commit, config);
          reader.readMethodChangeData();
          getKeywordChanges(property, reader, entity);
@@ -246,8 +246,8 @@ public class PropertyReadHelper {
    }
 
    private void removeUncalledClasses(final Set<String> calls, final CommitDiff diff) {
-      for (final Iterator<ChangedEntity> it = diff.getChangedClasses().iterator(); it.hasNext();) {
-         final ChangedEntity entity = it.next();
+      for (final Iterator<MethodCall> it = diff.getChangedClasses().iterator(); it.hasNext();) {
+         final MethodCall entity = it.next();
          boolean called = false;
          for (final String call : calls) {
             if (call.startsWith(entity.getJavaClazzName())) {
@@ -260,7 +260,7 @@ public class PropertyReadHelper {
       }
    }
 
-   public void getKeywordChanges(final ChangeProperty property, final MethodChangeReader changeManager, final ChangedEntity entity) throws FileNotFoundException {
+   public void getKeywordChanges(final ChangeProperty property, final MethodChangeReader changeManager, final MethodCall entity) throws FileNotFoundException {
       final Patch<String> patch = changeManager.getKeywordChanges(entity);
 
       final Map<String, Integer> vNewkeywords = new HashMap<>();
@@ -293,7 +293,7 @@ public class PropertyReadHelper {
       return merged;
    }
 
-   void getTestSourceAffection(final ChangeProperty property, final Set<String> calls, final PeassFolders folders, final Map<ChangedEntity, ClazzChangeData> changes)
+   void getTestSourceAffection(final ChangeProperty property, final Set<String> calls, final PeassFolders folders, final Map<MethodCall, ClazzChangeData> changes)
          throws FileNotFoundException {
       final ClazzChangeData clazzChangeData = changes.get(testClazz);
       if (clazzChangeData != null) {
@@ -309,11 +309,11 @@ public class PropertyReadHelper {
       }
 
       // Prinzipiell: Man müsste schauen, wo der Quelltext liegt, nicht, wie er heißt..
-      for (final Entry<ChangedEntity, ClazzChangeData> changedEntity : changes.entrySet()) {
+      for (final Entry<MethodCall, ClazzChangeData> changedEntity : changes.entrySet()) {
          // final Set<String> guessedTypes = new PropertyChangeGuesser().getGuesses(folders, changedEntity);
          // property.getGuessedTypes().addAll(guessedTypes);
 
-         final ChangedEntity outerClazz = changedEntity.getKey();
+         final MethodCall outerClazz = changedEntity.getKey();
          if (!changedEntity.getValue().isOnlyMethodChange()) {
             for (final String call : calls) {
                final String clazzCall = call.substring(0, call.indexOf("#"));
@@ -325,13 +325,13 @@ public class PropertyReadHelper {
             for (final Map.Entry<String, Set<String>> changedClazz : changedEntity.getValue().getChangedMethods().entrySet()) {
                for (final String changedMethod : changedClazz.getValue()) {
                   String fqn;
-                  if (changedMethod.contains(ChangedEntity.METHOD_SEPARATOR)) {
-                     fqn = outerClazz.getPackage() + "." + changedClazz.getKey() + ChangedEntity.CLAZZ_SEPARATOR + changedMethod;
+                  if (changedMethod.contains(MethodCall.METHOD_SEPARATOR)) {
+                     fqn = outerClazz.getPackage() + "." + changedClazz.getKey() + MethodCall.CLAZZ_SEPARATOR + changedMethod;
                   } else {
-                     fqn = outerClazz.getPackage() + "." + changedClazz.getKey() + ChangedEntity.METHOD_SEPARATOR + changedMethod;
+                     fqn = outerClazz.getPackage() + "." + changedClazz.getKey() + MethodCall.METHOD_SEPARATOR + changedMethod;
                   }
-                  if (fqn.contains("(") && changedClazz.getKey().contains(ChangedEntity.CLAZZ_SEPARATOR)) {
-                     final String innerParameter = changedClazz.getKey().substring(0, changedClazz.getKey().lastIndexOf(ChangedEntity.CLAZZ_SEPARATOR));
+                  if (fqn.contains("(") && changedClazz.getKey().contains(MethodCall.CLAZZ_SEPARATOR)) {
+                     final String innerParameter = changedClazz.getKey().substring(0, changedClazz.getKey().lastIndexOf(MethodCall.CLAZZ_SEPARATOR));
                      fqn = fqn.substring(0, fqn.indexOf("(") + 1) + innerParameter + "," + fqn.substring(fqn.indexOf("(") + 1);
                   }
                   if (calls.contains(fqn)) {
@@ -387,8 +387,8 @@ public class PropertyReadHelper {
       property.setCallsOld(traceOld.size());
    }
 
-   private void processFoundCall(final ChangeProperty property, final Entry<ChangedEntity, ClazzChangeData> changedEntity) {
-      final ChangedEntity call = changedEntity.getKey();
+   private void processFoundCall(final ChangeProperty property, final Entry<MethodCall, ClazzChangeData> changedEntity) {
+      final MethodCall call = changedEntity.getKey();
       if (call.getClazz().toLowerCase().contains("test")) {
          property.setAffectsTestSource(true);
       } else {
@@ -398,7 +398,7 @@ public class PropertyReadHelper {
       for (final Map.Entry<String, Set<String>> methods : changedEntity.getValue().getChangedMethods().entrySet()) {
          if (methods.getValue() != null && methods.getValue().size() > 0) {
             for (final String method : methods.getValue()) {
-               property.getAffectedMethods().add(packageName + "." + methods.getKey() + ChangedEntity.METHOD_SEPARATOR + method);
+               property.getAffectedMethods().add(packageName + "." + methods.getKey() + MethodCall.METHOD_SEPARATOR + method);
             }
          } else {
             property.getAffectedMethods().add(call.getJavaClazzName());

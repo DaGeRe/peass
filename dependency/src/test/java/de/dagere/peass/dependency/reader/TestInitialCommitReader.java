@@ -8,11 +8,11 @@ import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.dependency.DependencyManager;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
@@ -38,20 +38,20 @@ public class TestInitialCommitReader {
 
       StaticTestSelection dependencyResult = new StaticTestSelection();
       dependencyResult.getInitialcommit().setCommit(COMMIT1);
-      dependencyResult.getInitialcommit().addDependency(TESTCASE, new ChangedEntity("de.dagere.peass.MyCallee#method"));
+      dependencyResult.getInitialcommit().addDependency(TESTCASE, new MethodCall("de.dagere.peass.MyCallee#method"));
 
       CommitStaticSelection staticSelection = new CommitStaticSelection();
-      staticSelection.getChangedClazzes().put(new ChangedEntity("de.dagere.peass.MyCallee#method"), new TestSet(TESTCASE));
+      staticSelection.getChangedClazzes().put(new MethodCall("de.dagere.peass.MyCallee#method"), new TestSet(TESTCASE));
       dependencyResult.getCommits().put(COMMIT2, staticSelection);
 
       InitialCommitReader reader = new InitialCommitReader(dependencyResult, dependencyManagerMock, Mockito.mock(CommitIterator.class));
       reader.readCompletedCommits(new CommitComparatorInstance(Arrays.asList(new String[] { COMMIT1, COMMIT2 })));
 
-      Set<ChangedEntity> currentlyCalledClasses = currentTestDependencies.getDependencyMap().get(TESTCASE).getCalledClasses();
+      Set<MethodCall> currentlyCalledClasses = currentTestDependencies.getDependencyMap().get(TESTCASE).getCalledClasses();
       MatcherAssert.assertThat(currentlyCalledClasses,
-            IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.MyCallee")));
+            IsIterableContaining.hasItem(new MethodCall("de.dagere.peass.MyCallee")));
       MatcherAssert.assertThat(currentlyCalledClasses,
-            IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.MyTest")));
+            IsIterableContaining.hasItem(new MethodCall("de.dagere.peass.MyTest")));
 
    }
 

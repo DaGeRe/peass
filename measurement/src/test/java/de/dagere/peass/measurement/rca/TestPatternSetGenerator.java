@@ -7,9 +7,9 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.testData.TestMethodCall;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
 public class TestPatternSetGenerator {
