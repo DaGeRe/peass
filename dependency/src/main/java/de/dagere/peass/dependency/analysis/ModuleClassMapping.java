@@ -10,8 +10,8 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.nodeDiffGenerator.clazzFinding.ClazzFileFinder;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.TestExecutor;
 

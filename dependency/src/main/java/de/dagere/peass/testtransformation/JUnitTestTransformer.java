@@ -58,13 +58,13 @@ import com.github.javaparser.ast.type.TypeParameter;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
+import de.dagere.nodeDiffGenerator.clazzFinding.ClazzFileFinder;
 import de.dagere.nodeDiffGenerator.data.TestCase;
 import de.dagere.nodeDiffGenerator.data.TestClazzCall;
 import de.dagere.nodeDiffGenerator.data.TestMethodCall;
 import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.RunnableTestInformation;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestSet;

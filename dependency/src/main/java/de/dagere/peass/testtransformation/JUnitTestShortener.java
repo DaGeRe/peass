@@ -27,9 +27,9 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
+import de.dagere.nodeDiffGenerator.clazzFinding.ClazzFileFinder;
+import de.dagere.nodeDiffGenerator.clazzFinding.ClazzFinder;
 import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.peass.dependency.ClazzFileFinder;
-import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 
 public class JUnitTestShortener implements AutoCloseable {

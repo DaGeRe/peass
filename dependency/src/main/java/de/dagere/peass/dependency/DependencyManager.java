@@ -37,6 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.nodeDiffGenerator.clazzFinding.ClazzFileFinder;
 import de.dagere.nodeDiffGenerator.data.MethodCall;
 import de.dagere.nodeDiffGenerator.data.TestCase;
 import de.dagere.nodeDiffGenerator.data.TestClazzCall;
