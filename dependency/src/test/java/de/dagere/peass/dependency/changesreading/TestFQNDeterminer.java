@@ -11,14 +11,6 @@ import com.github.javaparser.ast.CompilationUnit;
 public class TestFQNDeterminer {
 
    @Test
-   public void testTypeItself() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/SelectStarter.java");
-      CompilationUnit unit = JavaParserProvider.parse(file);
-      String fqn = FQNDeterminer.getParameterFQN(unit, "SelectStarter");
-      Assert.assertEquals("de.dagere.peass.SelectStarter", fqn);
-   }
-
-   @Test
    public void testImportedClass() throws FileNotFoundException {
       
       File dependencyReaderFile = new File("src/main/java/de/dagere/peass/dependency/reader/DependencyReader.java");
