@@ -23,8 +23,8 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 
 import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffGenerator.sourceReading.SourceReadUtils;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
-import de.dagere.peass.dependency.changesreading.SourceReadUtils;
 
 /**
  * Utility for parsing java source by javaparser
