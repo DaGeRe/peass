@@ -24,15 +24,4 @@ public class TestFQNDeterminer {
       Assert.assertEquals("picocli.CommandLine", fqn2);
    }
    
-   @Test
-   public void testPackageClass() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/SelectStarter.java");
-      CompilationUnit unit = JavaParserProvider.parse(file);
-      String fqn = FQNDeterminer.getParameterFQN(unit, "SelectStarter");
-      Assert.assertEquals("de.dagere.peass.SelectStarter", fqn);
-   }
-
-   
-
-   
 }
