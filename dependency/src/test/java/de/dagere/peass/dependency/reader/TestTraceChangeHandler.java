@@ -6,8 +6,8 @@ import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.TestSet;

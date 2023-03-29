@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

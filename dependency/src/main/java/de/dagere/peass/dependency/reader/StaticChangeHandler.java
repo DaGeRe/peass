@@ -10,9 +10,9 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.TestClazzCall;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;

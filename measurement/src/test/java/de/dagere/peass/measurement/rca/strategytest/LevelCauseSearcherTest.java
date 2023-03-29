@@ -13,8 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;

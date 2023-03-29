@@ -32,10 +32,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import de.dagere.nodeDiffGenerator.data.TestCase;
-import de.dagere.nodeDiffGenerator.data.TestClazzCall;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
-import de.dagere.nodeDiffGenerator.data.serialization.TestClazzCallKeyDeserializer;
+import de.dagere.nodeDiffDetector.data.TestCase;
+import de.dagere.nodeDiffDetector.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.serialization.TestClazzCallKeyDeserializer;
 
 /**
  * Represents a set of tests which are executed for one version by its class and its list of methods.

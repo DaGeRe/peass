@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.ci.logHandling.LogRedirector;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;

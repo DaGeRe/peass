@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.dagere.nodeDiffGenerator.data.MethodCallHelper;
+import de.dagere.nodeDiffDetector.data.MethodCallHelper;
 import kieker.analysis.stage.DynamicEventDispatcher;
 import kieker.analysis.stage.IEventMatcher;
 import kieker.analysis.stage.ImplementsEventMatcher;

@@ -3,7 +3,7 @@ package de.dagere.peass.dependency;
 import java.io.File;
 import java.io.IOException;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.TestExecutor;

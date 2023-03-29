@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ExecutorCreator;

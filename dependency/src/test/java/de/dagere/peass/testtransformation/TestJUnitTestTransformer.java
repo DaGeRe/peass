@@ -9,8 +9,8 @@ import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.nodeDiffGenerator.data.TestClazzCall;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 
 public class TestJUnitTestTransformer {

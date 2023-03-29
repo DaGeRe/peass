@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.dagere.nodeDiffGenerator.data.TestCase;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestCase;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.InitialCommit;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;

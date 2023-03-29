@@ -6,8 +6,8 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.nodeDiffGenerator.data.TestCase;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestCase;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;

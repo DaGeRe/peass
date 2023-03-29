@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 
 import com.google.common.io.Files;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.PropertyReadHelper;

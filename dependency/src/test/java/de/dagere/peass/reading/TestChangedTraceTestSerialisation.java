@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.dagere.nodeDiffGenerator.data.TestClazzCall;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;

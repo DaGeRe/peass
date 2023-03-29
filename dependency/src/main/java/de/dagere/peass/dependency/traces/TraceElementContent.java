@@ -3,8 +3,8 @@ package de.dagere.peass.dependency.traces;
 import java.util.Arrays;
 import java.util.List;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.MethodCallHelper;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCallHelper;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.requitur.content.Content;
 

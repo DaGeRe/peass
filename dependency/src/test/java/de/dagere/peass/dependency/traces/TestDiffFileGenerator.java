@@ -11,8 +11,8 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;

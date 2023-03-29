@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.FixedCommitConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.statistics.StatisticUtil;

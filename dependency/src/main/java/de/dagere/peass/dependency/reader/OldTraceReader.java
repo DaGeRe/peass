@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.InitialCallList;

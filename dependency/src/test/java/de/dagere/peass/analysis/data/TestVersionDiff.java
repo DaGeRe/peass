@@ -13,7 +13,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.Files;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 

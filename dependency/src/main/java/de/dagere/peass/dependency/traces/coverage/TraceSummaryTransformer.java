@@ -2,7 +2,7 @@ package de.dagere.peass.dependency.traces.coverage;
 
 import java.util.List;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.dependency.traces.TraceElementContent;
 import de.dagere.requitur.content.Content;
 

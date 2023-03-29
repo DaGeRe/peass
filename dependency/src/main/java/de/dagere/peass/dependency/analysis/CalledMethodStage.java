@@ -13,9 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffGenerator.clazzFinding.ClazzFileFinder;
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.MethodCallHelper;
+import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCallHelper;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import kieker.analysis.trace.AbstractTraceProcessingStage;
 import kieker.model.repository.SystemModelRepository;

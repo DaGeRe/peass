@@ -6,9 +6,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.TestCase;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.TestCase;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 
 /**
  * Manages data about test existence changes, i.e. tests that are added or removed

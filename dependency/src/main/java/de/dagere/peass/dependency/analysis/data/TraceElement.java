@@ -16,8 +16,8 @@
  */
 package de.dagere.peass.dependency.analysis.data;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.MethodCallHelper;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCallHelper;
 
 /**
  * Represents an element of a trace, i.e. one call with its parameters and the depth in the stack of the call

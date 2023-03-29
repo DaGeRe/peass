@@ -13,7 +13,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;

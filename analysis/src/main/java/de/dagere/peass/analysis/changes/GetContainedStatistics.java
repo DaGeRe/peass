@@ -8,7 +8,7 @@ import java.util.Set;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.utils.Constants;
 

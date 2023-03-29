@@ -8,8 +8,8 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.diffDetection.FileComparisonUtil;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.diffDetection.FileComparisonUtil;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.traces.diff.DiffUtilJava;
 import difflib.DiffUtils;

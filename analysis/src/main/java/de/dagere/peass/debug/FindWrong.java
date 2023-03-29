@@ -9,7 +9,7 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.analysis.groups.Classification;
 import de.dagere.peass.analysis.groups.TestcaseClass;
 import de.dagere.peass.analysis.groups.VersionClass;

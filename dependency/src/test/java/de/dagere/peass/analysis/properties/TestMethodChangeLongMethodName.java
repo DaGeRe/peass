@@ -12,7 +12,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.ExecutionConfig;
 
 public class TestMethodChangeLongMethodName {

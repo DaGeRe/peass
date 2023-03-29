@@ -12,7 +12,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 
 public class DiffFileGeneraturTestUtil {
    public static TraceFileMapping generateFiles(File rawFileFolder, TestMethodCall test, String ending, boolean writeExpanded, boolean change) throws IOException {

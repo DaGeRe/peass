@@ -10,7 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;

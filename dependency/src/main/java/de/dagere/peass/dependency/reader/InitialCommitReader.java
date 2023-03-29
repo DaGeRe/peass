@@ -10,10 +10,10 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.TestCase;
-import de.dagere.nodeDiffGenerator.data.TestClazzCall;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.TestCase;
+import de.dagere.nodeDiffDetector.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.CalledMethods;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;

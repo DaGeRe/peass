@@ -12,8 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.nodeDiffGenerator.data.TestCase;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestCase;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.dependencyprocessors.VersionComparator;

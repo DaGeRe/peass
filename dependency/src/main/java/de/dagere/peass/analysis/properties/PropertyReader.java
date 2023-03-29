@@ -11,8 +11,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.FixedCommitConfig;

@@ -12,9 +12,9 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 
-import de.dagere.nodeDiffGenerator.clazzFinding.ClazzFileFinder;
-import de.dagere.nodeDiffGenerator.data.TestCase;
-import de.dagere.nodeDiffGenerator.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
+import de.dagere.nodeDiffDetector.data.TestCase;
+import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestSet;

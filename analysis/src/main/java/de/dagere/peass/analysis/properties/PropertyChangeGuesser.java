@@ -11,9 +11,9 @@ import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 
-import de.dagere.nodeDiffGenerator.clazzFinding.ClazzFileFinder;
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.diffDetection.FileComparisonUtil;
+import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.diffDetection.FileComparisonUtil;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;

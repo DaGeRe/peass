@@ -15,7 +15,7 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.analysis.helper.read.CommitData;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.MeasurementConfig;

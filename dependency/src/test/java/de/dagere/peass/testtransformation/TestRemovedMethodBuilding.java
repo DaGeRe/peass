@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.RunnableTestInformation;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;

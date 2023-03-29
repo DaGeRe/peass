@@ -3,8 +3,8 @@ package de.dagere.peass.dependency.jmh;
 import java.io.File;
 import java.io.IOException;
 
-import de.dagere.nodeDiffGenerator.data.TestCase;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestCase;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.AllModulePomPreparer;

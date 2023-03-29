@@ -11,7 +11,7 @@ import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.VMResult;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 
 public class DummyKoPeMeDataCreator {
    

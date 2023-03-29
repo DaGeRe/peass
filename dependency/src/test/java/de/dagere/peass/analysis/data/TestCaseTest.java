@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 
 public class TestCaseTest {
    

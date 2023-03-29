@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import de.dagere.nodeDiffGenerator.data.TestClazzCall;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.RunnableTestInformation;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;

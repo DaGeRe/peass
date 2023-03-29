@@ -2,7 +2,7 @@ package de.dagere.peass.measurement.rca.kieker;
 
 import java.io.File;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;

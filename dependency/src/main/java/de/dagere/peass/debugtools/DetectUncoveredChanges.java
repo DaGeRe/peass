@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;

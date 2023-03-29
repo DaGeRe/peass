@@ -10,7 +10,7 @@ import org.hamcrest.io.FileMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.config.WorkloadType;

@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.TestCase;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.TestCase;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionCommit;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;

@@ -4,7 +4,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 
 public class TestTestSet {
    

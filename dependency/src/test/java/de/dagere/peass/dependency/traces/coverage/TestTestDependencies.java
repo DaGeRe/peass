@@ -9,8 +9,8 @@ import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;

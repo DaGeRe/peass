@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;

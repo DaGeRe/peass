@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.dagere.kopeme.kopemedata.VMResult;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 
 /**
  * Represents an pair of measurement results that should be evaluated, i.e. the commits of both measurements and its results.

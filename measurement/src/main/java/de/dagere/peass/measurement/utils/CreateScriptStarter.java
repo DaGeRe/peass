@@ -16,8 +16,8 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.nodeDiffGenerator.data.TestClazzCall;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.analysis.changes.Changes;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;

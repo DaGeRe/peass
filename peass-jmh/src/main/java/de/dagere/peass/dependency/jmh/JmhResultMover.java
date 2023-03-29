@@ -3,7 +3,7 @@ package de.dagere.peass.dependency.jmh;
 import java.io.File;
 import java.io.FileFilter;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.folders.PeassFolders;

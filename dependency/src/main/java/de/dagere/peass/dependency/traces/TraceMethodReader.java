@@ -16,9 +16,9 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
-import de.dagere.nodeDiffGenerator.clazzFinding.ClazzFileFinder;
-import de.dagere.nodeDiffGenerator.clazzFinding.ClazzFinder;
-import de.dagere.nodeDiffGenerator.sourceReading.SourceReadUtils;
+import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
+import de.dagere.nodeDiffDetector.clazzFinding.ClazzFinder;
+import de.dagere.nodeDiffDetector.sourceReading.SourceReadUtils;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;

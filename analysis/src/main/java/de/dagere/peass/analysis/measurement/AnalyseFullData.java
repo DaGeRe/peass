@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;

@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;

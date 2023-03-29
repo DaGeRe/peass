@@ -1,6 +1,6 @@
 package de.dagere.peass.dependency.analysis.data;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 
 public class EntityUtil {
    public static MethodCall determineEntity(final String clazzMethodName) {

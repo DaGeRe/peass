@@ -23,7 +23,7 @@ import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
 
 /**

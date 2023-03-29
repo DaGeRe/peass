@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 
 public class Classification {
    private static final Logger LOG = LogManager.getLogger(Classification.class);

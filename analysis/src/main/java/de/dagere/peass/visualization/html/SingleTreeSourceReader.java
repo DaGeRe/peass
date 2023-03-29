@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.javaparser.utils.Log;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.analysis.properties.ChangedMethodManager;
 import de.dagere.peass.measurement.rca.data.BasicNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;

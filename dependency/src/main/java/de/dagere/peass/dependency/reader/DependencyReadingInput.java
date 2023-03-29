@@ -2,7 +2,7 @@ package de.dagere.peass.dependency.reader;
 
 import java.util.Map;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 
 public class DependencyReadingInput {

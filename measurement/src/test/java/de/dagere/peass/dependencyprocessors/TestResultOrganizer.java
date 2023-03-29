@@ -16,7 +16,7 @@ import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.Kopemedata;
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizer;

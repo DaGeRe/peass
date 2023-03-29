@@ -3,7 +3,7 @@ package de.dagere.peass.ci;
 import java.io.Serializable;
 import java.util.Set;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 
 public class RTSResult implements Serializable {
    private static final long serialVersionUID = 700041797958688300L;

@@ -6,7 +6,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 
 public class StrategyTestUtil {
    public static void checkChanges(final Set<MethodCall> changes) {

@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 
 /**
  * Since GitHub actions fails in one test without the option to step into the problem, and since this is not reproducible using GitHubs local docker container, this class tries to

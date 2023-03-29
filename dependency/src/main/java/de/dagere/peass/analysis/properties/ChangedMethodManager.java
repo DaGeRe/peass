@@ -8,7 +8,7 @@ import java.nio.file.StandardOpenOption;
 
 import org.apache.commons.io.FileUtils;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 
 public class ChangedMethodManager {
 

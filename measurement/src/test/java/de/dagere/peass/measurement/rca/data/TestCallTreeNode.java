@@ -3,7 +3,7 @@ package de.dagere.peass.measurement.rca.data;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.nodeDiffGenerator.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.helper.TreeBuilder;
 import de.dagere.peass.measurement.rca.helper.TreeBuilderBig;

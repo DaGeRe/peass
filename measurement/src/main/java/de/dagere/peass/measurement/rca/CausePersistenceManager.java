@@ -3,7 +3,7 @@ package de.dagere.peass.measurement.rca;
 import java.io.File;
 import java.io.IOException;
 
-import de.dagere.nodeDiffGenerator.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
