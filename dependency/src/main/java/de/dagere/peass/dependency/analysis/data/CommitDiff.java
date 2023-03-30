@@ -35,6 +35,7 @@ import de.dagere.peass.config.ExecutionConfig;
 public class CommitDiff {
 
    public static final String JAVA_ENDING = ".java";
+   public static final String SCALA_ENDING = ".scala";
 
    private static final Logger LOG = LogManager.getLogger(CommitDiff.class);
 
@@ -72,29 +73,40 @@ public class CommitDiff {
       if (currentFileName.endsWith("pom.xml")) {
          setPomChanged(true);
       } else {
-         if (currentFileName.endsWith(JAVA_ENDING)) {
+         if (currentFileName.endsWith(JAVA_ENDING)) { 
             String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - JAVA_ENDING.length());
-            String containedPath = null;
-            for (String path : config.getAllClazzFolders()) {
-               if (fileNameWithoutExtension.contains(path)) {
-                  containedPath = path;
-                  break;
-               }
-            }
-
-            if (containedPath != null) {
-               final int indexOf = currentFileName.indexOf(containedPath);
-               if (indexOf == -1) {
-                  LOG.error("Did not find any of the class pathes in the changed filename: {} classpathes: {} ", currentFileName, config.getAllClazzFolders());
-               } else {
-                  addChange(currentFileName, containedPath, indexOf);
-               }
-            } else {
-               LOG.info("Did not find matching class folder for file {}", currentFileName);
-            }
-
+            String containedPath = checkContainedPath(fileNameWithoutExtension, config);
+            addContainedPathFile(currentFileName, config, containedPath);
+         } else if (currentFileName.endsWith(SCALA_ENDING)) {
+            String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - SCALA_ENDING.length());
+            String containedPath = checkContainedPath(fileNameWithoutExtension, config);
+            addContainedPathFile(currentFileName, config, containedPath);
          }
       }
+   }
+
+   private void addContainedPathFile(final String currentFileName, final ExecutionConfig config, String containedPath) {
+      if (containedPath != null) {
+         final int indexOf = currentFileName.indexOf(containedPath);
+         if (indexOf == -1) {
+            LOG.error("Did not find any of the class pathes in the changed filename: {} classpathes: {} ", currentFileName, config.getAllClazzFolders());
+         } else {
+            addChange(currentFileName, containedPath, indexOf);
+         }
+      } else {
+         LOG.info("Did not find matching class folder for file {}", currentFileName);
+      }
+   }
+
+   private String checkContainedPath(final String fileNameWithoutExtension, final ExecutionConfig config) {
+      String containedPath = null;
+      for (String path : config.getAllClazzFolders()) {
+         if (fileNameWithoutExtension.contains(path)) {
+            containedPath = path;
+            break;
+         }
+      }
+      return containedPath;
    }
 
    private void addChange(final String currentFileName, final String containedPath, final int indexOf) {
@@ -128,7 +140,9 @@ public class CommitDiff {
    }
 
    public static String replaceClazzFolderFromName(final String fileName, final String classFolderName) {
-      String tempClazzName = fileName.replace(JAVA_ENDING, "");
+      String tempClazzName = fileName
+            .replace(JAVA_ENDING, "")
+            .replace(SCALA_ENDING, "");
       tempClazzName = tempClazzName.replaceAll(classFolderName, "");
       if (tempClazzName.startsWith(File.separator) || tempClazzName.startsWith("/")) {
          tempClazzName = tempClazzName.substring(1);
