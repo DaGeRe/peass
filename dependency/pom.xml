@@ -65,7 +65,7 @@
   <dependencies>
     <dependency>
       <groupId>de.dagere.peass</groupId>
-      <artifactId>nodeDiffGenerator</artifactId>
+      <artifactId>nodeDiffDetector</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
