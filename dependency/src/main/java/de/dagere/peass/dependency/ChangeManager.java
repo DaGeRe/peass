@@ -118,21 +118,6 @@ public class ChangeManager {
    }
 
    /**
-    * Attention: assumes, that getChanges() has been called or that somehow different the lastSourcesFolder has been filled
-    * 
-    * @param clazz
-    * @return
-    * @throws FileNotFoundException
-    */
-   public Patch<String> getKeywordChanges(final MethodCall clazz) throws FileNotFoundException {
-      final String method = MethodReader.getMethodSource(folders.getProjectFolder(), clazz, clazz.getMethod(), config);
-      final String methodOld = MethodReader.getMethodSource(folders.getOldSources(), clazz, clazz.getMethod(), config);
-
-      final Patch<String> patch = DiffUtils.diff(Arrays.asList(method.split("\n")), Arrays.asList(methodOld.split("\n")));
-      return patch;
-   }
-
-   /**
     * Returns all changed classes with the corresponding changed methods. If the set of a class is empty, the whole class was changed and all tests using any method of the class
     * need to be re-evaluated.
     * 

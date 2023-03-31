@@ -17,6 +17,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
 import de.dagere.nodeDiffDetector.sourceReading.SourceReadUtils;
+import de.dagere.nodeDiffDetector.typeFinding.TypeCache;
 import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.nodeDiffDetector.typeFinding.TypeFinder;
 import de.dagere.nodeDiffDetector.utils.JavaParserProvider;

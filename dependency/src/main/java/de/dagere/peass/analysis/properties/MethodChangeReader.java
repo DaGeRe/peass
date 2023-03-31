@@ -32,8 +32,8 @@ public class MethodChangeReader {
       this.clazz = clazz;
       this.commit = commit;
       
-      method = MethodReader.getMethodSource(sourceFolder, clazz, clazz.getMethod(), config);
-      methodOld = MethodReader.getMethodSource(oldSourceFolder, clazz, clazz.getMethod(), config);
+      method = MethodReader.getMethodSource(sourceFolder, clazz, config);
+      methodOld = MethodReader.getMethodSource(oldSourceFolder, clazz, config);
    }
 
    public void readMethodChangeData() throws IOException {
