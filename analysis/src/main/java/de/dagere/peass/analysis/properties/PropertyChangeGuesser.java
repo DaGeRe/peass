@@ -12,13 +12,13 @@ import java.util.Set;
 import com.github.javaparser.ast.CompilationUnit;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.diffDetection.ClazzChangeData;
 import de.dagere.nodeDiffDetector.diffDetection.FileComparisonUtil;
 import de.dagere.nodeDiffDetector.sourceReading.MethodReader;
 import de.dagere.nodeDiffDetector.typeFinding.TypeCache;
 import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.folders.PeassFolders;
 import difflib.Delta;
 import difflib.DiffUtils;

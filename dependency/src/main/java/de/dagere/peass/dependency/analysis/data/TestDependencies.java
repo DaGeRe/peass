@@ -29,7 +29,7 @@ import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestCase;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.nodeDiffDetector.data.Type;
-import de.dagere.peass.dependency.changesreading.ClazzChangeData;
+import de.dagere.nodeDiffDetector.diffDetection.ClazzChangeData;
 
 /**
  * Represents information about the tests and their dependencies, i.e. the classes they call.

@@ -16,11 +16,11 @@ import org.mockito.Mockito;
 
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.nodeDiffDetector.data.Type;
+import de.dagere.nodeDiffDetector.diffDetection.ClazzChangeData;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;

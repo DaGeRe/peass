@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.nodeDiffDetector.data.Type;
+import de.dagere.nodeDiffDetector.diffDetection.ClazzChangeData;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
-import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 
 public class TestTestDependencies {
    

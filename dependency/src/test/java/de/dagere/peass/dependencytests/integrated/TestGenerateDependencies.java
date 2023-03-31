@@ -14,11 +14,11 @@ import org.mockito.Mockito;
 import com.github.javaparser.ParseException;
 
 import de.dagere.nodeDiffDetector.data.Type;
+import de.dagere.nodeDiffDetector.diffDetection.ClazzChangeData;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.reader.CommitKeeper;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencytests.DependencyDetectorTestUtil;

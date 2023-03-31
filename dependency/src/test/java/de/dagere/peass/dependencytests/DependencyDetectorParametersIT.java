@@ -14,8 +14,8 @@ import org.mockito.Mockito;
 import com.github.javaparser.ParseException;
 
 import de.dagere.nodeDiffDetector.data.Type;
+import de.dagere.nodeDiffDetector.diffDetection.ClazzChangeData;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.CommitIterator;

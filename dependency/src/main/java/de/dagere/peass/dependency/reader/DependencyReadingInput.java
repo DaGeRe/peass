@@ -3,7 +3,7 @@ package de.dagere.peass.dependency.reader;
 import java.util.Map;
 
 import de.dagere.nodeDiffDetector.data.Type;
-import de.dagere.peass.dependency.changesreading.ClazzChangeData;
+import de.dagere.nodeDiffDetector.diffDetection.ClazzChangeData;
 
 public class DependencyReadingInput {
    private final Map<Type, ClazzChangeData> changes;
