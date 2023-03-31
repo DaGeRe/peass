@@ -44,4 +44,14 @@ public class TypeCache {
       final Node method = SourceReadUtils.getMethod(call, cu);
       return method;
    }
+   
+   public String getMethodSource(final MethodCall entity, final String method, File typeFile) throws FileNotFoundException {
+      CompilationUnit typeUnit = getCU(typeFile);
+      final Node node = SourceReadUtils.getMethod(entity, typeUnit);
+      if (node != null) {
+         return node.toString();
+      } else {
+         return "";
+      }
+   }
 }

@@ -18,6 +18,7 @@ import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
+import de.dagere.peass.dependency.traces.TypeCache;
 import de.dagere.peass.folders.PeassFolders;
 import difflib.Delta;
 import difflib.DiffUtils;
@@ -34,15 +35,14 @@ public class PropertyChangeGuesser {
       final File fileOld = finder.getSourceFile(folders.getOldSources(), changedEntity.getKey());
 
       if (file != null && fileOld != null && file.exists() && fileOld.exists()) {
-         final CompilationUnit clazzUnit = JavaParserProvider.parse(file);
-         final CompilationUnit clazzUnitOld = JavaParserProvider.parse(fileOld);
+         TypeCache cache = new TypeCache();
 
          for (Map.Entry<String, Set<String>> changedClazz : changedEntity.getValue().getChangedMethods().entrySet()) {
             // If only method change..
             if (changedClazz.getValue() != null) {
                for (String method : changedClazz.getValue()) {
-                  final String source = MethodReader.getMethodSource(changedEntity.getKey(), method, clazzUnit);
-                  final String sourceOld = MethodReader.getMethodSource(changedEntity.getKey(), method, clazzUnitOld);
+                  final String source = cache.getMethodSource(changedEntity.getKey(), method, file);
+                  final String sourceOld = cache.getMethodSource(changedEntity.getKey(), method, fileOld);
                   final Patch<String> changedLinesMethod = DiffUtils.diff(Arrays.asList(sourceOld.split("\n")), Arrays.asList(source.split("\n")));
 
                   for (final Delta<String> delta : changedLinesMethod.getDeltas()) {
