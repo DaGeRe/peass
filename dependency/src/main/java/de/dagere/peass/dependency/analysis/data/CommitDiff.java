@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.utils.Endings;
 import de.dagere.peass.config.ExecutionConfig;
 
 /**
@@ -33,9 +34,6 @@ import de.dagere.peass.config.ExecutionConfig;
  *
  */
 public class CommitDiff {
-
-   public static final String JAVA_ENDING = ".java";
-   public static final String SCALA_ENDING = ".scala";
 
    private static final Logger LOG = LogManager.getLogger(CommitDiff.class);
 
@@ -73,12 +71,12 @@ public class CommitDiff {
       if (currentFileName.endsWith("pom.xml")) {
          setPomChanged(true);
       } else {
-         if (currentFileName.endsWith(JAVA_ENDING)) { 
-            String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - JAVA_ENDING.length());
+         if (currentFileName.endsWith(Endings.JAVA)) { 
+            String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - Endings.JAVA.length());
             String containedPath = checkContainedPath(fileNameWithoutExtension, config);
             addContainedPathFile(currentFileName, config, containedPath);
-         } else if (currentFileName.endsWith(SCALA_ENDING)) {
-            String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - SCALA_ENDING.length());
+         } else if (currentFileName.endsWith(Endings.SCALA)) {
+            String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - Endings.SCALA.length());
             String containedPath = checkContainedPath(fileNameWithoutExtension, config);
             addContainedPathFile(currentFileName, config, containedPath);
          }
@@ -141,8 +139,8 @@ public class CommitDiff {
 
    public static String replaceClazzFolderFromName(final String fileName, final String classFolderName) {
       String tempClazzName = fileName
-            .replace(JAVA_ENDING, "")
-            .replace(SCALA_ENDING, "");
+            .replace(Endings.JAVA, "")
+            .replace(Endings.SCALA, "");
       tempClazzName = tempClazzName.replaceAll(classFolderName, "");
       if (tempClazzName.startsWith(File.separator) || tempClazzName.startsWith("/")) {
          tempClazzName = tempClazzName.substring(1);
