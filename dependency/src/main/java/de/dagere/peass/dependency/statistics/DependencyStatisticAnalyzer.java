@@ -20,6 +20,7 @@ import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestCase;
 import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -100,7 +101,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
       // final int pruningRunTests = 0;
       for (final Entry<String, CommitStaticSelection> version : versions.entrySet()) {
          final Set<TestCase> currentIterationTests = new HashSet<>();
-         for (final Map.Entry<MethodCall, TestSet> dependency : version.getValue().getChangedClazzes().entrySet()) {
+         for (final Map.Entry<Type, TestSet> dependency : version.getValue().getChangedClazzes().entrySet()) {
             for (final Entry<TestClazzCall, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
                final String testclass = testcase.getKey().getClazz();
                for (final String method : testcase.getValue()) {

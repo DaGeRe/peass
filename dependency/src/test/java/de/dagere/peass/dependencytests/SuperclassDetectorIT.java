@@ -22,6 +22,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
@@ -52,8 +53,8 @@ public class SuperclassDetectorIT {
    public void testSuperclassChange() throws IOException, ParseException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File secondVersion = new File(VERSIONS_FOLDER, "superclass_changed");
 
-      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
-      changes.put(new MethodCall("defaultpackage.NormalSuperclass", ""), new ClazzChangeData("defaultpackage.NormalSuperclass", false));
+      final Map<Type, ClazzChangeData> changes = new TreeMap<>();
+      changes.put(new Type("defaultpackage.NormalSuperclass", ""), new ClazzChangeData("defaultpackage.NormalSuperclass", false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);

@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import com.google.common.io.Files;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.PropertyReadHelper;
@@ -58,7 +59,7 @@ public class TestPropertyReadHelper {
       File projectFolder = new File("target/current");
       projectFolder.mkdirs();
       Files.touch(new File(projectFolder, "pom.xml"));
-      PropertyReadHelper helper = new PropertyReadHelper(new ExecutionConfig(), config, new MethodCall("Test"), changeMock, projectFolder, null, null, null);
+      PropertyReadHelper helper = new PropertyReadHelper(new ExecutionConfig(), config, new Type("Test", ""), changeMock, projectFolder, null, null, null);
       ChangeProperty emptyProperty = helper.read();
       MatcherAssert.assertThat(emptyProperty, IsNull.notNullValue());
       Assert.assertEquals("myTestMethod", emptyProperty.getMethod());

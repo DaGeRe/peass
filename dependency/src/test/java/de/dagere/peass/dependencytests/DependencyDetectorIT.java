@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
@@ -56,7 +56,7 @@ public class DependencyDetectorIT {
    @Test
    public void testNoChange() throws Exception {
 
-      final Map<MethodCall, ClazzChangeData> changes = new HashMap<>();
+      final Map<Type, ClazzChangeData> changes = new HashMap<>();
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
 
@@ -90,7 +90,7 @@ public class DependencyDetectorIT {
    public void testTestChange() throws Exception {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "changed_test");
 
-      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
+      final Map<Type, ClazzChangeData> changes = new TreeMap<>();
       DependencyDetectorTestUtil.addChange(changes, "", "defaultpackage.TestMe", "testMe");
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
@@ -124,8 +124,8 @@ public class DependencyDetectorIT {
    public void testClassChange() throws Exception {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "changed_class");
 
-      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
-      changes.put(new MethodCall("defaultpackage.NormalDependency", ""), new ClazzChangeData("defaultpackage.NormalDependency", false));
+      final Map<Type, ClazzChangeData> changes = new TreeMap<>();
+      changes.put(new Type("defaultpackage.NormalDependency", ""), new ClazzChangeData("defaultpackage.NormalDependency", false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
@@ -147,7 +147,7 @@ public class DependencyDetectorIT {
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(dependencies, "defaultpackage.NormalDependency", DependencyTestConstants.VERSION_1);
 
       System.out.println(testMe);
-      final MethodCall change = dependencies.getCommits().get(DependencyTestConstants.VERSION_1).getChangedClazzes().keySet().iterator().next();
+      final Type change = dependencies.getCommits().get(DependencyTestConstants.VERSION_1).getChangedClazzes().keySet().iterator().next();
       Assert.assertEquals("defaultpackage.NormalDependency", change.toString());
       Assert.assertEquals("defaultpackage.TestMe#testMe", testMe.getTestMethods().iterator().next().getExecutable());
    }
@@ -163,8 +163,8 @@ public class DependencyDetectorIT {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_method");
       final File thirdVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_method_change");
 
-      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
-      changes.put(new MethodCall("defaultpackage.TestMe", ""), new ClazzChangeData("defaultpackage.TestMe", false));
+      final Map<Type, ClazzChangeData> changes = new TreeMap<>();
+      changes.put(new Type("defaultpackage.TestMe", ""), new ClazzChangeData("defaultpackage.TestMe", false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
@@ -192,8 +192,8 @@ public class DependencyDetectorIT {
    public void testClassRemoval() throws Exception {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_class");
 
-      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
-      final MethodCall changedEntity = new MethodCall("defaultpackage.TestMe", "");
+      final Map<Type, ClazzChangeData> changes = new TreeMap<>();
+      final Type changedEntity = new Type("defaultpackage.TestMe", "");
       changes.put(changedEntity, new ClazzChangeData(changedEntity, false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
@@ -207,9 +207,9 @@ public class DependencyDetectorIT {
    }
 
    public static void checkClassRemoved(final DependencyReader reader) {
-      final Map<MethodCall, TestSet> changedClazzes = reader.getDependencies().getCommits().get(DependencyTestConstants.VERSION_1).getChangedClazzes();
+      final Map<Type, TestSet> changedClazzes = reader.getDependencies().getCommits().get(DependencyTestConstants.VERSION_1).getChangedClazzes();
       System.out.println("Ergebnis: " + changedClazzes);
-      final MethodCall key = new MethodCall("defaultpackage.TestMe", "");
+      final Type key = new Type("defaultpackage.TestMe", "");
       System.out.println("Hash: " + key.hashCode());
       final TestSet testSet = changedClazzes.get(key);
       System.out.println("Testset: " + testSet);

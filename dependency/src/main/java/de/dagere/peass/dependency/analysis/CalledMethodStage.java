@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.MethodCallHelper;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import kieker.analysis.trace.AbstractTraceProcessingStage;
@@ -30,7 +31,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
 
    private static final Logger LOG = LogManager.getLogger(CalledMethodStage.class);
 
-   private final Map<MethodCall, Set<String>> calledMethods = new HashMap<>();
+   private final Map<Type, Set<String>> calledMethods = new HashMap<>();
    private final ArrayList<TraceElement> calls = new ArrayList<>();
    private final String prefix;
    private final ModuleClassMapping mapping;
@@ -82,7 +83,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
    private void addCalledMethod(final String fullClassname, final String methodname, final TraceElement traceelement) {
       final String outerClazzName = TypeFileFinder.getOuterClass(fullClassname);
       final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
-      final MethodCall fullClassEntity = new MethodCall(fullClassname, moduleOfClass);
+      final Type fullClassEntity = new Type(fullClassname, moduleOfClass);
       traceelement.setModule(moduleOfClass);
       Set<String> currentMethodSet = calledMethods.get(fullClassEntity);
       if (currentMethodSet == null) {
@@ -134,7 +135,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
       return calls;
    }
 
-   public Map<MethodCall, Set<String>> getCalledMethods() {
+   public Map<Type, Set<String>> getCalledMethods() {
       return calledMethods;
    }
 }

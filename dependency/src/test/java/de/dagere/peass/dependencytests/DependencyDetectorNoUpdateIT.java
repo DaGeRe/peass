@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 
 import com.github.javaparser.ParseException;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.reader.DependencyReader;
@@ -51,7 +51,7 @@ public class DependencyDetectorNoUpdateIT {
    public void testTestChange() throws IOException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "changed_test");
 
-      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
+      final Map<Type, ClazzChangeData> changes = new TreeMap<>();
       DependencyDetectorTestUtil.addChange(changes, "", "defaultpackage.TestMe", "testMe");
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
@@ -70,8 +70,8 @@ public class DependencyDetectorNoUpdateIT {
    public void testClassRemoval() throws IOException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_class");
 
-      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
-      final MethodCall changedEntity = new MethodCall("defaultpackage.TestMe", "");
+      final Map<Type, ClazzChangeData> changes = new TreeMap<>();
+      final Type changedEntity = new Type("defaultpackage.TestMe", "");
       changes.put(changedEntity, new ClazzChangeData(changedEntity, false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 
 /**
  * Map from called classes to the methods of the classes that are called
@@ -13,13 +13,13 @@ import de.dagere.nodeDiffDetector.data.MethodCall;
  *
  */
 public class CalledMethods {
-	private final Map<MethodCall, Set<String>> calledMethods = new HashMap<>();
+	private final Map<Type, Set<String>> calledMethods = new HashMap<>();
 
-	public Map<MethodCall, Set<String>> getCalledMethods() {
+	public Map<Type, Set<String>> getCalledMethods() {
 		return calledMethods;
 	}
 
-	public Set<MethodCall> getCalledClasses() {
+	public Set<Type> getCalledClasses() {
 		return calledMethods.keySet();
 	}
 

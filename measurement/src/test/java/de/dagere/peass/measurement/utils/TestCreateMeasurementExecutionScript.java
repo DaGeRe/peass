@@ -39,10 +39,10 @@ public class TestCreateMeasurementExecutionScript {
       StaticTestSelection dependencies = TestExecutionData.buildExampleDependencies();
 
       CommitStaticSelection version2 = dependencies.getCommits().get("000002");
-      version2.getChangedClazzes().put(new MethodCall("Test1#testMe"), new TestSet(new TestMethodCall("Test1", "testMe")));
+      version2.getChangedClazzes().put(MethodCall.createFromString("Test1#testMe"), new TestSet(new TestMethodCall("Test1", "testMe")));
       
       CommitStaticSelection version5 = dependencies.getCommits().get("000005");
-      version5.getChangedClazzes().put(new MethodCall("Test5#testMe"), new TestSet(new TestMethodCall("Test5", "testMe")));
+      version5.getChangedClazzes().put(MethodCall.createFromString("Test5#testMe"), new TestSet(new TestMethodCall("Test5", "testMe")));
 
       ExecutionData executiondata = new ExecutionData(dependencies);
       return executiondata;

@@ -13,11 +13,11 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
 import de.dagere.kopeme.parsing.JUnitParseUtil;
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFinder;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFinder;
 import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
@@ -98,8 +98,8 @@ public class JmhTestTransformer implements TestTransformer {
 
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) throws FileNotFoundException {
       RunnableTestInformation moduleTests = new RunnableTestInformation();
-      ClazzFileFinder finder = new ClazzFileFinder(measurementConfig.getExecutionConfig());
-      for (final String clazz : finder.getClasses(module)) {
+      TypeFileFinder finder = new TypeFileFinder(measurementConfig.getExecutionConfig());
+      for (final String clazz : finder.getTypes(module)) {
          String currentModule = ModuleClassMapping.getModuleName(projectFolder, module);
          final Set<TestMethodCall> testMethodNames = getTestMethodNames(module, new TestClazzCall(clazz, currentModule));
          for (TestMethodCall test : testMethodNames) {
@@ -126,14 +126,14 @@ public class JmhTestTransformer implements TestTransformer {
    @Override
    public Set<TestMethodCall> getTestMethodNames(final File module, final TestClazzCall clazzname) {
       final Set<TestMethodCall> methods = new LinkedHashSet<>();
-      ClazzFileFinder finder = new ClazzFileFinder(measurementConfig.getExecutionConfig());
+      TypeFileFinder finder = new TypeFileFinder(measurementConfig.getExecutionConfig());
       final File clazzFile = finder.getClazzFile(module, clazzname);
       try {
          // File might be removed or moved
          if (clazzFile != null) {
             LOG.debug("Parsing {} - {}", clazzFile, clazzname);
             final CompilationUnit unit = JavaParserProvider.parse(clazzFile);
-            List<ClassOrInterfaceDeclaration> clazzDeclarations = ClazzFinder.getClazzDeclarations(unit);
+            List<ClassOrInterfaceDeclaration> clazzDeclarations = TypeFinder.getClazzDeclarations(unit);
             for (ClassOrInterfaceDeclaration clazz : clazzDeclarations) {
                String parsedClassName = getFullName(clazz);
                LOG.trace("Clazz: {} - {}", parsedClassName, clazzname.getShortClazz());

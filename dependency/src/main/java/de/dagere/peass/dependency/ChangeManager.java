@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.nodeDiffDetector.diffDetection.ChangeDetector;
 import de.dagere.nodeDiffDetector.diffDetection.FileComparisonUtil;
 import de.dagere.nodeDiffDetector.sourceReading.MethodReader;
@@ -57,7 +58,7 @@ public class ChangeManager {
     * @throws IOException
     * @throws FileNotFoundException
     */
-   private List<MethodCall> getChangedClasses(final String lastCommit) throws FileNotFoundException, IOException {
+   private List<Type> getChangedClasses(final String lastCommit) throws FileNotFoundException, IOException {
       List<File> moduleFiles = testExecutor.getModules().getModules(); 
       final CommitDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastCommit, config);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
@@ -110,7 +111,7 @@ public class ChangeManager {
       }
    }
 
-   public Map<MethodCall, ClazzChangeData> getChanges(final String commit1, final String commit2) {
+   public Map<Type, ClazzChangeData> getChanges(final String commit1, final String commit2) {
       GitUtils.goToCommit(commit1, folders.getProjectFolder());
       saveOldClasses();
       GitUtils.goToCommit(commit2, folders.getProjectFolder());
@@ -123,14 +124,14 @@ public class ChangeManager {
     * 
     * @return
     */
-   public Map<MethodCall, ClazzChangeData> getChanges(final String lastRunningVersion) {
-      final Map<MethodCall, ClazzChangeData> changedClassesMethods = new TreeMap<>();
+   public Map<Type, ClazzChangeData> getChanges(final String lastRunningVersion) {
+      final Map<Type, ClazzChangeData> changedClassesMethods = new TreeMap<>();
       try {
-         final List<MethodCall> changedClasses = getChangedClasses(lastRunningVersion);
+         final List<Type> changedClasses = getChangedClasses(lastRunningVersion);
          LOG.debug("Before Cleaning: {}", changedClasses);
          if (folders.getOldSources().exists()) {
             ChangeDetector detector = new ChangeDetector(config, folders);
-            for (final Iterator<MethodCall> clazzIterator = changedClasses.iterator(); clazzIterator.hasNext();) {
+            for (final Iterator<Type> clazzIterator = changedClasses.iterator(); clazzIterator.hasNext();) {
                detector.compareClazz(changedClassesMethods, clazzIterator);
             }
          } else {

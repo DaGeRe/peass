@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.config.MeasurementConfig;
 
 public class TestShortening {
@@ -57,7 +58,7 @@ public class TestShortening {
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTest.java");
 
-      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new MethodCall("de.ExampleTest", ""), "test1")) {
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new Type("de.ExampleTest", ""), "test1")) {
          Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
       }
 
@@ -70,7 +71,7 @@ public class TestShortening {
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTestJUnit5.java");
 
-      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new MethodCall("de.ExampleTestJUnit5", ""), "checkSomething")) {
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new Type("de.ExampleTestJUnit5", ""), "checkSomething")) {
          Assert.assertFalse(FileUtils.contentEquals(exampleTestFile5, testClazz));
          try (FileInputStream inputStream = new FileInputStream(testClazz)) {
             String fileContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
@@ -88,7 +89,7 @@ public class TestShortening {
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTestJUnit5Parameterized.java");
 
-      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new MethodCall("de.ExampleTestJUnit5Parameterized", ""), "checkSomething")) {
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new Type("de.ExampleTestJUnit5Parameterized", ""), "checkSomething")) {
          Assert.assertFalse(FileUtils.contentEquals(exampleTestFile5Parameterized, testClazz));
          try (FileInputStream inputStream = new FileInputStream(testClazz)) {
             String fileContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
@@ -109,7 +110,7 @@ public class TestShortening {
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTestJUnit5Parameterized.java");
 
-      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new MethodCall("de.ExampleTestJUnit5Parameterized", ""), "testMe")) {
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new Type("de.ExampleTestJUnit5Parameterized", ""), "testMe")) {
          Assert.assertFalse(FileUtils.contentEquals(exampleTestFile5Parameterized, testClazz));
          try (FileInputStream inputStream = new FileInputStream(testClazz)) {
             String fileContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
@@ -131,7 +132,7 @@ public class TestShortening {
       final File testClazz = new File(test, "ExampleTest.java");
       final File subClazz = new File(test, "SubTest.java");
 
-      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new MethodCall("de.SubTest", ""), "test3")) {
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new Type("de.SubTest", ""), "test3")) {
          Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
          Assert.assertFalse(FileUtils.contentEquals(subTestFile, subClazz));
       }

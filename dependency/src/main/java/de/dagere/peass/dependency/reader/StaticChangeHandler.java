@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
@@ -64,7 +65,7 @@ public class StaticChangeHandler {
       dependencyManager.getTestTransformer().determineVersions(dependencyManager.getExecutor().getModules().getModules());
       for (ClazzChangeData changedEntry : input.getChanges().values()) {
          if (!changedEntry.isOnlyMethodChange()) {
-            for (MethodCall change : changedEntry.getChanges()) {
+            for (Type change : changedEntry.getChanges()) {
                File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
                TestClazzCall potentialTest = new TestClazzCall(change.getClazz(), change.getModule());
                Set<TestMethodCall> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);

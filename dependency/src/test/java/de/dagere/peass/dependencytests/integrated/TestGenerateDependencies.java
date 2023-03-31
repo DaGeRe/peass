@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 
 import com.github.javaparser.ParseException;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
@@ -48,8 +48,8 @@ public class TestGenerateDependencies {
       iterator.goToNextCommit();
 
       final ChangeManager manager = Mockito.mock(ChangeManager.class);
-      final HashMap<MethodCall, ClazzChangeData> value = new HashMap<>();
-      MethodCall testMeEntity = new MethodCall("viewtest.TestMe", "");
+      final HashMap<Type, ClazzChangeData> value = new HashMap<>();
+      Type testMeEntity = new Type("viewtest.TestMe", "");
       value.put(testMeEntity, new ClazzChangeData(testMeEntity, false));
       Mockito.when(manager.getChanges(Mockito.any())).thenReturn(value);
 

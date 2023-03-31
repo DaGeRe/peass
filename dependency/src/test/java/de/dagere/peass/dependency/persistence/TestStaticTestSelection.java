@@ -99,7 +99,7 @@ public class TestStaticTestSelection {
    public void testSerialization() throws JsonProcessingException {
       StaticTestSelection selection = new StaticTestSelection();
       selection.getInitialcommit().setCommit("asdasd");
-      selection.getInitialcommit().addDependency(new TestMethodCall("TestA", "methodA2"), new MethodCall("TestA#methodA2"));
+      selection.getInitialcommit().addDependency(new TestMethodCall("TestA", "methodA2"), MethodCall.createMethodCallFromString("TestA#methodA2"));
       selection.getCommits().put("bsdbsd", new CommitStaticSelection());
       selection.getCommits().get("bsdbsd").setRunning(false);
 

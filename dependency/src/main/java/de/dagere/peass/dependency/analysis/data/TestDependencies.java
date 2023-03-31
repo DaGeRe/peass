@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestCase;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 
 /**
@@ -58,12 +59,12 @@ public class TestDependencies {
     * 
     * @param test
     */
-   public Map<MethodCall, Set<String>> getOrAddDependenciesForTest(final TestMethodCall test) {
+   public Map<Type, Set<String>> getOrAddDependenciesForTest(final TestMethodCall test) {
       CalledMethods tests = dependencyMap.get(test);
       if (tests == null) {
          tests = new CalledMethods();
          dependencyMap.put(test, tests);
-         final MethodCall onlyClass = new MethodCall(test.getClazz(), test.getModule());
+         final Type onlyClass = new Type(test.getClazz(), test.getModule());
          final HashSet<String> calledMethods = new HashSet<>();
          tests.getCalledMethods().put(onlyClass, calledMethods);
          String method = test.getMethod();
@@ -75,8 +76,8 @@ public class TestDependencies {
       return tests.getCalledMethods();
    }
    
-   public void setDependencies(final TestMethodCall testClassName, final Map<MethodCall, Set<String>> allCalledClasses) {
-      final Map<MethodCall, Set<String>> testDependencies = getOrAddDependenciesForTest(testClassName);
+   public void setDependencies(final TestMethodCall testClassName, final Map<Type, Set<String>> allCalledClasses) {
+      final Map<Type, Set<String>> testDependencies = getOrAddDependenciesForTest(testClassName);
       testDependencies.putAll(allCalledClasses);
    }
    
@@ -87,9 +88,9 @@ public class TestDependencies {
     * @param testMethodName
     * @param calledClasses Map from name of the called class to the methods of the class that are called
     */
-   public void addDependencies(final TestMethodCall testMethod, final Map<MethodCall, Set<String>> calledClasses) {
-      final Map<MethodCall, Set<String>> testDependencies = getOrAddDependenciesForTest(testMethod);
-      for (final Map.Entry<MethodCall, Set<String>> calledEntity : calledClasses.entrySet()) {
+   public void addDependencies(final TestMethodCall testMethod, final Map<Type, Set<String>> calledClasses) {
+      final Map<Type, Set<String>> testDependencies = getOrAddDependenciesForTest(testMethod);
+      for (final Map.Entry<Type, Set<String>> calledEntity : calledClasses.entrySet()) {
          LOG.debug("Adding call: " + calledEntity.getKey());
          LOG.debug(testDependencies.keySet());
          final Set<String> oldSet = testDependencies.get(calledEntity.getKey());
@@ -109,11 +110,11 @@ public class TestDependencies {
       return dependencyMap.size();
    }
 
-   public Map<TestMethodCall, Map<MethodCall, Set<String>>> getCopiedDependencies() {
-      final Map<TestMethodCall, Map<MethodCall, Set<String>>> copy = new HashMap<>();
+   public Map<TestMethodCall, Map<Type, Set<String>>> getCopiedDependencies() {
+      final Map<TestMethodCall, Map<Type, Set<String>>> copy = new HashMap<>();
       for (final Map.Entry<TestMethodCall, CalledMethods> entry : dependencyMap.entrySet()) {
-         final Map<MethodCall, Set<String>> dependencies = new HashMap<>();
-         for (final Map.Entry<MethodCall, Set<String>> testcase : entry.getValue().getCalledMethods().entrySet()) {
+         final Map<Type, Set<String>> dependencies = new HashMap<>();
+         for (final Map.Entry<Type, Set<String>> testcase : entry.getValue().getCalledMethods().entrySet()) {
             final Set<String> copiedMethods = new HashSet<>();
             copiedMethods.addAll(testcase.getValue());
             dependencies.put(testcase.getKey(), copiedMethods);
@@ -136,22 +137,22 @@ public class TestDependencies {
     * @param changes
     * @return Map from changed class to the influenced tests
     */
-   public ChangeTestMapping getChangeTestMap(final Map<MethodCall, ClazzChangeData> changes) {
+   public ChangeTestMapping getChangeTestMap(final Map<Type, ClazzChangeData> changes) {
       final ChangeTestMapping changeTestMap = new ChangeTestMapping();
       for (final Entry<TestMethodCall, CalledMethods> dependencyEntry : dependencyMap.entrySet()) {
          final TestMethodCall currentTestcase = dependencyEntry.getKey();
          final CalledMethods currentTestDependencies = dependencyEntry.getValue();
          for (ClazzChangeData changedEntry : changes.values()) {
-            for (MethodCall change : changedEntry.getChanges()) {
-               final MethodCall changedClass = change.onlyClazz();
-               final Set<MethodCall> calledClasses = currentTestDependencies.getCalledClasses();
+            for (Type change : changedEntry.getChanges()) {
+               final Type changedClass = change.onlyClazz();
+               final Set<Type> calledClasses = currentTestDependencies.getCalledClasses();
                if (calledClasses.contains(changedClass)) {
                   addCall(changeTestMap, currentTestcase, currentTestDependencies, changedEntry, change, changedClass);
                }
             }
          }
       }
-      for (final Map.Entry<MethodCall, Set<TestMethodCall>> element : changeTestMap.getChanges().entrySet()) {
+      for (final Map.Entry<Type, Set<TestMethodCall>> element : changeTestMap.getChanges().entrySet()) {
          LOG.debug("Change: {} Calling: {} {}", element.getKey(), element.getValue().size(), element.getValue());
       }
 
@@ -159,14 +160,15 @@ public class TestDependencies {
    }
 
    private void addCall(final ChangeTestMapping changeTestMap, final TestMethodCall currentTestcase, final CalledMethods currentTestDependencies,
-         final ClazzChangeData changedEntry, final MethodCall change, final MethodCall changedClass) {
+         final ClazzChangeData changedEntry, final Type change, final Type changedClass) {
       boolean clazzLevelChange = !changedEntry.isOnlyMethodChange();
       if (clazzLevelChange) {
          changeTestMap.addChangeEntry(change, currentTestcase);
          changeTestMap.addChangeEntry(change.onlyClazz(), currentTestcase);
       } else { 
-         String method = change.getMethod() + change.getParameterString();
-         final Map<MethodCall, Set<String>> calledMethods = currentTestDependencies.getCalledMethods();
+         MethodCall changeCall = (MethodCall) change;
+         String method = changeCall.getMethod() + changeCall.getParameterString();
+         final Map<Type, Set<String>> calledMethods = currentTestDependencies.getCalledMethods();
          final Set<String> calledMethodsInChangeClass = calledMethods.get(changedClass);
          if (calledMethodsInChangeClass.contains(method)) {
             final MethodCall classWithMethod = new MethodCall(changedClass.getClazz(), changedClass.getModule(), method);

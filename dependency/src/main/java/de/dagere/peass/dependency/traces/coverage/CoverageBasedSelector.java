@@ -11,14 +11,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 
 public class CoverageBasedSelector {
 
    private static final Logger LOG = LogManager.getLogger(CoverageBasedSelector.class);
 
-   public static CoverageSelectionCommit selectBasedOnCoverage(final List<TraceCallSummary> summaries, final Set<MethodCall> changes) {
+   public static CoverageSelectionCommit selectBasedOnCoverage(final List<TraceCallSummary> summaries, final Set<Type> changes) {
       List<TraceCallSummary> copiedSummaries = new LinkedList<>(summaries);
-      Set<MethodCall> copiedChanges = new HashSet<>(changes);
+      Set<Type> copiedChanges = new HashSet<>(changes);
       boolean changed = true;
 
       CoverageSelectionCommit resultingInfo = new CoverageSelectionCommit();
@@ -54,7 +55,7 @@ public class CoverageBasedSelector {
       return resultingInfo;
    }
 
-   private static void setRemainingCallSums(final Set<MethodCall> changes, final List<TraceCallSummary> copiedSummaries) {
+   private static void setRemainingCallSums(final Set<Type> changes, final List<TraceCallSummary> copiedSummaries) {
       for (TraceCallSummary summary : copiedSummaries) {
          int callSum = getCallSum(changes, summary);
          summary.setOverallScore(callSum);
@@ -69,11 +70,11 @@ public class CoverageBasedSelector {
       }
    }
 
-   private static boolean removeUnneededChanges(final Set<MethodCall> changes, boolean changed, final TraceCallSummary selected) {
-      for (Iterator<MethodCall> changeIterator = changes.iterator(); changeIterator.hasNext();) {
-         MethodCall change = changeIterator.next();
+   private static boolean removeUnneededChanges(final Set<Type> changes, boolean changed, final TraceCallSummary selected) {
+      for (Iterator<Type> changeIterator = changes.iterator(); changeIterator.hasNext();) {
+         Type change = changeIterator.next();
          String currentChangeSignature = change.toString();
-         if (change.getMethod() != null) {
+         if (change instanceof MethodCall) {
             if (selected.getCallCounts().containsKey(currentChangeSignature) && selected.getCallCounts().get(currentChangeSignature) > 0) {
                changeIterator.remove();
                changed = true;
@@ -98,7 +99,7 @@ public class CoverageBasedSelector {
       return changed;
    }
 
-   private static TraceCallSummary selectMaximumCalled(final Set<MethodCall> changes, final List<TraceCallSummary> copiedSummaries) {
+   private static TraceCallSummary selectMaximumCalled(final Set<Type> changes, final List<TraceCallSummary> copiedSummaries) {
       TraceCallSummary selected = copiedSummaries.get(0);
       int selectedCallSum = getCallSum(changes, selected);
       selected.setOverallScore(selectedCallSum);
@@ -118,15 +119,15 @@ public class CoverageBasedSelector {
       }
    }
 
-   private static int getCallSum(final Set<MethodCall> changes, final TraceCallSummary summary) {
+   private static int getCallSum(final Set<Type> changes, final TraceCallSummary summary) {
       summary.getSelectedChanges().clear();
       int currentCallSum = 0;
       LOG.debug("Changes: {} Test: {}", changes.size(), summary.getTestcase());
       LOG.trace("Trace Callcounts: {}", summary.getCallCounts().keySet());
-      for (MethodCall change : changes) {
+      for (Type change : changes) {
          String changeSignature = change.toString();
          LOG.trace("Change signature: {}", changeSignature);
-         if (change.getMethod() != null) {
+         if (change instanceof MethodCall) {
             currentCallSum = addExactCallCount(summary, currentCallSum, changeSignature);
          } else {
             currentCallSum = addClassbasedCallCount(summary, currentCallSum, changeSignature);

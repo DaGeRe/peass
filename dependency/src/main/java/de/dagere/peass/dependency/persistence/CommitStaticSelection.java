@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.nodeDiffDetector.data.serialization.MethodCallDeserializer;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 
@@ -19,7 +20,7 @@ public class CommitStaticSelection {
    private String predecessor;
    
    @JsonDeserialize(keyUsing = MethodCallDeserializer.class)
-   private Map<MethodCall, TestSet> changedClazzes = new TreeMap<>();
+   private Map<Type, TestSet> changedClazzes = new TreeMap<>();
    
    private TestSet ignoredAffectedTests = null;
    private TestSet removedTests = null;
@@ -40,11 +41,11 @@ public class CommitStaticSelection {
       this.jdk = jdk;
    }
 
-   public Map<MethodCall, TestSet> getChangedClazzes() {
+   public Map<Type, TestSet> getChangedClazzes() {
       return changedClazzes;
    }
 
-   public void setChangedClazzes(final Map<MethodCall, TestSet> changedClazzes) {
+   public void setChangedClazzes(final Map<Type, TestSet> changedClazzes) {
       this.changedClazzes = changedClazzes;
    }
    

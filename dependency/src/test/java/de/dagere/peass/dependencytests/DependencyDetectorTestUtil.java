@@ -14,8 +14,8 @@ import org.mockito.Mockito;
 
 import com.github.javaparser.ParseException;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
@@ -41,7 +41,7 @@ public class DependencyDetectorTestUtil {
       Assert.assertNotNull("Searching for " + changedClass + " in " + version, versionDependencies);
 
       TestSet testcase = null;
-      for (final Entry<MethodCall, TestSet> candidate : versionDependencies.getChangedClazzes().entrySet()) {
+      for (final Entry<Type, TestSet> candidate : versionDependencies.getChangedClazzes().entrySet()) {
          final String changeclassInDependencies = candidate.getKey().toString();
          if (changeclassInDependencies.equals(changedClass)) {
             testcase = candidate.getValue();
@@ -50,21 +50,21 @@ public class DependencyDetectorTestUtil {
       return testcase;
    }
 
-   public static Map<MethodCall, ClazzChangeData> buildChanges(final String module, final String clazz, final String method) {
-      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
+   public static Map<Type, ClazzChangeData> buildChanges(final String module, final String clazz, final String method) {
+      final Map<Type, ClazzChangeData> changes = new TreeMap<>();
       addChange(changes, module, clazz, method);
       return changes;
    }
 
-   public static void addChange(final Map<MethodCall, ClazzChangeData> changes, final String module, final String clazz, final String method) {
-      final MethodCall baseChangedClazz = new MethodCall(clazz, module);
+   public static void addChange(final Map<Type, ClazzChangeData> changes, final String module, final String clazz, final String method) {
+      final Type baseChangedClazz = new Type(clazz, module);
       final ClazzChangeData methodChanges = new ClazzChangeData(baseChangedClazz);
       methodChanges.addChange(clazz.substring(clazz.lastIndexOf('.') + 1), method);
       changes.put(baseChangedClazz, methodChanges);
    }
 
    public static ChangeManager defaultChangeManager() {
-      final Map<MethodCall, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("", "defaultpackage.NormalDependency", "executeThing");
+      final Map<Type, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("", "defaultpackage.NormalDependency", "executeThing");
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
@@ -72,8 +72,8 @@ public class DependencyDetectorTestUtil {
    }
    
    public static ChangeManager changedTestClassChangeManager() {
-      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
-      changes.put(new MethodCall("defaultpackage.TestMe", ""), new ClazzChangeData("defaultpackage.TestMe", false));
+      final Map<Type, ClazzChangeData> changes = new TreeMap<>();
+      changes.put(new Type("defaultpackage.TestMe", ""), new ClazzChangeData("defaultpackage.TestMe", false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
@@ -81,9 +81,9 @@ public class DependencyDetectorTestUtil {
    }
 
    public static ChangeManager mockAddedChangeManager() {
-      final Map<MethodCall, ClazzChangeData> changes = new TreeMap<>();
-      changes.put(new MethodCall("defaultpackage.NormalDependency", ""), new ClazzChangeData("defaultpackage.NormalDependency", false));
-      changes.put(new MethodCall("defaultpackage.TestMeAlso", ""), new ClazzChangeData("defaultpackage.TestMeAlso", false));
+      final Map<Type, ClazzChangeData> changes = new TreeMap<>();
+      changes.put(new Type("defaultpackage.NormalDependency", ""), new ClazzChangeData("defaultpackage.NormalDependency", false));
+      changes.put(new Type("defaultpackage.TestMeAlso", ""), new ClazzChangeData("defaultpackage.TestMeAlso", false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);

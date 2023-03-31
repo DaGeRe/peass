@@ -13,7 +13,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.Files;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 
@@ -38,7 +38,7 @@ public class TestVersionDiff {
       diff.addChange(MAVEN_PATH_FILE, config);
       diff.addChange(NO_SOURCE_FOLDER, config);
       
-      MatcherAssert.assertThat(diff.getChangedClasses(), IsIterableContaining.hasItem(new MethodCall("de.dagere.peass.Example")));
+      MatcherAssert.assertThat(diff.getChangedClasses(), IsIterableContaining.hasItem(new Type("de.dagere.peass.Example", "")));
    }
    
    @Test
@@ -54,8 +54,8 @@ public class TestVersionDiff {
       diff.addChange(JAVA_PATH_FILE, config);
       diff.addChange(NO_SOURCE_FOLDER, config);
       
-      MatcherAssert.assertThat(diff.getChangedClasses(), IsIterableContaining.hasItem(new MethodCall("de.dagere.peass.Example")));
-      MatcherAssert.assertThat(diff.getChangedClasses(), Matchers.not(IsIterableContaining.hasItem(new MethodCall("de.dagere.peass.Example2"))));
+      MatcherAssert.assertThat(diff.getChangedClasses(), IsIterableContaining.hasItem(new Type("de.dagere.peass.Example", "")));
+      MatcherAssert.assertThat(diff.getChangedClasses(), Matchers.not(IsIterableContaining.hasItem(new Type("de.dagere.peass.Example2", ""))));
    }
    
    @Test
@@ -73,8 +73,8 @@ public class TestVersionDiff {
       diff.addChange(TOMCAT_EXAMPLE, config);
       diff.addChange(NO_SOURCE_FOLDER, config);
       
-      MatcherAssert.assertThat(diff.getChangedClasses(), IsIterableContaining.hasItem(new MethodCall("de.dagere.peass.CoyoteAdapter")));
-      MatcherAssert.assertThat(diff.getChangedClasses(), Matchers.not(IsIterableContaining.hasItem(new MethodCall("de.dagere.peass.Example2"))));
+      MatcherAssert.assertThat(diff.getChangedClasses(), IsIterableContaining.hasItem(new Type("de.dagere.peass.CoyoteAdapter", "")));
+      MatcherAssert.assertThat(diff.getChangedClasses(), Matchers.not(IsIterableContaining.hasItem(new Type("de.dagere.peass.Example2", ""))));
    }
 
    private CommitDiff createVersionDiff() {

@@ -11,8 +11,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.FixedCommitConfig;
@@ -75,7 +75,7 @@ public class PropertyReader {
       final Change testcaseChange = new Change();
       testcaseChange.setMethod(testmethod);
 
-      final MethodCall entity = new MethodCall(testclazz.getKey().getClazz(), testclazz.getKey().getModule());
+      final Type entity = new Type(testclazz.getKey().getClazz(), testclazz.getKey().getModule());
       // TODO eventually, we need to set change the version of the config here to  version.getKey(), version.getValue().getPredecessor(),
       FixedCommitConfig copyConfig = new FixedCommitConfig();
       copyConfig.setCommit(commit.getKey());

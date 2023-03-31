@@ -6,9 +6,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestCase;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 
 /**
  * Manages data about test existence changes, i.e. tests that are added or removed
@@ -19,10 +19,10 @@ import de.dagere.nodeDiffDetector.data.TestMethodCall;
 public class TestExistenceChanges {
 	
 	//Map from dependency (fqn) -> testcase
-	private final Map<MethodCall, Set<TestMethodCall>> addedTests = new TreeMap<>();
+	private final Map<Type, Set<TestMethodCall>> addedTests = new TreeMap<>();
 	private final Set<TestCase> removedTests = new HashSet<>();
 
-	public Map<MethodCall, Set<TestMethodCall>> getAddedTests() {
+	public Map<Type, Set<TestMethodCall>> getAddedTests() {
 		return addedTests;
 	}
 
@@ -34,7 +34,7 @@ public class TestExistenceChanges {
 		removedTests.add(testcase);
 	}
 
-	public void addAddedTest(final MethodCall changedEntity, final TestMethodCall testcase) {
+	public void addAddedTest(final Type changedEntity, final TestMethodCall testcase) {
 		Set<TestMethodCall> testcaseSet = addedTests.get(changedEntity);
 		if (testcaseSet == null) {
 			testcaseSet = new TreeSet<>();

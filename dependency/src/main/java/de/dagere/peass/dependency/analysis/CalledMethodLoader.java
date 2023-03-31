@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.kieker.writer.onecall.OneCallReader;
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.EntityUtil;
@@ -62,10 +63,10 @@ public class CalledMethodLoader {
     * @param kiekerTraceFolder
     * @return
     */
-   public Map<MethodCall, Set<String>> getCalledMethods() {
+   public Map<Type, Set<String>> getCalledMethods() {
       try {
          if (kiekerConfig.isOnlyOneCallRecording()) {
-            Map<MethodCall, Set<String>> calledMethodResult = loadMethods();
+            Map<Type, Set<String>> calledMethodResult = loadMethods();
             return calledMethodResult;
          } else {
             final CalledMethodStage peassFilter = executePeassFilter(null);
@@ -78,9 +79,9 @@ public class CalledMethodLoader {
       return null;
    }
 
-   private Map<MethodCall, Set<String>> loadMethods() {
+   private Map<Type, Set<String>> loadMethods() {
       Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
-      Map<MethodCall, Set<String>> calledMethodResult = new HashMap<>();
+      Map<Type, Set<String>> calledMethodResult = new HashMap<>();
       for (String calledMethod : calledMethods) {
          LOG.debug("Adding called method: {}", calledMethod);
          MethodCall entity = EntityUtil.determineEntityWithDotSeparator(calledMethod);
@@ -88,7 +89,7 @@ public class CalledMethodLoader {
          final String outerClazzName = TypeFileFinder.getOuterClass(entity.getClazz());
          final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
 
-         MethodCall fullClassEntity = new MethodCall(entity.getClazz(), moduleOfClass);
+         Type fullClassEntity = new Type(entity.getClazz(), moduleOfClass);
          Set<String> currentMethodSet = calledMethodResult.get(fullClassEntity);
          if (currentMethodSet == null) {
             currentMethodSet = new HashSet<>();

@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -38,20 +39,20 @@ public class TestInitialCommitReader {
 
       StaticTestSelection dependencyResult = new StaticTestSelection();
       dependencyResult.getInitialcommit().setCommit(COMMIT1);
-      dependencyResult.getInitialcommit().addDependency(TESTCASE, new MethodCall("de.dagere.peass.MyCallee#method"));
+      dependencyResult.getInitialcommit().addDependency(TESTCASE, MethodCall.createMethodCallFromString("de.dagere.peass.MyCallee#method"));
 
       CommitStaticSelection staticSelection = new CommitStaticSelection();
-      staticSelection.getChangedClazzes().put(new MethodCall("de.dagere.peass.MyCallee#method"), new TestSet(TESTCASE));
+      staticSelection.getChangedClazzes().put(MethodCall.createMethodCallFromString("de.dagere.peass.MyCallee#method"), new TestSet(TESTCASE));
       dependencyResult.getCommits().put(COMMIT2, staticSelection);
 
       InitialCommitReader reader = new InitialCommitReader(dependencyResult, dependencyManagerMock, Mockito.mock(CommitIterator.class));
       reader.readCompletedCommits(new CommitComparatorInstance(Arrays.asList(new String[] { COMMIT1, COMMIT2 })));
 
-      Set<MethodCall> currentlyCalledClasses = currentTestDependencies.getDependencyMap().get(TESTCASE).getCalledClasses();
+      Set<Type> currentlyCalledClasses = currentTestDependencies.getDependencyMap().get(TESTCASE).getCalledClasses();
       MatcherAssert.assertThat(currentlyCalledClasses,
-            IsIterableContaining.hasItem(new MethodCall("de.dagere.peass.MyCallee")));
+            IsIterableContaining.hasItem(MethodCall.createFromString("de.dagere.peass.MyCallee")));
       MatcherAssert.assertThat(currentlyCalledClasses,
-            IsIterableContaining.hasItem(new MethodCall("de.dagere.peass.MyTest")));
+            IsIterableContaining.hasItem(MethodCall.createFromString("de.dagere.peass.MyTest")));
 
    }
 

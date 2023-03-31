@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 
 /**
  * Map from changed classes full-qualified-name to testcases that might have changed
@@ -22,13 +22,13 @@ public class ChangeTestMapping {
    
    private static final Logger LOG = LogManager.getLogger(ChangeTestMapping.class);
    
-	private final Map<MethodCall, Set<TestMethodCall>> changes = new TreeMap<>();
+	private final Map<Type, Set<TestMethodCall>> changes = new TreeMap<>();
 
-	public Map<MethodCall, Set<TestMethodCall>> getChanges() {
+	public Map<Type, Set<TestMethodCall>> getChanges() {
 		return changes;
 	}
 	
-	public Set<TestMethodCall> getTests(final MethodCall change){
+	public Set<TestMethodCall> getTests(final Type change){
 	   return changes.get(change);
 	}
 	
@@ -38,7 +38,7 @@ public class ChangeTestMapping {
 	}
 	
 	@JsonIgnore
-	public void addChangeEntry(final MethodCall changedFullname, final TestMethodCall currentTestcase) {
+	public void addChangeEntry(final Type changedFullname, final TestMethodCall currentTestcase) {
       Set<TestMethodCall> changedClasses = changes.get(changedFullname);
       if (changedClasses == null) {
          changedClasses = new HashSet<>();

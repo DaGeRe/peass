@@ -15,6 +15,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
@@ -51,12 +52,12 @@ public class DependencyDetectorParameterizedIT {
       System.out.println(firstVersion.getChangedClazzes());
 
       Assert.assertEquals(3, reader.getDependencies().getInitialcommit().getInitialDependencies().size());
-      TestSet selectedTest = firstVersion.getChangedClazzes().get(new MethodCall("defaultpackage.NormalDependency#onlyCalledWithOne"));
+      TestSet selectedTest = firstVersion.getChangedClazzes().get(MethodCall.createMethodCallFromString("defaultpackage.NormalDependency#onlyCalledWithOne"));
       Assert.assertEquals(TestMethodCall.createFromString("TestMe#testMe(JUNIT_PARAMETERIZED-2)"), selectedTest.getTestMethods().iterator().next());
    }
 
    public static ChangeManager changeManagerWithParameter() {
-      final Map<MethodCall, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("", "defaultpackage.NormalDependency", "onlyCalledWithOne()");
+      final Map<Type, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("", "defaultpackage.NormalDependency", "onlyCalledWithOne()");
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);

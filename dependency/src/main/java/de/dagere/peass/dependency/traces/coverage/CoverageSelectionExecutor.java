@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestCase;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -39,9 +40,12 @@ public class CoverageSelectionExecutor {
          throws IOException {
       List<TraceCallSummary> summaries = getSummaries(dynamicallySelected);
 
-      for (MethodCall change : newCommitSelection.getChangedClazzes().keySet()) {
+      for (Type change : newCommitSelection.getChangedClazzes().keySet()) {
          LOG.info("Change: {}", change.toString());
-         LOG.info("Parameters: {}", change.getParametersPrintable());
+         if (change instanceof MethodCall) {
+            LOG.info("Parameters: {}", ((MethodCall) change).getParametersPrintable());
+         }
+         
       }
 
       CoverageSelectionCommit selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newCommitSelection.getChangedClazzes().keySet());

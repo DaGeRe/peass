@@ -32,6 +32,7 @@ import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestCase;
 import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -55,7 +56,7 @@ public class DependencyReaderUtil {
       LOG.debug("Removed Tests: {}", testExistenceChanges.getRemovedTests());
       for (final TestCase removedTest : testExistenceChanges.getRemovedTests()) {
          LOG.debug("Remove: {}", removedTest);
-         for (final Entry<MethodCall, TestSet> dependency : newCommitSelection.getChangedClazzes().entrySet()) {
+         for (final Entry<Type, TestSet> dependency : newCommitSelection.getChangedClazzes().entrySet()) {
             final TestSet testSet = dependency.getValue();
             if (removedTest instanceof TestMethodCall) {
                for (final Entry<TestClazzCall, Set<String>> testcase : testSet.getTestcases().entrySet()) {
@@ -80,12 +81,12 @@ public class DependencyReaderUtil {
       }
    }
 
-   static void addNewTestcases(final CommitStaticSelection newVersionInfo, final Map<MethodCall, Set<TestMethodCall>> newTestcases) {
-      for (final Map.Entry<MethodCall, Set<TestMethodCall>> newTestcase : newTestcases.entrySet()) {
-         final MethodCall changedClazz = newTestcase.getKey();
+   static void addNewTestcases(final CommitStaticSelection newVersionInfo, final Map<Type, Set<TestMethodCall>> newTestcases) {
+      for (final Map.Entry<Type, Set<TestMethodCall>> newTestcase : newTestcases.entrySet()) {
+         final Type changedClazz = newTestcase.getKey();
          TestSet testsetForChange = null;
-         for (final Entry<MethodCall, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
-            MethodCall dependencyChangedClazz = dependency.getKey();
+         for (final Entry<Type, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
+            Type dependencyChangedClazz = dependency.getKey();
             if (dependencyChangedClazz.equals(changedClazz)) {
                testsetForChange = dependency.getValue();
             }
@@ -100,11 +101,11 @@ public class DependencyReaderUtil {
       }
    }
 
-   static CommitStaticSelection createCommitFromChangeMap(final Map<MethodCall, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
+   static CommitStaticSelection createCommitFromChangeMap(final Map<Type, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
       final CommitStaticSelection newCommitSelection = new CommitStaticSelection();
       newCommitSelection.setRunning(true);
       LOG.debug("Beginning to write");
-      for (final Map.Entry<MethodCall, ClazzChangeData> changedClassName : changedClassNames.entrySet()) {
+      for (final Map.Entry<Type, ClazzChangeData> changedClassName : changedClassNames.entrySet()) {
          ClazzChangeData changedClazzInsideFile = changedClassName.getValue();
          if (!changedClazzInsideFile.isOnlyMethodChange()) { // class changed as a whole
             handleWholeClassChange(changeTestMap, newCommitSelection, changedClazzInsideFile);
@@ -117,12 +118,11 @@ public class DependencyReaderUtil {
    }
 
    private static void handleMethodChange(final ChangeTestMapping changeTestMap, final CommitStaticSelection version, final ClazzChangeData changedClassName) {
-      for (MethodCall underminedChange : changedClassName.getChanges()) {
+      for (Type underminedChange : changedClassName.getChanges()) {
          boolean contained = false;
 
-         final MethodCall changedEntryFullName = new MethodCall(underminedChange.toString());
-         for (final Entry<MethodCall, TestSet> currentDependency : version.getChangedClazzes().entrySet()) {
-            if (currentDependency.getKey().equals(changedEntryFullName)) {
+         for (final Entry<Type, TestSet> currentDependency : version.getChangedClazzes().entrySet()) {
+            if (currentDependency.getKey().equals(underminedChange)) {
                contained = true;
             }
          }
@@ -133,15 +133,15 @@ public class DependencyReaderUtil {
                   tests.addTest(testClass);
                }
             }
-            version.getChangedClazzes().put(changedEntryFullName, tests);
+            version.getChangedClazzes().put(underminedChange, tests);
          }
       }
    }
 
    private static void handleWholeClassChange(final ChangeTestMapping changeTestMap, final CommitStaticSelection version, final ClazzChangeData changedClassName) {
-      for (MethodCall underminedChange : changedClassName.getUniqueChanges()) {
+      for (Type underminedChange : changedClassName.getUniqueChanges()) {
          final TestSet tests = new TestSet();
-         MethodCall realChange = underminedChange.onlyClazz();
+         Type realChange = underminedChange.onlyClazz();
          Set<TestMethodCall> testEntities = changeTestMap.getTests(realChange);
          if (testEntities != null) {
             for (final TestMethodCall testcase : testEntities) {

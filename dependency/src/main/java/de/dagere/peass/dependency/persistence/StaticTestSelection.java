@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 
 public class StaticTestSelection extends SelectedTests {
@@ -35,11 +36,12 @@ public class StaticTestSelection extends SelectedTests {
          if (!commit.getKey().equals(first)) {
             CommitStaticSelection commitDependencies = new CommitStaticSelection();
             commitDependencies.setPredecessor(commit.getValue().getPredecessor());
-            commitDependencies.getChangedClazzes().put(new MethodCall("unknown", ""), commit.getValue());
+            commitDependencies.getChangedClazzes().put(new Type("unknown", ""), commit.getValue());
             String commitHash = commit.getKey();
             commits.put(commitHash, commitDependencies);
             for (TestMethodCall test : commit.getValue().getTestMethods()) {
-               initialcommit.addDependency(test, new MethodCall(test.getClazz(), ""));
+               MethodCall testItself = new MethodCall(test.getClazz(), "", test.getMethod());
+               initialcommit.addDependency(test, testItself);
             }
          }
       }

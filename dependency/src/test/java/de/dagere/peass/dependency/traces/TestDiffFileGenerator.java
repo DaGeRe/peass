@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.CommitStaticSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -41,7 +42,7 @@ public class TestDiffFileGenerator {
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
-      staticSelection.getChangedClazzes().put(new MethodCall("de.SomeClass"), new TestSet(test));
+      staticSelection.getChangedClazzes().put(new Type("de.SomeClass", ""), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
 
@@ -66,7 +67,7 @@ public class TestDiffFileGenerator {
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
-      staticSelection.getChangedClazzes().put(new MethodCall("de.SomeClass"), new TestSet(test));
+      staticSelection.getChangedClazzes().put(new Type("de.SomeClass", ""), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
 
@@ -91,7 +92,7 @@ public class TestDiffFileGenerator {
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
-      staticSelection.getChangedClazzes().put(new MethodCall("de.SomeClass"), new TestSet(test));
+      staticSelection.getChangedClazzes().put(new Type("de.SomeClass", ""), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
 
@@ -105,7 +106,7 @@ public class TestDiffFileGenerator {
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       CommitStaticSelection staticSelection = new CommitStaticSelection();
-      staticSelection.getChangedClazzes().put(new MethodCall("de.SomeClass"), new TestSet(test));
+      staticSelection.getChangedClazzes().put(new Type("de.SomeClass", ""), new TestSet(test));
 
       generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
 

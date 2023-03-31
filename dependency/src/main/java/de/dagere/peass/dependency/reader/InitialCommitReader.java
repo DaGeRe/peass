@@ -14,6 +14,7 @@ import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestCase;
 import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.CalledMethods;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
@@ -63,8 +64,8 @@ public class InitialCommitReader {
       LOG.debug("Starting writing: {}", dependencyMap.getDependencyMap().size());
       for (final Entry<TestMethodCall, CalledMethods> dependencyEntry : dependencyMap.getDependencyMap().entrySet()) {
          final TestMethodCall testcase = dependencyEntry.getKey();
-         for (final Map.Entry<MethodCall, Set<String>> calledClassEntry : dependencyEntry.getValue().getCalledMethods().entrySet()) {
-            final MethodCall dependentclass = calledClassEntry.getKey();
+         for (final Map.Entry<Type, Set<String>> calledClassEntry : dependencyEntry.getValue().getCalledMethods().entrySet()) {
+            final Type dependentclass = calledClassEntry.getKey();
             if (!dependentclass.getJavaClazzName().contains("junit") && !dependentclass.getJavaClazzName().contains("log4j")) {
                for (final String dependentmethod : calledClassEntry.getValue()) {
                   final MethodCall callee = new MethodCall(dependentclass.getClazz(), dependentclass.getModule(), dependentmethod);
@@ -102,14 +103,14 @@ public class InitialCommitReader {
    private void addCommitTestDependencies(final CommitStaticSelection commitStaticSelection) {
       // changedClazzes will be null if the commit has no changes
       if (commitStaticSelection.getChangedClazzes() != null) {
-         for (final Entry<MethodCall, TestSet> dependency : commitStaticSelection.getChangedClazzes().entrySet()) {
-            final MethodCall callee = dependency.getKey();
+         for (final Entry<Type, TestSet> dependency : commitStaticSelection.getChangedClazzes().entrySet()) {
+            final MethodCall callee = (MethodCall) dependency.getKey();
             for (final Entry<TestClazzCall, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
                for (final String testMethod : testcase.getValue()) {
-                  final Map<MethodCall, Set<String>> calledClasses = new HashMap<>();
+                  final Map<Type, Set<String>> calledClasses = new HashMap<>();
                   final Set<String> methods = new HashSet<>();
                   methods.add(callee.getMethod());
-                  calledClasses.put(new MethodCall(callee.getClazz(), callee.getModule()), methods);
+                  calledClasses.put(new Type(callee.getClazz(), callee.getModule()), methods);
                   final TestCase testClazz = testcase.getKey();
                   TestMethodCall test = new TestMethodCall(testClazz.getClazz(), testMethod, testClazz.getModule());
                   dependencyManager.addDependencies(test, calledClasses);
@@ -129,8 +130,8 @@ public class InitialCommitReader {
    }
 
    private void addDependencies(final TestMethodCall testName , final MethodCall dependentClass) {
-      final Map<MethodCall, Set<String>> testDependencies = dependencyMap.getOrAddDependenciesForTest(testName);
-      final MethodCall dependencyEntity = new MethodCall(dependentClass.getClazz(), dependentClass.getModule());
+      final Map<Type, Set<String>> testDependencies = dependencyMap.getOrAddDependenciesForTest(testName);
+      final Type dependencyEntity = new Type(dependentClass.getClazz(), dependentClass.getModule());
       Set<String> methods = testDependencies.get(dependencyEntity);
       if (methods == null) {
          methods = new HashSet<>();

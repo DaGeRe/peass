@@ -188,7 +188,7 @@ public class CallTreeNode extends BasicNode {
       if (call.equals(CauseSearchData.ADDED)) {
          String otherKiekerPattern = getOtherKiekerPattern();
          String otherCall = otherKiekerPattern.substring(otherKiekerPattern.lastIndexOf(' '), otherKiekerPattern.indexOf('('));
-         return new MethodCall(otherCall);
+         return MethodCall.createMethodCallFromString(otherCall);
       } else {
          final int index = call.lastIndexOf(MethodCall.METHOD_SEPARATOR);
          String method = call.substring(index + 1);

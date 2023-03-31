@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
@@ -73,8 +74,8 @@ public class TraceChangeHandler {
    }
 
    public void addAddedTests(final CommitStaticSelection newCommitInfo, final TestSet testsToRun) {
-      for (final MethodCall testName : newCommitInfo.getChangedClazzes().keySet()) {
-         MethodCall simplyClazz = testName.getSourceContainingClazz();
+      for (final Type testName : newCommitInfo.getChangedClazzes().keySet()) {
+         Type simplyClazz = testName.getSourceContainingClazz();
          TestClazzCall potentialTest = new TestClazzCall(simplyClazz.getClazz(), testName.getModule());
          if (NonIncludedTestRemover.isTestClassIncluded(potentialTest, executionConfig)) {
             testsToRun.addTest(potentialTest, null);
@@ -100,7 +101,7 @@ public class TraceChangeHandler {
    private void handleDependencyChanges(final CommitStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)
          throws IOException {
       final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, mapping);
-      final Map<MethodCall, Set<TestMethodCall>> addedTestcases = testExistenceChanges.getAddedTests();
+      final Map<Type, Set<TestMethodCall>> addedTestcases = testExistenceChanges.getAddedTests();
 
       if (DETAIL_DEBUG) {
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "add_" + commit + ".json"), addedTestcases);

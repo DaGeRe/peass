@@ -32,7 +32,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.nodeDiffDetector.utils.Endings;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
@@ -307,7 +307,7 @@ public final class GitUtils {
       return diff;
    }
 
-   public static int getChangedLines(final File projectFolder, final String commit, final List<MethodCall> entities, ExecutionConfig config) {
+   public static int getChangedLines(final File projectFolder, final String commit, final List<Type> entities, ExecutionConfig config) {
       try {
 
          final File folderTemp = new File(FilenameUtils.normalize(projectFolder.getAbsolutePath()));
@@ -329,7 +329,7 @@ public final class GitUtils {
                final int count = Integer.parseInt(countString);
                String clazzName = getClazz(clazz, config);
                if (clazzName != null) {
-                  final MethodCall changedEntity = new MethodCall(clazzName, "");
+                  final Type changedEntity = new Type(clazzName, "");
                   if (entities.contains(changedEntity)) {
                      size += count;
                   }

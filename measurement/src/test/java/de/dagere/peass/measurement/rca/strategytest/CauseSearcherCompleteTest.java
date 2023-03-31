@@ -81,7 +81,7 @@ public class CauseSearcherCompleteTest {
       final Set<MethodCall> changes = getChanges(rootPredecessor, rootVersion);
 
       System.out.println(changes);
-      MatcherAssert.assertThat(changes, Matchers.hasItem(new MethodCall("ClassB#methodB", "")));
+      MatcherAssert.assertThat(changes, Matchers.hasItem((MethodCall) MethodCall.createFromString("ClassB#methodB")));
 //      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassD#methodD", "")));
 //      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassE#methodE", "")));
 
