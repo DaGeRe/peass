@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.diffDetection.FileComparisonUtil;
+import de.dagere.nodeDiffDetector.sourceReading.MethodReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.traces.diff.DiffUtilJava;
 import difflib.DiffUtils;
@@ -31,8 +32,8 @@ public class MethodChangeReader {
       this.clazz = clazz;
       this.commit = commit;
       
-      method = FileComparisonUtil.getMethodSource(sourceFolder, clazz, clazz.getMethod(), config);
-      methodOld = FileComparisonUtil.getMethodSource(oldSourceFolder, clazz, clazz.getMethod(), config);
+      method = MethodReader.getMethodSource(sourceFolder, clazz, clazz.getMethod(), config);
+      methodOld = MethodReader.getMethodSource(oldSourceFolder, clazz, clazz.getMethod(), config);
    }
 
    public void readMethodChangeData() throws IOException {

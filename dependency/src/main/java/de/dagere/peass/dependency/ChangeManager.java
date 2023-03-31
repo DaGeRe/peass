@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.diffDetection.ChangeDetector;
 import de.dagere.nodeDiffDetector.diffDetection.FileComparisonUtil;
+import de.dagere.nodeDiffDetector.sourceReading.MethodReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
@@ -124,8 +125,8 @@ public class ChangeManager {
     * @throws FileNotFoundException
     */
    public Patch<String> getKeywordChanges(final MethodCall clazz) throws FileNotFoundException {
-      final String method = FileComparisonUtil.getMethodSource(folders.getProjectFolder(), clazz, clazz.getMethod(), config);
-      final String methodOld = FileComparisonUtil.getMethodSource(folders.getOldSources(), clazz, clazz.getMethod(), config);
+      final String method = MethodReader.getMethodSource(folders.getProjectFolder(), clazz, clazz.getMethod(), config);
+      final String methodOld = MethodReader.getMethodSource(folders.getOldSources(), clazz, clazz.getMethod(), config);
 
       final Patch<String> patch = DiffUtils.diff(Arrays.asList(method.split("\n")), Arrays.asList(methodOld.split("\n")));
       return patch;
