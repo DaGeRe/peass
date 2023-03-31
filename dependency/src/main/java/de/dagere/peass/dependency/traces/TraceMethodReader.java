@@ -16,9 +16,9 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFinder;
 import de.dagere.nodeDiffDetector.sourceReading.SourceReadUtils;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFinder;
 import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
@@ -42,8 +42,8 @@ public class TraceMethodReader {
    private static final Logger LOG = LogManager.getLogger(TraceMethodReader.class);
 
    private final File[] clazzFolder;
-
-   private final Map<File, CompilationUnit> loadedUnits = new HashMap<>();
+   
+   private TypeCache typeCache = new TypeCache();
    final TraceWithMethods trace;
    final PeassSequitur seq = new PeassSequitur();
 
@@ -76,14 +76,13 @@ public class TraceMethodReader {
          final TraceElementContent te = (TraceElementContent) traceElement.getValue();
          
          final String clazzFileName = TraceReadUtils.getClassFileName(te);
-         File clazzFile = ClazzFileFinder.getClazzFile(clazzFileName, clazzFolder);
+         File clazzFile = TypeFileFinder.getClazzFile(clazzFileName, clazzFolder);
          if (clazzFile == null) {
             clazzFile = findAlternativeClassfile(te, clazzFile);
          }
 
          if (clazzFile != null) {
-            CompilationUnit cu = getCU(clazzFile);
-            final Node method = SourceReadUtils.getMethod(te.toEntity(), cu);
+            final Node method = typeCache.getMethod(clazzFile, te.toEntity()); 
 
             if (method != null) {
                final String commentedMethod = method.toString().replace("\r", "").intern();
@@ -109,8 +108,7 @@ public class TraceMethodReader {
          File packageFolder = new File(clazzFolderCandidate, packageName);
          if (packageFolder.exists()) {
             for (File candidate : packageFolder.listFiles((FileFilter) new WildcardFileFilter("*.java"))) {
-               CompilationUnit cu = getCU(candidate);
-               List<String> clazzes = ClazzFinder.getClazzes(cu);
+               List<String> clazzes = typeCache.getTypes(candidate);
                if (clazzes.contains(te.getPackagelessClazz())) {
                   clazzFile = candidate;
                }
@@ -120,15 +118,7 @@ public class TraceMethodReader {
       return clazzFile;
    }
 
-   public CompilationUnit getCU(final File clazzFile) throws FileNotFoundException {
-      CompilationUnit cu = loadedUnits.get(clazzFile);
-      if (cu == null) {
-         LOG.trace("CU {} not imported yet", clazzFile);
-         cu = JavaParserProvider.parse(clazzFile);
-         loadedUnits.put(clazzFile, cu);
-      }
-      return cu;
-   }
+   
 
    public List<Content> getExpandedTrace() {
       return ContentTraceExpander.expandContentTrace(seq.getUncompressedTrace(), seq.getRules());

@@ -13,9 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.MethodCallHelper;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import kieker.analysis.trace.AbstractTraceProcessingStage;
 import kieker.model.repository.SystemModelRepository;
@@ -80,7 +80,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
    }
 
    private void addCalledMethod(final String fullClassname, final String methodname, final TraceElement traceelement) {
-      final String outerClazzName = ClazzFileFinder.getOuterClass(fullClassname);
+      final String outerClazzName = TypeFileFinder.getOuterClass(fullClassname);
       final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
       final MethodCall fullClassEntity = new MethodCall(fullClassname, moduleOfClass);
       traceelement.setModule(moduleOfClass);

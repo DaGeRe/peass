@@ -27,9 +27,9 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFinder;
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFinder;
 import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 
 public class JUnitTestShortener implements AutoCloseable {
@@ -52,7 +52,7 @@ public class JUnitTestShortener implements AutoCloseable {
       this.callee = callee;
       this.method = method;
       
-      ClazzFileFinder finder = new ClazzFileFinder(transformer.getConfig().getExecutionConfig());
+      TypeFileFinder finder = new TypeFileFinder(transformer.getConfig().getExecutionConfig());
       calleeClazzFile = finder.getClazzFile(module, callee);
       shortenTest();
    }
@@ -94,7 +94,7 @@ public class JUnitTestShortener implements AutoCloseable {
          saveUnshortened(calleeClazzFile);
 
          final CompilationUnit calleeUnit = transformer.getLoadedFiles().get(calleeClazzFile);
-         final TypeDeclaration<?> clazz = ClazzFinder.findClazz(callee, calleeUnit.getChildNodes());
+         final TypeDeclaration<?> clazz = TypeFinder.findClazz(callee, calleeUnit.getChildNodes());
 
          // The clazz might be null, if it is
          if (clazz != null && clazz instanceof ClassOrInterfaceDeclaration) {
@@ -118,7 +118,7 @@ public class JUnitTestShortener implements AutoCloseable {
       LOG.debug("Shortening: {}", callee);
       if (clazz.getExtendedTypes().size() > 0) {
          final MethodCall parentEntity = getParentEntity(callee, calleeUnit, clazz);
-         ClazzFileFinder finder = new ClazzFileFinder(transformer.getConfig().getExecutionConfig());
+         TypeFileFinder finder = new TypeFileFinder(transformer.getConfig().getExecutionConfig());
          final File parentClazzFile = finder.getClazzFile(module, parentEntity);
          if (parentClazzFile != null) {
             shortenTestClazz(parentEntity, parentClazzFile);

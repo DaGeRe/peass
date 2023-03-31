@@ -10,7 +10,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -30,14 +30,14 @@ public class ModuleClassMapping {
 
    public ModuleClassMapping(final File baseFolder, final ProjectModules modules, final ExecutionConfig config) {
       for (final File module : modules.getModules()) {
-         ClazzFileFinder finder = new ClazzFileFinder(config);
+         TypeFileFinder finder = new TypeFileFinder(config);
          populateModule(baseFolder, module, finder);
       }
       this.modules = modules.getModules();
    }
    
-   private void populateModule(final File baseFolder, final File module, final ClazzFileFinder finder) {
-      final List<String> classes = finder.getClasses(module);
+   private void populateModule(final File baseFolder, final File module, final TypeFileFinder finder) {
+      final List<String> classes = finder.getTypes(module);
       String moduleName;
       if (module.equals(baseFolder)) {
          moduleName = "";

@@ -3,8 +3,8 @@ package de.dagere.peass.measurement.rca.kieker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -96,7 +96,7 @@ public class TreeStage extends AbstractTraceProcessingStage<ExecutionTrace> {
    }
 
    private void setModule(final String fullClassname, final CallTreeNode node) {
-      final String outerClazzName = ClazzFileFinder.getOuterClass(fullClassname);
+      final String outerClazzName = TypeFileFinder.getOuterClass(fullClassname);
       final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
       node.setModule(moduleOfClass);
    }

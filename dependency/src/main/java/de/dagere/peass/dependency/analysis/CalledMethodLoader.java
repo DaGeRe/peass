@@ -29,8 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.kieker.writer.onecall.OneCallReader;
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.EntityUtil;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
@@ -85,7 +85,7 @@ public class CalledMethodLoader {
          LOG.debug("Adding called method: {}", calledMethod);
          MethodCall entity = EntityUtil.determineEntityWithDotSeparator(calledMethod);
 
-         final String outerClazzName = ClazzFileFinder.getOuterClass(entity.getClazz());
+         final String outerClazzName = TypeFileFinder.getOuterClass(entity.getClazz());
          final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
 
          MethodCall fullClassEntity = new MethodCall(entity.getClazz(), moduleOfClass);
@@ -137,7 +137,7 @@ public class CalledMethodLoader {
       for (String calledMethod : calledMethods) {
          MethodCall entity = EntityUtil.determineEntityWithDotSeparator(calledMethod);
          
-         final String outerClazzName = ClazzFileFinder.getOuterClass(entity.getClazz());
+         final String outerClazzName = TypeFileFinder.getOuterClass(entity.getClazz());
          final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
          
          TraceElement traceelement = new TraceElement(entity.getClazz(), entity.getMethod(), 0, moduleOfClass);

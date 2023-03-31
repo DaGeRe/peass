@@ -33,6 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.nodeDiffDetector.utils.Endings;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -343,8 +344,8 @@ public final class GitUtils {
    }
 
    public static String getClazz(String currentFileName, ExecutionConfig config) {
-      if (currentFileName.endsWith(CommitDiff.JAVA_ENDING)) {
-         String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - CommitDiff.JAVA_ENDING.length());
+      if (currentFileName.endsWith(Endings.JAVA)) {
+         String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - Endings.JAVA.length());
          String containedPath = null;
          for (String path : config.getAllClazzFolders()) {
             if (fileNameWithoutExtension.contains(path)) {

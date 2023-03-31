@@ -11,9 +11,9 @@ import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.diffDetection.FileComparisonUtil;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
@@ -28,7 +28,7 @@ public class PropertyChangeGuesser {
       final Set<String> guessedTypes = new HashSet<>();
       
       //TODO Here, a real config should be passed; since this is rarely used, we go with the default folders
-      ClazzFileFinder finder = new ClazzFileFinder(new ExecutionConfig());
+      TypeFileFinder finder = new TypeFileFinder(new ExecutionConfig());
       final File file = finder.getSourceFile(folders.getProjectFolder(), changedEntity.getKey());
       final File fileOld = finder.getSourceFile(folders.getOldSources(), changedEntity.getKey());
 

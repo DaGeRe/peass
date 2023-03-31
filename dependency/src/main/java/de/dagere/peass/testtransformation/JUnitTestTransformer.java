@@ -58,10 +58,10 @@ import com.github.javaparser.ast.type.TypeParameter;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
 import de.dagere.nodeDiffDetector.data.TestCase;
 import de.dagere.nodeDiffDetector.data.TestClazzCall;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
@@ -153,7 +153,7 @@ public class JUnitTestTransformer implements TestTransformer {
    private RunnableTestInformation findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules,
          final File module) {
       final RunnableTestInformation moduleTests = new RunnableTestInformation();
-      ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
+      TypeFileFinder finder = new TypeFileFinder(config.getExecutionConfig());
       for (final String clazz : finder.getTestClazzes(module)) {
          final String currentModule = mapping.getModuleOfClass(clazz);
          final Set<TestMethodCall> testMethodNames = getTestMethodNames(module, new TestClazzCall(clazz, currentModule));
@@ -381,7 +381,7 @@ public class JUnitTestTransformer implements TestTransformer {
 
    private RunnableTestInformation getTestRunInformation(final File module, final TestClazzCall clazzname) {
       RunnableTestInformation rti = new RunnableTestInformation();
-      ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
+      TypeFileFinder finder = new TypeFileFinder(config.getExecutionConfig());
       final File clazzFile = finder.getClazzFile(module, clazzname);
       final CompilationUnit unit = loadedFiles.get(clazzFile);
       if (unit != null) {

@@ -12,9 +12,9 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
 import de.dagere.nodeDiffDetector.data.TestCase;
 import de.dagere.nodeDiffDetector.data.TestClazzCall;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -116,7 +116,7 @@ public class NonIncludedByRule {
    }
 
    private static CompilationUnit getUnit(TestCase test, JUnitTestTransformer transformer, ExecutionConfig executionConfig) {
-      ClazzFileFinder finder = new ClazzFileFinder(executionConfig);
+      TypeFileFinder finder = new TypeFileFinder(executionConfig);
       final File clazzFile = finder.getClazzFile(transformer.getProjectFolder(), test);
       CompilationUnit unit = transformer.getLoadedFiles().get(clazzFile);
       return unit;

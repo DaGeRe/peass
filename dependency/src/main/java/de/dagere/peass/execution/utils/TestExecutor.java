@@ -15,9 +15,9 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffDetector.clazzFinding.ClazzFileFinder;
 import de.dagere.nodeDiffDetector.data.TestCase;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
+import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.execution.kieker.KiekerEnvironmentPreparer;
@@ -201,8 +201,8 @@ public abstract class TestExecutor {
       existingClasses = new LinkedList<>();
       for (final File module : getModules().getModules()) {
          ExecutionConfig executionConfig = testTransformer.getConfig().getExecutionConfig();
-         ClazzFileFinder finder = new ClazzFileFinder(executionConfig);
-         final List<String> currentClasses = finder.getClasses(module);
+         TypeFileFinder finder = new TypeFileFinder(executionConfig);
+         final List<String> currentClasses = finder.getTypes(module);
          existingClasses.addAll(currentClasses);
       }
    }
