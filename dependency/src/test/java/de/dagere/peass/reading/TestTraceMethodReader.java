@@ -81,6 +81,12 @@ public class TestTraceMethodReader {
 
       StreamGobbler.showFullProcess(process);
 
+      try {
+         Thread.sleep(1000);
+      } catch (InterruptedException e) {
+         e.printStackTrace();
+      }
+      
       final File[] kiekerFolders = tmpFolder.listFiles((FileFilter) new WildcardFileFilter("kieker-*"));
 
       final File traceFolder = kiekerFolders[0];
