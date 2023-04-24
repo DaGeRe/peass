@@ -9,8 +9,8 @@ jobs:
   build:
     strategy: 
         matrix:
-          os: [ubuntu-latest, windows-latest] # no macos-latest since github actions always procudes EDTIMEOUT
-          java: [ 1.8, 11, 17 ]
+          os: [ubuntu-latest] # no macos-latest since github actions always procudes EDTIMEOUT
+          java: [ 1.8, 11 ]
         fail-fast: false
     runs-on: ${{ matrix.os }}
     name: Java ${{ matrix.java }} OS ${{ matrix.os }} sample

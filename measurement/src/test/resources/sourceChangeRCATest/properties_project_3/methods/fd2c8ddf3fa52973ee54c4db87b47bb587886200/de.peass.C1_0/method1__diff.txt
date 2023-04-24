@@ -1,5 +1,0 @@
-public void method1() {
-    C2_1 object = new C2_1();
-    object.method0();
-    object.method1();
-}
