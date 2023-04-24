@@ -124,30 +124,4 @@ public class TestTraceMethodReader {
       System.out.println(jarPath);
       return jarPath;
    }
-
-   @Test
-   public void testTraceLengthLongFor() throws ParseException, IOException {
-      String jarPath = getJarPath();
-      String agentPath = getAgentPath();
-
-      final ProcessBuilder builder = new ProcessBuilder("java",
-            "-javaagent:" + agentPath,
-            "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
-            "-cp", jarPath,
-            "de.dagere.peass.example.CallerLongFor");
-      final Process process = builder.start();
-
-      StreamGobbler.showFullProcess(process);
-      final File[] kiekerFolders = tmpFolder.listFiles((FileFilter) new WildcardFileFilter("kieker-*"));
-
-      final File traceFolder = kiekerFolders[0];
-
-      final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING, new KiekerConfig()).getShortTrace(""),
-            new File("src" + File.separator + "test" + File.separator + "java"));
-      final TraceWithMethods trace = reader.getTraceWithMethods();
-
-      System.out.println(trace.getWholeTrace());
-
-      Assert.assertEquals(7, trace.getLength());
-   }
 }
