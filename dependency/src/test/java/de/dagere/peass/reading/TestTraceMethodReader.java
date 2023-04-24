@@ -31,7 +31,7 @@ import de.dagere.peass.utils.StreamGobbler;
  */
 public class TestTraceMethodReader {
 
-   private static final String LOG4J_VERSION = "2.19.0";
+   private static final String LOG4J_VERSION = "2.20.0";
    private final File tmpFolder = new File("target" + File.separator + "kieker_results_test");
    private static final String REPO = System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository";
    private static final String KOPEME_JAR = REPO + File.separator + "de" + File.separator + "dagere" + File.separator + "kopeme" + File.separator + "kopeme-core" + File.separator
