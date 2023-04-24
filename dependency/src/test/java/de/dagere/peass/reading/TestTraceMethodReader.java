@@ -77,12 +77,23 @@ public class TestTraceMethodReader {
             "-cp", jarPath,
             "de.dagere.peass.example.CallerSimpleFor");
       System.out.println("Command: " + builder.command());
+      try {
+         for (int i = 0; i < 5; i++) {
+            System.out.println();
+            Thread.sleep(100);
+         }
+      } catch (InterruptedException e) {
+         e.printStackTrace();
+      }
+      
       final Process process = builder.start();
-
       StreamGobbler.showFullProcess(process);
 
       try {
-         Thread.sleep(1000);
+         for (int i = 0; i < 5; i++) {
+            System.out.println();
+            Thread.sleep(100);
+         }
       } catch (InterruptedException e) {
          e.printStackTrace();
       }
