@@ -104,12 +104,12 @@ public class InitialCommitReader {
       // changedClazzes will be null if the commit has no changes
       if (commitStaticSelection.getChangedClazzes() != null) {
          for (final Entry<Type, TestSet> dependency : commitStaticSelection.getChangedClazzes().entrySet()) {
-            final MethodCall callee = (MethodCall) dependency.getKey();
+            final Type callee = dependency.getKey();
             for (final Entry<TestClazzCall, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
                for (final String testMethod : testcase.getValue()) {
                   final Map<Type, Set<String>> calledClasses = new HashMap<>();
                   final Set<String> methods = new HashSet<>();
-                  methods.add(callee.getMethod());
+                  methods.add(callee instanceof MethodCall ? ((MethodCall)callee).getMethod() : "");
                   calledClasses.put(new Type(callee.getClazz(), callee.getModule()), methods);
                   final TestCase testClazz = testcase.getKey();
                   TestMethodCall test = new TestMethodCall(testClazz.getClazz(), testMethod, testClazz.getModule());
