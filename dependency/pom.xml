@@ -116,7 +116,8 @@
       <version>4.12</version>
     </dependency>
 
-    <!-- Normally, we just use log4j2. Since kieker relies on slf4j, we need to add the bridge -->
+    <!-- Normally, we just use log4j2. Since kieker relies on slf4j, we need to add the bridge;
+         In case of an update, usually, the TestTraceMethodReader also needs to be updated -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
