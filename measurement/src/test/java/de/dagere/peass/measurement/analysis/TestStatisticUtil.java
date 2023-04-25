@@ -62,10 +62,10 @@ public class TestStatisticUtil {
       Assert.assertEquals(Relation.UNKOWN, StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.05));
       // Increased type-1-error should lead to unequal measurement (even if they are considered unequal with lower type-1-error)
       // -> increasing the type-1-error leads to a false positive (since type-1-error-rate is false-positive rate)
-      Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.agnosticTTest(statistics1, statistics2, 0.25, 0.05));
+      Assert.assertEquals(Relation.GREATER_THAN, StatisticUtil.agnosticTTest(statistics1, statistics2, 0.25, 0.05));
       
       
-      Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.agnosticTTest(statistics1, statistics3, 0.05, 0.05));
+      Assert.assertEquals(Relation.LESS_THAN, StatisticUtil.agnosticTTest(statistics1, statistics3, 0.05, 0.05));
       
       // High type-2-error should lead to equal measurement (false negative)
       Assert.assertEquals(Relation.EQUAL, StatisticUtil.agnosticTTest(statistics1, statistics4, 0.05, 0.40));

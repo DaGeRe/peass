@@ -45,7 +45,7 @@ public class EarlyBreakDecider {
       boolean savelyDecidable = false;
       if (statisticsPredecessor.getN() > 30 && statisticsCurrent.getN() > 30) {
          final Relation relation = StatisticUtil.agnosticTTest(statisticsPredecessor, statisticsCurrent, type1error, type2error);
-         if (relation == Relation.EQUAL || relation == Relation.UNEQUAL) {
+         if (relation == Relation.EQUAL || Relation.isUnequal(relation)) {
             LOG.info("Can savely decide: {}", relation);
             savelyDecidable = true;
          }

@@ -68,7 +68,7 @@ public abstract class DifferentNodeDeterminer {
          final Relation relation = StatisticUtil.isDifferent(cleaned, measurementConfig.getStatisticsConfig());
          boolean needsEnoughTime = needsEnoughTime(cleaned.getPredecessorStat(), cleaned.getCurrentStat());
          LOG.debug("Relation: {} Needs enough time: {}", relation, needsEnoughTime);
-         if ((relation == Relation.UNEQUAL || relation == Relation.GREATER_THAN || relation == Relation.LESS_THAN)) {
+         if (Relation.isUnequal(relation)) {
             addChildsToMeasurement(currentPredecessorNode, cleaned.getPredecessorStat(), cleaned.getCurrentStat());
          } else {
             LOG.info("No remeasurement");

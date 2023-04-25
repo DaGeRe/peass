@@ -55,7 +55,7 @@ class TestVersionPair {
       for (final MeasuredNode node : nodes) {
 //         final Relation relation = StatisticUtil.agnosticTTest(node.getStatistic().getStatisticsOld(), node.getStatistic().getStatisticsCurrent(), TreeAnalysis.config);
          final Relation relation = StatisticUtil.isChange(node.getStatistic().getStatisticsOld(), node.getStatistic().getStatisticsCurrent(), TreeAnalysis.config.getStatisticsConfig());
-         if (relation == Relation.UNEQUAL
+         if (Relation.isUnequal(relation)
                && (node.getStatistic().getMeanCurrent() > 1.0
                || node.getStatistic().getMeanOld() > 1.0)) {
             oneHasChange = true;

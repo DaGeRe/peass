@@ -64,7 +64,7 @@ public class StatisticUtil {
       LOG.debug("T: {}", tValue);
 
       if (Math.abs(tValue) > criticalValueUnequal) {
-         return Relation.UNEQUAL;
+         return tValue > 0 ? Relation.GREATER_THAN : Relation.LESS_THAN;
       } else if (Math.abs(tValue) < criticalValueEqual) {
          return Relation.EQUAL;
       } else {
