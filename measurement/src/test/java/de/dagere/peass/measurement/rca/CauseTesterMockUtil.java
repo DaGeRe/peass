@@ -21,7 +21,7 @@ public class CauseTesterMockUtil {
             builderPredecessor.buildMeasurements(nodes.toArray(new CallTreeNode[0]));
             return null;
          }
-      }).when(measurer).measureVersion(Mockito.any());
+      }).when(measurer).measureCommit(Mockito.any());
    }
 
 }

@@ -51,7 +51,7 @@ public class CauseTester extends AdaptiveTester {
       this.folders = project;
    }
 
-   public void measureVersion(final List<CallTreeNode> nodes) {
+   public void measureCommit(final List<CallTreeNode> nodes) {
       includedNodes = prepareNodes(nodes);
       evaluate(causeConfig.getTestCase());
       if (!getCurrentOrganizer().isSuccess()) {

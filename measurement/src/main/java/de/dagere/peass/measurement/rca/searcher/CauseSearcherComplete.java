@@ -113,7 +113,7 @@ public class CauseSearcherComplete extends CauseSearcher {
       
       final CauseTester calibrationMeasurer = new CauseTester(folders, config, causeSearchConfig, env, comparator);
       final AllDifferingDeterminer calibrationRunner = new AllDifferingDeterminer(predecessorNodeList, causeSearchConfig, config);
-      calibrationMeasurer.measureVersion(predecessorNodeList);
+      calibrationMeasurer.measureCommit(predecessorNodeList);
       final List<CallTreeNode> includableByMinTime = calibrationRunner.getIncludableNodes();
       return includableByMinTime;
    }

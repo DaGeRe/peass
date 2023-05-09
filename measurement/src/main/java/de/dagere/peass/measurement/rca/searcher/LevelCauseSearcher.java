@@ -95,7 +95,7 @@ public class LevelCauseSearcher extends CauseSearcher {
    }
 
    private void measureLevel(final LevelDifferentNodeDeterminer levelDifferentNodeDeterminer, final List<CallTreeNode> measuredPredecessor) {
-      measurer.measureVersion(measuredPredecessor);
+      measurer.measureCommit(measuredPredecessor);
       levelDifferentNodeDeterminer.calculateDiffering();
 
       for (final CallTreeNode predecessorNode : measuredPredecessor) {

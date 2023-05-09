@@ -70,7 +70,7 @@ public abstract class CauseSearcher {
 
    protected void measureDefinedTree(final List<CallTreeNode> includableNodes) {
       final AllDifferingDeterminer allSearcher = new AllDifferingDeterminer(includableNodes, causeSearchConfig, measurementConfig);
-      measurer.measureVersion(includableNodes);
+      measurer.measureCommit(includableNodes);
       allSearcher.calculateDiffering();
 
       RCAMeasurementAdder measurementReader = new RCAMeasurementAdder(persistenceManager, includableNodes);

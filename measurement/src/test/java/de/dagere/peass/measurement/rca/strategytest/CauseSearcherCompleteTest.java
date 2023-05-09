@@ -86,7 +86,7 @@ public class CauseSearcherCompleteTest {
 //      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassE#methodE", "")));
 
       ArgumentCaptor<List<CallTreeNode>> includedNodes = ArgumentCaptor.forClass(List.class);
-      Mockito.verify(measurer).measureVersion(includedNodes.capture());
+      Mockito.verify(measurer).measureCommit(includedNodes.capture());
 
       MatcherAssert.assertThat(includedNodes.getValue(), Matchers.hasItem(builderPredecessor.getB()));
       MatcherAssert.assertThat(includedNodes.getValue(), Matchers.hasItem(builderPredecessor.getC()));
