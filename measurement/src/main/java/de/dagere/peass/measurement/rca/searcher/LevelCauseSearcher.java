@@ -44,7 +44,7 @@ public class LevelCauseSearcher extends CauseSearcher {
    }
 
    public LevelCauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer, final MeasurementConfig measurementConfig,
-         final CauseSearchFolders folders, final EnvironmentVariables env) throws InterruptedException, IOException {
+         final CauseSearchFolders folders, final EnvironmentVariables env) {
       super(reader, causeSearchConfig, measurer, measurementConfig, folders, env);
       persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
 

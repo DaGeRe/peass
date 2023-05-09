@@ -74,7 +74,7 @@ public class LevelCauseSearcherTest {
    }
 
    @Test
-   public void testMeasurement() throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
+   public void testMeasurement() {
       buildRoots();
       
       root1.getChildren().get(0).setOtherKiekerPattern(null);
@@ -104,8 +104,7 @@ public class LevelCauseSearcherTest {
    }
    
    @Test
-   public void testCauseSearching()
-         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException {
+   public void testCauseSearching() {
       buildRoots();
 
       searchChanges(TestConstants.SIMPLE_CAUSE_CONFIG);
@@ -160,7 +159,7 @@ public class LevelCauseSearcherTest {
    }
 
    @Test
-   public void testOutlier() throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
+   public void testOutlier() {
       measurementConfig = new MeasurementConfig(30, TestConstants.V2, TestConstants.V1);
       measurementConfig.setWarmup(5);
       measurementConfig.setIterations(5);
@@ -177,7 +176,7 @@ public class LevelCauseSearcherTest {
       
    }
    
-   private void searchChanges(final CauseSearcherConfig config) throws IOException, XmlPullParserException, InterruptedException, AnalysisConfigurationException {
+   private void searchChanges(final CauseSearcherConfig config) {
       final CauseTester measurer = Mockito.mock(CauseTester.class);
       CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
       CauseSearchFolders folders = new CauseSearchFolders(folder);
