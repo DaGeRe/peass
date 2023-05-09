@@ -59,13 +59,13 @@ public class LevelCauseSearcher extends CauseSearcher {
 
    @Override
    protected Set<MethodCall> searchCause() {
-      reader.getRootPredecessor().setOtherCommitNode(reader.getRootVersion());
-      reader.getRootVersion().setOtherCommitNode(reader.getRootPredecessor());
-      reader.getRootPredecessor().setOtherKiekerPattern(reader.getRootVersion().getKiekerPattern());
+      reader.getRootPredecessor().setOtherCommitNode(reader.getRootCurrent());
+      reader.getRootCurrent().setOtherCommitNode(reader.getRootPredecessor());
+      reader.getRootPredecessor().setOtherKiekerPattern(reader.getRootCurrent().getKiekerPattern());
 
       LevelChildDeterminer predecessorDeterminer = new LevelChildDeterminer(Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() }), causeSearchConfig.getLevels() - 1);
       List<CallTreeNode> initialNodesPredecessor = predecessorDeterminer.getSelectedIncludingParentNodes();
-      LevelChildDeterminer currentDeterminer = new LevelChildDeterminer(Arrays.asList(new CallTreeNode[] { reader.getRootVersion() }), causeSearchConfig.getLevels() - 1);
+      LevelChildDeterminer currentDeterminer = new LevelChildDeterminer(Arrays.asList(new CallTreeNode[] { reader.getRootCurrent() }), causeSearchConfig.getLevels() - 1);
       List<CallTreeNode> initialNodesCurrent = currentDeterminer.getSelectedIncludingParentNodes();
 
       isLevelDifferent(initialNodesPredecessor, initialNodesCurrent);

@@ -29,10 +29,10 @@ public class LevelManager {
       this.mainVersionNodeList = mainVersionNodeList;
       this.predecessorNodeList = currentPredecessorNodeList;
 
-      mainVersionNodeList.add(reader.getRootVersion());
+      mainVersionNodeList.add(reader.getRootCurrent());
       currentPredecessorNodeList.add(reader.getRootPredecessor());
-      reader.getRootVersion().setOtherCommitNode(reader.getRootPredecessor());
-      reader.getRootPredecessor().setOtherCommitNode(reader.getRootVersion());
+      reader.getRootCurrent().setOtherCommitNode(reader.getRootPredecessor());
+      reader.getRootPredecessor().setOtherCommitNode(reader.getRootCurrent());
    }
 
    public void goToLastMeasuredLevel(final MeasuredNode root) {

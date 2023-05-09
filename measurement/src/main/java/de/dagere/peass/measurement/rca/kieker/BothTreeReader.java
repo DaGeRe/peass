@@ -19,7 +19,7 @@ public class BothTreeReader {
    private static final Logger LOG = LogManager.getLogger(BothTreeReader.class);
 
    private CallTreeNode rootPredecessor;
-   private CallTreeNode rootVersion;
+   private CallTreeNode rootCurrent;
 
    private final CauseSearcherConfig causeSearchConfig;
    private final MeasurementConfig config;
@@ -49,15 +49,15 @@ public class BothTreeReader {
       }
       try {
          rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
-         rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
+         rootCurrent = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
 
       rootPredecessor.setConfig(config);
       setConfig(rootPredecessor);
-      rootVersion.setConfig(config);
-      setConfig(rootVersion);
+      rootCurrent.setConfig(config);
+      setConfig(rootCurrent);
    }
 
    private void setConfig(final CallTreeNode node) {
@@ -76,7 +76,7 @@ public class BothTreeReader {
          LOG.info("Writing to cache");
          try {
             Constants.OBJECTMAPPER.writeValue(potentialCacheFileOld, rootPredecessor);
-            Constants.OBJECTMAPPER.writeValue(potentialCacheFile, rootVersion);
+            Constants.OBJECTMAPPER.writeValue(potentialCacheFile, rootCurrent);
          } catch (IOException e) {
             throw new RuntimeException(e);
          }
@@ -89,16 +89,16 @@ public class BothTreeReader {
 
       final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getFixedCommitConfig().getCommit(), config, causeSearchConfig.isIgnoreEOIs(),
             env);
-      rootVersion = resultsManagerPrevious.getTree(causeSearchConfig.getTestCase(), config.getFixedCommitConfig().getCommit());
-      LOG.info("Traces equal: {}", TreeUtil.areTracesEqual(rootPredecessor, rootVersion));
+      rootCurrent = resultsManagerPrevious.getTree(causeSearchConfig.getTestCase(), config.getFixedCommitConfig().getCommit());
+      LOG.info("Traces equal: {}", TreeUtil.areTracesEqual(rootPredecessor, rootCurrent));
    }
 
    public CallTreeNode getRootPredecessor() {
       return rootPredecessor;
    }
 
-   public CallTreeNode getRootVersion() {
-      return rootVersion;
+   public CallTreeNode getRootCurrent() {
+      return rootCurrent;
    }
 
    public EnvironmentVariables getEnv() {

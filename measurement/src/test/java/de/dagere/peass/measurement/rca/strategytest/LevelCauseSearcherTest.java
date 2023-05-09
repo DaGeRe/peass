@@ -70,7 +70,7 @@ public class LevelCauseSearcherTest {
 
       treeReader = Mockito.mock(BothTreeReader.class);
       Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
-      Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
+      Mockito.when(treeReader.getRootCurrent()).thenReturn(root2);
    }
 
    @Test

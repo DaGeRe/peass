@@ -46,7 +46,7 @@ public class CauseSearcherComplete extends CauseSearcher {
       creator = new TreeAnalyzerCreator() {
          @Override
          public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
-            return new CompleteTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
+            return new CompleteTreeAnalyzer(reader.getRootCurrent(), reader.getRootPredecessor());
          }
       };
    }

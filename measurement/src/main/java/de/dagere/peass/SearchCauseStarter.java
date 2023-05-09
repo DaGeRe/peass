@@ -171,7 +171,7 @@ public class SearchCauseStarter extends MeasureStarter {
                   File propertyFolder = config.getPropertyFolder();
                   File methodSourceFolder = new File(propertyFolder, "methods");
                   ChangedMethodManager manager = new ChangedMethodManager(methodSourceFolder);
-                  return new SourceChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor(), manager, measurementConfiguration);
+                  return new SourceChangeTreeAnalyzer(reader.getRootCurrent(), reader.getRootPredecessor(), manager, measurementConfiguration);
                }
             };
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creatorSource, env);
@@ -181,7 +181,7 @@ public class SearchCauseStarter extends MeasureStarter {
 
                @Override
                public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
-                  return new StructureChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
+                  return new StructureChangeTreeAnalyzer(reader.getRootCurrent(), reader.getRootPredecessor());
                }
             };
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator, env);
@@ -195,7 +195,7 @@ public class SearchCauseStarter extends MeasureStarter {
 
             @Override
             public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
-               return new StructureChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
+               return new StructureChangeTreeAnalyzer(reader.getRootCurrent(), reader.getRootPredecessor());
             }
          };
          tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator, env);

@@ -37,7 +37,7 @@ public class TestSourceChangeTreeAnalyzer {
 
       File methodSourceFolder = new File("src/test/resources/sourceChangeRCATest/properties_project_3", "methods");
       ChangedMethodManager manager = new ChangedMethodManager(methodSourceFolder);
-      SourceChangeTreeAnalyzer analyzer = new SourceChangeTreeAnalyzer(treeReader.getRootVersion(), treeReader.getRootPredecessor(), manager, config);
+      SourceChangeTreeAnalyzer analyzer = new SourceChangeTreeAnalyzer(treeReader.getRootCurrent(), treeReader.getRootPredecessor(), manager, config);
 
       List<String> instrumentedCalls = analyzer.getMeasurementNodesPredecessor().stream().map(node -> node.getCall()).collect(Collectors.toList());
       MatcherAssert.assertThat(instrumentedCalls, IsIterableContaining.hasItem("de.peass.MainTest#testMe"));

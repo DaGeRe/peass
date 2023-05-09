@@ -100,7 +100,7 @@ public class CauseSearcherCompleteTest {
       final BothTreeReader treeReader = Mockito.mock(BothTreeReader.class);
 
       Mockito.when(treeReader.getRootPredecessor()).thenReturn(rootPredecessor);
-      Mockito.when(treeReader.getRootVersion()).thenReturn(rootVersion);
+      Mockito.when(treeReader.getRootCurrent()).thenReturn(rootVersion);
 
       final CauseSearcherComplete searcher = new CauseSearcherComplete(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer,
             TestConstants.SIMPLE_MEASUREMENT_CONFIG,

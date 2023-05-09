@@ -84,7 +84,7 @@ public class LevelManagerTest {
 
       final BothTreeReader mock = Mockito.mock(BothTreeReader.class);
       Mockito.when(mock.getRootPredecessor()).thenReturn(root);
-      Mockito.when(mock.getRootVersion()).thenReturn(root);
+      Mockito.when(mock.getRootCurrent()).thenReturn(root);
 
       final LinkedList<CallTreeNode> currentVersionNodeList = new LinkedList<>();
       final LinkedList<CallTreeNode> currentVersionPredecessorNodeList = new LinkedList<>();
@@ -102,7 +102,7 @@ public class LevelManagerTest {
    private BothTreeReader buildTree() {
       final BothTreeReader mock = Mockito.mock(BothTreeReader.class);
       Mockito.when(mock.getRootPredecessor()).thenReturn(builder1.getRoot());
-      Mockito.when(mock.getRootVersion()).thenReturn(builder2.getRoot());
+      Mockito.when(mock.getRootCurrent()).thenReturn(builder2.getRoot());
       return mock;
    }
 

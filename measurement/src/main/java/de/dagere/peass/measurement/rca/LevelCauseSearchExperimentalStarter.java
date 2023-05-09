@@ -42,7 +42,7 @@ public class LevelCauseSearchExperimentalStarter {
       reader.readTrees();
 
       List<CallTreeNode> predecessor = Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() });
-      List<CallTreeNode> current = Arrays.asList(new CallTreeNode[] { reader.getRootVersion() });
+      List<CallTreeNode> current = Arrays.asList(new CallTreeNode[] { reader.getRootCurrent() });
 
       int level = 0;
       boolean hasChilds = true;
