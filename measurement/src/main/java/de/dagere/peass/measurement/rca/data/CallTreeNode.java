@@ -207,20 +207,20 @@ public class CallTreeNode extends BasicNode {
    @JsonIgnore
    public TestcaseStatistic getTestcaseStatistic() {
       LOG.debug("Creating statistics for {} {} Keys: {}", config.getFixedCommitConfig().getCommit(), config.getFixedCommitConfig().getCommitOld(), data.keySet());
-      final CallTreeStatistics currentVersionStatistics = data.get(config.getFixedCommitConfig().getCommit());
-      final SummaryStatistics current = currentVersionStatistics.getStatistics();
-      final CallTreeStatistics previousVersionStatistics = data.get(config.getFixedCommitConfig().getCommitOld());
-      final SummaryStatistics previous = previousVersionStatistics.getStatistics();
+      final CallTreeStatistics currentStatistics = data.get(config.getFixedCommitConfig().getCommit());
+      final SummaryStatistics current = currentStatistics.getStatistics();
+      final CallTreeStatistics predecessorStatistics = data.get(config.getFixedCommitConfig().getCommitOld());
+      final SummaryStatistics predecessor = predecessorStatistics.getStatistics();
       try {
-         final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current,
-               previousVersionStatistics.getCalls(), currentVersionStatistics.getCalls());
+         final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(predecessor, current,
+               predecessorStatistics.getCalls(), currentStatistics.getCalls());
          return testcaseStatistic;
       } catch (NumberIsTooSmallException t) {
-         LOG.debug("Data: " + current.getN() + " " + previous.getN());
+         LOG.debug("Data: " + current.getN() + " " + predecessor.getN());
          final String otherCall = getOtherKiekerPattern() != null ? getOtherKiekerPattern() : "Not Existing";
          throw new RuntimeException("Could not read " + call + " Other Version: " + otherCall, t);
       } catch (TestcaseStatisticException t) {
-         LOG.debug("Data: " + current.getN() + " " + previous.getN());
+         LOG.debug("Data: " + current.getN() + " " + predecessor.getN());
          final String otherCall = getOtherKiekerPattern() != null ? getOtherKiekerPattern() : "Not Existing";
          throw new RuntimeException("Could not read " + call + " Other Version: " + otherCall, t);
       }
