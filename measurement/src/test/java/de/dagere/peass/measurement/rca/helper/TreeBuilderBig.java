@@ -14,7 +14,7 @@ public class TreeBuilderBig extends TreeBuilder {
    @Override
    public void buildMeasurements(final CallTreeNode... nodes) {
 //      final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c, constructor, b2 };
-      initVersions(nodes);
+      initCommitData(nodes);
       buildChunks(b2, commit, 95);
       buildBasicChunks(nodes);
       if (secondBDiffering) {

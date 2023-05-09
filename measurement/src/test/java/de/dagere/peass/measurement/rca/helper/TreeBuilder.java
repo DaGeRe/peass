@@ -61,7 +61,7 @@ public class TreeBuilder {
    }
 
    public void buildMeasurements(final CallTreeNode... nodes) {
-      initVersions(nodes);
+      initCommitData(nodes);
       buildBasicChunks(nodes);
       buildStatistics(nodes);
    }
@@ -109,7 +109,7 @@ public class TreeBuilder {
       }
    }
 
-   protected void initVersions(final CallTreeNode[] nodes) {
+   protected void initCommitData(final CallTreeNode[] nodes) {
       for (final CallTreeNode node : nodes) {
          node.initCommitData();
       }

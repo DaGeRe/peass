@@ -15,7 +15,7 @@ public class TreeBuilderLeafs extends TreeBuilder {
    @Override
    public void buildMeasurements(CallTreeNode... nodes) {
 //      final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c, b2, b3, b4, c2 };
-      initVersions(nodes);
+      initCommitData(nodes);
       buildChunks(b2, commit, 95);
       buildChunks(b3, commit, 95);
       buildChunks(b4, commit, 95);

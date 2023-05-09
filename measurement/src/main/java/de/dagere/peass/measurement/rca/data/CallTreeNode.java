@@ -394,4 +394,15 @@ public class CallTreeNode extends BasicNode {
       }
    }
 
+   @JsonIgnore
+   public CallTreeNode getChildByKiekerPattern(String kiekerPattern) {
+      for (CallTreeNode child : children) {
+         if (child.getKiekerPattern().equals(kiekerPattern)) {
+            return child;
+         }
+      }
+      return null;
+
+   }
+
 }

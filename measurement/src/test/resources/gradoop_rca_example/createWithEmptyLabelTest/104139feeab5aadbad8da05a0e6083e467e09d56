@@ -1,0 +1,43 @@
+{
+  "call" : "org.gradoop.model.impl.pojo.EdgePojoTest#createWithEmptyLabelTest",
+  "kiekerPattern" : "public void org.gradoop.model.impl.pojo.EdgePojoTest.createWithEmptyLabelTest()",
+  "otherKiekerPattern" : null,
+  "module" : "gradoop-core",
+  "children" : [ {
+    "call" : "org.gradoop.model.impl.pojo.ElementPojoFactory#<init>",
+    "kiekerPattern" : "public new org.gradoop.model.impl.pojo.ElementPojoFactory.<init>()",
+    "otherKiekerPattern" : null,
+    "module" : "gradoop-core",
+    "children" : [ ]
+  }, {
+    "call" : "org.gradoop.model.impl.pojo.EdgePojoFactory#<init>",
+    "kiekerPattern" : "public new org.gradoop.model.impl.pojo.EdgePojoFactory.<init>()",
+    "otherKiekerPattern" : null,
+    "module" : "gradoop-core",
+    "children" : [ ]
+  }, {
+    "call" : "org.gradoop.model.impl.pojo.EdgePojoFactory#createEdge",
+    "kiekerPattern" : "public org.gradoop.model.impl.pojo.EdgePojo org.gradoop.model.impl.pojo.EdgePojoFactory.createEdge(java.lang.Long,java.lang.String,java.lang.Long,java.lang.Long)",
+    "otherKiekerPattern" : null,
+    "module" : "gradoop-core",
+    "children" : [ {
+      "call" : "org.gradoop.model.impl.pojo.EdgePojoFactory#createEdge",
+      "kiekerPattern" : "public org.gradoop.model.impl.pojo.EdgePojo org.gradoop.model.impl.pojo.EdgePojoFactory.createEdge(java.lang.Long,java.lang.String,java.lang.Long,java.lang.Long,java.util.Map,java.util.Set)",
+      "otherKiekerPattern" : null,
+      "module" : "gradoop-core",
+      "children" : [ {
+        "call" : "org.gradoop.model.impl.pojo.ElementPojoFactory#checkId",
+        "kiekerPattern" : "protected void org.gradoop.model.impl.pojo.ElementPojoFactory.checkId(java.lang.Long)",
+        "otherKiekerPattern" : null,
+        "module" : "gradoop-core",
+        "children" : [ ]
+      }, {
+        "call" : "org.gradoop.model.impl.pojo.ElementPojoFactory#checkLabel",
+        "kiekerPattern" : "protected void org.gradoop.model.impl.pojo.ElementPojoFactory.checkLabel(java.lang.String)",
+        "otherKiekerPattern" : null,
+        "module" : "gradoop-core",
+        "children" : [ ]
+      } ]
+    } ]
+  } ]
+}
