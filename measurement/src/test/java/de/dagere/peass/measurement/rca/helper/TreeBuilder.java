@@ -9,6 +9,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
 
 public class TreeBuilder {
    
@@ -19,6 +20,7 @@ public class TreeBuilder {
 
    private CallTreeNode d;
    private CallTreeNode e;
+   private CallTreeNode f;
 
    protected String commitPredecessor = COMMIT_OLD;
    protected String commit = COMMIT;
@@ -58,6 +60,15 @@ public class TreeBuilder {
    public void addDE() {
       d = c.appendChild("ClassD#methodD", "public void ClassD.methodD()", "public void ClassD.methodD()");
       e = c.appendChild("ClassE#methodE", "public void ClassE.methodE()", "public void ClassE.methodE()");
+   }
+   
+   public void addDE2() {
+      d = c.appendChild("ClassD#methodD2", "public void ClassD.methodD2()", "public void ClassD.methodD()");
+      e = c.appendChild("ClassE#methodE2", "public void ClassE.methodE2()", "public void ClassE.methodE()");
+   }
+   
+   public void addF() {
+      f = a.appendChild("ClassF#methodF", "public void ClassF.methodF()", CauseSearchData.ADDED);
    }
 
    public void buildMeasurements(final CallTreeNode... nodes) {
@@ -185,6 +196,10 @@ public class TreeBuilder {
 
    public CallTreeNode getE() {
       return e;
+   }
+   
+   public CallTreeNode getF() {
+      return f;
    }
 
    public CallTreeNode getConstructor() {

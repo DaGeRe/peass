@@ -1,8 +1,10 @@
 package de.dagere.peass.measurement.rca.treeanalysis;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,12 +26,23 @@ public class LevelDifferentNodeDeterminer extends DifferentNodeDeterminer {
    public LevelDifferentNodeDeterminer(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList,
          final CauseSearcherConfig causeSearchConfig, final MeasurementConfig measurementConfig) {
       super(causeSearchConfig, measurementConfig);
-      final Iterator<CallTreeNode> predecessorIterator = currentPredecessorNodeList.iterator();
-      final Iterator<CallTreeNode> currentIterator = currentVersionNodeList.iterator();
-      for (; predecessorIterator.hasNext() && currentIterator.hasNext();) {
-         final CallTreeNode currentPredecessorNode = predecessorIterator.next();
-         final CallTreeNode currentVersionNode = currentIterator.next();
-         findMeasurable(currentPredecessorNode, currentVersionNode);
+      
+      List<CallTreeNode> currentNodes = new LinkedList<>(currentVersionNodeList);
+      
+      for (CallTreeNode predecessorNode : currentPredecessorNodeList) {
+         CallTreeNode currentVersionNode = predecessorNode.getOtherCommitNode();
+         if (currentVersionNode == null) {
+            throw new RuntimeException("Node " + predecessorNode + " was not mapped");
+         }
+         currentNodes.remove(currentVersionNode);
+         findMeasurable(predecessorNode, currentVersionNode);
+      }
+      
+      if (!currentNodes.isEmpty()) {
+         LOG.error("Could not map node lists");
+         LOG.error("Predecessor: {}", currentPredecessorNodeList);
+         LOG.error("Current: {}", currentVersionNodeList);
+         throw new RuntimeException("Mapping error");
       }
    }
 

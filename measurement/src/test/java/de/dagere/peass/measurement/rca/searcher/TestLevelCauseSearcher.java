@@ -42,7 +42,7 @@ public class TestLevelCauseSearcher {
    private static final String COMMIT_CURRENT = "cf1a996ffc69fd1fdd94a3eb16ef40eb9843e2de";
 
    private static final File folder = new File("src/test/resources/gradoop_rca_example/createWithEmptyLabelTest/");
-   
+
    private final File temp = new File("target/temp_test");
 
    @BeforeEach
@@ -110,6 +110,9 @@ public class TestLevelCauseSearcher {
             "public org.gradoop.model.impl.pojo.EdgePojo org.gradoop.model.impl.pojo.EdgePojoFactory.createEdge(java.lang.Long,java.lang.String,java.lang.Long,java.lang.Long,java.util.Map,java.util.Set)",
             new long[] { 100, 100 });
       averages.put("new org.gradoop.model.impl.id.GradoopId.<init>(java.lang.Long)", new long[] { 100, 100 });
+      averages.put(
+            "public org.gradoop.model.impl.pojo.EdgePojo org.gradoop.model.impl.pojo.EdgePojoFactory.createEdge(org.gradoop.model.impl.id.GradoopId,java.lang.String,org.gradoop.model.impl.id.GradoopId,org.gradoop.model.impl.id.GradoopId,java.util.Map,org.gradoop.model.impl.id.GradoopIds)",
+            new long[] { 100, 100 });
 
       Mockito.doAnswer(new Answer<Void>() {
          @Override
