@@ -67,6 +67,9 @@ public class LevelCauseSearcherTest {
    public void buildRoots() {
       root1 = builderPredecessor.getRoot();
       root2 = builderPredecessor.getRoot();
+      
+      root1.setOtherCommitNode(root2);
+      root2.setOtherCommitNode(root1);
 
       treeReader = Mockito.mock(BothTreeReader.class);
       Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
