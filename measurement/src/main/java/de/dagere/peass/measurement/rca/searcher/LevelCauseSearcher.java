@@ -38,8 +38,7 @@ public class LevelCauseSearcher extends CauseSearcher {
     * @throws InterruptedException
     * @throws IOException
     */
-   public LevelCauseSearcher(final CauseTester measurer, final CausePersistenceManager persistenceManager, final EnvironmentVariables env)
-         throws InterruptedException, IOException {
+   public LevelCauseSearcher(final CauseTester measurer, final CausePersistenceManager persistenceManager, final EnvironmentVariables env) {
       super(null, persistenceManager.getRCAData().getCauseConfig(), measurer, persistenceManager.getRCAData().getMeasurementConfig(), persistenceManager.getFolders(), env);
       this.persistenceManager = persistenceManager;
    }
