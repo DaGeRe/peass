@@ -38,7 +38,7 @@ public class GetChangesStarter implements Callable<Void> {
    @Option(names = { "-executionFile", "--executionFile" }, description = "Path to the executionFile")
    protected File executionFile;
 
-   @Option(names = { "-data", "--data" }, description = "Path to datafolder")
+   @Option(names = { "-data", "--data" }, description = "Path to datafolder", required = true)
    protected File data[];
 
    @Option(names = { "-out", "--out" }, description = "Path for saving the changefile")
