@@ -50,7 +50,7 @@ public class DirectKiekerMeasurementTransformer {
    }
 
    private void buildMergedData(Kopemedata data, List<MeasuredValue> oneVMResult) {
-      if (data.getMethods().size() > 0) {
+      if (data.getMethods().size() > 0 && oneVMResult.size() > 0) {
          TestMethod testMethod = data.getMethods().get(0);
          DatacollectorResult datacollector = new DatacollectorResult(TimeDataCollectorNoGC.class.getName());
          VMResult vmResult = new VMResult();

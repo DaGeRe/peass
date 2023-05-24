@@ -1,10 +1,12 @@
 package de.dagere.peass.measurement.kieker;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,6 +63,23 @@ public class TestKiekerDataTransformation {
       TestMethodCall test = new TestMethodCall("defaultpackage.TestMe", "testMe");
 
       // Failed tests should not yield an exception, therefore this is checked here
+      transformer.transform(test);
+   }
+   
+   @Test
+   public void testSemiEmptyEmptyTransformation() throws IOException {
+      PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
+
+      for (File kiekerDataFolder : folders.getTempDir().listFiles((FileFilter) new WildcardFileFilter("kieker-*-KoPeMe"))) {
+         for (File dataFile : kiekerDataFolder.listFiles()) {
+            FileUtils.delete(dataFile);
+         }
+      }
+      
+      DirectKiekerMeasurementTransformer transformer = new DirectKiekerMeasurementTransformer(folders);
+      TestMethodCall test = new TestMethodCall("defaultpackage.TestMe", "testMe");
+
+      // Failed tests might not produce Kieker results, but produce KoPeMe results; this should also not yield exceptions (but just missing data)
       transformer.transform(test);
    }
 }
