@@ -130,68 +130,6 @@
     </repository>
   </repositories>
 
-  <profiles>
-    <profile>
-      <id>buildFatJar</id>
-      <activation>
-        <!-- The shade plugin took ~ 21 s from 25 s of build, if a shaded jar is built for every module Therefore, shade is commented out currently; if a separate 
-          dependency-jar is needed, it could be re-enabled (or used by activating the profile) -->
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>3.2.4</version>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>shade</goal>
-                </goals>
-                <configuration>
-                  <transformers>
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                      <mainClass>de.peass.AdaptiveTestStarter</mainClass>
-                    </transformer>
-                  </transformers>
-                  <filters>
-                    <filter>
-                      <artifact>*:*</artifact>
-                      <excludes>
-                        <exclude>META-INF/*.SF</exclude>
-                        <exclude>META-INF/*.DSA</exclude>
-                        <exclude>META-INF/*.RSA</exclude>
-                      </excludes>
-                    </filter>
-                    <filter>
-                      <artifact>org.apache.logging.log4j:*</artifact>
-                      <excludes>
-                        <exclude>org/apache/logging/log4j/core/appender/db/jpa/converter/*</exclude>
-                      </excludes>
-                    </filter>
-                  </filters>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
