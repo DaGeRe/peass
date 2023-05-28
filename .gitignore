@@ -52,4 +52,10 @@ dependency/src/test/resources/jmh-it/multimodule/using-module/target/
 measurement/scripts/versions/dependencies/
 measurement/scripts/versions/laststart
 measurement/scripts/versions/sync2/
+# Don't version generated files
+analysis/src/test/resources/visualization/rcaSingleTreeTest_peass/clearRCA.sh
+analysis/src/test/resources/visualization/rcaSingleTreeTest_peass/getProgress.sh
+analysis/src/test/resources/visualization/rcaSingleTreeTest_peass/rca/getIntermediaryValues.sh
+analysis/src/test/resources/visualization/singleTreeBeforeProblem/demo-project_peass/clearRCA.sh
+analysis/src/test/resources/visualization/singleTreeBeforeProblem/demo-project_peass/getProgress.sh
 results/
