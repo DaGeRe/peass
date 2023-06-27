@@ -77,7 +77,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.11.0</version>
+      <version>2.13.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -130,7 +130,7 @@
     <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
-      <version>4.7.3</version>
+      <version>4.7.4</version>
     </dependency>
 
     <!-- Both are needed in your local maven repo, and both should be downloaded when building (but are only needed at runtime, if a project does not use snapshot 
