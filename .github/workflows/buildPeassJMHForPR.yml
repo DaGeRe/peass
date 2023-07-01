@@ -3,11 +3,7 @@
 
 name: Build Peass-JMH (PR)
 
-on:
-  pull_request:
-    branches: [ master, main, develop ]
-  workflow_dispatch:
-    branches: [ master, main, develop ]
+on: [push, workflow_dispatch]
 
 jobs:
   build:
