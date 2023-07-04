@@ -2,16 +2,13 @@ package de.dagere.peass;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.ExecutionConfig;
@@ -83,7 +80,7 @@ public class SelectStarter implements Callable<Void> {
             config.getDependencyConfig(), executionConfig, kiekerConfig, new EnvironmentVariables(executionConfig.getProperties()));
       final ResultsFolders[] outFiles = reader.readDependencies();
 
-      LOG.debug("Files: {}", outFiles);
+      LOG.debug("Files: {}", Arrays.toString(outFiles));
 
       ResultsFolders mergedFolders = new ResultsFolders(config.getResultBaseFolder(), project);
 
