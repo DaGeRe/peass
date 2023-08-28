@@ -130,7 +130,7 @@
     <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
-      <version>4.7.4</version>
+      <version>4.7.5</version>
     </dependency>
 
     <!-- Both are needed in your local maven repo, and both should be downloaded when building (but are only needed at runtime, if a project does not use snapshot 
