@@ -221,6 +221,12 @@ public class MultipleVMTestUtil {
                   / vmVal.getFulldata().getValues().size())
             .boxed().sorted().collect(Collectors.toList());
    }
+   
+   public static double[] getAveragesArray(List<VMResult> values) {
+      final List<Double> list = getAverages(values);
+      final double[] array = ArrayUtils.toPrimitive(list.toArray(new Double[0]));
+      return array;
+   }
 
    public static SummaryStatistics getStatistic(final List<VMResult> results) {
       final SummaryStatistics statistisc = new SummaryStatistics();
