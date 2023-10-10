@@ -9,6 +9,7 @@ import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
 import org.apache.commons.math3.stat.inference.TTest;
 import org.apache.logging.log4j.LogManager;
@@ -141,7 +142,7 @@ public class StatisticUtil {
 
    public static VMResult shortenResult(final VMResult result, final int start, final int end) {
       final VMResult resultShort = copyResultBasics(result);
-      final DescriptiveStatistics statistics = new DescriptiveStatistics();
+      final SummaryStatistics statistics = new SummaryStatistics();
       // LOG.debug("Size: " + result.getFulldata().getValue().size());
       final int size = (Math.min(end, result.getFulldata().getValues().size()));
       if (start > size) {
