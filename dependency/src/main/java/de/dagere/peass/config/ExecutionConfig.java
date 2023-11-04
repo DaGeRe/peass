@@ -41,7 +41,7 @@ public class ExecutionConfig implements FolderConfig, Serializable {
    private long timeout = 5 * 60 * 1000;
    private String cleanGoal;
    private String testGoal;
-   private List<String> executableCheckGoals;
+   private List<String> executableCheckGoals = new LinkedList<>();
    private List<String> includes = new LinkedList<>();
    private List<String> excludes = new LinkedList<>();
    private List<String> includeByRule = new LinkedList<>();
