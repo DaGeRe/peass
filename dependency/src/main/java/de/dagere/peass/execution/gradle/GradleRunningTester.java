@@ -14,21 +14,21 @@ import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 
 public class GradleRunningTester implements BuildfileRunningTester {
-   
+
    private final PeassFolders folders;
    private final EnvironmentVariables env;
    private final MeasurementConfig measurementConfig;
    private final ProjectModules modules;
-   
+
    private boolean isAndroid = false;
- 
+
    public GradleRunningTester(final PeassFolders folders, final MeasurementConfig measurementConfig, final EnvironmentVariables env, final ProjectModules modules) {
       this.folders = folders;
       this.measurementConfig = measurementConfig;
       this.env = env;
       this.modules = modules;
    }
-   
+
    public boolean isCommitRunning(final String commit, GradleTestExecutor executor) {
       boolean isRunning = false;
       if (executor.doesBuildfileExist()) {
@@ -47,28 +47,31 @@ public class GradleRunningTester implements BuildfileRunningTester {
 
          executor.replaceAllBuildfiles(modules);
 
-         final String[] basicVars = new String[] {EnvironmentVariables.fetchGradleCall(), "--no-daemon"};
+         final String cleanGoal = measurementConfig.getExecutionConfig().getCleanGoal() != null ? measurementConfig.getExecutionConfig().getCleanGoal() : "clean";
+         
+         final String[] basicVars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon" };
          final String[] vars;
          if (!isAndroid) {
             if (measurementConfig.getExecutionConfig().getExecutableCheckGoals().isEmpty()) {
-               String[] temp = CommandConcatenator.concatenateCommandArrays(basicVars, new String[] {measurementConfig.getExecutionConfig().getCleanGoal() });
+               
+               String[] temp = CommandConcatenator.concatenateCommandArrays(basicVars, new String[] { cleanGoal });
                vars = CommandConcatenator.concatenateCommandArrays(temp, measurementConfig.getExecutionConfig().getExecutableCheckGoals().toArray(new String[0]));
             } else {
-               vars = CommandConcatenator.concatenateCommandArrays(basicVars, new String[] {measurementConfig.getExecutionConfig().getCleanGoal(), "testClasses", "assemble"});
+               vars = CommandConcatenator.concatenateCommandArrays(basicVars, new String[] { cleanGoal, "testClasses", "assemble" });
             }
          } else {
-            vars = CommandConcatenator.concatenateCommandArrays(basicVars, new String[] {"assemble"});
+            vars = CommandConcatenator.concatenateCommandArrays(basicVars, new String[] { "assemble" });
          }
 
          ProcessSuccessTester processSuccessTester = new ProcessSuccessTester(folders, measurementConfig, env);
          isRunning = processSuccessTester.testRunningSuccess(commit, vars);
-         
+
          File cleanLogFile = folders.getDependencyLogSuccessRunFile(commit);
          GradleDaemonFileDeleter.deleteDaemonFile(cleanLogFile);
       }
       return isRunning;
    }
-   
+
    public boolean isAndroid() {
       return isAndroid;
    }
