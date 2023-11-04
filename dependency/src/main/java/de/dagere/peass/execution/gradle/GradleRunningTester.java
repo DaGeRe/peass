@@ -1,11 +1,13 @@
 package de.dagere.peass.execution.gradle;
 
 import java.io.File;
+import java.util.Arrays;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.execution.maven.BuildfileRunningTester;
 import de.dagere.peass.execution.processutils.ProcessSuccessTester;
+import de.dagere.peass.execution.utils.CommandConcatenator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -45,11 +47,17 @@ public class GradleRunningTester implements BuildfileRunningTester {
 
          executor.replaceAllBuildfiles(modules);
 
+         final String[] basicVars = new String[] {EnvironmentVariables.fetchGradleCall(), "--no-daemon"};
          final String[] vars;
          if (!isAndroid) {
-            vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", measurementConfig.getExecutionConfig().getCleanGoal(), "testClasses", "assemble" };
+            if (measurementConfig.getExecutionConfig().getExecutableCheckGoals().isEmpty()) {
+               String[] temp = CommandConcatenator.concatenateCommandArrays(basicVars, new String[] {measurementConfig.getExecutionConfig().getCleanGoal() });
+               vars = CommandConcatenator.concatenateCommandArrays(temp, measurementConfig.getExecutionConfig().getExecutableCheckGoals().toArray(new String[0]));
+            } else {
+               vars = CommandConcatenator.concatenateCommandArrays(basicVars, new String[] {measurementConfig.getExecutionConfig().getCleanGoal(), "testClasses", "assemble"});
+            }
          } else {
-            vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", "assemble" };
+            vars = CommandConcatenator.concatenateCommandArrays(basicVars, new String[] {"assemble"});
          }
 
          ProcessSuccessTester processSuccessTester = new ProcessSuccessTester(folders, measurementConfig, env);

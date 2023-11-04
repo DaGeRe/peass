@@ -41,6 +41,7 @@ public class ExecutionConfig implements FolderConfig, Serializable {
    private long timeout = 5 * 60 * 1000;
    private String cleanGoal;
    private String testGoal;
+   private List<String> executableCheckGoals;
    private List<String> includes = new LinkedList<>();
    private List<String> excludes = new LinkedList<>();
    private List<String> includeByRule = new LinkedList<>();
@@ -199,6 +200,15 @@ public class ExecutionConfig implements FolderConfig, Serializable {
 
    public void setTestGoal(final String testGoal) {
       this.testGoal = testGoal;
+   }
+   
+   public List<String> getExecutableCheckGoals() {
+      return executableCheckGoals;
+   }
+   
+   @JsonInclude(Include.NON_EMPTY)
+   public void setExecutableCheckGoals(List<String> executableCheckGoals) {
+      this.executableCheckGoals = executableCheckGoals;
    }
 
    @JsonInclude(Include.NON_EMPTY)

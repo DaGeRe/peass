@@ -47,6 +47,10 @@ public class ExecutionConfigMixin {
          + "If you want to run integration tests in maven e.g. by calling failsafe, also specify it here. ")
    protected String testGoal;
 
+   @Option(names = { "-executableCheckGoals",
+         "--executableCheckGoals" }, split = ";", description = "Goals that should be used for checking whether a commit is executable *currently only for gradle* (by default testClasses and assemble for non-android projects, assemble for android projects)")
+   protected String[] executableCheckGoals;
+
    @Option(names = { "-cleanGoal", "--cleanGoal" }, description = "Clean goal that is called before the test execution *in Gradle*; defaults to cleanTest.")
    protected String cleanGoal;
 
@@ -181,6 +185,14 @@ public class ExecutionConfigMixin {
 
    public String getTestGoal() {
       return testGoal;
+   }
+
+   public void setExecutableCheckGoals(String[] executableCheckGoals) {
+      this.executableCheckGoals = executableCheckGoals;
+   }
+
+   public String[] getExecutableCheckGoals() {
+      return executableCheckGoals;
    }
 
    public void setCleanGoal(String cleanGoal) {
@@ -424,18 +436,18 @@ public class ExecutionConfigMixin {
    }
 
    public String getAndroidGradleVersion() {
-       return androidGradleVersion;
+      return androidGradleVersion;
    }
 
    public void setAndroidGradleVersion(String androidGradleVersion) {
-       this.androidGradleVersion = androidGradleVersion;
+      this.androidGradleVersion = androidGradleVersion;
    }
 
    public String getAndroidTestPackageName() {
       return androidTestPackageName;
    }
 
-  public void setAndroidTestPackageName(String androidTestPackageName) {
+   public void setAndroidTestPackageName(String androidTestPackageName) {
       this.androidTestPackageName = androidTestPackageName;
    }
 
@@ -454,6 +466,12 @@ public class ExecutionConfigMixin {
       config.setEndcommit(getEndcommit());
       config.setLinearizeHistory(linearizeHistory);
       config.setTestGoal(getTestGoal());
+      if (getExecutableCheckGoals() != null) {
+         for (String executableCheckGoal : getExecutableCheckGoals()) {
+            config.getExecutableCheckGoals().add(executableCheckGoal);
+         }
+      }
+
       config.setCleanGoal(getCleanGoal());
 
       if (getIncludes() != null) {
