@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.execution.maven.MavenRunningTester;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.execution.utils.CommandConcatenator;
@@ -173,41 +174,18 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
    @Override
    public boolean isCommitRunning(final String commit) {
-      boolean isRunning = false;
-      if (doesBuildfileExist()) {
-         boolean isAndroid = false;
-         for (final File module : getModules().getModules()) {
-            final File buildfile = GradleParseHelper.findGradleFile(module);
-            final GradleBuildfileVisitor visitor = GradleParseUtil.setAndroidTools(buildfile, testTransformer.getConfig().getExecutionConfig());
-            if (visitor.isAndroid()) {
-               isAndroid = true;
-               if (!visitor.hasVersion()) {
-                  return false;
-               }
-            }
-         }
-         this.isAndroid = isAndroid;
-
-         ProjectModules modules = getModules();
-         replaceAllBuildfiles(modules);
-
-         final String[] vars;
-         if (!isAndroid) {
-            vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", getCleanGoal(), "testClasses", "assemble" };
-         } else {
-            vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", "assemble" };
-         }
-
-         ProcessSuccessTester processSuccessTester = new ProcessSuccessTester(folders, testTransformer.getConfig(), env);
-         isRunning = processSuccessTester.testRunningSuccess(commit, vars);
-         
-         File cleanLogFile = folders.getDependencyLogSuccessRunFile(commit);
-         GradleDaemonFileDeleter.deleteDaemonFile(cleanLogFile);
+      ProjectModules modules = getModules();
+      if (modules != null) {
+         GradleRunningTester mavenRunningTester = new GradleRunningTester(folders, testTransformer.getConfig(), env, modules);
+         boolean isRunning = mavenRunningTester.isCommitRunning(commit, this);
+         isAndroid = mavenRunningTester.isAndroid();
+         return isRunning;
+      } else {
+         return false;
       }
-      return isRunning;
    }
 
-   private void replaceAllBuildfiles(final ProjectModules modules) {
+   void replaceAllBuildfiles(final ProjectModules modules) {
       if (testTransformer.getConfig().getExecutionConfig().isUseAlternativeBuildfile()) {
          for (final File module : modules.getModules()) {
             final File gradleFile = GradleParseHelper.findGradleFile(module);

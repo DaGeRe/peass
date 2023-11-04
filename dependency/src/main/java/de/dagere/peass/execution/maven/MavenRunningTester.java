@@ -13,9 +13,10 @@ import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.execution.utils.CommandConcatenator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
+import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 
-public class MavenRunningTester {
+public class MavenRunningTester implements BuildfileRunningTester {
 
    private static final Logger LOG = LogManager.getLogger(MavenRunningTester.class);
 
@@ -31,11 +32,11 @@ public class MavenRunningTester {
       this.modules = modules;
    }
 
-   public boolean isCommitRunning(final String commit) {
+   public boolean isCommitRunning(final String commit, TestExecutor executor) {
       File potentialPom = new File(folders.getProjectFolder(), "pom.xml");
       final File testFolder = new File(folders.getProjectFolder(), "src/test");
       boolean isRunning = false;
-      if (potentialPom.exists()) {
+      if (executor.doesBuildfileExist()) {
          try {
             final boolean multimodule = MavenPomUtil.isMultiModuleProject(potentialPom);
             if (multimodule || testFolder.exists()) {
