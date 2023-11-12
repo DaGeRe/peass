@@ -36,16 +36,16 @@ public class MavenPomUtil {
    public static final String LOG4J_GROUPID = "org.apache.logging.log4j";
    public static final String LOG4J_SLF4J_IMPL_ARTIFACTID = "log4j-slf4j-impl";
    public static final String LOG4J_TO_SLF4J_ARTIFACTID = "log4j-to-slf4j";
-   public static final String KOPEME_VERSION = "1.3.8";
-   public static final String KIEKER_VERSION = "1.15.2";
+   public static final String KOPEME_VERSION = "1.3.9";
+   public static final String KIEKER_VERSION = "1.15.3";
    public static final String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
    public static final String SUREFIRE_ARTIFACTID = "maven-surefire-plugin";
    public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";
 
-   public static final String COMPILER_PLUGIN_VERSION = "3.10.1";
+   public static final String COMPILER_PLUGIN_VERSION = "3.11.0";
 
-   public static final String JUPITER_VERSION = "5.9.0";
-   public static final String LOG4J_VERSION = "2.19.0";
+   public static final String JUPITER_VERSION = "5.10.1";
+   public static final String LOG4J_VERSION = "2.21.1";
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
 
