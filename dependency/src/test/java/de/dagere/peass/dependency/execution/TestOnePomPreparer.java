@@ -33,7 +33,7 @@ public class TestOnePomPreparer {
       final Model model = getModel();
       
       Assert.assertEquals("4.13.2", model.getDependencies().get(1).getVersion());
-      Assert.assertEquals("2.19.0", model.getDependencies().get(2).getVersion());
+      Assert.assertEquals("2.21.1", model.getDependencies().get(2).getVersion());
    }
    
    @Test
@@ -57,7 +57,7 @@ public class TestOnePomPreparer {
       
       final Model model = getModel();
       
-      Assert.assertEquals("2.19.0", model.getDependencyManagement().getDependencies().get(0).getVersion());
+      Assert.assertEquals("2.21.1", model.getDependencyManagement().getDependencies().get(0).getVersion());
    }
 
    private Model getModel() throws IOException, XmlPullParserException, FileNotFoundException {
