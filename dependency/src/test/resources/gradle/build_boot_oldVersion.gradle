@@ -1,17 +1,18 @@
 plugins {
     id 'java-library'
     id 'java'
-    id 'org.springframework.boot' version '2.3.3.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '2.7.17'
 }
+
+apply plugin: 'io.spring.dependency-management'
 
 repositories {
     mavenCentral()
     mavenLocal()
 }
 
-bootJar {
-	mainClassName='Dummy'
+springBoot {
+	mainClass='Dummy'
 }
 
 test {
