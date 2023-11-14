@@ -260,7 +260,7 @@ public class TestBuildGradleExclusions {
 
       final String gradleFileContentsBefore = FileUtils.readFileToString(destFile, Charset.defaultCharset());
 
-      MatcherAssert.assertThat(gradleFileContentsBefore, Matchers.containsString("com.android.tools.build:gradle:4.2.1"));
+      MatcherAssert.assertThat(gradleFileContentsBefore, Matchers.containsString("com.android.tools.build:gradle:7.4.2"));
       MatcherAssert.assertThat(gradleFileContentsBefore, Matchers.not(Matchers.containsString("com.android.tools.build:gradle:" + GRADLE_VERSION)));
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
@@ -270,7 +270,7 @@ public class TestBuildGradleExclusions {
 
       System.out.println(gradleFileContentsAfter);
 
-      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.not(Matchers.containsString("com.android.tools.build:gradle:4.2.1")));
+      MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.not(Matchers.containsString("com.android.tools.build:gradle:7.4.2")));
       MatcherAssert.assertThat(gradleFileContentsAfter, Matchers.containsString("com.android.tools.build:gradle:" + GRADLE_VERSION));
    }
 }
