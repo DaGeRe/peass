@@ -96,4 +96,15 @@ public class EnvironmentVariables implements Serializable {
    public static boolean isLinux() {
       return !System.getProperty("os.name").startsWith("Windows") && !System.getProperty("os.name").startsWith("Mac");
    }
+   
+   public static int getVersion() {
+      String version = System.getProperty("java.version");
+      if(version.startsWith("1.")) {
+          version = version.substring(2, 3);
+      } else {
+          int dot = version.indexOf(".");
+          if(dot != -1) { version = version.substring(0, dot); }
+      } return Integer.parseInt(version);
+  }
+
 }
