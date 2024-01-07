@@ -32,8 +32,7 @@ import de.dagere.peass.utils.StreamGobbler;
 public class TestTraceMethodReader {
 
    // Usually, the both following versions need to be updated together
-   private static final String LOG4J_VERSION = "2.20.0";
-   private static final String SLF4J_IMPL_VERSION = "2.20.0";
+   private static final String SLF4J_IMPL_VERSION = "2.22.0";
 
    private final File tmpFolder = new File("target" + File.separator + "kieker_results_test");
    private static final String REPO = System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository";
@@ -45,9 +44,9 @@ public class TestTraceMethodReader {
    private static final String SLF4J_API_JAR = REPO + File.separator + "org" + File.separator + "slf4j" + File.separator + "slf4j-api" + File.separator + SLF4J_API_VERSION
          + File.separator + "slf4j-api-" + SLF4J_API_VERSION + ".jar";
    private static final String LOG4J_FOLDER = REPO + File.separator + "org" + File.separator + "apache" + File.separator + "logging" + File.separator + "log4j";
-   private static final String LOG4J_IMPL_JAR = LOG4J_FOLDER + File.separator + "log4j-core" + File.separator + LOG4J_VERSION + File.separator + File.separator
-         + "log4j-core-" + LOG4J_VERSION + ".jar";
-   private static final String LOG4J_API_JAR = LOG4J_FOLDER + File.separator + "log4j-api" + File.separator + LOG4J_VERSION + File.separator + "log4j-api-" + LOG4J_VERSION
+   private static final String LOG4J_IMPL_JAR = LOG4J_FOLDER + File.separator + "log4j-core" + File.separator + MavenPomUtil.LOG4J_VERSION + File.separator + File.separator
+         + "log4j-core-" + MavenPomUtil.LOG4J_VERSION + ".jar";
+   private static final String LOG4J_API_JAR = LOG4J_FOLDER + File.separator + "log4j-api" + File.separator + MavenPomUtil.LOG4J_VERSION + File.separator + "log4j-api-" + MavenPomUtil.LOG4J_VERSION
          + ".jar";
 
    @BeforeEach
@@ -107,6 +106,9 @@ public class TestTraceMethodReader {
          agentPath = "\"" + MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath() + "\"";
       }
       System.out.println(agentPath);
+      if (!new File(agentPath).exists()) {
+         throw new RuntimeException("Kieker jar in " + agentPath + " not fond!");
+      }
       return agentPath;
    }
 
