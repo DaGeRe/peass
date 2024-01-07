@@ -102,11 +102,11 @@ public class TestTraceMethodReader {
       String agentPath;
       if (!System.getProperty("os.name").startsWith("Windows")) {
          agentPath = MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath();
-      } else {
-         agentPath = "\"" + MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath() + "\"";
          if (!new File(agentPath).exists()) {
             throw new RuntimeException("Kieker jar in " + agentPath + " not fond!");
          }
+      } else {
+         agentPath = "\"" + MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath() + "\"";
       }
       System.out.println(agentPath);
       return agentPath;
