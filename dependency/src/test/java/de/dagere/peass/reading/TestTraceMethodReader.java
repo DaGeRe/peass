@@ -104,11 +104,11 @@ public class TestTraceMethodReader {
          agentPath = MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath();
       } else {
          agentPath = "\"" + MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath() + "\"";
+         if (!new File(agentPath).exists()) {
+            throw new RuntimeException("Kieker jar in " + agentPath + " not fond!");
+         }
       }
       System.out.println(agentPath);
-      if (!new File(agentPath).exists()) {
-         throw new RuntimeException("Kieker jar in " + agentPath + " not fond!");
-      }
       return agentPath;
    }
 
