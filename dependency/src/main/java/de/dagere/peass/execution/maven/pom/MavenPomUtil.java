@@ -42,7 +42,7 @@ public class MavenPomUtil {
    public static final String SUREFIRE_ARTIFACTID = "maven-surefire-plugin";
    public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";
 
-   public static final String COMPILER_PLUGIN_VERSION = "3.11.0";
+   public static final String COMPILER_PLUGIN_VERSION = "3.12.1";
 
    public static final String JUPITER_VERSION = "5.10.1";
    public static final String LOG4J_VERSION = "2.21.1";
