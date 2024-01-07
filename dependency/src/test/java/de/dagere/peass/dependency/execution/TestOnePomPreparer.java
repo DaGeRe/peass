@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.execution.maven.OnePomPreparer;
+import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.testtransformation.JUnitVersions;
 import de.dagere.peass.testtransformation.TestTransformer;
 
@@ -33,7 +34,7 @@ public class TestOnePomPreparer {
       final Model model = getModel();
       
       Assert.assertEquals("4.13.2", model.getDependencies().get(1).getVersion());
-      Assert.assertEquals("2.21.1", model.getDependencies().get(2).getVersion());
+      Assert.assertEquals(MavenPomUtil.LOG4J_VERSION , model.getDependencies().get(2).getVersion());
    }
    
    @Test
@@ -57,7 +58,7 @@ public class TestOnePomPreparer {
       
       final Model model = getModel();
       
-      Assert.assertEquals("2.21.1", model.getDependencyManagement().getDependencies().get(0).getVersion());
+      Assert.assertEquals(MavenPomUtil.LOG4J_VERSION, model.getDependencyManagement().getDependencies().get(0).getVersion());
    }
 
    private Model getModel() throws IOException, XmlPullParserException, FileNotFoundException {
