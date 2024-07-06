@@ -114,8 +114,8 @@ public class CauseTester extends AdaptiveTester {
 
    @Override
    public boolean checkIsDecidable(final TestMethodCall testcase, final int vmid) {
-      getDurationsVersion(configuration.getFixedCommitConfig().getCommit());
-      getDurationsVersion(configuration.getFixedCommitConfig().getCommitOld());
+      getDurationsCommit(configuration.getFixedCommitConfig().getCommit());
+      getDurationsCommit(configuration.getFixedCommitConfig().getCommitOld());
       boolean allDecidable = super.checkIsDecidable(testcase, vmid);
       LOG.debug("Super decidable: {}", allDecidable);
       for (final CallTreeNode includedNode : includedNodes) {
@@ -159,8 +159,8 @@ public class CauseTester extends AdaptiveTester {
    }
 
    public void getDurations(final int levelId) {
-      getDurationsVersion(configuration.getFixedCommitConfig().getCommit());
-      getDurationsVersion(configuration.getFixedCommitConfig().getCommitOld());
+      getDurationsCommit(configuration.getFixedCommitConfig().getCommit());
+      getDurationsCommit(configuration.getFixedCommitConfig().getCommitOld());
    }
 
    public void cleanup(final int levelId) {
@@ -182,11 +182,11 @@ public class CauseTester extends AdaptiveTester {
       }
    }
 
-   private void getDurationsVersion(final String commit) {
+   private void getDurationsCommit(final String commit) {
       includedNodes.forEach(node -> node.createStatistics(commit));
    }
 
-   public void setCurrentVersion(final String commit) {
+   public void setCurrentCommit(final String commit) {
       configuration.getFixedCommitConfig().setCommit(commit);
       configuration.getFixedCommitConfig().setCommitOld(commit + "~1");
    }
