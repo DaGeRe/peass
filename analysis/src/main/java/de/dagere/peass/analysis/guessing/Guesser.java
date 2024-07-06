@@ -3,8 +3,9 @@ package de.dagere.peass.analysis.guessing;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.github.difflib.patch.AbstractDelta;
+
 import de.dagere.peass.analysis.guessing.GuessDecider.ConditionChecker;
-import difflib.Delta;
 
 public class Guesser {
 
@@ -60,12 +61,12 @@ public class Guesser {
       this.direction = direction;
    }
 
-   boolean isGuessTrue(Delta<String> delta) {
+   boolean isGuessTrue(AbstractDelta<String> delta) {
       boolean fullfills = false;
-      if (check(delta.getOriginal().getLines(), checker) && check(delta.getRevised().getLines(), checkerOld)) {
+      if (check(delta.getSource().getLines(), checker) && check(delta.getTarget().getLines(), checkerOld)) {
          fullfills = true;
       }
-      if (check(delta.getOriginal().getLines(), checkerOld) && check(delta.getRevised().getLines(), checker)) {
+      if (check(delta.getSource().getLines(), checkerOld) && check(delta.getTarget().getLines(), checker)) {
          fullfills = true;
       }
       return fullfills;

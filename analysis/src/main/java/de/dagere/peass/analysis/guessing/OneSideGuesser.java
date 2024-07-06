@@ -2,8 +2,9 @@ package de.dagere.peass.analysis.guessing;
 
 import java.util.List;
 
+import com.github.difflib.patch.AbstractDelta;
+
 import de.dagere.peass.analysis.guessing.GuessDecider.ConditionChecker;
-import difflib.Delta;
 
 class OneSideGuesser extends Guesser {
 
@@ -12,9 +13,9 @@ class OneSideGuesser extends Guesser {
    }
 
    @Override
-   boolean isGuessTrue(Delta<String> delta) {
-      List<String> lines = delta.getRevised().getLines();
-      List<String> lines2 = delta.getOriginal().getLines();
+   boolean isGuessTrue(AbstractDelta<String> delta) {
+      List<String> lines = delta.getTarget().getLines();
+      List<String> lines2 = delta.getSource().getLines();
       if (lines2.size() < lines.size()) {
          return testOneSideCondition(checker, lines, lines2);
       } else if (lines2.size() > lines.size()) {

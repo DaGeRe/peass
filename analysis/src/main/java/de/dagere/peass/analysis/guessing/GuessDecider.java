@@ -8,9 +8,10 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.AbstractDelta;
+import com.github.difflib.patch.Patch;
+
 
 public class GuessDecider {
 
@@ -40,7 +41,7 @@ public class GuessDecider {
             Patch<String> patch = getDiff(method);
 
             for (Guesser guesser : Guesser.allGuessers) {
-               for (Delta<String> delta : patch.getDeltas()) {
+               for (AbstractDelta<String> delta : patch.getDeltas()) {
                   if (guesser.isGuessTrue(delta)) {
                      currentGuess.add(guesser);
                   }
