@@ -55,7 +55,7 @@ public class ResultOrganizer {
 
    // TODO the success test duplicatees saveResultFiles code and logic from DependencyTester.shouldReduce
    /**
-    * Tests whether there is a correct result file, i.e. a XML file in the correct position with the right amount of iterations (it may be less iterations if the test takes too
+    * Tests whether there is a correct result file, i.e. a JSON file in the correct position with the right amount of iterations (it may be less iterations if the test takes too
     * long). This only works *before* the result has been moved, afterwards, the file will be gone and the measurement will be considered no success
     * 
     * @return true of the measurement was correct
