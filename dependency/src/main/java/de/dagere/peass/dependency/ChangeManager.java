@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,20 +13,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.nodeDiffDetector.diffDetection.ChangeDetector;
 import de.dagere.nodeDiffDetector.diffDetection.ClazzChangeData;
-import de.dagere.nodeDiffDetector.diffDetection.FileComparisonUtil;
-import de.dagere.nodeDiffDetector.sourceReading.MethodReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.CommitDiff;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.CommitIterator;
 import de.dagere.peass.vcs.GitUtils;
-import difflib.DiffUtils;
-import difflib.Patch;
 
 /**
  * Determines whether a file has a change, and whether this change is class-wide or only affecting a method.
