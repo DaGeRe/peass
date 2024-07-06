@@ -100,7 +100,7 @@
     <dependency>
       <groupId>de.cau.cs.se.teetime</groupId>
       <artifactId>teetime</artifactId>
-      <version>3.1.0</version>
+      <version>3.1.1</version>
     </dependency>
 
     <dependency>
@@ -125,7 +125,7 @@
     <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
-      <version>4.7.5</version>
+      <version>4.7.6</version>
     </dependency>
 
     <!-- Both are needed in your local maven repo, and both should be downloaded when building (but are only needed at runtime, if a project does not use snapshot 
@@ -189,13 +189,13 @@
     <dependency>
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
-      <version>1.14.11</version>
+      <version>1.14.17</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy-agent</artifactId>
-      <version>1.14.11</version>
+      <version>1.14.17</version>
       <scope>test</scope>
     </dependency>
 
