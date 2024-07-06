@@ -16,6 +16,11 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.AbstractDelta;
+import com.github.difflib.patch.DeltaType;
+import com.github.difflib.patch.Patch;
+
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.nodeDiffDetector.diffDetection.ClazzChangeData;
@@ -40,10 +45,6 @@ import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.CommitIteratorGit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.requitur.Sequitur;
-import difflib.Delta;
-import difflib.Delta.TYPE;
-import difflib.DiffUtils;
-import difflib.Patch;
 
 public class PropertyReadHelper {
 
@@ -263,11 +264,11 @@ public class PropertyReadHelper {
 
       final Map<String, Integer> vNewkeywords = new HashMap<>();
       final Map<String, Integer> vOldkeywords = new HashMap<>();
-      for (final Delta<String> changeSet : patch.getDeltas()) {
-         for (final String line : changeSet.getOriginal().getLines()) {
+      for (final AbstractDelta<String> changeSet : patch.getDeltas()) {
+         for (final String line : changeSet.getSource().getLines()) {
             getKeywordCount(vOldkeywords, line);
          }
-         for (final String line : changeSet.getRevised().getLines()) {
+         for (final String line : changeSet.getTarget().getLines()) {
             getKeywordCount(vNewkeywords, line);
          }
       }
@@ -357,12 +358,12 @@ public class PropertyReadHelper {
          LOG.debug(patch);
 
          int added = 0, removed = 0;
-         for (final Delta<String> delta : patch.getDeltas()) {
-            if (delta.getType().equals(TYPE.DELETE)) {
+         for (final AbstractDelta<String> delta : patch.getDeltas()) {
+            if (delta.getType().equals(DeltaType.DELETE)) {
                removed++;
-            } else if (delta.getType().equals(TYPE.INSERT)) {
+            } else if (delta.getType().equals(DeltaType.INSERT)) {
                added++;
-            } else if (delta.getType().equals(TYPE.CHANGE)) {
+            } else if (delta.getType().equals(DeltaType.CHANGE)) {
                added++;
                removed++;
             }

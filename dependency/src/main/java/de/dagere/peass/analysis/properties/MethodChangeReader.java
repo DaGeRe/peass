@@ -8,13 +8,14 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.Patch;
+
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.nodeDiffDetector.diffDetection.FileComparisonUtil;
 import de.dagere.nodeDiffDetector.sourceReading.MethodReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.traces.diff.DiffUtilJava;
-import difflib.DiffUtils;
-import difflib.Patch;
 
 public class MethodChangeReader {
 
