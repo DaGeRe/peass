@@ -11,21 +11,19 @@ import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
+import de.dagere.peass.measurement.rca.searcher.ICauseSearcher;
 import de.dagere.peass.testtransformation.TestTransformer;
-import de.dagere.peass.vcs.GitUtils;
-import de.dagere.peass.vcs.VersionControlSystem;
 
-public class OnceRunner extends AbstractMeasurementProcessRunner {
-
+public class SamplingRunner extends AbstractMeasurementProcessRunner {
    private static final Logger LOG = LogManager.getLogger(OnceRunner.class);
 
    protected final TestTransformer testTransformer;
    protected final TestExecutor testExecutor;
 
    protected final ResultOrganizer currentOrganizer;
-   private final KiekerResultHandler resultHandler;
+   private final ICauseSearcher resultHandler;
 
-   public OnceRunner(final PeassFolders folders, final TestExecutor testExecutor, final ResultOrganizer currentOrganizer, final KiekerResultHandler resultHandler) {
+   public SamplingRunner(final PeassFolders folders, final TestExecutor testExecutor, final ResultOrganizer currentOrganizer, final ICauseSearcher resultHandler) {
       super(folders);
       this.testTransformer = testExecutor.getTestTransformer();
       this.testExecutor = testExecutor;
@@ -39,33 +37,22 @@ public class OnceRunner extends AbstractMeasurementProcessRunner {
       }
    }
 
-   public void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder) {
+   @Override
+   public void runOnce(TestMethodCall testcase, String commit, int vmid, File logFolder) {
       initCommit(commit);
 
       final File vmidFolder = initVMFolder(commit, vmid, logFolder);
-
-      if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
-         testExecutor.loadClasses();
-      }
+      
       testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
-      final long outerTimeout = 10 + (int) (this.testTransformer.getConfig().getTimeoutInSeconds() * 1.2);
-      testExecutor.executeTest(testcase, vmidFolder, outerTimeout);
-
-      if (testTransformer.getConfig().isDirectlyMeasureKieker()) {
-         DirectKiekerMeasurementTransformer measurementTransformer = new DirectKiekerMeasurementTransformer(folders);
-         measurementTransformer.transform(testcase);
+      
+      //TODO implement sampling measurement
+      if (true) {
+         throw new RuntimeException("Not implemented yet");
       }
-
-      LOG.debug("Handling Kieker results");
-      resultHandler.handleKiekerResults(commit, currentOrganizer.getTempResultsFolder(commit));
-
+      
       LOG.info("Organizing result paths");
       currentOrganizer.saveResultFiles(commit, vmid);
 
       cleanup();
-   }
-
-   public ResultOrganizer getCurrentOrganizer() {
-      return currentOrganizer;
    }
 }

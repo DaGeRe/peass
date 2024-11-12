@@ -25,7 +25,9 @@ import de.dagere.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcherComplete;
+import de.dagere.peass.measurement.rca.searcher.ICauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
+import de.dagere.peass.measurement.rca.searcher.SamplingCauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.TreeAnalyzerCreator;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import picocli.CommandLine;
@@ -92,7 +94,7 @@ public class SearchCauseStarter extends MeasureStarter {
             new EnvironmentVariables(measurementConfiguration.getExecutionConfig().getProperties()));
 
       CommitComparatorInstance comparator = new CommitComparatorInstance(staticTestSelection);
-      final CauseSearcher tester = getCauseSeacher(measurementConfiguration, causeSearcherConfig, alternateFolders, reader, comparator);
+      final ICauseSearcher tester = getCauseSeacher(measurementConfiguration, causeSearcherConfig, alternateFolders, reader, comparator);
       tester.search();
 
       return null;
@@ -139,7 +141,7 @@ public class SearchCauseStarter extends MeasureStarter {
       return measurementConfiguration;
    }
 
-   public static CauseSearcher getCauseSeacher(final MeasurementConfig measurementConfiguration,
+   public static ICauseSearcher getCauseSeacher(final MeasurementConfig measurementConfiguration,
          final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader, CommitComparatorInstance comparator)
          throws IOException, InterruptedException {
       if (measurementConfiguration.getKiekerConfig().isOnlyOneCallRecording()) {
@@ -150,7 +152,7 @@ public class SearchCauseStarter extends MeasureStarter {
       }
 
       EnvironmentVariables env = reader.getEnv();
-      final CauseSearcher tester;
+      final ICauseSearcher tester;
       final CauseTester measurer = new CauseTester(alternateFolders, measurementConfiguration, causeSearcherConfig, env, comparator);
       if (causeSearcherConfig.getRcaStrategy() != null) {
          switch (causeSearcherConfig.getRcaStrategy()) {
@@ -186,6 +188,8 @@ public class SearchCauseStarter extends MeasureStarter {
             };
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator, env);
             break;
+         case SAMPLING:
+            tester = new SamplingCauseSearcher();
          default:
             throw new RuntimeException("Strategy " + causeSearcherConfig.getRcaStrategy() + " not expected");
          }
