@@ -101,7 +101,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
    private void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder) {
       final TestExecutor testExecutor = getExecutor(folders, commit);
-      final OnceRunner runner = new SamplingRunner(folders, testExecutor, getCurrentOrganizer(), this);
+      final SamplingRunner runner = new SamplingRunner(folders, testExecutor, getCurrentOrganizer(), this);
       runner.runOnce(testcase, commit, vmid, logFolder);
    }
 
