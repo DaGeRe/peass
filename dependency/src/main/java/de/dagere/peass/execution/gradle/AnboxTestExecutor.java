@@ -235,7 +235,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
     * @param testname Name of the test that should be run
     */
    @Override
-   protected void runTest(final File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout) {
+   protected void runTest(final File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout, final String profilerAgent) {
       final Process process = buildGradleProcess(moduleFolder, logFile, test);
       execute(testname, timeout, process);
       adbPull();

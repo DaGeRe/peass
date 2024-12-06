@@ -20,5 +20,9 @@ public enum RCAStrategy {
    /**
     * Searches for root causes by analyzing all nodes on the path to a changed source code, implemented by {@link SourceChangeTreeAnalyzer}
     */
-   UNTIL_SOURCE_CHANGE
+   UNTIL_SOURCE_CHANGE,
+   /**
+    * Read the whole tree using sampling
+    */
+   SAMPLING
 }

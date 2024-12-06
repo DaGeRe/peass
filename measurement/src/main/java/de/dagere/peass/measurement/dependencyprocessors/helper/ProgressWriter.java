@@ -11,8 +11,12 @@ public class ProgressWriter implements AutoCloseable {
    private final SummaryStatistics durationStatistics = new SummaryStatistics();
    private final int vms;
 
-   public ProgressWriter(final File resultFile, final int vms) throws FileNotFoundException {
-      progressFileWriter = new PrintWriter(resultFile);
+   public ProgressWriter(final File resultFile, final int vms) {
+      try {
+         progressFileWriter = new PrintWriter(resultFile);
+      } catch (FileNotFoundException e) {
+         throw new RuntimeException(e);
+      }
       this.vms = vms;
    }
 

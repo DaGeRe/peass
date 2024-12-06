@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -33,7 +32,6 @@ import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
-import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherIT {
 
@@ -62,7 +60,7 @@ public class CauseSearcherIT {
 
    @Test
    public void testSlowerState()
-         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException {
+         throws InterruptedException, IOException, IllegalStateException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          mockEnvironment(mockedVCS, mockedGitUtils);

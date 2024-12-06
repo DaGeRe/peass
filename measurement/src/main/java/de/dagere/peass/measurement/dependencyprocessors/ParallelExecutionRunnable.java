@@ -33,7 +33,7 @@ public class ParallelExecutionRunnable implements Runnable {
    public void run() {
       final TestExecutor testExecutor = tester.getExecutor(temporaryFolders, commit);
       final OnceRunner runner = new OnceRunner(temporaryFolders, testExecutor, organizer, tester);
-      runner.runOnce(testcase, commit, vmid, logFolder);
+      runner.runOnce(testcase, commit, vmid, logFolder, logFolder);
    }
 
    private PeassFolders cloneProjectFolder(final String gitCryptKey) throws IOException {

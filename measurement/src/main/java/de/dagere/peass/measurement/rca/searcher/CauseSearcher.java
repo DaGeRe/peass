@@ -21,7 +21,7 @@ import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
 
-public abstract class CauseSearcher {
+public abstract class CauseSearcher implements ICauseSearcher {
 
    private static final Logger LOG = LogManager.getLogger(CauseSearcher.class);
 

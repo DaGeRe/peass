@@ -138,10 +138,10 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public void executeTest(final TestMethodCall test, final File logFolder, final long timeout) {
+   public void executeTest(final TestMethodCall test, final File logFolder, final long timeout, final String profilerAgent) {
       final File module = new File(folders.getProjectFolder(), test.getModule());
       cleanLastTest(module);
-      runMethod(logFolder, test, module, timeout);
+      runMethod(logFolder, test, module, timeout, "");
 
       cleanAboveSize(logFolder, "txt");
    }
@@ -153,7 +153,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
     * @param testname Name of the test that should be run
     */
    @Override
-   protected void runTest(final File moduleFolder, final File methodLogFile, TestMethodCall test, final String testname, final long timeout) {
+   protected void runTest(final File moduleFolder, final File methodLogFile, TestMethodCall test, final String testname, final long timeout, final String profilerAgent) {
       try {
          final Process process = buildGradleProcess(moduleFolder, methodLogFile, test, "--tests", testname);
          execute(testname, timeout, process);

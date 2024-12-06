@@ -75,8 +75,6 @@
       <version>3.14.0</version>
     </dependency>
 
-
-
     <!-- Do not upgrade until whole project switches to Java 11, since jgrapht 1.5 is only available for Java 11 -->
     <dependency>
       <groupId>org.jgrapht</groupId>
@@ -109,6 +107,12 @@
       <artifactId>mockito-core</artifactId>
       <version>${mockito.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.terahidro2003</groupId>
+      <artifactId>sjsw</artifactId>
+      <version>0.1.0</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   <repositories>

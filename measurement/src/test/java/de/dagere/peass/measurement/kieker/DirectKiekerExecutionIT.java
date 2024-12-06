@@ -70,7 +70,9 @@ public class DirectKiekerExecutionIT {
          testTransformer.determineVersions(Arrays.asList(new File[] { DependencyTestConstants.CURRENT }));
          testTransformer.transformTests();
 
-         runner.runOnce(new TestMethodCall("defaultpackage.TestMe", "testMe"), "123456", 0, folders.getMeasureLogFolder());
+         runner.runOnce(new TestMethodCall("defaultpackage.TestMe", "testMe"), "123456", 0, folders.getMeasureLogFolder(), File.createTempFile("tmps", "d"));
+      } catch (IOException e) {
+          throw new RuntimeException(e);
       }
    }
 }

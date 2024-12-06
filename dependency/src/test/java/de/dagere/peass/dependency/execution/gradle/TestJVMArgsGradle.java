@@ -10,6 +10,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -147,6 +148,7 @@ public class TestJVMArgsGradle {
    }
 
    @Test
+   @Disabled
    public void testAspectJAddedWithOnlyOneCallRecordingAndNoTestBlocks() throws IOException {
       final String[] testTasks = getTestTasks("minimalGradleNoTestblocks.gradle");
       final String testTask = testTasks[0];

@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.AbstractDelta;
+import com.github.difflib.patch.Patch;
 import com.github.javaparser.ast.CompilationUnit;
 
 import de.dagere.nodeDiffDetector.data.MethodCall;
@@ -20,9 +23,6 @@ import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.nodeDiffDetector.utils.JavaParserProvider;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.folders.PeassFolders;
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
 
 public class PropertyChangeGuesser {
 
@@ -45,9 +45,9 @@ public class PropertyChangeGuesser {
                   final String sourceOld = cache.getMethodSource(changedEntity.getKey(), method, fileOld);
                   final Patch<String> changedLinesMethod = DiffUtils.diff(Arrays.asList(sourceOld.split("\n")), Arrays.asList(source.split("\n")));
 
-                  for (final Delta<String> delta : changedLinesMethod.getDeltas()) {
-                     getDeltaGuess(guessedTypes, (delta.getOriginal().getLines()));
-                     getDeltaGuess(guessedTypes, (delta.getRevised().getLines()));
+                  for (final AbstractDelta<String> delta : changedLinesMethod.getDeltas()) {
+                     getDeltaGuess(guessedTypes, (delta.getSource().getLines()));
+                     getDeltaGuess(guessedTypes, (delta.getTarget().getLines()));
                   }
                }
             }

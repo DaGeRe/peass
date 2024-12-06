@@ -43,7 +43,7 @@ public class TwiceExecutableChecker {
       truncateLastRunResults();
       
       for (TestMethodCall testcase : tests) {
-         executor.executeTest(testcase, twiceRunningLogFolder, transformer.getConfig().getExecutionConfig().getTimeout());
+         executor.executeTest(testcase, twiceRunningLogFolder, transformer.getConfig().getExecutionConfig().getTimeout(), "");
 
          checkTestExistance(commit, testcase);
       }
