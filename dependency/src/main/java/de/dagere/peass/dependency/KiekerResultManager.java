@@ -122,7 +122,7 @@ public class KiekerResultManager {
 
       executor.prepareKoPeMeExecution(new File(commitLogFolder, "clean.txt"));
       for (final TestMethodCall testcase : testsToUpdate.getTestMethods()) {
-         executor.executeTest(testcase, commitLogFolder, testTransformer.getConfig().getTimeoutInSeconds());
+         executor.executeTest(testcase, commitLogFolder, testTransformer.getConfig().getTimeoutInSeconds(), "");
       }
       LOG.debug("KoPeMe-Kieker-Run finished");
    }

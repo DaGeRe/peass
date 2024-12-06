@@ -24,7 +24,7 @@ public class DummyExecutor extends TestExecutor{
    }
 
    @Override
-   public void executeTest(final TestMethodCall test, final File logFolder, final long timeout) {
+   public void executeTest(final TestMethodCall test, final File logFolder, final long timeout, final String profilerAgent) {
       // TODO Auto-generated method stub
       
    }

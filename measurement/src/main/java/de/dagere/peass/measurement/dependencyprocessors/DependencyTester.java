@@ -188,7 +188,7 @@ public class DependencyTester implements KiekerResultHandler {
    private void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder) {
       final TestExecutor testExecutor = getExecutor(folders, commit);
       final OnceRunner runner = new OnceRunner(folders, testExecutor, getCurrentOrganizer(), this);
-      runner.runOnce(testcase, commit, vmid, logFolder);
+      runner.runOnce(testcase, commit, vmid, logFolder, folders.getProjectFolder());
    }
 
    protected synchronized TestExecutor getExecutor(final PeassFolders currentFolders, final String commit) {

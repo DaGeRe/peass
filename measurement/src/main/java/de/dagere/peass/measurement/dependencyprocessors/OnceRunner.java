@@ -39,7 +39,7 @@ public class OnceRunner extends AbstractMeasurementProcessRunner {
       }
    }
 
-   public void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder) {
+   public void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder, final File projectFolderToIgnore) {
       initCommit(commit);
 
       final File vmidFolder = initVMFolder(commit, vmid, logFolder);
@@ -49,7 +49,7 @@ public class OnceRunner extends AbstractMeasurementProcessRunner {
       }
       testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
       final long outerTimeout = 10 + (int) (this.testTransformer.getConfig().getTimeoutInSeconds() * 1.2);
-      testExecutor.executeTest(testcase, vmidFolder, outerTimeout);
+      testExecutor.executeTest(testcase, vmidFolder, outerTimeout, "");
 
       if (testTransformer.getConfig().isDirectlyMeasureKieker()) {
          DirectKiekerMeasurementTransformer measurementTransformer = new DirectKiekerMeasurementTransformer(folders);

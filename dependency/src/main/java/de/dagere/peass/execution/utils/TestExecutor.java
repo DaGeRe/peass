@@ -62,7 +62,7 @@ public abstract class TestExecutor {
 
    public abstract void prepareKoPeMeExecution(File logFile);
 
-   public abstract void executeTest(final TestMethodCall test, final File logFolder, long timeout);
+   public abstract void executeTest(final TestMethodCall test, final File logFolder, long timeout, String profilerAgent);
 
    /**
     * Deletes files which are bigger than sizeInMb Mb, since they pollute the disc space and will not be analyzable
