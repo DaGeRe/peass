@@ -28,7 +28,7 @@ public class RCAMeasurementAdder {
       addMeasurements(root);
    }
 
-   public void addMeasurements(final CallTreeNode parent) {
+   private void addMeasurements(final CallTreeNode parent) {
       for (CallTreeNode child : parent.getChildren()) {
          if (includableNodes.contains(child)) {
             LOG.debug("Analyzing: {}", child);
