@@ -24,7 +24,7 @@ jobs:
           mvn -version
         fi
       shell: bash
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Install git-crypt
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
@@ -36,7 +36,7 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
     - name: Cache Maven packages
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
