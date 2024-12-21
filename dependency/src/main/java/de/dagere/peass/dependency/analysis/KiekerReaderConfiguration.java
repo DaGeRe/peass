@@ -8,11 +8,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import kieker.analysis.stage.DynamicEventDispatcher;
-import kieker.analysis.stage.IEventMatcher;
-import kieker.analysis.stage.ImplementsEventMatcher;
-import kieker.analysis.trace.execution.ExecutionRecordTransformationStage;
-import kieker.analysis.trace.reconstruction.TraceReconstructionStage;
+import kieker.analysis.architecture.trace.execution.ExecutionRecordTransformationStage;
+import kieker.analysis.architecture.trace.reconstruction.TraceReconstructionStage;
+import kieker.analysis.generic.DynamicEventDispatcher;
+import kieker.analysis.generic.IEventMatcher;
+import kieker.analysis.generic.ImplementsEventMatcher;
 import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.model.repository.SystemModelRepository;
 import kieker.tools.source.LogsReaderCompositeStage;

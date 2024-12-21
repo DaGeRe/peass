@@ -12,11 +12,11 @@ import de.dagere.peass.dependency.analysis.KiekerReaderConfiguration;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.TreeStage;
-import kieker.analysis.stage.DynamicEventDispatcher;
-import kieker.analysis.stage.IEventMatcher;
-import kieker.analysis.stage.ImplementsEventMatcher;
-import kieker.analysis.trace.execution.ExecutionRecordTransformationStage;
-import kieker.analysis.trace.reconstruction.TraceReconstructionStage;
+import kieker.analysis.architecture.trace.execution.ExecutionRecordTransformationStage;
+import kieker.analysis.architecture.trace.reconstruction.TraceReconstructionStage;
+import kieker.analysis.generic.DynamicEventDispatcher;
+import kieker.analysis.generic.IEventMatcher;
+import kieker.analysis.generic.ImplementsEventMatcher;
 import kieker.tools.source.LogsReaderCompositeStage;
 
 public class KiekerReaderConfigurationDuration extends KiekerReaderConfiguration {

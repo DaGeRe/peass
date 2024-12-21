@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
-import kieker.analysis.trace.AbstractTraceProcessingStage;
+import kieker.analysis.architecture.trace.AbstractTraceProcessingStage;
 import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.Execution;
 

@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.dagere.nodeDiffDetector.data.MethodCallHelper;
-import kieker.analysis.stage.DynamicEventDispatcher;
-import kieker.analysis.stage.IEventMatcher;
-import kieker.analysis.stage.ImplementsEventMatcher;
-import kieker.analysis.trace.AbstractTraceProcessingStage;
-import kieker.analysis.trace.execution.ExecutionRecordTransformationStage;
+import kieker.analysis.architecture.trace.AbstractTraceProcessingStage;
+import kieker.analysis.architecture.trace.execution.ExecutionRecordTransformationStage;
+import kieker.analysis.generic.DynamicEventDispatcher;
+import kieker.analysis.generic.IEventMatcher;
+import kieker.analysis.generic.ImplementsEventMatcher;
 import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.Execution;

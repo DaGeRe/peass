@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.dagere.kopeme.kieker.record.DurationRecord;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
-import kieker.analysis.trace.AbstractTraceAnalysisStage;
+import kieker.analysis.architecture.trace.AbstractTraceAnalysisStage;
 import kieker.model.repository.SystemModelRepository;
 
 public class DurationMeasurementStage extends AbstractTraceAnalysisStage<DurationRecord> {

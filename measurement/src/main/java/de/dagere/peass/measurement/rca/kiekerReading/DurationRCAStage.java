@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.kieker.record.DurationRecord;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
-import kieker.analysis.trace.AbstractTraceAnalysisStage;
+import kieker.analysis.architecture.trace.AbstractTraceAnalysisStage;
 import kieker.model.repository.SystemModelRepository;
 
 public class DurationRCAStage extends AbstractTraceAnalysisStage<DurationRecord> {

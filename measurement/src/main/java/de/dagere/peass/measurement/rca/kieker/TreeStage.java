@@ -8,7 +8,7 @@ import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import kieker.analysis.trace.AbstractTraceProcessingStage;
+import kieker.analysis.architecture.trace.AbstractTraceProcessingStage;
 import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.Execution;
 import kieker.model.system.model.ExecutionTrace;

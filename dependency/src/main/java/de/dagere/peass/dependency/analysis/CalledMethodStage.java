@@ -18,7 +18,7 @@ import de.dagere.nodeDiffDetector.data.MethodCallHelper;
 import de.dagere.nodeDiffDetector.data.Type;
 import de.dagere.nodeDiffDetector.typeFinding.TypeFileFinder;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
-import kieker.analysis.trace.AbstractTraceProcessingStage;
+import kieker.analysis.architecture.trace.AbstractTraceProcessingStage;
 import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.Execution;
 import kieker.model.system.model.ExecutionTrace;
