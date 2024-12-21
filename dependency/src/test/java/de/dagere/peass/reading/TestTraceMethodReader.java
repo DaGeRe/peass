@@ -108,6 +108,9 @@ public class TestTraceMethodReader {
       } else {
          agentPath = "\"" + MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath() + "\"";
       }
+      if (!MavenTestExecutor.KIEKER_ASPECTJ_JAR.exists()) {
+         throw new RuntimeException("Kieker aspectj jar not found in " + MavenTestExecutor.KIEKER_ASPECTJ_JAR);
+      }
       System.out.println(agentPath);
       return agentPath;
    }
@@ -126,7 +129,7 @@ public class TestTraceMethodReader {
                "target" + File.separator + "test-classes";
       }
       if (!new File(KOPEME_JAR).exists()) {
-         throw new RuntimeException("KoPeMe jar not found!");
+         throw new RuntimeException("Kieker aspectj jar not found in " + KOPEME_JAR);
       }
       System.out.println(jarPath);
       return jarPath;
