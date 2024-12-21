@@ -125,6 +125,9 @@ public class TestTraceMethodReader {
                "\"" + LOG4J_API_JAR + "\"" + File.pathSeparator +
                "target" + File.separator + "test-classes";
       }
+      if (!new File(KOPEME_JAR).exists()) {
+         throw new RuntimeException("KoPeMe jar not found!");
+      }
       System.out.println(jarPath);
       return jarPath;
    }
