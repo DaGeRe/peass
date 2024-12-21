@@ -131,6 +131,9 @@ public class TestTraceMethodReader {
       if (!new File(KOPEME_JAR).exists()) {
          throw new RuntimeException("Kieker aspectj jar not found in " + KOPEME_JAR);
       }
+      if (!new File(LOG4J_IMPL_JAR).exists()) {
+         throw new RuntimeException("log4j jar not found in " + LOG4J_IMPL_JAR);
+      }
       System.out.println(jarPath);
       return jarPath;
    }
