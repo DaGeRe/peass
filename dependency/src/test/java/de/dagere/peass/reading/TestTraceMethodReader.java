@@ -32,7 +32,7 @@ import de.dagere.peass.utils.StreamGobbler;
 public class TestTraceMethodReader {
 
    // Usually, the both following versions need to be updated together
-   private static final String SLF4J_IMPL_VERSION = "2.22.0";
+   private static final String SLF4J_IMPL_VERSION = "2.24.3";
 
    private final File tmpFolder = new File("target" + File.separator + "kieker_results_test");
    private static final String REPO = System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository";
