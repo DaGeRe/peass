@@ -69,12 +69,6 @@
       <classifier>aspectj</classifier>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.14.0</version>
-    </dependency>
-
 
 
     <!-- Do not upgrade until whole project switches to Java 11, since jgrapht 1.5 is only available for Java 11 -->
