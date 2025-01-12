@@ -140,7 +140,7 @@
   </build>
 
   <properties>
-    <mockito.version>5.14.2</mockito.version>
+    <mockito.version>5.15.2</mockito.version>
     <junit.version>5.11.4</junit.version>
     <kieker.version>2.0.2</kieker.version>
     <kopeme.version>1.4.1</kopeme.version>
