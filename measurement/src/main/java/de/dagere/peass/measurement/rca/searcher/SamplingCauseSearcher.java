@@ -25,6 +25,9 @@ import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
 import de.dagere.peass.measurement.organize.FolderDeterminer;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.testtransformation.TestTransformer;
+import io.github.terahidro2003.config.Config;
+import io.github.terahidro2003.result.SamplerResultsProcessor;
+import io.github.terahidro2003.samplers.asyncprofiler.MeasurementIdentifier;
 
 public class SamplingCauseSearcher implements ICauseSearcher {
 
@@ -62,10 +65,23 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
    private void evaluateSimple(TestMethodCall testcase2, File logFolder, ProgressWriter writer) {
       currentChunkStart = System.currentTimeMillis();
+
+      MeasurementIdentifier measurementIdentifier = new MeasurementIdentifier();
+      String outputPath = logFolder.getAbsolutePath() + "/sjsw-results";
+      
+      Config sjswConfiguration = Config.builder()
+               .autodownloadProfiler()
+               .outputPathWithIdentifier(outputPath, measurementIdentifier)
+               .frequency(100)
+               .jfrEnabled(true)
+               .build();
+      
+      SamplerResultsProcessor processor = new SamplerResultsProcessor();         
+                                    
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
          long comparisonStart = System.currentTimeMillis();
 
-         runOneComparison(logFolder, testcase, finishedVMs);
+         runOneComparison(logFolder, testcase, finishedVMs, sjswConfiguration);
 
          long durationInSeconds = (System.currentTimeMillis() - comparisonStart) / 1000;
          writer.write(durationInSeconds, finishedVMs);
@@ -74,12 +90,12 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       }
    }
 
-   public void runOneComparison(final File logFolder, final TestMethodCall testcase, final int vmid) {
+   public void runOneComparison(final File logFolder, final TestMethodCall testcase, final int vmid, final Config sjswConfiguration) {
       String[] commits = getVersions();
 
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
          LOG.info("Running sequential");
-         runSequential(logFolder, testcase, vmid, commits);
+         runSequential(logFolder, testcase, vmid, commits, sjswConfiguration);
       } else if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.PARALLEL)) {
          LOG.info("Running parallel");
          runParallel(logFolder, testcase, vmid, commits);
@@ -90,18 +106,18 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       throw new RuntimeException("Not implemented yet");
    }
 
-   private void runSequential(File logFolder, TestMethodCall testcase2, int vmid, String[] commits) {
+   private void runSequential(File logFolder, TestMethodCall testcase2, int vmid, String[] commits, Config config) {
       currentOrganizer = new ResultOrganizer(folders, configuration.getFixedCommitConfig().getCommit(), currentChunkStart, configuration.getKiekerConfig().isUseKieker(),
             configuration.isSaveAll(),
             testcase, configuration.getAllIterations());
       for (String commit : commits) {
-         runOnce(testcase, commit, vmid, logFolder);
+         runOnce(testcase, commit, vmid, logFolder, config);
       }
    }
 
-   private void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder) {
+   private void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder, final Config config) {
       final TestExecutor testExecutor = getExecutor(folders, commit);
-      final SamplingRunner runner = new SamplingRunner(folders, testExecutor, getCurrentOrganizer(), this);
+      final SamplingRunner runner = new SamplingRunner(folders, testExecutor, getCurrentOrganizer(), this, config);
       runner.runOnce(testcase, commit, vmid, logFolder);
    }
 
