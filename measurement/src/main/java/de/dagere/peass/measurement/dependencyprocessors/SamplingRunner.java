@@ -2,6 +2,7 @@ package de.dagere.peass.measurement.dependencyprocessors;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +14,10 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.rca.searcher.ICauseSearcher;
 import de.dagere.peass.testtransformation.TestTransformer;
+import io.github.terahidro2003.config.Config;
+import io.github.terahidro2003.samplers.SamplerExecutorPipeline;
+import io.github.terahidro2003.samplers.asyncprofiler.AsyncProfilerExecutor;
+import io.github.terahidro2003.samplers.asyncprofiler.MeasurementInformation;
 
 public class SamplingRunner extends AbstractMeasurementProcessRunner {
    private static final Logger LOG = LogManager.getLogger(OnceRunner.class);
@@ -23,12 +28,15 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
    protected final ResultOrganizer currentOrganizer;
    private final ICauseSearcher resultHandler;
 
-   public SamplingRunner(final PeassFolders folders, final TestExecutor testExecutor, final ResultOrganizer currentOrganizer, final ICauseSearcher resultHandler) {
+   private final Config configuration;
+
+   public SamplingRunner(final PeassFolders folders, final TestExecutor testExecutor, final ResultOrganizer currentOrganizer, final ICauseSearcher resultHandler, final Config config) {
       super(folders);
       this.testTransformer = testExecutor.getTestTransformer();
       this.testExecutor = testExecutor;
       this.currentOrganizer = currentOrganizer;
       this.resultHandler = resultHandler;
+      this.configuration = config;
       
       try {
          FileUtils.cleanDirectory(folders.getTempDir());
@@ -45,10 +53,11 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
       
       testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
       
-      //TODO implement sampling measurement
-      if (true) {
-         throw new RuntimeException("Not implemented yet");
-      }
+      Duration duration = Duration.ofSeconds(300);
+      SamplerExecutorPipeline pipeline = new AsyncProfilerExecutor();
+      MeasurementInformation agent = pipeline.javaAgent(this.configuration, vmid, commit, duration);
+      
+      testExecutor.executeTest(agent.javaAgentPath(), testcase, vmidFolder, vmid);
       
       LOG.info("Organizing result paths");
       currentOrganizer.saveResultFiles(commit, vmid);
