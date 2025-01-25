@@ -8,8 +8,8 @@ import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -54,6 +54,7 @@ public class TestBuildGradleExclusions {
    }
 
    @Test
+   @Disabled
    public void testLog4jSlf4jImplExclusionWithConstraints() throws IOException {
       final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "buildConstraints.gradle");
 

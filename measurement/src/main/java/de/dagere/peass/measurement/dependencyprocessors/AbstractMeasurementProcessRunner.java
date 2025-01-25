@@ -23,7 +23,7 @@ public abstract class AbstractMeasurementProcessRunner {
       this.vcs = folders.getVCS();
    }
    
-   public abstract void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder);
+   public abstract void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder, final File projectFolder);
    
    protected void initCommit(final String commit) {
       if (vcs.equals(VersionControlSystem.SVN)) {

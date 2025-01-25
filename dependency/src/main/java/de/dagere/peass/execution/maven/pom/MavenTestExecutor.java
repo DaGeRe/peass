@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,9 +125,9 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public void executeTest(final TestMethodCall test, final File logFolder, final long timeout) {
+   public void executeTest(final TestMethodCall test, final File logFolder, final long timeout, final String profilerAgent) {
       final File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
-      runMethod(logFolder, test, moduleFolder, timeout);
+      runMethod(logFolder, test, moduleFolder, timeout, profilerAgent);
       
       cleanAboveSize(logFolder, "txt");
    }
@@ -138,9 +139,26 @@ public class MavenTestExecutor extends KoPeMeExecutor {
     * @param testname Name of the test that should be run
     */
    @Override
-   protected void runTest(final File module, final File logFile, TestMethodCall test, final String testname, final long timeout) {
+   protected void runTest(final File module, final File logFile, TestMethodCall test, final String testname, final long timeout, final String profilerAgent) {
       try {
-         final Process process = buildMavenProcess(logFile, test, "-Dtest=" + testname);
+         LOG.info("Executing test with name {}", testname);
+         final Process process = buildMavenProcess(logFile, test, "-Dtest=" + testname, profilerAgent);
+         execute(testname, timeout, process);
+      } catch (final InterruptedException | IOException e) {
+         e.printStackTrace();
+      }
+   }
+
+   private void runTest(final File module, final File logFile, TestMethodCall test, final String testname, final long timeout, Optional<String> profilerAgent) {
+      try {
+         LOG.info("Executing test with name {}", testname);
+         final Process process;
+         if (profilerAgent.isPresent()) {
+            process = buildMavenProcess(logFile, test, "-Dtest=" + testname, profilerAgent.get());
+         } else {
+            process = buildMavenProcess(logFile, test, "-Dtest=" + testname);
+         }
+
          execute(testname, timeout, process);
       } catch (final InterruptedException | IOException e) {
          e.printStackTrace();

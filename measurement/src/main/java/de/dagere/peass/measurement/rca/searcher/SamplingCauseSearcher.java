@@ -1,8 +1,6 @@
 package de.dagere.peass.measurement.rca.searcher;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,8 +16,6 @@ import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.measurement.dependencyprocessors.DependencyTester;
-import de.dagere.peass.measurement.dependencyprocessors.OnceRunner;
 import de.dagere.peass.measurement.dependencyprocessors.SamplingRunner;
 import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
 import de.dagere.peass.measurement.organize.FolderDeterminer;
@@ -95,14 +91,14 @@ public class SamplingCauseSearcher implements ICauseSearcher {
             configuration.isSaveAll(),
             testcase, configuration.getAllIterations());
       for (String commit : commits) {
-         runOnce(testcase, commit, vmid, logFolder);
+         runOnce(testcase, commit, vmid, logFolder, folders.getProjectFolder());
       }
    }
 
-   private void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder) {
+   private void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder, File projectFolder) {
       final TestExecutor testExecutor = getExecutor(folders, commit);
       final SamplingRunner runner = new SamplingRunner(folders, testExecutor, getCurrentOrganizer(), this);
-      runner.runOnce(testcase, commit, vmid, logFolder);
+      runner.runOnce(testcase, commit, vmid, logFolder, projectFolder);
    }
 
    protected synchronized TestExecutor getExecutor(final PeassFolders currentFolders, final String commit) {
