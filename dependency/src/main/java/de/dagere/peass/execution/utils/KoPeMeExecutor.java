@@ -82,11 +82,12 @@ public abstract class KoPeMeExecutor extends TestExecutor {
          e.printStackTrace();
       }
 
+
       final File methodLogFile = getMethodLogFile(logFolder, test);
       if(javaAgent != null && javaAgent.length == 1) {
-         runTest(javaAgent[0], moduleFolder, methodLogFile, test, test.getClazz(), timeout);
+         runTest(javaAgent[0], moduleFolder, methodLogFile, test, test.getClazz(), timeout == 0 ? 300 : timeout);
       } else {
-         runTest(moduleFolder, methodLogFile, test, test.getClazz(), timeout);
+         runTest(moduleFolder, methodLogFile, test, test.getClazz(), timeout == 0 ? 300 : timeout);
       }
    }
 
