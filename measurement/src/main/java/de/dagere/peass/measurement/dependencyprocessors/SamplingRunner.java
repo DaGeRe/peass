@@ -57,9 +57,9 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
       Duration duration = Duration.ofSeconds(300);
       SamplerExecutorPipeline pipeline = new AsyncProfilerExecutor();
       MeasurementInformation agent = pipeline.javaAgent(this.configuration, vmid, commit, duration);
-
-      log.info("Java-agent: {}", agent);
-      testExecutor.executeTest(agent.javaAgentPath(), testcase, vmidFolder, vmid);
+      String javaAgentAsMavenArgument = "-DargLine=" + agent.javaAgentPath();
+      log.info("Java-agent: {}", javaAgentAsMavenArgument);
+      testExecutor.executeTest(javaAgentAsMavenArgument, testcase, vmidFolder, vmid);
       
       LOG.info("Organizing result paths");
       currentOrganizer.saveResultFiles(commit, vmid);
