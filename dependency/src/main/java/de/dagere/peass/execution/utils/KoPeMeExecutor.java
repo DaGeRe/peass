@@ -46,7 +46,9 @@ public abstract class KoPeMeExecutor extends TestExecutor {
 
    protected abstract void runTest(File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout);
 
-   protected void runMethod(final File logFolder, final TestMethodCall test, final File moduleFolder, final long timeout) {
+   protected abstract void runTest(String javaAgent, File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout);
+
+   protected void runMethod(final File logFolder, final TestMethodCall test, final File moduleFolder, final long timeout, final String... javaAgent) {
       try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, test.toEntity(), test.getMethod())) {
          if (testTransformer.getConfig().isDirectlyMeasureKieker()) {
             File fileToInstrument = shortener.getCalleeClazzFile();
@@ -68,7 +70,12 @@ public abstract class KoPeMeExecutor extends TestExecutor {
          clean(cleanFile);
 
          final File methodLogFile = getMethodLogFile(logFolder, test);
-         runTest(moduleFolder, methodLogFile, test, test.getClazz(), timeout);
+         if(javaAgent != null && javaAgent.length == 1) {
+            runTest(javaAgent[0], moduleFolder, methodLogFile, test, test.getClazz(), timeout);
+         } else {
+            runTest(moduleFolder, methodLogFile, test, test.getClazz(), timeout);
+         }
+         
       } catch (Exception e1) {
          e1.printStackTrace();
       }
