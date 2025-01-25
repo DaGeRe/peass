@@ -51,8 +51,6 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
 
       final File vmidFolder = initVMFolder(commit, vmid, logFolder);
       
-      testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
-      
       Duration duration = Duration.ofSeconds(300);
       SamplerExecutorPipeline pipeline = new AsyncProfilerExecutor();
       MeasurementInformation agent = pipeline.javaAgent(this.configuration, vmid, commit, duration);
