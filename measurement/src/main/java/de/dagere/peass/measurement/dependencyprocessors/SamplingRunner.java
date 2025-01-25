@@ -19,6 +19,8 @@ import io.github.terahidro2003.samplers.SamplerExecutorPipeline;
 import io.github.terahidro2003.samplers.asyncprofiler.AsyncProfilerExecutor;
 import io.github.terahidro2003.samplers.asyncprofiler.MeasurementInformation;
 
+import static io.github.terahidro2003.samplers.asyncprofiler.AsyncProfilerExecutor.log;
+
 public class SamplingRunner extends AbstractMeasurementProcessRunner {
    private static final Logger LOG = LogManager.getLogger(OnceRunner.class);
 
@@ -47,6 +49,7 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
 
    @Override
    public void runOnce(TestMethodCall testcase, String commit, int vmid, File logFolder) {
+      log.debug("Running test {}", testcase);
       initCommit(commit);
 
       final File vmidFolder = initVMFolder(commit, vmid, logFolder);
@@ -54,7 +57,8 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
       Duration duration = Duration.ofSeconds(300);
       SamplerExecutorPipeline pipeline = new AsyncProfilerExecutor();
       MeasurementInformation agent = pipeline.javaAgent(this.configuration, vmid, commit, duration);
-      
+
+      log.info("Java-agent: {}", agent);
       testExecutor.executeTest(agent.javaAgentPath(), testcase, vmidFolder, vmid);
       
       LOG.info("Organizing result paths");
