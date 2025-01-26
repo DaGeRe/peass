@@ -45,10 +45,14 @@ public abstract class KoPeMeExecutor extends TestExecutor {
    }
 
    protected abstract void runTest(File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout);
-
+   
    protected abstract void runTest(String javaAgent, File moduleFolder, final File logFile, TestMethodCall test, final String testname, final long timeout);
 
-   private void instrumentTest(final TestMethodCall test, final File moduleFolder) {
+   protected void runMethod(final File logFolder, final TestMethodCall test, final File moduleFolder, final long timeout) {
+      runMethod(logFolder, test, moduleFolder, timeout, null);
+   }
+   
+   protected void runMethod(final File logFolder, final TestMethodCall test, final File moduleFolder, final long timeout, String javaAgent) {
       try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, test.toEntity(), test.getMethod())) {
          if (testTransformer.getConfig().isDirectlyMeasureKieker()) {
             File fileToInstrument = shortener.getCalleeClazzFile();
@@ -57,37 +61,29 @@ public abstract class KoPeMeExecutor extends TestExecutor {
             if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()) {
                strictMode = true;
             }
-
+            
             HashSet<String> includedPatterns = new HashSet<>();
             includedPatterns.add("* " + test.getClazz() + "." + test.getMethod() + "()");
             InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.DURATION, true, false, false, includedPatterns, null, false, testTransformer.getConfig().getRepetitions(), false, strictMode);
             InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(configuration);
             instrumenter.instrument(fileToInstrument);
          }
+         
+         LOG.info("Cleaning...");
+         final File cleanFile = getCleanLogFile(logFolder, test);
+         clean(cleanFile);
+
+         final File methodLogFile = getMethodLogFile(logFolder, test);
+         
+         if(javaAgent != null) {
+            runTest(javaAgent, moduleFolder, methodLogFile, test, test.getClazz(), timeout == 0 ? 300 : timeout);
+         } else {
+            runTest(moduleFolder, methodLogFile, test, test.getClazz(), timeout == 0 ? 300 : timeout);
+         }
+         
+//         runTest(moduleFolder, methodLogFile, test, test.getClazz(), timeout);
       } catch (Exception e1) {
          e1.printStackTrace();
-      }
-   }
-
-   protected void runMethod(final File logFolder, final TestMethodCall test, final File moduleFolder, final long timeout, final String... javaAgent) {
-
-      if (javaAgent == null || javaAgent.length != 1) instrumentTest(test, moduleFolder);
-         
-      LOG.info("Cleaning...");
-      final File cleanFile = getCleanLogFile(logFolder, test);
-
-      try {
-         clean(cleanFile);
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-
-
-      final File methodLogFile = getMethodLogFile(logFolder, test);
-      if(javaAgent != null && javaAgent.length == 1) {
-         runTest(javaAgent[0], moduleFolder, methodLogFile, test, test.getClazz(), timeout == 0 ? 300 : timeout);
-      } else {
-         runTest(moduleFolder, methodLogFile, test, test.getClazz(), timeout == 0 ? 300 : timeout);
       }
    }
 

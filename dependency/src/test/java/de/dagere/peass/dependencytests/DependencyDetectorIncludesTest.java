@@ -32,7 +32,6 @@ public class DependencyDetectorIncludesTest {
    }
 
    @Test
-   @Disabled
    public void testNormalChangeIncluded() throws IOException, InterruptedException, ParseException {
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
       final DependencyReader reader = executeWithInclude("defaultpackage.TestMe#testMe", DependencyTestConstants.NORMAL_CHANGE, changeManager);
@@ -40,7 +39,6 @@ public class DependencyDetectorIncludesTest {
    }
    
    @Test
-   @Disabled
    public void testNormalChangeAddedClass() throws IOException, InterruptedException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "added_class");
       final ChangeManager changeManager = DependencyDetectorTestUtil.mockAddedChangeManager();
@@ -49,7 +47,6 @@ public class DependencyDetectorIncludesTest {
    }
 
    @Test
-   @Disabled
    public void testNormalChangeNotIncluded() throws IOException, ParseException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change");
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
