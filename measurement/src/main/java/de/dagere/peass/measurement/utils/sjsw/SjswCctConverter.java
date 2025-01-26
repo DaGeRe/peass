@@ -3,10 +3,15 @@ package de.dagere.peass.measurement.utils.sjsw;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import io.github.terahidro2003.result.tree.StackTraceTreeNode;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class SjswCctConverter {
+    private static final Logger log = LoggerFactory.getLogger(SjswCctConverter.class);
+
     public static CallTreeNode convertCallContextTreeToCallTree(StackTraceTreeNode node, CallTreeNode ctn, String commit, String predesseror, int vms) {
         if (commit == null && predesseror == null) {
             throw new IllegalArgumentException("Commit and Predesseror cannot be null");
@@ -75,5 +80,14 @@ public class SjswCctConverter {
         }
 
         peasNode.createStatistics(commit);
+        SummaryStatistics statistics = peasNode.getStatistics(commit);
+        if(statistics == null) {
+            log.info("Statistics is null. Attempting to provide empty statistics.");
+            peasNode.addMeasurement(commit, 0L);
+            statistics = peasNode.getStatistics(commit);
+            if(statistics == null) {
+                log.info("Unable to provide empty statistics");
+            }
+        }
     }
 }
