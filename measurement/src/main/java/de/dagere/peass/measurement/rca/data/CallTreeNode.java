@@ -287,7 +287,7 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public String getMethod() {
-      final String method = call.substring(call.lastIndexOf('#'));
+      final String method = call.contains("#") ? call.substring(call.lastIndexOf('#')) : call;
       return method;
    }
 
