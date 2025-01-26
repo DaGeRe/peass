@@ -1,10 +1,17 @@
 package de.dagere.peass.measurement.rca.searcher;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.utils.sjsw.SjswCctConverter;
+import io.github.terahidro2003.result.tree.StackTraceTreeNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,8 +25,6 @@ import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.measurement.dependencyprocessors.DependencyTester;
-import de.dagere.peass.measurement.dependencyprocessors.OnceRunner;
 import de.dagere.peass.measurement.dependencyprocessors.SamplingRunner;
 import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
 import de.dagere.peass.measurement.organize.FolderDeterminer;
@@ -88,6 +93,57 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
          betweenVMCooldown();
       }
+
+      analyseSamplingResults(processor, measurementIdentifier, testcase2, configuration.getVms());
+   }
+
+   private void analyseSamplingResults(SamplerResultsProcessor processor, MeasurementIdentifier identifier, TestMethodCall testcase, int vms) {
+      File resultDir = retrieveSamplingResultsDirectory(identifier);
+      Path resultsPath = resultDir.toPath();
+      var commits = getVersions();
+
+      List<CallTreeNode> vmNodes = new ArrayList<>();
+
+      for (int i = 0; i<commits.length; i++) {
+         // Build BATs for both commits
+         StackTraceTreeNode BAT = retrieveBatForCommit(commits[i], processor, resultsPath);
+
+         // Convert BAT to CallTreeNode for both commits
+         CallTreeNode root = null;
+         root = SjswCctConverter.convertCallContextTreeToCallTree(BAT, root, commits[i], null,  vms);
+         vmNodes.add(root);
+
+         if (root == null) {
+            throw new RuntimeException("CallTreeNode was null after attempted conversion from SJSW structure.");
+         }
+      }
+
+      // Persist CallTreeNode
+      ObjectMapper objectMapper = new ObjectMapper();
+      for (CallTreeNode node : vmNodes) {
+         String outputFile = folders.getMeasureLogFolder().getAbsoluteFile() + "/calltreenode_serialized" + UUID.randomUUID() + ".json";
+         try {
+            objectMapper.writeValue(new File(outputFile), node);
+         } catch (IOException e) {
+            LOG.error("Failed to serialize call tree node {}", node, e);
+         }
+      }
+
+      // Map CallTreeNodes
+   }
+
+   private StackTraceTreeNode retrieveBatForCommit(String commit, SamplerResultsProcessor processor, Path resultsPath) {
+      List<File> commitJfrs = processor.listJfrMeasurementFiles(resultsPath, List.of(commit));
+      StackTraceTreeNode tree = processor.getTreeFromJfr(commitJfrs, commit);
+      StackTraceTreeNode filteredTestcaseTree = processor.filterTestcaseSubtree(testcase.getMethod(), tree);
+      filteredTestcaseTree.printTree();
+      return filteredTestcaseTree;
+   }
+
+   private File retrieveSamplingResultsDirectory(MeasurementIdentifier identifier) {
+      final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);
+      String outputPath = logFolder.getAbsolutePath() + "/sjsw-results";
+      return new File(outputPath + "/measurement_" +identifier.getUuid().toString());
    }
 
    public void runOneComparison(final File logFolder, final TestMethodCall testcase, final int vmid, final Config sjswConfiguration) {

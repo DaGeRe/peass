@@ -48,7 +48,10 @@ public class SjswCctConverter {
         }
 
         if (measurementsForSpecificCommit.size() != vms) {
-            throw new RuntimeException("Amount of commit measurements must be the same as the number of VMs");
+            int missing = vms - measurementsForSpecificCommit.size();
+            for (int i = 0; i<missing; i++) {
+                measurementsForSpecificCommit.add(0.0);
+            }
         }
 
         for (int vm = 0; vm < vms; vm++) {
