@@ -3,14 +3,22 @@ package de.dagere.peass.measurement.rca.searcher;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
+import de.dagere.peass.folders.CauseSearchFolders;
+import de.dagere.peass.measurement.rca.CausePersistenceManager;
+import de.dagere.peass.measurement.rca.CauseSearcherConfig;
+import de.dagere.peass.measurement.rca.CauseTester;
+import de.dagere.peass.measurement.rca.RCAMeasurementAdder;
+import de.dagere.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
+import de.dagere.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
+import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
 import de.dagere.peass.measurement.utils.sjsw.SjswCctConverter;
+import de.dagere.peass.vcs.GitUtils;
 import io.github.terahidro2003.result.tree.StackTraceTreeNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,17 +48,25 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
    private final TestMethodCall testcase;
    protected final MeasurementConfig configuration;
-   protected final PeassFolders folders;
+   protected final CauseSearchFolders folders;
    private ResultOrganizer currentOrganizer;
    protected final EnvironmentVariables env;
+   protected final CauseSearcherConfig causeSearcherConfig;
+   private final CausePersistenceManager persistenceManager;
+   private final BothTreeReader reader;
    
    protected long currentChunkStart = 0;
 
-   public SamplingCauseSearcher(TestMethodCall testcase, MeasurementConfig configuration, PeassFolders folders, EnvironmentVariables env) {
+   public SamplingCauseSearcher(TestMethodCall testcase, MeasurementConfig configuration, CauseSearchFolders folders,
+                                EnvironmentVariables env, CauseSearcherConfig causeSearcherConfig,
+                                final BothTreeReader reader) {
       this.testcase = testcase;
       this.configuration = configuration;
       this.folders = folders;
       this.env = env;
+      this.causeSearcherConfig = causeSearcherConfig;
+      this.persistenceManager = new CausePersistenceManager(causeSearcherConfig, configuration, folders);
+      this.reader = reader;
    }
 
    @Override
@@ -61,14 +77,19 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       new FolderDeterminer(folders).testResultFolders(fixedCommitConfig.getCommit(), fixedCommitConfig.getCommitOld(), testcase);
 
       final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);
+      Set<MethodCall> result = new HashSet<>();
       try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())) {
-         evaluateSimple(testcase, logFolder, writer);
+         result = evaluateSimple(testcase, logFolder, writer);
       }
 
-      throw new RuntimeException("Not implemented yet");
+      if(result.isEmpty()) {
+         throw new RuntimeException("Result is empty");
+      }
+
+      return result;
    }
 
-   private void evaluateSimple(TestMethodCall testcase2, File logFolder, ProgressWriter writer) {
+   private Set<MethodCall> evaluateSimple(TestMethodCall testcase2, File logFolder, ProgressWriter writer) {
       currentChunkStart = System.currentTimeMillis();
 
       MeasurementIdentifier measurementIdentifier = new MeasurementIdentifier();
@@ -94,10 +115,10 @@ public class SamplingCauseSearcher implements ICauseSearcher {
          betweenVMCooldown();
       }
 
-      analyseSamplingResults(processor, measurementIdentifier, testcase2, configuration.getVms());
+      return analyseSamplingResults(processor, measurementIdentifier, testcase2, configuration.getVms());
    }
 
-   private void analyseSamplingResults(SamplerResultsProcessor processor, MeasurementIdentifier identifier, TestMethodCall testcase, int vms) {
+   private Set<MethodCall> analyseSamplingResults(SamplerResultsProcessor processor, MeasurementIdentifier identifier, TestMethodCall testcase, int vms) {
       File resultDir = retrieveSamplingResultsDirectory(identifier);
       Path resultsPath = resultDir.toPath();
       var commits = getVersions();
@@ -119,6 +140,19 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       }
 
       // Persist CallTreeNode
+      persistBasicCallTreeNode(vmNodes);
+
+      if (vmNodes.size() != 2) {
+         throw new RuntimeException("Sampling results did not produce exactly 2 nodes");
+      }
+
+      CallTreeNode currentNode = vmNodes.get(1);
+      CallTreeNode predecessorNode = vmNodes.get(0);
+      Set<MethodCall> differentMethods = getDifferingMethodCalls(currentNode, predecessorNode);
+      return differentMethods;
+   }
+
+   private void persistBasicCallTreeNode(List<CallTreeNode> vmNodes) {
       ObjectMapper objectMapper = new ObjectMapper();
       for (CallTreeNode node : vmNodes) {
          String outputFile = folders.getMeasureLogFolder().getAbsoluteFile() + "/calltreenode_serialized" + UUID.randomUUID() + ".json";
@@ -128,8 +162,76 @@ public class SamplingCauseSearcher implements ICauseSearcher {
             LOG.error("Failed to serialize call tree node {}", node, e);
          }
       }
+   }
 
-      // Map CallTreeNodes
+   private Set<MethodCall> getDifferingMethodCalls(CallTreeNode currentRoot, CallTreeNode rootPredecessor) {
+      // Define tree analyzer
+      var creator = new TreeAnalyzerCreator() {
+         @Override
+         public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
+            return new CompleteTreeAnalyzer(currentRoot, rootPredecessor);
+         }
+      };
+      final TreeAnalyzer analyzer = creator.getAnalyzer(reader, causeSearcherConfig);
+      final List<CallTreeNode> predecessorNodeList = analyzer.getMeasurementNodesPredecessor();
+      final List<CallTreeNode> includableNodes = getIncludableNodes(predecessorNodeList);
+
+      if (includableNodes.isEmpty()) {
+         throw new RuntimeException("Tried to analyze empty node list");
+      }
+
+      applyMeasurementToDefinedTree(includableNodes, rootPredecessor);
+
+      return convertToChangedEntitites(includableNodes);
+   }
+
+   private void applyMeasurementToDefinedTree(List<CallTreeNode> differingNodes, CallTreeNode rootPredecessor) {
+      final AllDifferingDeterminer allSearcher = new AllDifferingDeterminer(differingNodes, causeSearcherConfig, configuration);
+      allSearcher.calculateDiffering();
+
+      RCAMeasurementAdder measurementReader = new RCAMeasurementAdder(persistenceManager, differingNodes);
+      measurementReader.addAllMeasurements(rootPredecessor);
+
+      differingNodes.addAll(allSearcher.getLevelDifferentPredecessor());
+
+      persistenceManager.writeTreeState();
+   }
+
+   private Set<MethodCall> convertToChangedEntitites(List<CallTreeNode> differingNodes) {
+      final Set<MethodCall> changed = new TreeSet<>();
+      differingNodes.forEach(node -> {
+         changed.add(node.toEntity());
+      });
+      return changed;
+   }
+
+   private List<CallTreeNode> getIncludableNodes(final List<CallTreeNode> predecessorNodeList) {
+      final List<CallTreeNode> includableNodes;
+      if (causeSearcherConfig.useCalibrationRun()) {
+         includableNodes = getAnalysableNodes(predecessorNodeList);
+      } else {
+         includableNodes = predecessorNodeList;
+      }
+
+      LOG.debug("Analyzable: {} / {}", includableNodes.size(), predecessorNodeList.size());
+      return includableNodes;
+   }
+
+   private List<CallTreeNode> getAnalysableNodes(final List<CallTreeNode> predecessorNodeList) {
+      final MeasurementConfig config = new MeasurementConfig(1, configuration.getFixedCommitConfig().getCommit(), configuration.getFixedCommitConfig().getCommitOld());
+      config.setIterations(configuration.getIterations());
+      config.setRepetitions(configuration.getRepetitions());
+      config.setWarmup(configuration.getWarmup());
+      config.getKiekerConfig().setUseKieker(true);
+
+      List<String> commits = GitUtils.getCommits(folders.getProjectFolder(), true, true);
+      CommitComparatorInstance comparator = new CommitComparatorInstance(commits);
+
+      final CauseTester calibrationMeasurer = new CauseTester(folders, config, causeSearcherConfig, env, comparator);
+      final AllDifferingDeterminer calibrationRunner = new AllDifferingDeterminer(predecessorNodeList, causeSearcherConfig, config);
+      calibrationMeasurer.measureCommit(predecessorNodeList);
+      final List<CallTreeNode> includableByMinTime = calibrationRunner.getIncludableNodes();
+      return includableByMinTime;
    }
 
    private StackTraceTreeNode retrieveBatForCommit(String commit, SamplerResultsProcessor processor, Path resultsPath) {
