@@ -49,21 +49,29 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
 
    @Override
    public void runOnce(TestMethodCall testcase, String commit, int vmid, File logFolder) {
-      log.debug("Running test {}", testcase);
+      LOG.debug("Preparing testcase {} to run with SAMPLING enabled", testcase);
       initCommit(commit);
 
       final File vmidFolder = initVMFolder(commit, vmid, logFolder);
-      
-      Duration duration = Duration.ofSeconds(300);
-      SamplerExecutorPipeline pipeline = new AsyncProfilerExecutor();
-      MeasurementInformation agent = pipeline.javaAgent(this.configuration, vmid, commit, duration);
-      String javaAgentAsMavenArgument = "-DargLine=" + agent.javaAgentPath();
-      log.info("Java-agent: {}", javaAgentAsMavenArgument);
-      testExecutor.executeTest(javaAgentAsMavenArgument, testcase, vmidFolder, vmid);
+
+      // What is the reason behind this arithmetic of timeout?
+      final long outerTimeout = 10 + (int) (this.testTransformer.getConfig().getTimeoutInSeconds() * 1.2);
+      LOG.info("Executing testcase {}", testcase);
+      String mavenJavaAgent = retrieveProfilerJavaAgentAsMavenArgument(configuration, outerTimeout, vmid, logFolder, commit);
+      testExecutor.executeTest(mavenJavaAgent, testcase, vmidFolder, outerTimeout);
       
       LOG.info("Organizing result paths");
       currentOrganizer.saveResultFiles(commit, vmid);
 
       cleanup();
+   }
+
+   private String retrieveProfilerJavaAgentAsMavenArgument(Config config, long maxSamplingDuration, int vmid, File logFolder, String commit) {
+      Duration duration = Duration.ofSeconds(maxSamplingDuration * 60);
+      SamplerExecutorPipeline pipeline = new AsyncProfilerExecutor();
+      MeasurementInformation agent = pipeline.javaAgent(this.configuration, vmid, commit, duration);
+      String javaAgentAsMavenArgument = "-DargLine=" + agent.javaAgentPath();
+      LOG.info("Async-profiler java-agent configured: {}", javaAgentAsMavenArgument);
+      return javaAgentAsMavenArgument;
    }
 }

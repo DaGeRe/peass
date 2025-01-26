@@ -127,7 +127,7 @@ public abstract class TestExecutor {
 
    protected void execute(final String testname, final long timeoutInSeconds, final Process process) {
       if (timeoutInSeconds == -1) {
-         LOG.info("Executing without timeout!");
+         LOG.warn("Executing without timeout!");
          try {
             process.waitFor();
          } catch (InterruptedException e) {
