@@ -32,14 +32,15 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
 
    private final Config configuration;
 
-   public SamplingRunner(final PeassFolders folders, final TestExecutor testExecutor, final ResultOrganizer currentOrganizer, final ICauseSearcher resultHandler, final Config config) {
+   public SamplingRunner(final PeassFolders folders, final TestExecutor testExecutor, final ResultOrganizer currentOrganizer, final ICauseSearcher resultHandler,
+         final Config config) {
       super(folders);
       this.testTransformer = testExecutor.getTestTransformer();
       this.testExecutor = testExecutor;
       this.currentOrganizer = currentOrganizer;
       this.resultHandler = resultHandler;
       this.configuration = config;
-      
+
       try {
          FileUtils.cleanDirectory(folders.getTempDir());
       } catch (IOException e) {
@@ -52,6 +53,9 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
       LOG.debug("Preparing testcase {} to run with SAMPLING enabled", testcase);
       initCommit(commit);
 
+      testExecutor.loadClasses();
+      testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
+
       final File vmidFolder = initVMFolder(commit, vmid, logFolder);
 
       // What is the reason behind this arithmetic of timeout?
@@ -59,7 +63,7 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
       LOG.info("Executing testcase {}", testcase);
       String mavenJavaAgent = retrieveProfilerJavaAgentAsMavenArgument(configuration, outerTimeout, vmid, logFolder, commit);
       testExecutor.executeTest(mavenJavaAgent, testcase, vmidFolder, outerTimeout);
-      
+
       LOG.info("Organizing result paths");
       currentOrganizer.saveResultFiles(commit, vmid);
 
