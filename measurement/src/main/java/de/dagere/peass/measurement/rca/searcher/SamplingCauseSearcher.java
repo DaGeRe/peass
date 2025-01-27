@@ -76,7 +76,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
             fixedCommitConfig.getCommit());
       new FolderDeterminer(folders).testResultFolders(fixedCommitConfig.getCommit(), fixedCommitConfig.getCommitOld(), testcase);
 
-      final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);
+      final File logFolder = folders.getRCALogFolder(configuration.getFixedCommitConfig().getCommit(), testcase, 0);
       Set<MethodCall> result = new HashSet<>();
       try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())) {
          result = evaluateSimple(testcase, logFolder, writer);
