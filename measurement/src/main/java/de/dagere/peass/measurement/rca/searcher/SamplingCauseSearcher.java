@@ -244,7 +244,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
    }
 
    private File retrieveSamplingResultsDirectory(MeasurementIdentifier identifier) {
-      final File logFolder = folders.getMeasureLogFolder(configuration.getFixedCommitConfig().getCommit(), testcase);
+      final File logFolder = folders.getRCALogFolder(configuration.getFixedCommitConfig().getCommit(), testcase, 0);
       String outputPath = logFolder.getAbsolutePath() + "/sjsw-results";
       return new File(outputPath + "/measurement_" +identifier.getUuid().toString());
    }
