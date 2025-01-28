@@ -54,12 +54,12 @@ public class SamplingCauseSearcher implements ICauseSearcher {
    protected final CauseSearcherConfig causeSearcherConfig;
    private final CausePersistenceManager persistenceManager;
    private final BothTreeReader reader;
-   
+
    protected long currentChunkStart = 0;
 
    public SamplingCauseSearcher(TestMethodCall testcase, MeasurementConfig configuration, CauseSearchFolders folders,
-                                EnvironmentVariables env, CauseSearcherConfig causeSearcherConfig,
-                                final BothTreeReader reader) {
+         EnvironmentVariables env, CauseSearcherConfig causeSearcherConfig,
+         final BothTreeReader reader) {
       this.testcase = testcase;
       this.configuration = configuration;
       this.folders = folders;
@@ -82,7 +82,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
          result = evaluateSimple(testcase, logFolder, writer);
       }
 
-      if(result.isEmpty()) {
+      if (result.isEmpty()) {
          throw new RuntimeException("Result is empty");
       }
 
@@ -94,16 +94,16 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
       MeasurementIdentifier measurementIdentifier = new MeasurementIdentifier();
       String outputPath = logFolder.getAbsolutePath() + "/sjsw-results";
-      
+
       Config sjswConfiguration = Config.builder()
-               .autodownloadProfiler()
-               .outputPathWithIdentifier(outputPath, measurementIdentifier)
-               .frequency(1)
-               .jfrEnabled(true)
-               .build();
-      
-      SamplerResultsProcessor processor = new SamplerResultsProcessor();         
-                                    
+            .autodownloadProfiler()
+            .outputPathWithIdentifier(outputPath, measurementIdentifier)
+            .frequency(1)
+            .jfrEnabled(true)
+            .build();
+
+      SamplerResultsProcessor processor = new SamplerResultsProcessor();
+
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
          long comparisonStart = System.currentTimeMillis();
 
@@ -125,18 +125,16 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
       List<CallTreeNode> vmNodes = new ArrayList<>();
 
-      for (int i = 0; i<commits.length; i++) {
-         // Build BATs for both commits
-         StackTraceTreeNode BAT = retrieveBatForCommit(commits[i], processor, resultsPath);
+      StackTraceTreeNode commitBAT = retrieveBatForCommit(commits[1], processor, resultsPath);
+      StackTraceTreeNode predecessorBAT = retrieveBatForCommit(commits[0], processor, resultsPath);
 
-         // Convert BAT to CallTreeNode for both commits
-         CallTreeNode root = null;
-         root = SjswCctConverter.convertCallContextTreeToCallTree(BAT, root, commits[i], null,  vms);
-         vmNodes.add(root);
+      // Convert BAT to CallTreeNode for both commits
+      CallTreeNode root = null;
+      root = SjswCctConverter.convertCallContextTreeToCallTree(commitBAT, predecessorBAT, root, commits[1], commits[0], vms);
+      vmNodes.add(root);
 
-         if (root == null) {
-            throw new RuntimeException("CallTreeNode was null after attempted conversion from SJSW structure.");
-         }
+      if (root == null) {
+         throw new RuntimeException("CallTreeNode was null after attempted conversion from SJSW structure.");
       }
 
       // Persist CallTreeNode
@@ -246,7 +244,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
    private File retrieveSamplingResultsDirectory(MeasurementIdentifier identifier) {
       final File logFolder = folders.getRCALogFolder(configuration.getFixedCommitConfig().getCommit(), testcase, 0);
       String outputPath = logFolder.getAbsolutePath() + "/sjsw-results";
-      return new File(outputPath + "/measurement_" +identifier.getUuid().toString());
+      return new File(outputPath + "/measurement_" + identifier.getUuid().toString());
    }
 
    public void runOneComparison(final File logFolder, final TestMethodCall testcase, final int vmid, final Config sjswConfiguration) {
@@ -296,11 +294,11 @@ public class SamplingCauseSearcher implements ICauseSearcher {
          throw new RuntimeException(e);
       }
    }
-   
+
    public ResultOrganizer getCurrentOrganizer() {
       return currentOrganizer;
    }
-   
+
    private String[] getVersions() {
       String commits[] = new String[2];
       commits[0] = configuration.getFixedCommitConfig().getCommitOld().equals("HEAD~1") ? configuration.getFixedCommitConfig().getCommit() + "~1"

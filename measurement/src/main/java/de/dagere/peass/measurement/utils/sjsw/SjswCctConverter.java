@@ -12,7 +12,7 @@ import java.util.List;
 public class SjswCctConverter {
     private static final Logger log = LoggerFactory.getLogger(SjswCctConverter.class);
 
-    public static CallTreeNode convertCallContextTreeToCallTree(StackTraceTreeNode node, CallTreeNode ctn, String commit, String predesseror, int vms) {
+    public static CallTreeNode convertCallContextTreeToCallTree(StackTraceTreeNode node, StackTraceTreeNode predecessorBAT, CallTreeNode ctn, String commit, String predesseror, int vms) {
         if (commit == null && predesseror == null) {
             throw new IllegalArgumentException("Commit and Predesseror cannot be null");
         }
@@ -37,7 +37,7 @@ public class SjswCctConverter {
 
         List<StackTraceTreeNode> children = node.getChildren();
         for (StackTraceTreeNode child : children) {
-            convertCallContextTreeToCallTree(child, ctn, commit, predesseror, vms);
+            convertCallContextTreeToCallTree(child, null, ctn, commit, predesseror, vms);
         }
 
         return ctn;
