@@ -38,6 +38,7 @@ import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
 import de.dagere.peass.measurement.organize.FolderDeterminer;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.testtransformation.TestTransformer;
+import de.dagere.peass.utils.Constants;
 import io.github.terahidro2003.config.Config;
 import io.github.terahidro2003.result.SamplerResultsProcessor;
 import io.github.terahidro2003.samplers.asyncprofiler.MeasurementIdentifier;
@@ -123,42 +124,30 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       Path resultsPath = resultDir.toPath();
       var commits = getVersions();
 
-      List<CallTreeNode> vmNodes = new ArrayList<>();
-
       StackTraceTreeNode commitBAT = retrieveBatForCommit(commits[1], processor, resultsPath);
       StackTraceTreeNode predecessorBAT = retrieveBatForCommit(commits[0], processor, resultsPath);
 
       // Convert BAT to CallTreeNode for both commits
       CallTreeNode root = null;
       root = SjswCctConverter.convertCallContextTreeToCallTree(commitBAT, predecessorBAT, root, commits[1], commits[0], vms);
-      vmNodes.add(root);
 
       if (root == null) {
          throw new RuntimeException("CallTreeNode was null after attempted conversion from SJSW structure.");
       }
 
       // Persist CallTreeNode
-      persistBasicCallTreeNode(vmNodes);
+      persistBasicCallTreeNode(root);
 
-      if (vmNodes.size() != 2) {
-         throw new RuntimeException("Sampling results did not produce exactly 2 nodes");
-      }
-
-      CallTreeNode currentNode = vmNodes.get(1);
-      CallTreeNode predecessorNode = vmNodes.get(0);
-      Set<MethodCall> differentMethods = getDifferingMethodCalls(currentNode, predecessorNode);
+      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode());
       return differentMethods;
    }
 
-   private void persistBasicCallTreeNode(List<CallTreeNode> vmNodes) {
-      ObjectMapper objectMapper = new ObjectMapper();
-      for (CallTreeNode node : vmNodes) {
-         String outputFile = folders.getMeasureLogFolder().getAbsoluteFile() + "/calltreenode_serialized" + UUID.randomUUID() + ".json";
-         try {
-            objectMapper.writeValue(new File(outputFile), node);
-         } catch (IOException e) {
-            LOG.error("Failed to serialize call tree node {}", node, e);
-         }
+   private void persistBasicCallTreeNode(CallTreeNode node) {
+      String outputFile = folders.getMeasureLogFolder().getAbsoluteFile() + "/calltreenode_serialized" + UUID.randomUUID() + ".json";
+      try {
+         Constants.OBJECTMAPPER.writeValue(new File(outputFile), node);
+      } catch (IOException e) {
+         LOG.error("Failed to serialize call tree node {}", node, e);
       }
    }
 

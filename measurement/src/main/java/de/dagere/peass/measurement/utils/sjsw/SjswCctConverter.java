@@ -12,32 +12,32 @@ import java.util.List;
 public class SjswCctConverter {
     private static final Logger log = LoggerFactory.getLogger(SjswCctConverter.class);
 
-    public static CallTreeNode convertCallContextTreeToCallTree(StackTraceTreeNode node, StackTraceTreeNode predecessorBAT, CallTreeNode ctn, String commit, String predesseror, int vms) {
-        if (commit == null && predesseror == null) {
+    public static CallTreeNode convertCallContextTreeToCallTree(StackTraceTreeNode currentBAT, StackTraceTreeNode predecessorBAT, CallTreeNode ctn, String commit, String predecessor, int vms) {
+        if (commit == null && predecessor == null) {
             throw new IllegalArgumentException("Commit and Predesseror cannot be null");
         }
 
-        MeasurementConfig mConfig = new MeasurementConfig(vms, commit, predesseror);
+        MeasurementConfig mConfig = new MeasurementConfig(vms, commit, predecessor);
 
         if(ctn == null) {
-            String methodNameWithNew = node.getPayload().getMethodName() + "()";
-            if(node.getPayload().getMethodName().contains("<init>")) {
-                methodNameWithNew = "new " + node.getPayload().getMethodName() + "()";
+            String methodNameWithNew = currentBAT.getPayload().getMethodName() + "()";
+            if(currentBAT.getPayload().getMethodName().contains("<init>")) {
+                methodNameWithNew = "new " + currentBAT.getPayload().getMethodName() + "()";
             }
-            ctn = new CallTreeNode(node.getPayload().getMethodName(),
+            ctn = new CallTreeNode(currentBAT.getPayload().getMethodName(),
                     methodNameWithNew,
                     methodNameWithNew,
                     mConfig);
 
-            createPeassNode(node, ctn, commit, predesseror, vms);
+            createPeassNode(currentBAT, ctn, commit, predecessor, vms);
         } else {
-            createPeassNode(node, ctn, commit, predesseror, vms);
-            ctn = ctn.getChildByKiekerPattern(node.getPayload().getMethodName() + "()");
+            createPeassNode(currentBAT, ctn, commit, predecessor, vms);
+            ctn = ctn.getChildByKiekerPattern(currentBAT.getPayload().getMethodName() + "()");
         }
 
-        List<StackTraceTreeNode> children = node.getChildren();
+        List<StackTraceTreeNode> children = currentBAT.getChildren();
         for (StackTraceTreeNode child : children) {
-            convertCallContextTreeToCallTree(child, null, ctn, commit, predesseror, vms);
+            convertCallContextTreeToCallTree(child, null, ctn, commit, predecessor, vms);
         }
 
         return ctn;
