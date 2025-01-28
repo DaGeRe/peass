@@ -98,7 +98,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       Config sjswConfiguration = Config.builder()
                .autodownloadProfiler()
                .outputPathWithIdentifier(outputPath, measurementIdentifier)
-               .frequency(100)
+               .frequency(1)
                .jfrEnabled(true)
                .build();
       
@@ -237,7 +237,8 @@ public class SamplingCauseSearcher implements ICauseSearcher {
    private StackTraceTreeNode retrieveBatForCommit(String commit, SamplerResultsProcessor processor, Path resultsPath) {
       List<File> commitJfrs = processor.listJfrMeasurementFiles(resultsPath, List.of(commit));
       StackTraceTreeNode tree = processor.getTreeFromJfr(commitJfrs, commit);
-      StackTraceTreeNode filteredTestcaseTree = processor.filterTestcaseSubtree(testcase.getMethod(), tree);
+      String normalizedMethodName = testcase.getMethod().substring(testcase.getMethod().lastIndexOf('#') + 1);
+      StackTraceTreeNode filteredTestcaseTree = processor.filterTestcaseSubtree(normalizedMethodName, tree);
       filteredTestcaseTree.printTree();
       return filteredTestcaseTree;
    }
