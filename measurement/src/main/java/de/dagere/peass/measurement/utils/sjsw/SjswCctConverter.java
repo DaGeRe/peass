@@ -43,8 +43,8 @@ public class SjswCctConverter {
         return ctn;
     }
 
-    private static void createPeassNode(StackTraceTreeNode node, CallTreeNode peasNode, String commit, String oldCommit, int vms) {
-        peasNode.initCommitData();
+    private static void createPeassNode(StackTraceTreeNode node, CallTreeNode peassNode, String commit, String oldCommit, int vms) {
+        peassNode.initCommitData();
 
         List<Double> measurementsForSpecificCommit = node.getMeasurements().get(commit);
         if(measurementsForSpecificCommit == null || measurementsForSpecificCommit.isEmpty()) {
@@ -60,31 +60,31 @@ public class SjswCctConverter {
         }
 
         for (int vm = 0; vm < vms; vm++) {
-            peasNode.initVMData(commit);
+            peassNode.initVMData(commit);
             double measurement = measurementsForSpecificCommit.get(vm);
-            peasNode.addMeasurement(commit, (long) measurement);
+            peassNode.addMeasurement(commit, (long) measurement);
         }
 
         // check is done as a workaround for Peass kieker pattern check
         if(node.getPayload().getMethodName().contains("<init>")) {
             String methodNameWithNew = "new " + node.getPayload().getMethodName() + "()";
-            peasNode.appendChild(node.getPayload().getMethodName(),
+            peassNode.appendChild(node.getPayload().getMethodName(),
                     methodNameWithNew,
                     methodNameWithNew
             );
         } else {
-            peasNode.appendChild(node.getPayload().getMethodName(),
+            peassNode.appendChild(node.getPayload().getMethodName(),
                     node.getPayload().getMethodName() + "()",
                     node.getPayload().getMethodName() + "()"
             );
         }
 
-        peasNode.createStatistics(commit);
-        SummaryStatistics statistics = peasNode.getStatistics(commit);
+        peassNode.createStatistics(commit);
+        SummaryStatistics statistics = peassNode.getStatistics(commit);
         if(statistics == null) {
             log.info("Statistics is null. Attempting to provide empty statistics.");
-            peasNode.addMeasurement(commit, 0L);
-            statistics = peasNode.getStatistics(commit);
+            peassNode.addMeasurement(commit, 0L);
+            statistics = peassNode.getStatistics(commit);
             if(statistics == null) {
                 log.info("Unable to provide empty statistics");
             }
