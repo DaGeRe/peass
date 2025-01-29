@@ -19,10 +19,10 @@ public class SjswCctConverter {
 
         MeasurementConfig mConfig = new MeasurementConfig(vms, commit, predecessor);
 
+        String methodNameWithNew = normalizeKiekerPattern(currentBAT);
         if(ctn == null) {
-            String methodNameWithNew = currentBAT.getPayload().getMethodName() + "()";
             if(currentBAT.getPayload().getMethodName().contains("<init>")) {
-                methodNameWithNew = "new " + currentBAT.getPayload().getMethodName() + "()";
+                methodNameWithNew = "new " + methodNameWithNew;
             }
             ctn = new CallTreeNode(currentBAT.getPayload().getMethodName(),
                     methodNameWithNew,
@@ -30,7 +30,7 @@ public class SjswCctConverter {
                     mConfig);
         } else {
             createPeassNode(currentBAT, ctn, commit, predecessor, vms, false);
-            ctn = ctn.getChildByKiekerPattern(currentBAT.getPayload().getMethodName() + "()");
+            ctn = ctn.getChildByKiekerPattern(methodNameWithNew);
         }
 
         StackTraceTreeNode otherNode = predecessorBAT != null ? search(predecessorBAT, currentBAT) : null;
@@ -49,6 +49,12 @@ public class SjswCctConverter {
         }
 
         return ctn;
+    }
+
+    private static String normalizeKiekerPattern(StackTraceTreeNode node) {
+        String methodSignature = node.getPayload().getMethodName();
+        if (!methodSignature.contains("(")) methodSignature = methodSignature + "()";
+        return methodSignature;
     }
 
     public static void printCallTreeNode(CallTreeNode root) {
@@ -116,16 +122,17 @@ public class SjswCctConverter {
 
     private static void appendChild(StackTraceTreeNode node, CallTreeNode peassNode) {
         // check is done as a workaround for Peass kieker pattern check
+        String methodNameWithNew = normalizeKiekerPattern(node);
         if(node.getPayload().getMethodName().contains("<init>")) {
-            String methodNameWithNew = "new " + node.getPayload().getMethodName() + "()";
+            methodNameWithNew = "new " + methodNameWithNew;
             peassNode.appendChild(node.getPayload().getMethodName(),
                     methodNameWithNew,
                     methodNameWithNew
             );
         } else {
             peassNode.appendChild(node.getPayload().getMethodName(),
-                    node.getPayload().getMethodName() + "()",
-                    node.getPayload().getMethodName() + "()"
+                    methodNameWithNew,
+                    methodNameWithNew
             );
         }
     }
@@ -158,10 +165,10 @@ public class SjswCctConverter {
 
         MeasurementConfig mConfig = new MeasurementConfig(vms, predecessor, commit);
 
+        String methodNameWithNew = normalizeKiekerPattern(otherNode);
         if(otherCallTreeNode == null) {
-            String methodNameWithNew = otherNode.getPayload().getMethodName() + "()";
             if(otherNode.getPayload().getMethodName().contains("<init>")) {
-                methodNameWithNew = "new " + otherNode.getPayload().getMethodName() + "()";
+                methodNameWithNew = "new " + otherNode.getPayload().getMethodName();
             }
             otherCallTreeNode = new CallTreeNode(otherNode.getPayload().getMethodName(),
                     methodNameWithNew,
@@ -169,7 +176,7 @@ public class SjswCctConverter {
                     mConfig);
         } else {
             createPeassNode(otherNode, otherCallTreeNode, predecessor, commit, vms, false);
-            otherCallTreeNode = otherCallTreeNode.getChildByKiekerPattern(otherNode.getPayload().getMethodName() + "()");
+            otherCallTreeNode = otherCallTreeNode.getChildByKiekerPattern(methodNameWithNew);
         }
 
         List<StackTraceTreeNode> children = otherNode.getChildren();
