@@ -184,6 +184,14 @@ public class CallTreeNode extends BasicNode {
       return kiekerPattern.toString();
    }
 
+   private String extractMethodName(String call) {
+      int lastParenthesisIndex = call.contains("(") ? call.lastIndexOf("(") : call.length() -1;
+      String methodName = call.substring(0, lastParenthesisIndex);
+
+      String[] parts = methodName.split(" ");
+      return parts.length > 1 ? parts[parts.length - 1] : call;
+   }
+
    public MethodCall toEntity() {
       if (call.equals(CauseSearchData.ADDED)) {
          String otherKiekerPattern = getOtherKiekerPattern();
