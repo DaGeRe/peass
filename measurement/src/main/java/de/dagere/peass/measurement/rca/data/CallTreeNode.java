@@ -51,6 +51,10 @@ public class CallTreeNode extends BasicNode {
    protected final List<CallTreeNode> children = new ArrayList<>();
    protected final Map<String, CallTreeStatistics> data = new HashMap<>();
 
+   public List<String> getKeys() {
+      return data.keySet().stream().collect(Collectors.toList());
+   }
+
    @JsonIgnore
    protected MeasurementConfig config;
 

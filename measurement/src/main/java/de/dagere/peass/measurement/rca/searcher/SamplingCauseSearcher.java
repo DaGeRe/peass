@@ -137,9 +137,30 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
       // Persist CallTreeNode
       persistBasicCallTreeNode(root);
+      printCallTreeNode(root);
+      System.out.println();
+      printCallTreeNode(root.getOtherCommitNode());
+
+      CompleteTreeAnalyzer completeTreeAnalyzer = new CompleteTreeAnalyzer(root, root.getOtherCommitNode());
 
       Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode());
       return differentMethods;
+   }
+
+   public static void printCallTreeNode(CallTreeNode root) {
+      printCallTreeNodeTreeRecursive(root, "", false);
+   }
+
+   public static void printCallTreeNodeTreeRecursive(CallTreeNode node, String prefix, boolean isLast) {
+      if (node.getMethod() != null) {
+         System.out.println(prefix + (isLast ? "└────── " : "├────── ") + node.getMethod() +
+                 " Keys: [" + node.getKeys());
+      }
+
+      List<CallTreeNode> children = node.getChildren();
+      for (int i = 0; i < children.size(); i++) {
+         printCallTreeNodeTreeRecursive(children.get(i), prefix + (isLast ? "    " : "│   "), i == children.size() - 1);
+      }
    }
 
    private void persistBasicCallTreeNode(CallTreeNode node) {
