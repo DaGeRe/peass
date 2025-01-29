@@ -1,5 +1,7 @@
 package de.dagere.peass.measurement.utils;
 
+import de.dagere.nodeDiffDetector.data.MethodCall;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.utils.sjsw.SjswCctConverter;
@@ -8,15 +10,17 @@ import io.github.terahidro2003.result.tree.StackTraceTreeNode;
 import io.github.terahidro2003.samplers.jfr.ExecutionSample;
 import io.github.terahidro2003.samplers.jfr.Method;
 import org.apache.commons.lang3.RandomUtils;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
 public class SjswCctConverterTest {
-    private List<String> path1a = new ArrayList<>(List.of("testing()", "methodA()", "methodB()"));
-    private List<String> path1b = new ArrayList<>(List.of("testing()", "methodA()", "someOtherMethod()"));
-    private List<String> path2 = new ArrayList<>(List.of("testing()", "methodB()"));
+    private List<String> path1a = new ArrayList<>(List.of("org.example.testing", "org.example.methodA", "org.example.methodB"));
+    private List<String> path1b = new ArrayList<>(List.of("org.example.testing", "org.example.methodA", "org.example.someOtherMethod", "libjvm.so.Runtime1::counter_overflow()"));
+    private List<String> path2 = new ArrayList<>(List.of("org.example.testing", "org.example.methodB"));
 
     @BeforeEach
     void prepare() {
@@ -59,7 +63,34 @@ public class SjswCctConverterTest {
         System.out.println();
         printCallTreeNode(root.getOtherCommitNode());
 
-        reproduce(root, root.getOtherCommitNode());
+//        reproduce(root, root.getOtherCommitNode());
+    }
+
+    @Test
+    public void testCorrectCallString() {
+        String methodSignature = "public void org.example.testing(int, long)";
+        String call = SjswCctConverter.getCorrectCallString(methodSignature);
+        Assertions.assertEquals("org.example#testing", call);
+    }
+
+    @Test
+    public void testCTNToEntity() {
+        String methodSignature = "public void org.example.testing(int, long)";
+        String call = SjswCctConverter.getCorrectCallString(methodSignature);
+        final CallTreeNode node = new CallTreeNode(call, methodSignature, methodSignature, (MeasurementConfig) null);
+        System.out.println("Node created: " + node.getCall() + ", " + node.getMethod());
+        MethodCall result = node.toEntity();
+        Assert.assertEquals(new MethodCall("org.example", "", "testing"), node.toEntity());
+    }
+
+    @Test
+    public void testCTNToEntityWithRootNode() {
+        String methodSignature = "root";
+        String call = SjswCctConverter.getCorrectCallString(methodSignature);
+        final CallTreeNode node = new CallTreeNode(call, methodSignature, methodSignature, (MeasurementConfig) null);
+        System.out.println("Node created: " + node.getCall() + ", " + node.getMethod());
+        MethodCall result = node.toEntity();
+        Assert.assertEquals(new MethodCall("", "", "root"), node.toEntity());
     }
 
     private void reverseStacktraces() {
@@ -80,8 +111,8 @@ public class SjswCctConverterTest {
     }
 
     public static void printCallTreeNodeTreeRecursive(CallTreeNode node, String prefix, boolean isLast) {
-        if (node.getMethod() != null) {
-            System.out.println(prefix + (isLast ? "└────── " : "├────── ") + node.getMethod() +
+        if (node.getCall() != null) {
+            System.out.println(prefix + (isLast ? "└────── " : "├────── ") + node.getCall() +
                     " Keys: [" + node.getKeys() + "]");
         }
 
@@ -130,6 +161,8 @@ public class SjswCctConverterTest {
         stacktraceAsString.forEach(s -> {
             Method method = new Method();
             method.setMethodName(s);
+            method.setMethodModifier("public void");
+            method.setMethodDescriptor("int, long");
             stacktrace.add(method);
         });
         ExecutionSample sample = new ExecutionSample();
@@ -138,9 +171,22 @@ public class SjswCctConverterTest {
     }
 
     private void reproduce(CallTreeNode root, CallTreeNode rootPredecessor) {
+        // rootPredecessor and root nodes cannot be null
         root.setOtherKiekerPattern(rootPredecessor.getKiekerPattern());
         rootPredecessor.setOtherCommitNode(root);
         rootPredecessor.setOtherKiekerPattern(root.getKiekerPattern());
+
+        // toEntity method works
+        everyNodetoEntityCall(root);
+        everyNodetoEntityCall(rootPredecessor);
+    }
+
+    private static void everyNodetoEntityCall(CallTreeNode node) {
+        node.toEntity();
+        List<CallTreeNode> children = node.getChildren();
+        for (CallTreeNode child : children) {
+            everyNodetoEntityCall(child);
+        }
     }
 
 }
