@@ -84,12 +84,13 @@ public class SjswCctConverterTest {
 
     @Test
     public void testCTNToEntityWithRootNode() {
-        String methodSignature = "root";
-        String call = SjswCctConverter.getCorrectCallString(methodSignature);
+        String methodSignature = "Root.root()";
+        String call = "Root#root";
+//        String call = SjswCctConverter.getCorrectCallString(methodSignature);
         final CallTreeNode node = new CallTreeNode(call, methodSignature, methodSignature, (MeasurementConfig) null);
         System.out.println("Node created: " + node.getCall() + ", " + node.getMethod());
         MethodCall result = node.toEntity();
-        Assert.assertEquals(new MethodCall("", "", "root"), node.toEntity());
+        Assert.assertEquals(new MethodCall("Root", "", "root"), node.toEntity());
     }
 
     private void reverseStacktraces() {
