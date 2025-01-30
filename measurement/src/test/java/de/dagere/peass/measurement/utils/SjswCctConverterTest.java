@@ -11,9 +11,8 @@ import io.github.terahidro2003.samplers.jfr.ExecutionSample;
 import io.github.terahidro2003.samplers.jfr.Method;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
@@ -63,14 +62,14 @@ public class SjswCctConverterTest {
         System.out.println();
         printCallTreeNode(root.getOtherCommitNode());
 
-//        reproduce(root, root.getOtherCommitNode());
+        reproduceToEntityProblem(root, root.getOtherCommitNode());
     }
 
     @Test
     public void testCorrectCallString() {
         String methodSignature = "public void org.example.testing(int, long)";
         String call = SjswCctConverter.getCorrectCallString(methodSignature);
-        Assertions.assertEquals("org.example#testing", call);
+        Assert.assertEquals("org.example#testing", call);
     }
 
     @Test
@@ -170,23 +169,11 @@ public class SjswCctConverterTest {
         return sample;
     }
 
-    private void reproduce(CallTreeNode root, CallTreeNode rootPredecessor) {
-        // rootPredecessor and root nodes cannot be null
-        root.setOtherKiekerPattern(rootPredecessor.getKiekerPattern());
-        rootPredecessor.setOtherCommitNode(root);
-        rootPredecessor.setOtherKiekerPattern(root.getKiekerPattern());
-
-        // toEntity method works
-        everyNodetoEntityCall(root);
-        everyNodetoEntityCall(rootPredecessor);
+    private void reproduceToEntityProblem(CallTreeNode root, CallTreeNode rootPredecessor) {
+       root.toEntity();
+       List<CallTreeNode> children = root.getChildren();
+       for (CallTreeNode child : children) {
+          reproduceToEntityProblem(child, child.getOtherCommitNode());
+       }
     }
-
-    private static void everyNodetoEntityCall(CallTreeNode node) {
-        node.toEntity();
-        List<CallTreeNode> children = node.getChildren();
-        for (CallTreeNode child : children) {
-            everyNodetoEntityCall(child);
-        }
-    }
-
 }

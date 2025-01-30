@@ -198,12 +198,13 @@ public class CallTreeNode extends BasicNode {
 
    public MethodCall toEntity() {
       if (call.equals(CauseSearchData.ADDED)) {
-         String otherKiekerPattern = getOtherKiekerPattern();
-         String otherCall = otherKiekerPattern.substring(otherKiekerPattern.lastIndexOf(' '), otherKiekerPattern.indexOf('('));
+//         String otherKiekerPattern = getOtherKiekerPattern();
+         String otherCall = getOtherCommitNode().getCall();
          return MethodCall.createMethodCallFromString(otherCall);
       } else {
          final int index = call.lastIndexOf(MethodCall.METHOD_SEPARATOR);
          String method = call.substring(index + 1);
+         System.out.println(call + " " + method);
          final MethodCall entity;
          if (method.contains("(")) {
             entity = new MethodCall(call.substring(0, index), module, method.substring(0, method.indexOf('(')));

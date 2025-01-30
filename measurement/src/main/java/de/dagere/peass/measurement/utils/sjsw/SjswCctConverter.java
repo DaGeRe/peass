@@ -1,5 +1,6 @@
 package de.dagere.peass.measurement.utils.sjsw;
 
+import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import io.github.terahidro2003.result.tree.StackTraceTreeNode;
@@ -20,11 +21,12 @@ public class SjswCctConverter {
         MeasurementConfig mConfig = new MeasurementConfig(vms, commit, predecessor);
 
         String methodNameWithNew = normalizeKiekerPattern(currentBAT);
+        String call = getCall(methodNameWithNew);
         if(ctn == null) {
-            if(currentBAT.getPayload().getMethodName().contains("<init>")) {
+            if(methodNameWithNew.contains("<init>")) {
                 methodNameWithNew = "new " + methodNameWithNew;
             }
-            ctn = new CallTreeNode(currentBAT.getPayload().getMethodName(),
+            ctn = new CallTreeNode(call,
                     methodNameWithNew,
                     methodNameWithNew,
                     mConfig);
@@ -51,9 +53,32 @@ public class SjswCctConverter {
         return ctn;
     }
 
+   private static String getCall(String methodNameWithNew) {
+        int indexOfParenthesis = methodNameWithNew.indexOf('(');
+        
+        String partBeforeParenthesis = methodNameWithNew.substring(0, indexOfParenthesis);
+        String parameters = methodNameWithNew.substring(indexOfParenthesis).replace(" ", "");
+        int methodSeperatorIndex = partBeforeParenthesis.lastIndexOf('.');
+        String clazz = partBeforeParenthesis.substring(0, methodSeperatorIndex);
+        String method = partBeforeParenthesis.substring(methodSeperatorIndex + 1) ;
+        
+        String call = clazz + MethodCall.METHOD_SEPARATOR + method + parameters; 
+      return call;
+   }
+
     private static String normalizeKiekerPattern(StackTraceTreeNode node) {
         String methodSignature = node.getPayload().getMethodName();
-        if (!methodSignature.contains("(")) methodSignature = methodSignature + "()";
+        if ("root".equals(methodSignature)) {
+           methodSignature = "RootClass.root";
+        }
+        if (!methodSignature.contains("(")) {
+           methodSignature = methodSignature + "()";
+        } else {
+           int indexOfParenthesis = methodSignature.indexOf('(');
+           String partBeforeParenthesis = methodSignature.substring(0, indexOfParenthesis);
+           String parameters = methodSignature.substring(indexOfParenthesis).replace(" ", "");
+           methodSignature = partBeforeParenthesis + parameters;
+        }
         return methodSignature;
     }
 
@@ -123,14 +148,15 @@ public class SjswCctConverter {
     private static void appendChild(StackTraceTreeNode node, CallTreeNode peassNode) {
         // check is done as a workaround for Peass kieker pattern check
         String methodNameWithNew = normalizeKiekerPattern(node);
+        String call = getCall(methodNameWithNew);
         if(node.getPayload().getMethodName().contains("<init>")) {
             methodNameWithNew = "new " + methodNameWithNew;
-            peassNode.appendChild(node.getPayload().getMethodName(),
+            peassNode.appendChild(call,
                     methodNameWithNew,
                     methodNameWithNew
             );
         } else {
-            peassNode.appendChild(node.getPayload().getMethodName(),
+            peassNode.appendChild(call,
                     methodNameWithNew,
                     methodNameWithNew
             );
@@ -166,11 +192,12 @@ public class SjswCctConverter {
         MeasurementConfig mConfig = new MeasurementConfig(vms, predecessor, commit);
 
         String methodNameWithNew = normalizeKiekerPattern(otherNode);
+        String call = getCall(methodNameWithNew);
         if(otherCallTreeNode == null) {
             if(otherNode.getPayload().getMethodName().contains("<init>")) {
                 methodNameWithNew = "new " + otherNode.getPayload().getMethodName();
             }
-            otherCallTreeNode = new CallTreeNode(otherNode.getPayload().getMethodName(),
+            otherCallTreeNode = new CallTreeNode(call,
                     methodNameWithNew,
                     methodNameWithNew,
                     mConfig);
