@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CausePersistenceManager;
@@ -230,7 +229,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       config.setIterations(configuration.getIterations());
       config.setRepetitions(configuration.getRepetitions());
       config.setWarmup(configuration.getWarmup());
-      config.getKiekerConfig().setUseKieker(true);
+      config.getKiekerConfig().setUseKieker(false);
 
       List<String> commits = GitUtils.getCommits(folders.getProjectFolder(), true, true);
       CommitComparatorInstance comparator = new CommitComparatorInstance(commits);
