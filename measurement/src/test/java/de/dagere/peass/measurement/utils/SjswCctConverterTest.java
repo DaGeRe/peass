@@ -18,24 +18,12 @@ import java.util.*;
 
 public class SjswCctConverterTest {
     private List<String> path1a = new ArrayList<>(List.of("org.example.testing", "org.example.methodA", "org.example.methodB"));
-    private List<String> path1b = new ArrayList<>(List.of("org.example.testing", "org.example.methodA", "org.example.someOtherMethod", "libjvm.so.Runtime1::counter_overflow()"));
+    private List<String> path1b = new ArrayList<>(List.of("org.example.testing", "org.example.methodA", "org.example.someOtherMethod<init>", "org.example.someOtherMethod", "libjvm.so.Runtime1::counter_overflow()"));
     private List<String> path2 = new ArrayList<>(List.of("org.example.testing", "org.example.methodB"));
 
     @BeforeEach
     void prepare() {
         reverseStacktraces();
-    }
-
-    @Test
-    public void testRecursiveOtherTreeCreation() {
-        int vms = 2;
-        String commit = "a1";
-        String oldCommit = "b2";
-        StackTraceTreeNode current = prepareFakeTree(List.of(path1a, path1b), commit, vms);
-        current.printTree();
-        CallTreeNode root = null;
-        root = SjswCctConverter.createOtherNodeRecursive(current, root, vms, commit, oldCommit);
-        printCallTreeNode(root);
     }
 
     @Test
@@ -111,9 +99,13 @@ public class SjswCctConverterTest {
     }
 
     public static void printCallTreeNodeTreeRecursive(CallTreeNode node, String prefix, boolean isLast) {
+        List<String> measurements = new LinkedList<>();
+        node.getData().forEach((commit, value) -> {
+            measurements.add(commit + "---" + value.getResults().size());
+        });
         if (node.getCall() != null) {
-            System.out.println(prefix + (isLast ? "└────── " : "├────── ") + node.getCall() +
-                    " Keys: [" + node.getKeys() + "]");
+            System.out.println(prefix + (isLast ? "└────── " : "├────── ") + node.getKiekerPattern() +
+                    " Measurements: " + measurements);
         }
 
         List<CallTreeNode> children = node.getChildren();
