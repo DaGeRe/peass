@@ -27,11 +27,11 @@ public class SjswCctConverter {
         LOG.info("Other original node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
 
         String methodNameWithNew = normalizeKiekerPattern(currentBAT);
+        if(methodNameWithNew.contains("<init>")) {
+            methodNameWithNew = "new " + methodNameWithNew;
+        }
         String call = getCall(methodNameWithNew);
         if(ctn == null) {
-            if(methodNameWithNew.contains("<init>")) {
-                methodNameWithNew = "new " + methodNameWithNew;
-            }
             ctn = new CallTreeNode(call,
                     methodNameWithNew,
                     methodNameWithNew,
@@ -199,11 +199,11 @@ public class SjswCctConverter {
         MeasurementConfig mConfig = new MeasurementConfig(vms, predecessor, commit);
 
         String methodNameWithNew = normalizeKiekerPattern(otherNode);
+        if(otherNode.getPayload().getMethodName().contains("<init>")) {
+            methodNameWithNew = "new " + otherNode.getPayload().getMethodName();
+        }
         String call = getCall(methodNameWithNew);
         if(otherCallTreeNode == null) {
-            if(otherNode.getPayload().getMethodName().contains("<init>")) {
-                methodNameWithNew = "new " + otherNode.getPayload().getMethodName();
-            }
             otherCallTreeNode = new CallTreeNode(call,
                     methodNameWithNew,
                     methodNameWithNew,
