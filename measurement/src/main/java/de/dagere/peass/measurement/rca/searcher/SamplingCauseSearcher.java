@@ -18,6 +18,7 @@ import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
 import de.dagere.peass.measurement.utils.sjsw.SjswCctConverter;
 import de.dagere.peass.vcs.GitUtils;
+import io.github.terahidro2003.result.tree.StackTraceTreeBuilder;
 import io.github.terahidro2003.result.tree.StackTraceTreeNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -151,9 +152,13 @@ public class SamplingCauseSearcher implements ICauseSearcher {
    }
 
    public static void printCallTreeNodeTreeRecursive(CallTreeNode node, String prefix, boolean isLast) {
-      if (node.getMethod() != null) {
-         System.out.println(prefix + (isLast ? "└────── " : "├────── ") + node.getMethod() +
-                 " Keys: [" + node.getKeys());
+      List<String> measurements = new LinkedList<>();
+      node.getData().forEach((commit, value) -> {
+         measurements.add(commit + "---" + value.getResults().size());
+      });
+      if (node.getCall() != null) {
+         System.out.println(prefix + (isLast ? "└────── " : "├────── ") + node.getCall() +
+                 " Measurements: " + measurements);
       }
 
       List<CallTreeNode> children = node.getChildren();
@@ -243,11 +248,15 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
    private StackTraceTreeNode retrieveBatForCommit(String commit, SamplerResultsProcessor processor, Path resultsPath) {
       List<File> commitJfrs = processor.listJfrMeasurementFiles(resultsPath, List.of(commit));
-      StackTraceTreeNode tree = processor.getTreeFromJfr(commitJfrs, commit);
-      String normalizedMethodName = testcase.getMethod().substring(testcase.getMethod().lastIndexOf('#') + 1);
-      StackTraceTreeNode filteredTestcaseTree = processor.filterTestcaseSubtree(normalizedMethodName, tree);
-      filteredTestcaseTree.printTree();
-      return filteredTestcaseTree;
+      String normalizedMethodName = testcase.getMethodWithParams().substring(testcase.getMethod().lastIndexOf('#') + 1);
+
+      StackTraceTreeBuilder builder = new StackTraceTreeBuilder();
+      StackTraceTreeNode mergedTree = builder.buildTree(commitJfrs, commit, configuration.getVms(), normalizedMethodName, true);
+
+      System.out.println();
+      mergedTree.printTree();
+      System.out.println();
+      return mergedTree;
    }
 
    private File retrieveSamplingResultsDirectory(MeasurementIdentifier identifier) {
