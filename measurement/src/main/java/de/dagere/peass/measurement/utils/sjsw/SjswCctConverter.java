@@ -18,7 +18,13 @@ public class SjswCctConverter {
             throw new IllegalArgumentException("Commit and Predesseror cannot be null");
         }
 
+        LOG.info("Current original node: {}", currentBAT.getPayload().getMethodName());
+
         MeasurementConfig mConfig = new MeasurementConfig(vms, commit, predecessor);
+        StackTraceTreeNode otherNode = predecessorBAT != null ? search(currentBAT, predecessorBAT) : null;
+
+        LOG.info("Other original node: {}", otherNode != null ? otherNode.getPayload().getMethodName() : null);
+        LOG.info("Other original node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
 
         String methodNameWithNew = normalizeKiekerPattern(currentBAT);
         String call = getCall(methodNameWithNew);
@@ -119,8 +125,9 @@ public class SjswCctConverter {
         return null;
     }
 
-    private static void createPeassNode(StackTraceTreeNode node, CallTreeNode peassNode, String commit,
-                                        int vms, boolean lastNode) {
+    private static void createPeassNode(StackTraceTreeNode node, StackTraceTreeNode otherNode, CallTreeNode peassNode,
+                                        String commit, String oldCommit, int vms, boolean lastNode) {
+        LOG.info("Creating peass node for stacktracetreenodes: {} -> {}", node.getPayload().getMethodName() + "(" + node.getMeasurements() + ")", otherNode != null ? otherNode.getPayload().getMethodName() + "(" + otherNode.getMeasurements() + ")" : null);
         peassNode.initCommitData();
 
         addMeasurements(commit, node, peassNode, vms);
@@ -186,7 +193,7 @@ public class SjswCctConverter {
 
     public static CallTreeNode createOtherNodeRecursive(StackTraceTreeNode otherNode, CallTreeNode otherCallTreeNode, int vms, String predecessor, String commit) {
         if (commit == null && predecessor == null) {
-            throw new IllegalArgumentException("Commit and Predesseror cannot be null");
+            throw new IllegalArgumentException("Commit and Predecessor cannot be null");
         }
 
         MeasurementConfig mConfig = new MeasurementConfig(vms, predecessor, commit);
