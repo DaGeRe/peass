@@ -90,22 +90,6 @@ public class SjswCctConverter {
         return methodSignature;
     }
 
-    public static void printCallTreeNode(CallTreeNode root) {
-        printCallTreeNodeTreeRecursive(root, "", false);
-    }
-
-    public static void printCallTreeNodeTreeRecursive(CallTreeNode node, String prefix, boolean isLast) {
-        if (node.getMethod() != null) {
-            System.out.println(prefix + (isLast ? "└────── " : "├────── ") + node.getMethod() +
-                    " [Measurements: NA");
-        }
-
-        List<CallTreeNode> children = node.getChildren();
-        for (int i = 0; i < children.size(); i++) {
-            printCallTreeNodeTreeRecursive(children.get(i), prefix + (isLast ? "    " : "│   "), i == children.size() - 1);
-        }
-    }
-
     public static StackTraceTreeNode search(StackTraceTreeNode searchable, StackTraceTreeNode tree) {
         Stack<StackTraceTreeNode> stack = new Stack<>();
         stack.push(tree);
