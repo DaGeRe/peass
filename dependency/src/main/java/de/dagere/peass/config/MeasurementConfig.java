@@ -26,6 +26,8 @@ public class MeasurementConfig implements Serializable {
    private boolean logFullData = true;
    private boolean useGC = false;
    private boolean directlyMeasureKieker = false;
+   private boolean useIterativeSampling = false;
+   private String samplingOutputFolder = "";
 
    private boolean callSyncBetweenVMs = true;
    private int waitTimeBetweenVMs = 1000;
@@ -82,6 +84,7 @@ public class MeasurementConfig implements Serializable {
       setMaxLogSizeInMb(mixin.getMaxLogSizeInMb());
       setUseGC(mixin.isUseGC());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
+      setUseIterativeSampling(mixin.isUseIterativeSampling());
       this.directlyMeasureKieker = mixin.isDirectlyMeasureKieker();
 
       saveAll = !mixin.isSaveNothing();
@@ -130,6 +133,8 @@ public class MeasurementConfig implements Serializable {
       this.waitTimeBetweenVMs = other.waitTimeBetweenVMs;
       this.directlyMeasureKieker = other.directlyMeasureKieker;
       this.maxLogSizeInMb = other.maxLogSizeInMb;
+      this.useIterativeSampling = other.useIterativeSampling;
+      this.samplingOutputFolder = other.samplingOutputFolder;
    }
 
    public FixedCommitConfig getFixedCommitConfig() {
@@ -308,5 +313,21 @@ public class MeasurementConfig implements Serializable {
 
    public KiekerConfig getKiekerConfig() {
       return kiekerConfig;
+   }
+
+    public boolean isUseIterativeSampling() {
+        return useIterativeSampling;
+    }
+
+    public void setUseIterativeSampling(boolean useIterativeSampling) {
+        this.useIterativeSampling = useIterativeSampling;
+    }
+
+   public String getSamplingOutputFolder() {
+      return samplingOutputFolder;
+   }
+
+   public void setSamplingOutputFolder(String samplingOutputFolder) {
+      this.samplingOutputFolder = samplingOutputFolder;
    }
 }

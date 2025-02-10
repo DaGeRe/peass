@@ -4,6 +4,7 @@ import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import io.github.terahidro2003.result.tree.StackTraceTreeNode;
+import io.github.terahidro2003.result.tree.VmMeasurement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +14,10 @@ import java.util.Stack;
 public class SjswCctConverter {
     private static final Logger LOG = LoggerFactory.getLogger(SjswCctConverter.class);
 
-    public static CallTreeNode convertCallContextTreeToCallTree(StackTraceTreeNode currentBAT, StackTraceTreeNode predecessorBAT, CallTreeNode ctn, String commit, String predecessor, int vms) {
+    public static CallTreeNode convertCallContextTreeToCallTree(StackTraceTreeNode currentBAT,
+                                                                StackTraceTreeNode predecessorBAT, CallTreeNode ctn,
+                                                                String commit, String predecessor, int vms,
+                                                                boolean iterativeMeasurements, int iterations) {
         if (commit == null && predecessor == null) {
             throw new IllegalArgumentException("Commit and Predesseror cannot be null");
         }
@@ -24,7 +28,7 @@ public class SjswCctConverter {
         StackTraceTreeNode otherNode = predecessorBAT != null ? search(currentBAT, predecessorBAT) : null;
 
         LOG.info("Other original node: {}", otherNode != null ? otherNode.getPayload().getMethodName() : null);
-        LOG.info("Other original node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
+        LOG.info("Original node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
 
         String methodNameWithNew = normalizeKiekerPattern(currentBAT);
         if(methodNameWithNew.contains("<init>")) {
@@ -36,25 +40,25 @@ public class SjswCctConverter {
                     methodNameWithNew,
                     methodNameWithNew,
                     mConfig);
-            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, vms, true);
+            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, vms, true, iterativeMeasurements, iterations);
         } else {
-            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, vms, false);
+            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, vms, false, iterativeMeasurements, iterations);
             ctn = ctn.getChildByKiekerPattern(methodNameWithNew);
         }
 
         if (otherNode != null) {
             CallTreeNode otherCallTreeNode = null;
-            otherCallTreeNode = createOtherNodeRecursive(otherNode, currentBAT, otherCallTreeNode, vms, predecessor, commit);
+            otherCallTreeNode = createOtherNodeRecursive(otherNode, currentBAT, otherCallTreeNode, vms, commit, predecessor, iterativeMeasurements, iterations);
             ctn.setOtherCommitNode(otherCallTreeNode);
         }
 
         List<StackTraceTreeNode> children = currentBAT.getChildren();
         if (children.isEmpty() && ctn != null) {
-            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, vms, true);
+            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, vms, true, iterativeMeasurements, iterations);
         }
         for (StackTraceTreeNode child : children) {
             if (child != null) {
-                convertCallContextTreeToCallTree(child, otherNode, ctn, commit, predecessor, vms);
+                convertCallContextTreeToCallTree(child, otherNode, ctn, commit, predecessor, vms, iterativeMeasurements, iterations);
             }
         }
 
@@ -112,14 +116,23 @@ public class SjswCctConverter {
     }
 
     private static void createPeassNode(StackTraceTreeNode node, StackTraceTreeNode otherNode, CallTreeNode peassNode,
-                                        String commit, String oldCommit, int vms, boolean lastNode) {
+                                        String commit, String oldCommit, int vms, boolean lastNode,
+                                        boolean iterativeMeasurement, int iterations) {
         LOG.info("Creating peass node for stacktracetreenodes: {} -> {}", node.getPayload().getMethodName() + "(" + node.getMeasurements() + ")", otherNode != null ? otherNode.getPayload().getMethodName() + "(" + otherNode.getMeasurements() + ")" : null);
         peassNode.initCommitData();
 
-        addMeasurements(commit, node, peassNode, vms);
-        if(otherNode != null) {
-            LOG.info("Adding measurements for the other commit {}", oldCommit);
-            addMeasurements(oldCommit, otherNode, peassNode, vms);
+        if(iterativeMeasurement) {
+            addIterativeMeasurements(commit, node, peassNode, vms, iterations);
+            if(otherNode != null) {
+                LOG.info("Adding measurements for the other commit {}", oldCommit);
+                addIterativeMeasurements(oldCommit, otherNode, peassNode, vms, iterations);
+            }
+        } else {
+            addMeasurements(commit, node, peassNode, vms);
+            if(otherNode != null) {
+                LOG.info("Adding measurements for the other commit {}", oldCommit);
+                addMeasurements(oldCommit, otherNode, peassNode, vms);
+            }
         }
 
         if(!lastNode) appendChild(node, peassNode);
@@ -187,7 +200,30 @@ public class SjswCctConverter {
         }
     }
 
-    public static CallTreeNode createOtherNodeRecursive(StackTraceTreeNode otherNode, StackTraceTreeNode node, CallTreeNode otherCallTreeNode, int vms, String predecessor, String commit) {
+    private static void addIterativeMeasurements(String commit, StackTraceTreeNode node, CallTreeNode peassNode,
+                                                 int vms, int iterations) {
+        List<VmMeasurement> measurementsForSpecificCommit = node.getVmMeasurements().get(commit);
+        if(measurementsForSpecificCommit == null || measurementsForSpecificCommit.isEmpty()) {
+            throw new IllegalArgumentException("Possibly invalid iterative measurement data. Commit " +
+                    commit + " does not contain any measurement data.");
+        }
+
+        if (measurementsForSpecificCommit.size() != vms) {
+            throw new RuntimeException("Amount of measurements is not equal to the amount of VMs");
+        }
+
+        for (int vm = 0; vm < vms; vm++) {
+            peassNode.initVMData(commit);
+            List<Double> measurements = measurementsForSpecificCommit.get(vm).getMeasurements();
+            measurements.forEach(measurement -> {
+                peassNode.addMeasurement(commit, (long) (double) measurement);
+            });
+        }
+    }
+
+    public static CallTreeNode createOtherNodeRecursive(StackTraceTreeNode otherNode, StackTraceTreeNode node,
+                                                        CallTreeNode otherCallTreeNode, int vms, String predecessor,
+                                                        String commit, boolean isIterativeMeasurement, int iterations) {
         if (commit == null && predecessor == null) {
             throw new IllegalArgumentException("Commit and Predecessor cannot be null");
         }
@@ -205,19 +241,19 @@ public class SjswCctConverter {
                     methodNameWithNew,
                     methodNameWithNew,
                     mConfig);
-            createPeassNode(otherNode, node, otherCallTreeNode, predecessor, commit, vms, true);
+            createPeassNode(otherNode, node, otherCallTreeNode, predecessor, commit, vms, true, isIterativeMeasurement, iterations);
         } else {
-            createPeassNode(otherNode, node, otherCallTreeNode, predecessor, commit, vms, false);
+            createPeassNode(otherNode, node, otherCallTreeNode, predecessor, commit, vms, false, isIterativeMeasurement, iterations);
             otherCallTreeNode = otherCallTreeNode.getChildByKiekerPattern(methodNameWithNew);
         }
         
         if (otherCallTreeNode != null) {
            List<StackTraceTreeNode> children = otherNode.getChildren();
            if (children.isEmpty() && otherCallTreeNode != null) {
-               createPeassNode(otherNode, node, otherCallTreeNode, predecessor, commit, vms, true);
+               createPeassNode(otherNode, node, otherCallTreeNode, predecessor, commit, vms, true, isIterativeMeasurement, iterations);
            }
            for (StackTraceTreeNode child : children) {
-               createOtherNodeRecursive(child, node, otherCallTreeNode , vms, predecessor, commit);
+               createOtherNodeRecursive(child, node, otherCallTreeNode , vms, predecessor, commit, isIterativeMeasurement, iterations);
            }
         } else {
            LOG.warn("Didn't find other call tree node for " + methodNameWithNew + " (Call: " + call + ")");

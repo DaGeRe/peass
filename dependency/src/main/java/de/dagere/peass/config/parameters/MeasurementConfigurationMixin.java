@@ -11,9 +11,13 @@ public class MeasurementConfigurationMixin {
    public static final int DEFAULT_MAX_LOGSIZE_IN_MB = 100;
    public static final int DEFAULT_REPETITIONS = 1000000;
    public static final long DEFAULT_TIMEOUT = 5L;
+   public static final boolean DEFAULT_USE_ITERATIVE_SAMPLING = false;
 
    @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
    int vms = DEFAULT_VMS;
+
+   @Option(names = { "-iterativeSampling", "--iterativeSampling" }, description = "If true, samples each iteration separately, otherwise each VM")
+   boolean isUseIterativeSampling = DEFAULT_USE_ITERATIVE_SAMPLING;
 
    @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
    int iterations = DEFAULT_ITERATIONS;
@@ -156,4 +160,11 @@ public class MeasurementConfigurationMixin {
       return directlyMeasureKieker;
    }
 
+   public boolean isUseIterativeSampling() {
+      return isUseIterativeSampling;
+   }
+
+   public void setUseIterativeSampling(boolean useIterativeSampling) {
+      isUseIterativeSampling = useIterativeSampling;
+   }
 }

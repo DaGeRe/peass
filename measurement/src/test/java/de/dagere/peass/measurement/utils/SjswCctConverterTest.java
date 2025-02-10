@@ -38,7 +38,7 @@ public class SjswCctConverterTest {
         printTrees(current, old);
 
         CallTreeNode root = null;
-        root = SjswCctConverter.convertCallContextTreeToCallTree(current, old, root, commit, oldCommit, vms);
+        root = SjswCctConverter.convertCallContextTreeToCallTree(current, old, root, commit, oldCommit, vms, false, 0);
 
         CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, root.getOtherCommitNode());
         var bla = root.getOtherCommitNode();

@@ -7,6 +7,8 @@ import java.util.*;
 
 import de.dagere.peass.dependencyprocessors.CommitComparatorInstance;
 import de.dagere.peass.folders.CauseSearchFolders;
+import de.dagere.peass.measurement.dependencyprocessors.AbstractMeasurementProcessRunner;
+import de.dagere.peass.measurement.dependencyprocessors.IterativeSamplingRunner;
 import de.dagere.peass.measurement.rca.CausePersistenceManager;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.CauseTester;
@@ -90,25 +92,35 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       return result;
    }
 
+   private void createSamplingResultFolder(String outputPath) {
+      File samplingOutputFile = new File(outputPath);
+      if(!samplingOutputFile.exists()) {
+         samplingOutputFile.mkdirs();
+      }
+   }
+
    private Set<MethodCall> evaluateSimple(TestMethodCall testcase2, File logFolder, ProgressWriter writer) {
       currentChunkStart = System.currentTimeMillis();
 
       MeasurementIdentifier measurementIdentifier = new MeasurementIdentifier();
-      String outputPath = logFolder.getAbsolutePath() + "/sjsw-results";
 
+      String outputPath = logFolder.getAbsolutePath() + "/sjsw-results";
       Config sjswConfiguration = Config.builder()
             .autodownloadProfiler()
             .outputPathWithIdentifier(outputPath, measurementIdentifier)
-            .frequency(1)
+            .interval(100)
             .jfrEnabled(true)
             .build();
+
+      createSamplingResultFolder(sjswConfiguration.outputPath());
+      configuration.setSamplingOutputFolder(sjswConfiguration.outputPath());
 
       SamplerResultsProcessor processor = new SamplerResultsProcessor();
 
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
          long comparisonStart = System.currentTimeMillis();
 
-         runOneComparison(logFolder, testcase, finishedVMs, sjswConfiguration);
+         runOneComparison(logFolder, testcase, finishedVMs, sjswConfiguration, measurementIdentifier);
 
          long durationInSeconds = (System.currentTimeMillis() - comparisonStart) / 1000;
          writer.write(durationInSeconds, finishedVMs);
@@ -116,10 +128,14 @@ public class SamplingCauseSearcher implements ICauseSearcher {
          betweenVMCooldown();
       }
 
-      return analyseSamplingResults(processor, measurementIdentifier, testcase2, configuration.getVms());
+      if(configuration.isUseIterativeSampling()) {
+         return analyseSamplingResultsWithIterations(processor, measurementIdentifier, configuration.getVms());
+      } else {
+         return analyseSamplingResults(processor, measurementIdentifier, configuration.getVms());
+      }
    }
 
-   private Set<MethodCall> analyseSamplingResults(SamplerResultsProcessor processor, MeasurementIdentifier identifier, TestMethodCall testcase, int vms) {
+   private Set<MethodCall> analyseSamplingResults(SamplerResultsProcessor processor, MeasurementIdentifier identifier, int vms) {
       File resultDir = retrieveSamplingResultsDirectory(identifier);
       Path resultsPath = resultDir.toPath();
       var commits = getVersions();
@@ -129,7 +145,34 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
       // Convert BAT to CallTreeNode for both commits
       CallTreeNode root = null;
-      root = SjswCctConverter.convertCallContextTreeToCallTree(commitBAT, predecessorBAT, root, commits[1], commits[0], vms);
+      root = SjswCctConverter.convertCallContextTreeToCallTree(commitBAT, predecessorBAT, root, commits[1], commits[0], vms, configuration.isUseIterativeSampling(), configuration.getIterations());
+
+      if (root == null) {
+         throw new RuntimeException("CallTreeNode was null after attempted conversion from SJSW structure.");
+      }
+
+      // Persist CallTreeNode
+      persistBasicCallTreeNode(root);
+      printCallTreeNode(root);
+      System.out.println();
+      printCallTreeNode(root.getOtherCommitNode());
+
+      CompleteTreeAnalyzer completeTreeAnalyzer = new CompleteTreeAnalyzer(root, root.getOtherCommitNode());
+
+      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode());
+      return differentMethods;
+   }
+
+   private Set<MethodCall> analyseSamplingResultsWithIterations(SamplerResultsProcessor processor, MeasurementIdentifier identifier, int vms) {
+      Path resultsPath = retrieveSamplingResultsDirectory(identifier).toPath();
+      var commits = getVersions();
+
+      StackTraceTreeNode commitBAT = retrieveBatForCommit(commits[1], processor, resultsPath);
+      StackTraceTreeNode predecessorBAT = retrieveBatForCommit(commits[0], processor, resultsPath);
+
+      // Convert BAT to CallTreeNode for both commits
+      CallTreeNode root = null;
+      root = SjswCctConverter.convertCallContextTreeToCallTree(commitBAT, predecessorBAT, root, commits[1], commits[0], vms, configuration.isUseIterativeSampling(), configuration.getIterations());
 
       if (root == null) {
          throw new RuntimeException("CallTreeNode was null after attempted conversion from SJSW structure.");
@@ -265,12 +308,12 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       return new File(outputPath + "/measurement_" + identifier.getUuid().toString());
    }
 
-   public void runOneComparison(final File logFolder, final TestMethodCall testcase, final int vmid, final Config sjswConfiguration) {
+   public void runOneComparison(final File logFolder, final TestMethodCall testcase, final int vmid, final Config sjswConfiguration, final MeasurementIdentifier identifier) {
       String[] commits = getVersions();
 
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
          LOG.info("Running sequential");
-         runSequential(logFolder, testcase, vmid, commits, sjswConfiguration);
+         runSequential(logFolder, testcase, vmid, commits, sjswConfiguration, identifier);
       } else if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.PARALLEL)) {
          LOG.info("Running parallel");
          runParallel(logFolder, testcase, vmid, commits);
@@ -281,19 +324,26 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       throw new RuntimeException("Not implemented yet");
    }
 
-   private void runSequential(File logFolder, TestMethodCall testcase2, int vmid, String[] commits, Config config) {
+   private void runSequential(File logFolder, TestMethodCall testcase2, int vmid, String[] commits, Config config, MeasurementIdentifier identifier) {
       currentOrganizer = new ResultOrganizer(folders, configuration.getFixedCommitConfig().getCommit(), currentChunkStart, configuration.getKiekerConfig().isUseKieker(),
             configuration.isSaveAll(),
             testcase, configuration.getAllIterations());
       for (String commit : commits) {
-         runOnce(testcase, commit, vmid, logFolder, config);
+         runOnce(testcase, commit, vmid, logFolder, config, identifier);
       }
    }
 
-   private void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder, final Config config) {
+   private void runOnce(final TestMethodCall testcase, final String commit, final int vmid, final File logFolder, final Config config, final MeasurementIdentifier identifier) {
       final TestExecutor testExecutor = getExecutor(folders, commit);
-      final SamplingRunner runner = new SamplingRunner(folders, testExecutor, getCurrentOrganizer(), this, config);
+      final AbstractMeasurementProcessRunner runner;
+      if (!configuration.isUseIterativeSampling()) {
+         runner = new SamplingRunner(folders, testExecutor, getCurrentOrganizer(), this, config);
+      } else {
+         runner = new IterativeSamplingRunner(folders, testExecutor, getCurrentOrganizer(), this, config);
+      }
       runner.runOnce(testcase, commit, vmid, logFolder);
+      SamplerResultsProcessor processor = new SamplerResultsProcessor();
+      processor.processIterationMeasurementFiles(retrieveSamplingResultsDirectory(identifier), vmid, commit);
    }
 
    protected synchronized TestExecutor getExecutor(final PeassFolders currentFolders, final String commit) {
