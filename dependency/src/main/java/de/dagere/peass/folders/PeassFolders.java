@@ -201,7 +201,7 @@ public class PeassFolders implements SourceCodeFolders {
 
    private List<File> findTempClazzFolder(final File baseFolder, final FileFilter folderFilter) {
       final List<File> files = new LinkedList<>();
-      System.out.println("Searching in " + baseFolder + " " + baseFolder.exists());
+      LOG.trace("Searching in {} {}", baseFolder, baseFolder.exists());
       for (final File subfolder : baseFolder.listFiles()) {
          if (subfolder.isDirectory()) {
             if (folderFilter.accept(subfolder)) {
