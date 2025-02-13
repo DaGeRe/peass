@@ -228,7 +228,7 @@ public class SjswCctConverter {
             throw new IllegalArgumentException("Commit and Predecessor cannot be null");
         }
 
-        MeasurementConfig mConfig = new MeasurementConfig(vms, predecessor, commit);
+        MeasurementConfig mConfig = new MeasurementConfig(vms, commit, predecessor);
         node = node != null ? search(otherNode, node) : null;
 
         String methodNameWithNew = normalizeKiekerPattern(otherNode);
@@ -241,16 +241,16 @@ public class SjswCctConverter {
                     methodNameWithNew,
                     methodNameWithNew,
                     mConfig);
-            createPeassNode(otherNode, node, otherCallTreeNode, predecessor, commit, vms, true, isIterativeMeasurement, iterations);
+            createPeassNode(otherNode, node, otherCallTreeNode, commit, predecessor, vms, true, isIterativeMeasurement, iterations);
         } else {
-            createPeassNode(otherNode, node, otherCallTreeNode, predecessor, commit, vms, false, isIterativeMeasurement, iterations);
+            createPeassNode(otherNode, node, otherCallTreeNode, commit, predecessor, vms, false, isIterativeMeasurement, iterations);
             otherCallTreeNode = otherCallTreeNode.getChildByKiekerPattern(methodNameWithNew);
         }
         
         if (otherCallTreeNode != null) {
            List<StackTraceTreeNode> children = otherNode.getChildren();
            if (children.isEmpty() && otherCallTreeNode != null) {
-               createPeassNode(otherNode, node, otherCallTreeNode, predecessor, commit, vms, true, isIterativeMeasurement, iterations);
+               createPeassNode(otherNode, node, otherCallTreeNode, commit, predecessor, vms, true, isIterativeMeasurement, iterations);
            }
            for (StackTraceTreeNode child : children) {
                createOtherNodeRecursive(child, node, otherCallTreeNode , vms, predecessor, commit, isIterativeMeasurement, iterations);

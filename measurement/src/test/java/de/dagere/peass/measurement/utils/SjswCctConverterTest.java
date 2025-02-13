@@ -5,8 +5,8 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.utils.sjsw.SjswCctConverter;
-import io.github.terahidro2003.result.tree.StackTraceTreeBuilder;
 import io.github.terahidro2003.result.tree.StackTraceTreeNode;
+import io.github.terahidro2003.result.tree.builder.ExecutionSampleTreeBuilder;
 import io.github.terahidro2003.samplers.jfr.ExecutionSample;
 import io.github.terahidro2003.samplers.jfr.Method;
 import org.apache.commons.lang3.RandomUtils;
@@ -120,7 +120,7 @@ public class SjswCctConverterTest {
             samples.add(getMockExecutionSample(path));
         });
 
-        StackTraceTreeBuilder treeBuilder = new StackTraceTreeBuilder();
+        ExecutionSampleTreeBuilder treeBuilder = new ExecutionSampleTreeBuilder();
         StackTraceTreeNode tree = treeBuilder.buildFromExecutionSamples(samples);
         addFakeMeasurements(tree, commit, vms);
 
