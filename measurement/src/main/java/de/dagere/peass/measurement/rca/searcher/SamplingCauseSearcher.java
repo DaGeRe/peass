@@ -20,8 +20,9 @@ import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
 import de.dagere.peass.measurement.utils.sjsw.SjswCctConverter;
 import de.dagere.peass.vcs.GitUtils;
-import io.github.terahidro2003.result.tree.StackTraceTreeBuilder;
 import io.github.terahidro2003.result.tree.StackTraceTreeNode;
+import io.github.terahidro2003.result.tree.builder.IterativeContextTreeBuilder;
+import io.github.terahidro2003.result.tree.builder.VmContextTreeBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -293,8 +294,14 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       List<File> commitJfrs = processor.listJfrMeasurementFiles(resultsPath, List.of(commit));
       String normalizedMethodName = testcase.getMethodWithParams().substring(testcase.getMethod().lastIndexOf('#') + 1);
 
-      StackTraceTreeBuilder builder = new StackTraceTreeBuilder();
-      StackTraceTreeNode mergedTree = builder.buildTree(commitJfrs, commit, configuration.getVms(), normalizedMethodName, true);
+      final StackTraceTreeNode mergedTree;
+      if (configuration.isUseIterativeSampling()) {
+         mergedTree = new IterativeContextTreeBuilder().buildTree(commitJfrs, commit, normalizedMethodName, true);
+      } else {
+         VmContextTreeBuilder vmBuilder = new VmContextTreeBuilder();
+         mergedTree = vmBuilder.buildTree(commitJfrs, commit, configuration.getVms(), normalizedMethodName, true);
+      }
+
 
       System.out.println();
       mergedTree.printTree();
