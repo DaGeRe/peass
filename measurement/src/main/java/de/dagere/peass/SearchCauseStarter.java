@@ -23,7 +23,6 @@ import de.dagere.peass.measurement.rca.analyzer.SourceChangeTreeAnalyzer;
 import de.dagere.peass.measurement.rca.analyzer.StructureChangeTreeAnalyzer;
 import de.dagere.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
-import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.dagere.peass.measurement.rca.searcher.ICauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;

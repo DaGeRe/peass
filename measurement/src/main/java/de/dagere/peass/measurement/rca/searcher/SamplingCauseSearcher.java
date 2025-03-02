@@ -103,7 +103,16 @@ public class SamplingCauseSearcher implements ICauseSearcher {
    private Set<MethodCall> evaluateSimple(TestMethodCall testcase2, File logFolder, ProgressWriter writer) {
       currentChunkStart = System.currentTimeMillis();
 
-      MeasurementIdentifier measurementIdentifier = new MeasurementIdentifier();
+      final MeasurementIdentifier measurementIdentifier;
+      if(!configuration.isDisableMeasurements()) {
+         measurementIdentifier = new MeasurementIdentifier();
+      } else {
+         if(configuration.getSamplingResultUUID() != null) {
+            measurementIdentifier = new MeasurementIdentifier(UUID.fromString(configuration.getSamplingResultUUID()));
+         } else {
+            throw new RuntimeException("Sampling result UUID must be provided, if measurements are disabled.");
+         }
+      }
 
       String outputPath = logFolder.getAbsolutePath() + "/sjsw-results";
       Config sjswConfiguration = Config.builder()
@@ -299,7 +308,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       List<File> commitJfrs = processor.listJfrMeasurementFiles(resultsPath, List.of(commit));
       String normalizedMethodName = testcase.getMethodWithParams().substring(testcase.getMethod().lastIndexOf('#') + 1);
 
-      final StackTraceTreeNode mergedTree;
+      StackTraceTreeNode mergedTree;
       if (configuration.isUseIterativeSampling()) {
          try {
             mergedTree = new IterativeContextTreeBuilder().buildTree(commitJfrs, commit, normalizedMethodName, false, false, 0);

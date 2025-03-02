@@ -27,6 +27,8 @@ public class MeasurementConfig implements Serializable {
    private boolean useGC = false;
    private boolean directlyMeasureKieker = false;
    private boolean useIterativeSampling = false;
+   private boolean disableMeasurements = false;
+   private String samplingResultUUID = "";
    private String samplingOutputFolder = "";
 
    private boolean callSyncBetweenVMs = true;
@@ -85,6 +87,8 @@ public class MeasurementConfig implements Serializable {
       setUseGC(mixin.isUseGC());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
       setUseIterativeSampling(mixin.isUseIterativeSampling());
+      setDisableMeasurements(mixin.isDisableMeasurements());
+      setSamplingResultUUID(mixin.getSamplingResultUUID());
       this.directlyMeasureKieker = mixin.isDirectlyMeasureKieker();
 
       saveAll = !mixin.isSaveNothing();
@@ -134,7 +138,9 @@ public class MeasurementConfig implements Serializable {
       this.directlyMeasureKieker = other.directlyMeasureKieker;
       this.maxLogSizeInMb = other.maxLogSizeInMb;
       this.useIterativeSampling = other.useIterativeSampling;
+      this.disableMeasurements = other.disableMeasurements;
       this.samplingOutputFolder = other.samplingOutputFolder;
+      this.samplingResultUUID = other.samplingResultUUID;
    }
 
    public FixedCommitConfig getFixedCommitConfig() {
@@ -323,11 +329,27 @@ public class MeasurementConfig implements Serializable {
         this.useIterativeSampling = useIterativeSampling;
     }
 
+   public boolean isDisableMeasurements() {
+      return disableMeasurements;
+   }
+
+   public void setDisableMeasurements(boolean disableMeasurements) {
+      this.disableMeasurements = disableMeasurements;
+   }
+
    public String getSamplingOutputFolder() {
       return samplingOutputFolder;
    }
 
    public void setSamplingOutputFolder(String samplingOutputFolder) {
       this.samplingOutputFolder = samplingOutputFolder;
+   }
+
+   public String getSamplingResultUUID() {
+      return samplingResultUUID;
+   }
+
+   public void setSamplingResultUUID(String samplingResultUUID) {
+      this.samplingResultUUID = samplingResultUUID;
    }
 }

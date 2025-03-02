@@ -19,6 +19,12 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-iterativeSampling", "--iterativeSampling" }, description = "If true, samples each iteration separately, otherwise each VM")
    boolean isUseIterativeSampling = DEFAULT_USE_ITERATIVE_SAMPLING;
 
+   @Option(names = { "-disableMeasurements", "--disableMeasurements" }, description = "Disables measurements.")
+   boolean disableMeasurements = false;
+
+   @Option(names = { "-samplingUUID", "--samplingUUID" }, description = "Pass UUID of already existing sjsw measurement")
+   String samplingResultUUID = "";
+
    @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
    int iterations = DEFAULT_ITERATIONS;
 
@@ -166,5 +172,21 @@ public class MeasurementConfigurationMixin {
 
    public void setUseIterativeSampling(boolean useIterativeSampling) {
       isUseIterativeSampling = useIterativeSampling;
+   }
+
+   public boolean isDisableMeasurements() {
+      return disableMeasurements;
+   }
+
+   public void setDisableMeasurements(boolean disableMeasurements) {
+      this.disableMeasurements = disableMeasurements;
+   }
+
+   public String getSamplingResultUUID() {
+      return samplingResultUUID;
+   }
+
+   public void setSamplingResultUUID(String samplingResultUUID) {
+      this.samplingResultUUID = samplingResultUUID;
    }
 }

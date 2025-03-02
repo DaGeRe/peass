@@ -210,12 +210,18 @@ public class SjswCctConverter {
         }
 
         if (measurementsForSpecificCommit.size() != vms) {
-            throw new RuntimeException("Amount of measurements is not equal to the amount of VMs");
+            LOG.error("Amount of measurements ({}) is not equal to the amount of VMs ({}).", measurementsForSpecificCommit.size(), vms);
         }
 
         for (int vm = 0; vm < vms; vm++) {
             peassNode.initVMData(commit);
-            List<Double> measurements = measurementsForSpecificCommit.get(vm).getMeasurements();
+            final int vmfinal = vm;
+            List<VmMeasurement> vmMeasurements = measurementsForSpecificCommit.stream().filter(vmm -> vmm.getVm() == vmfinal).collect(Collectors.toList());
+            if(vmMeasurements.isEmpty() || vmMeasurements.get(0) == null) {
+                LOG.warn("No measurements found for VM {}", vm);
+                return;
+            }
+            List<Double> measurements = vmMeasurements.get(0).getMeasurements();
             measurements.forEach(measurement -> {
                 peassNode.addMeasurement(commit, (long) (double) measurement);
             });
