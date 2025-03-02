@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 
+import io.github.terahidro2003.measurement.data.MeasurementInformation;
+import io.github.terahidro2003.measurement.executor.SjswJavaAgentCreator;
+import io.github.terahidro2003.measurement.executor.asprof.AsprofJavaAgentCreator;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,11 +18,6 @@ import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.rca.searcher.ICauseSearcher;
 import de.dagere.peass.testtransformation.TestTransformer;
 import io.github.terahidro2003.config.Config;
-import io.github.terahidro2003.samplers.SamplerExecutorPipeline;
-import io.github.terahidro2003.samplers.asyncprofiler.AsyncProfilerExecutor;
-import io.github.terahidro2003.samplers.asyncprofiler.MeasurementInformation;
-
-import static io.github.terahidro2003.samplers.asyncprofiler.AsyncProfilerExecutor.log;
 
 public class SamplingRunner extends AbstractMeasurementProcessRunner {
    private static final Logger LOG = LogManager.getLogger(OnceRunner.class);
@@ -28,8 +26,6 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
    protected final TestExecutor testExecutor;
 
    protected final ResultOrganizer currentOrganizer;
-   private final ICauseSearcher resultHandler;
-
    private final Config configuration;
 
    public SamplingRunner(final PeassFolders folders, final TestExecutor testExecutor, final ResultOrganizer currentOrganizer, final ICauseSearcher resultHandler,
@@ -38,7 +34,6 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
       this.testTransformer = testExecutor.getTestTransformer();
       this.testExecutor = testExecutor;
       this.currentOrganizer = currentOrganizer;
-      this.resultHandler = resultHandler;
       this.configuration = config;
 
       try {
@@ -72,9 +67,9 @@ public class SamplingRunner extends AbstractMeasurementProcessRunner {
 
    private String retrieveProfilerJavaAgentAsMavenArgument(Config config, long maxSamplingDuration, int vmid, File logFolder, String commit) {
       Duration duration = Duration.ofSeconds(maxSamplingDuration * 60);
-      SamplerExecutorPipeline pipeline = new AsyncProfilerExecutor();
+      SjswJavaAgentCreator pipeline = new AsprofJavaAgentCreator();
       MeasurementInformation agent = pipeline.javaAgent(this.configuration, vmid, commit, duration);
-      String javaAgentAsMavenArgument = "-DargLine=" + agent.javaAgentPath();
+      String javaAgentAsMavenArgument = "-DargLine=" + agent.javaAgent();
       LOG.info("Async-profiler java-agent configured: {}", javaAgentAsMavenArgument);
       return javaAgentAsMavenArgument;
    }

@@ -3,13 +3,14 @@ package de.dagere.peass.measurement.utils.sjsw;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import io.github.terahidro2003.result.tree.StackTraceTreeNode;
-import io.github.terahidro2003.result.tree.VmMeasurement;
+import io.github.terahidro2003.cct.result.StackTraceTreeNode;
+import io.github.terahidro2003.cct.result.VmMeasurement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class SjswCctConverter {
     private static final Logger LOG = LoggerFactory.getLogger(SjswCctConverter.class);

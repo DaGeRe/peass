@@ -20,9 +20,11 @@ import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
 import de.dagere.peass.measurement.utils.sjsw.SjswCctConverter;
 import de.dagere.peass.vcs.GitUtils;
-import io.github.terahidro2003.result.tree.StackTraceTreeNode;
-import io.github.terahidro2003.result.tree.builder.IterativeContextTreeBuilder;
-import io.github.terahidro2003.result.tree.builder.VmContextTreeBuilder;
+import io.github.terahidro2003.cct.SamplerResultsProcessor;
+import io.github.terahidro2003.cct.builder.IterativeContextTreeBuilder;
+import io.github.terahidro2003.cct.builder.VmContextTreeBuilder;
+import io.github.terahidro2003.cct.result.StackTraceTreeNode;
+import io.github.terahidro2003.measurement.data.MeasurementIdentifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,8 +45,6 @@ import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.utils.Constants;
 import io.github.terahidro2003.config.Config;
-import io.github.terahidro2003.result.SamplerResultsProcessor;
-import io.github.terahidro2003.samplers.asyncprofiler.MeasurementIdentifier;
 
 public class SamplingCauseSearcher implements ICauseSearcher {
 
@@ -117,7 +117,18 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       configuration.setSamplingOutputFolder(sjswConfiguration.outputPath());
 
       SamplerResultsProcessor processor = new SamplerResultsProcessor();
+      if(!configuration.isDisableMeasurements()) {
+         measure(logFolder, sjswConfiguration, measurementIdentifier, writer);
+      }
 
+      if(configuration.isUseIterativeSampling()) {
+         return analyseSamplingResultsWithIterations(processor, measurementIdentifier, configuration.getVms());
+      } else {
+         return analyseSamplingResults(processor, measurementIdentifier, configuration.getVms());
+      }
+   }
+
+   private void measure(File logFolder, Config sjswConfiguration, MeasurementIdentifier measurementIdentifier, ProgressWriter writer) {
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
          long comparisonStart = System.currentTimeMillis();
 
@@ -127,12 +138,6 @@ public class SamplingCauseSearcher implements ICauseSearcher {
          writer.write(durationInSeconds, finishedVMs);
 
          betweenVMCooldown();
-      }
-
-      if(configuration.isUseIterativeSampling()) {
-         return analyseSamplingResultsWithIterations(processor, measurementIdentifier, configuration.getVms());
-      } else {
-         return analyseSamplingResults(processor, measurementIdentifier, configuration.getVms());
       }
    }
 
@@ -296,10 +301,14 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
       final StackTraceTreeNode mergedTree;
       if (configuration.isUseIterativeSampling()) {
-         mergedTree = new IterativeContextTreeBuilder().buildTree(commitJfrs, commit, normalizedMethodName, true);
+         try {
+            mergedTree = new IterativeContextTreeBuilder().buildTree(commitJfrs, commit, normalizedMethodName, false, false, 0);
+         } catch (Exception e) {
+            throw new RuntimeException(e);
+         }
       } else {
          VmContextTreeBuilder vmBuilder = new VmContextTreeBuilder();
-         mergedTree = vmBuilder.buildTree(commitJfrs, commit, configuration.getVms(), normalizedMethodName, true);
+         mergedTree = vmBuilder.buildTree(commitJfrs, commit, configuration.getVms(), normalizedMethodName, false);
       }
 
 
