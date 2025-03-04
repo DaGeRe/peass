@@ -288,7 +288,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
    }
 
    private List<CallTreeNode> getAnalysableNodes(final List<CallTreeNode> predecessorNodeList) {
-      final MeasurementConfig config = new MeasurementConfig(1, configuration.getFixedCommitConfig().getCommit(), configuration.getFixedCommitConfig().getCommitOld());
+      final MeasurementConfig config = new MeasurementConfig(configuration.getVms(), configuration.getFixedCommitConfig().getCommit(), configuration.getFixedCommitConfig().getCommitOld());
       config.setIterations(configuration.getIterations());
       config.setRepetitions(configuration.getRepetitions());
       config.setWarmup(configuration.getWarmup());
