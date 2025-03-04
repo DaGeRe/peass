@@ -64,7 +64,7 @@
     <dependency>
       <groupId>io.github.terahidro2003</groupId>
       <artifactId>sjsw</artifactId>
-      <version>2.0.0</version>
+      <version>1.0.0</version>
     </dependency>
 
     <!-- For execution, it is assumed that the kieker aspectJ-jar is in the local .m2 directory; no need for inclusion in jar, therefore scope runtime -->
