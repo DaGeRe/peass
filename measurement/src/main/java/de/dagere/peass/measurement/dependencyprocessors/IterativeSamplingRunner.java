@@ -51,7 +51,7 @@ public class IterativeSamplingRunner extends AbstractMeasurementProcessRunner{
         final File vmidFolder = initVMFolder(commit, vmid, logFolder);
 
         // What is the reason behind this arithmetic of timeout?
-        final long outerTimeout = 10 + (int) (this.testTransformer.getConfig().getTimeoutInSeconds() * 1.2);
+        final long outerTimeout = 30 + (int) (this.testTransformer.getConfig().getTimeoutInSeconds() * 1.8);
         LOG.info("Executing testcase {}", testcase);
         testExecutor.executeTest(testcase, vmidFolder, outerTimeout);
 
