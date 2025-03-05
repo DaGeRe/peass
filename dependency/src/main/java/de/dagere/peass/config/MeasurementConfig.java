@@ -30,6 +30,7 @@ public class MeasurementConfig implements Serializable {
    private boolean disableMeasurements = false;
    private String samplingResultUUID = "";
    private String samplingOutputFolder = "";
+   private int samplingInterval = 10;
 
    private boolean callSyncBetweenVMs = true;
    private int waitTimeBetweenVMs = 1000;
@@ -89,6 +90,7 @@ public class MeasurementConfig implements Serializable {
       setUseIterativeSampling(mixin.isUseIterativeSampling());
       setDisableMeasurements(mixin.isDisableMeasurements());
       setSamplingResultUUID(mixin.getSamplingResultUUID());
+      setSamplingInterval(mixin.getInterval());
       this.directlyMeasureKieker = mixin.isDirectlyMeasureKieker();
 
       saveAll = !mixin.isSaveNothing();
@@ -141,6 +143,7 @@ public class MeasurementConfig implements Serializable {
       this.disableMeasurements = other.disableMeasurements;
       this.samplingOutputFolder = other.samplingOutputFolder;
       this.samplingResultUUID = other.samplingResultUUID;
+      this.samplingInterval = other.samplingInterval;
    }
 
    public FixedCommitConfig getFixedCommitConfig() {
@@ -351,5 +354,13 @@ public class MeasurementConfig implements Serializable {
 
    public void setSamplingResultUUID(String samplingResultUUID) {
       this.samplingResultUUID = samplingResultUUID;
+   }
+
+   public int getSamplingInterval() {
+      return samplingInterval;
+   }
+
+   public void setSamplingInterval(int samplingInterval) {
+      this.samplingInterval = samplingInterval;
    }
 }

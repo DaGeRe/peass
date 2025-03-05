@@ -62,7 +62,7 @@ public class TestMethodHelper {
       performanceTestAnnotation.addPair("showStart", "" + config.getExecutionConfig().isShowStart());
       if (config.isUseIterativeSampling()) {
          performanceTestAnnotation.addPair("useSampling", "" + true);
-         performanceTestAnnotation.addPair("samplingInterval", "" + 100);
+         performanceTestAnnotation.addPair("samplingInterval", "" + config.getSamplingInterval());
          if(config.getSamplingOutputFolder().isEmpty()) {
             LOG.error("Sampling output folder is empty");
          }

@@ -22,6 +22,9 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-disableMeasurements", "--disableMeasurements" }, description = "Disables measurements.")
    boolean disableMeasurements = false;
 
+   @Option(names = { "-interval", "--interval" }, description = "Determines the interval of sampling measurements.")
+   int interval = 10;
+
    @Option(names = { "-samplingUUID", "--samplingUUID" }, description = "Pass UUID of already existing sjsw measurement")
    String samplingResultUUID = "";
 
@@ -188,5 +191,13 @@ public class MeasurementConfigurationMixin {
 
    public void setSamplingResultUUID(String samplingResultUUID) {
       this.samplingResultUUID = samplingResultUUID;
+   }
+
+   public int getInterval() {
+      return interval;
+   }
+
+   public void setInterval(int interval) {
+      this.interval = interval;
    }
 }
