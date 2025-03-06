@@ -70,7 +70,7 @@ public class SamplingCauseSearcherTest {
         File projectFolder = new File("/home/hellstone/typ/unit_test_data/" + projectName);
 
         // cleanup
-        File peassRcaResultFolder = new File(new File(projectFolder, "rca"), "treeMeasurementResults");
+        File peassRcaResultFolder = new File(new File(projectFolder + "_peass", "rca"), "treeMeasurementResults");
         if(peassRcaResultFolder.exists()) {
             peassRcaResultFolder.listFiles()[0].delete();
         }
