@@ -59,4 +59,7 @@ public class CauseSearcherConfigMixin {
       return levels;
    }
 
+   public void setStrategy(RCAStrategy strategy) {
+      this.strategy = strategy;
+   }
 }
