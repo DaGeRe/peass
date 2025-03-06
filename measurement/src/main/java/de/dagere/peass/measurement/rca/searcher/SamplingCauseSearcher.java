@@ -174,7 +174,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
       CompleteTreeAnalyzer completeTreeAnalyzer = new CompleteTreeAnalyzer(root, root.getOtherCommitNode());
 
-      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode());
+      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode(), completeTreeAnalyzer);
       return differentMethods;
    }
 
@@ -201,7 +201,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
       CompleteTreeAnalyzer completeTreeAnalyzer = new CompleteTreeAnalyzer(root, root.getOtherCommitNode());
 
-      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode());
+      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode(), completeTreeAnalyzer);
       return differentMethods;
    }
 
@@ -234,15 +234,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       }
    }
 
-   private Set<MethodCall> getDifferingMethodCalls(CallTreeNode currentRoot, CallTreeNode rootPredecessor) {
-      // Define tree analyzer
-      var creator = new TreeAnalyzerCreator() {
-         @Override
-         public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
-            return new CompleteTreeAnalyzer(currentRoot, rootPredecessor);
-         }
-      };
-      final TreeAnalyzer analyzer = creator.getAnalyzer(reader, causeSearcherConfig);
+   private Set<MethodCall> getDifferingMethodCalls(CallTreeNode currentRoot, CallTreeNode rootPredecessor, CompleteTreeAnalyzer analyzer) {
       final List<CallTreeNode> predecessorNodeList = analyzer.getMeasurementNodesPredecessor();
       final List<CallTreeNode> includableNodes = getIncludableNodes(predecessorNodeList);
 
