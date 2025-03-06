@@ -225,8 +225,8 @@ public class SjswCctConverter {
             }
             List<Double> measurements = vmMeasurements.get(0).getMeasurements();
             final List<StatisticalSummary> values = new LinkedList<>();
-            if(measurements.size() >= 2) {
-                List<List<Double>> slicedIterationMeasurements = Lists.partition(measurements, 2);
+            if(measurements.size() >= 5) {
+                List<List<Double>> slicedIterationMeasurements = Lists.partition(measurements, 5);
                 slicedIterationMeasurements.forEach(slice -> {
                     final SummaryStatistics statistic = new SummaryStatistics();
                     slice.forEach(measurement -> {
