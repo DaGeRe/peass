@@ -189,7 +189,7 @@ public class SearchCauseStarter extends MeasureStarter {
             break;
          case SAMPLING:
             measurementConfiguration.setUseKieker(false);
-            tester = new SamplingCauseSearcher(causeSearcherConfig.getTestCase(), measurementConfiguration, alternateFolders, env, causeSearcherConfig, reader);
+            tester = new SamplingCauseSearcher(causeSearcherConfig.getTestCase(), measurementConfiguration, alternateFolders, env, causeSearcherConfig);
             break;
          default:
             throw new RuntimeException("Strategy " + causeSearcherConfig.getRcaStrategy() + " not expected");
