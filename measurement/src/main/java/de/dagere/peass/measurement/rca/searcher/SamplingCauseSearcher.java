@@ -57,20 +57,17 @@ public class SamplingCauseSearcher implements ICauseSearcher {
    protected final EnvironmentVariables env;
    protected final CauseSearcherConfig causeSearcherConfig;
    private final CausePersistenceManager persistenceManager;
-   private final BothTreeReader reader;
 
    protected long currentChunkStart = 0;
 
    public SamplingCauseSearcher(TestMethodCall testcase, MeasurementConfig configuration, CauseSearchFolders folders,
-         EnvironmentVariables env, CauseSearcherConfig causeSearcherConfig,
-         final BothTreeReader reader) {
+         EnvironmentVariables env, CauseSearcherConfig causeSearcherConfig) {
       this.testcase = testcase;
       this.configuration = configuration;
       this.folders = folders;
       this.env = env;
       this.causeSearcherConfig = causeSearcherConfig;
       this.persistenceManager = new CausePersistenceManager(causeSearcherConfig, configuration, folders);
-      this.reader = reader;
    }
 
    @Override
@@ -179,9 +176,17 @@ public class SamplingCauseSearcher implements ICauseSearcher {
    }
 
    private Set<MethodCall> analyseSamplingResultsWithIterations(SamplerResultsProcessor processor, MeasurementIdentifier identifier, int vms) {
+      CallTreeNode root = generateTree(processor, identifier, vms);
+
+      CompleteTreeAnalyzer completeTreeAnalyzer = new CompleteTreeAnalyzer(root, root.getOtherCommitNode());
+
+      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode(), completeTreeAnalyzer);
+      return differentMethods;
+   }
+
+   public CallTreeNode generateTree(SamplerResultsProcessor processor, MeasurementIdentifier identifier, int vms) {
       Path resultsPath = retrieveSamplingResultsDirectory(identifier).toPath();
       var commits = getVersions();
-
       StackTraceTreeNode commitBAT = retrieveBatForCommit(commits[0], processor, resultsPath);
       StackTraceTreeNode predecessorBAT = retrieveBatForCommit(commits[1], processor, resultsPath);
 
@@ -198,11 +203,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       printCallTreeNode(root);
       System.out.println();
       printCallTreeNode(root.getOtherCommitNode());
-
-      CompleteTreeAnalyzer completeTreeAnalyzer = new CompleteTreeAnalyzer(root, root.getOtherCommitNode());
-
-      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode(), completeTreeAnalyzer);
-      return differentMethods;
+      return root;
    }
 
    public static void printCallTreeNode(CallTreeNode root) {
