@@ -54,6 +54,20 @@ public class SamplingCauseSearcherTest {
         return new SamplingCauseSearcher(test, measurementConfig, alternateFolders, environmentVariables, config);
     }
 
+    private void cleanup(File projectFolder) {
+        File peassRcaResultFolder = new File(new File(projectFolder + "_peass", "rca"), "treeMeasurementResults");
+        if(peassRcaResultFolder.exists()) {
+            peassRcaResultFolder.listFiles()[0].delete();
+        }
+        peassRcaResultFolder.delete();
+    }
+
+    @Test
+    void cleanup() {
+        String projectName = "project_2_10100";
+        File projectFolder = new File("/home/hellstone/typ/unit_test_data/" + projectName);
+    }
+
     @Test
     void testTreeMeasurements() {
         String projectName = "project_2_10100";
@@ -67,9 +81,13 @@ public class SamplingCauseSearcherTest {
         String sjswUUID = "899bf630-06e6-456c-81ee-a0803a942923";
         String commit = "453d8deb392581e5f047370ecf660ad7c44dcce6";
         String commitOld = "a99d8b731939747ea1da77dc5c085f2cb7cfefa1";
+
+        // ADJUST TO ABSOLUTE PATH
         File projectFolder = new File("/home/hellstone/typ/unit_test_data/" + projectName);
 
         // cleanup
+        cleanup(projectFolder);
+
         File peassRcaResultFolder = new File(new File(projectFolder + "_peass", "rca"), "treeMeasurementResults");
         if(peassRcaResultFolder.exists()) {
             peassRcaResultFolder.listFiles()[0].delete();
@@ -79,7 +97,13 @@ public class SamplingCauseSearcherTest {
         SamplingCauseSearcher searcher = getSearcher(true, vms, iterations, repetitions, warmup, interval, iterativeSampling, sjswUUID, commit, commitOld, projectFolder, testcase);
 
         MeasurementIdentifier measurementIdentifier = new MeasurementIdentifier(UUID.fromString(sjswUUID));
-        CallTreeNode root = searcher.generateTree(new SamplerResultsProcessor(), measurementIdentifier, 10);
+        CallTreeNode root = searcher.generateTree(new SamplerResultsProcessor(), measurementIdentifier, 2);
+
+        root.getData().get(commit).getResults().forEach(value -> {
+            value.getValues().forEach(v -> {
+                System.out.println(v);
+            });
+        });
 
         Assertions.assertTrue(root.getData().get(commit).getResults().get(0).getValues().size() > 1);
     }
