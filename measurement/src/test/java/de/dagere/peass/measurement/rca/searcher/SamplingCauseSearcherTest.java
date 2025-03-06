@@ -15,6 +15,9 @@ import de.dagere.peass.measurement.rca.RCAStrategy;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import io.github.terahidro2003.cct.SamplerResultsProcessor;
 import io.github.terahidro2003.measurement.data.MeasurementIdentifier;
+
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -93,6 +96,7 @@ public class SamplingCauseSearcherTest {
             });
         });
 
-        Assertions.assertTrue(root.getData().get(commit).getResults().get(0).getValues().size() > 1);
+        int countOfValues = root.getData().get(commit).getResults().get(0).getValues().size();
+        MatcherAssert.assertThat(countOfValues, Matchers.greaterThan(1));
     }
 }
