@@ -54,8 +54,7 @@ public class SamplingCauseSearcherTest {
         return new SamplingCauseSearcher(test, measurementConfig, alternateFolders, environmentVariables, config);
     }
 
-    private void cleanup(File projectFolder) {
-        File peassRcaResultFolder = new File(new File(projectFolder + "_peass", "rca"), "treeMeasurementResults");
+    private void cleanup(File peassRcaResultFolder) {
         if(peassRcaResultFolder.exists()) {
             peassRcaResultFolder.listFiles()[0].delete();
         }
@@ -63,14 +62,8 @@ public class SamplingCauseSearcherTest {
     }
 
     @Test
-    void cleanup() {
-        String projectName = "project_2_10100";
-        File projectFolder = new File("/home/hellstone/typ/unit_test_data/" + projectName);
-    }
-
-    @Test
     void testTreeMeasurements() {
-        String projectName = "project_2_10100";
+        String projectName = "project_2";
         String testcase = "de.dagere.peass.MainTest#testMe";
         int vms = 2;
         int iterations = 5;
@@ -81,17 +74,12 @@ public class SamplingCauseSearcherTest {
         String sjswUUID = "899bf630-06e6-456c-81ee-a0803a942923";
         String commit = "453d8deb392581e5f047370ecf660ad7c44dcce6";
         String commitOld = "a99d8b731939747ea1da77dc5c085f2cb7cfefa1";
-
-        // ADJUST TO ABSOLUTE PATH
-        File projectFolder = new File("/home/hellstone/typ/unit_test_data/" + projectName);
+        File projectFolder = new File("src/test/resources/samplingTestData/" + projectName);
 
         // cleanup
-        cleanup(projectFolder);
-
         File peassRcaResultFolder = new File(new File(projectFolder + "_peass", "rca"), "treeMeasurementResults");
-        if(peassRcaResultFolder.exists()) {
-            peassRcaResultFolder.listFiles()[0].delete();
-        }
+        cleanup(peassRcaResultFolder);
+
         peassRcaResultFolder.delete();
 
         SamplingCauseSearcher searcher = getSearcher(true, vms, iterations, repetitions, warmup, interval, iterativeSampling, sjswUUID, commit, commitOld, projectFolder, testcase);
