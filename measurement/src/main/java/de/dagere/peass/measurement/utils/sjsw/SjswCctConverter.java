@@ -1,13 +1,17 @@
 package de.dagere.peass.measurement.utils.sjsw;
 
+import com.google.common.collect.Lists;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import io.github.terahidro2003.cct.result.StackTraceTreeNode;
 import io.github.terahidro2003.cct.result.VmMeasurement;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -134,12 +138,11 @@ public class SjswCctConverter {
                 LOG.info("Adding measurements for the other commit {}", oldCommit);
                 addMeasurements(oldCommit, otherNode, peassNode, vms);
             }
+            peassNode.createStatistics(commit);
+            peassNode.createStatistics(oldCommit);
         }
 
         if(!lastNode) appendChild(node, peassNode);
-
-        peassNode.createStatistics(commit);
-        peassNode.createStatistics(oldCommit);
 
         LOG.info("Current stats: {} --> {}", commit, peassNode.getData().get(commit).getResults().size());
         if(otherNode != null) {
@@ -214,7 +217,6 @@ public class SjswCctConverter {
         }
 
         for (int vm = 0; vm < vms; vm++) {
-            peassNode.initVMData(commit);
             final int vmfinal = vm;
             List<VmMeasurement> vmMeasurements = measurementsForSpecificCommit.stream().filter(vmm -> vmm.getVm() == vmfinal).collect(Collectors.toList());
             if(vmMeasurements.isEmpty() || vmMeasurements.get(0) == null) {
@@ -222,9 +224,24 @@ public class SjswCctConverter {
                 return;
             }
             List<Double> measurements = vmMeasurements.get(0).getMeasurements();
-            measurements.forEach(measurement -> {
-                peassNode.addMeasurement(commit, (long) (double) measurement);
-            });
+            final List<StatisticalSummary> values = new LinkedList<>();
+            if(measurements.size() >= 2) {
+                List<List<Double>> slicedIterationMeasurements = Lists.partition(measurements, 2);
+                slicedIterationMeasurements.forEach(slice -> {
+                    final SummaryStatistics statistic = new SummaryStatistics();
+                    slice.forEach(measurement -> {
+                        statistic.addValue((long) (double) measurement);
+                        System.out.println("Adding sjsw measurement: " + measurement);
+                    });
+                    values.add(statistic);
+                });
+                peassNode.addAggregatedMeasurement(commit, values);
+            } else {
+                peassNode.initVMData(commit);
+                measurements.forEach(measurement -> {
+                    peassNode.addMeasurement(commit, (long) (double) measurement);
+                });
+            }
         }
     }
 
