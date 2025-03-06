@@ -31,6 +31,8 @@ measurement/dependencies.xml
 measurement/results/
 measurement/scripts/versions/sync/
 measurement/scripts/versions/helpers/[0-9].sh
+measurement/src/test/resources/samplingTestData/project_2_peass/rca/
+measurement/src/test/resources/samplingTestData/project_2_peass/*sh
 dependency/src/test/resources/dependencyIT/current/
 dependency/src/test/resources/dependencyIT/current_peass/
 dependency/src/test/resources/dependencyIT/ausgabe_kieker.txt
