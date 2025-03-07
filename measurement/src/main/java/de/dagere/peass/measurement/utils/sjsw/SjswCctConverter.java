@@ -8,8 +8,8 @@ import io.github.terahidro2003.cct.result.StackTraceTreeNode;
 import io.github.terahidro2003.cct.result.VmMeasurement;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class SjswCctConverter {
-    private static final Logger LOG = LoggerFactory.getLogger(SjswCctConverter.class);
+    private static final Logger LOG = LogManager.getLogger(SjswCctConverter.class);
 
     public static CallTreeNode convertCallContextTreeToCallTree(StackTraceTreeNode currentBAT,
                                                                 StackTraceTreeNode predecessorBAT, CallTreeNode ctn,
