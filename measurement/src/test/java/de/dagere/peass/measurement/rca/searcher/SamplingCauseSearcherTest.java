@@ -18,6 +18,7 @@ import io.github.terahidro2003.measurement.data.MeasurementIdentifier;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.hamcrest.number.IsNaN;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -97,5 +98,7 @@ public class SamplingCauseSearcherTest {
 
         int countOfValues = root.getData().get(commit).getResults().get(0).getValues().size();
         MatcherAssert.assertThat(countOfValues, Matchers.greaterThan(1));
+        
+        MatcherAssert.assertThat(root.getData().get(commit).getStatistics().getMean(), Matchers.not(IsNaN.notANumber()));
     }
 }

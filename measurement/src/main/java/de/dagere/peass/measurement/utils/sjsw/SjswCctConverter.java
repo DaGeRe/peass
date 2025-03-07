@@ -136,9 +136,9 @@ public class SjswCctConverter {
                 LOG.info("Adding measurements for the other commit {}", oldCommit);
                 addMeasurements(oldCommit, otherNode, peassNode, config.getVms());
             }
-            peassNode.createStatistics(commit);
-            peassNode.createStatistics(oldCommit);
         }
+        peassNode.createStatistics(commit);
+        peassNode.createStatistics(oldCommit);
 
         if(!lastNode) appendChild(node, peassNode);
 
