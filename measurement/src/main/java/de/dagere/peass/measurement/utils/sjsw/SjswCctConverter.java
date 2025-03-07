@@ -231,7 +231,7 @@ public class SjswCctConverter {
                     final SummaryStatistics statistic = new SummaryStatistics();
                     slice.forEach(measurement -> {
                         statistic.addValue((long) (double) measurement);
-                        System.out.println("Adding sjsw measurement: " + measurement);
+                        LOG.info("Adding sjsw measurement: {}", measurement);
                     });
                     values.add(statistic);
                 });
