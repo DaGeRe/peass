@@ -88,7 +88,7 @@ public class SamplingCauseSearcherTest {
         SamplingCauseSearcher searcher = getSearcher(true, vms, iterations, repetitions, warmup, interval, iterativeSampling, sjswUUID, commit, commitOld, projectFolder, testcase);
 
         MeasurementIdentifier measurementIdentifier = new MeasurementIdentifier(UUID.fromString(sjswUUID));
-        CallTreeNode root = searcher.generateTree(new SamplerResultsProcessor(), measurementIdentifier, 2);
+        CallTreeNode root = searcher.generateTree(new SamplerResultsProcessor(), measurementIdentifier, vms);
 
         root.getData().get(commit).getResults().forEach(value -> {
             value.getValues().forEach(v -> {
