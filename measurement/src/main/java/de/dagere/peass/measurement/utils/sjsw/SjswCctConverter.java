@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 import io.github.terahidro2003.cct.result.StackTraceTreeNode;
 import io.github.terahidro2003.cct.result.VmMeasurement;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
@@ -37,7 +38,7 @@ public class SjswCctConverter {
         if(methodNameWithNew.contains("<init>")) {
             methodNameWithNew = "new " + methodNameWithNew;
         }
-        String call = getCall(methodNameWithNew);
+        String call = KiekerPatternConverter.getCall(methodNameWithNew);
         if(ctn == null) {
             ctn = new CallTreeNode(call,
                     methodNameWithNew,
@@ -67,19 +68,6 @@ public class SjswCctConverter {
 
         return ctn;
     }
-
-   private static String getCall(String methodNameWithNew) {
-        int indexOfParenthesis = methodNameWithNew.indexOf('(');
-        
-        String partBeforeParenthesis = methodNameWithNew.substring(0, indexOfParenthesis);
-        String parameters = methodNameWithNew.substring(indexOfParenthesis).replace(" ", "");
-        int methodSeperatorIndex = partBeforeParenthesis.lastIndexOf('.');
-        String clazz = partBeforeParenthesis.substring(0, methodSeperatorIndex);
-        String method = partBeforeParenthesis.substring(methodSeperatorIndex + 1) ;
-        
-        String call = clazz + MethodCall.METHOD_SEPARATOR + method + parameters; 
-      return call;
-   }
 
    private static String normalizeKiekerPattern(StackTraceTreeNode node) {
         String methodSignature = node.getPayload().getMethodName();
@@ -166,7 +154,7 @@ public class SjswCctConverter {
     private static void appendChild(StackTraceTreeNode node, CallTreeNode peassNode) {
         // check is done as a workaround for Peass kieker pattern check
         String methodNameWithNew = normalizeKiekerPattern(node);
-        String call = getCall(methodNameWithNew);
+        String call = KiekerPatternConverter.getCall(methodNameWithNew);
         if(node.getPayload().getMethodName().contains("<init>")) {
             methodNameWithNew = "new " + methodNameWithNew;
             peassNode.appendChild(call,
@@ -258,7 +246,7 @@ public class SjswCctConverter {
         if(otherNode.getPayload().getMethodName().contains("<init>")) {
             methodNameWithNew = "new " + otherNode.getPayload().getMethodName();
         }
-        String call = getCall(methodNameWithNew);
+        String call = KiekerPatternConverter.getCall(methodNameWithNew);
         if(otherCallTreeNode == null) {
             otherCallTreeNode = new CallTreeNode(call,
                     methodNameWithNew,
