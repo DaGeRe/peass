@@ -131,6 +131,14 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       cleanAboveSize(logFolder, "txt");
    }
 
+   @Override
+   public void executeTest(final String javaAgent, final TestMethodCall test, final File logFolder, final long timeout) {
+      final File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
+      runMethod(logFolder, test, moduleFolder, timeout, javaAgent);
+      
+      cleanAboveSize(logFolder, "txt");
+   }
+
    /**
     * Runs the given test and saves the results to the result folder.
     * 
@@ -138,14 +146,30 @@ public class MavenTestExecutor extends KoPeMeExecutor {
     * @param testname Name of the test that should be run
     */
    @Override
-   protected void runTest(final File module, final File logFile, TestMethodCall test, final String testname, final long timeout) {
+   protected void runTest(final String javaAgent, final File module, final File logFile, TestMethodCall test, final String testname, final long timeout) {
       try {
-         final Process process = buildMavenProcess(logFile, test, "-Dtest=" + testname);
+         final Process process = buildMavenProcess(logFile, test, "-Dtest=" + testname, javaAgent);
          execute(testname, timeout, process);
       } catch (final InterruptedException | IOException e) {
          e.printStackTrace();
       }
    }
+
+   /**
+    * Runs the given test and saves the results to the result folder.
+    * 
+    * @param specialResultFolder Folder for saving the results
+    * @param testname Name of the test that should be run
+    */
+    @Override
+    protected void runTest(final File module, final File logFile, TestMethodCall test, final String testname, final long timeout) {
+       try {
+          final Process process = buildMavenProcess(logFile, test, "-Dtest=" + testname);
+          execute(testname, timeout, process);
+       } catch (final InterruptedException | IOException e) {
+          e.printStackTrace();
+       }
+    }
 
    @Override
    public boolean doesBuildfileExist() {

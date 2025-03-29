@@ -73,6 +73,8 @@ public abstract class BasicNode {
       return call;
    }
 
+   public void setCall(String call) { this.call = call; }
+
    public String getKiekerPattern() {
       return kiekerPattern;
    }
