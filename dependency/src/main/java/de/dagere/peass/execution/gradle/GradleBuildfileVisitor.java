@@ -47,6 +47,8 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private int integrationTestLine = -1;
 
    private int junitLine = -1;
+   private int junitPlatformLine = -1;
+   
    private int androidLine = -1;
    private int compileOptionsLine = -1;
    private int sourceCompatibilityLine = -1;
@@ -279,6 +281,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
    public TestTaskParser getTestTaskProperties() {
       return testTaskProperties;
+   }
+   
+   public int getJunitPlatformLine() {
+      return junitPlatformLine;
    }
 
    public int getJunitLine() {

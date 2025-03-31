@@ -46,6 +46,7 @@ public class MavenPomUtil {
 
    public static final String JUPITER_VERSION = "5.12.1";
    public static final String JUPITER_ENGINE_VERSION = "5.12.1";
+   public static final String JUPITER_PLATFORM_VERSION = "1.12.1";
    public static final String LOG4J_VERSION = "2.24.3";
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
