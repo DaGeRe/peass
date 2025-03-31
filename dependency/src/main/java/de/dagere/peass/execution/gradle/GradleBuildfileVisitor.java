@@ -15,14 +15,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
+import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.builder.AstBuilder;
 import org.codehaus.groovy.ast.expr.ArgumentListExpression;
+import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.NamedArgumentListExpression;
 import org.codehaus.groovy.ast.expr.TupleExpression;
+import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
+import org.codehaus.groovy.ast.stmt.ReturnStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
 
 import de.dagere.peass.config.ExecutionConfig;
 
@@ -40,6 +46,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private TestTaskParser integrationTestTaskProperties = null;
    private int integrationTestLine = -1;
 
+   private int junitLine = -1;
    private int androidLine = -1;
    private int compileOptionsLine = -1;
    private int sourceCompatibilityLine = -1;
@@ -85,12 +92,13 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
    @Override
    public void visitMethodCallExpression(final MethodCallExpression call) {
-      LOG.trace("Call: {}", call.getMethodAsString());
+      LOG.debug("Call: {}", call.getMethodAsString());
       if (call != null && call.getMethodAsString() != null) {
          // System.out.println(call.getMethodAsString());
          if (call.getMethodAsString().equals("dependencies")) {
             // System.out.println(call);
             dependencyLine = call.getLastLineNumber() + offset;
+            parseDependencies(call);
          } else if (call.getMethodAsString().equals("buildscript")) {
             // continue parsing
          } else if (call.getMethodAsString().equals("test")) {
@@ -155,7 +163,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
       super.visitMethodCallExpression(call);
    }
-   
+
    private boolean isGradleVersionLine(MethodCallExpression call) {
       Expression expression = call.getArguments();
 
@@ -172,6 +180,31 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       }
 
       return false;
+   }
+
+   private void parseDependencies(final MethodCallExpression call) {
+      TupleExpression tuple = (TupleExpression) call.getArguments();
+      Expression expression = tuple.getExpression(0);
+      if (expression instanceof ClosureExpression) {
+         ClosureExpression argumentListExpression = (ClosureExpression) expression;
+         Statement code = argumentListExpression.getCode();
+         if (code instanceof BlockStatement) {
+            BlockStatement block = (BlockStatement) code;
+            for (Statement statement : block.getStatements()) {
+               if (statement instanceof ReturnStatement) {
+                  ReturnStatement returnStatement = (ReturnStatement) statement;
+                  if (returnStatement.getText().contains("org.junit.jupiter:junit-jupiter:")) {
+                     junitLine = returnStatement.getLineNumber();
+                  }
+               } else if (statement instanceof ExpressionStatement) {
+                  ExpressionStatement expressionStatement = (ExpressionStatement) statement;
+                  if (expressionStatement.getText().contains("org.junit.jupiter:junit-jupiter:")) {
+                     junitLine = expressionStatement.getLineNumber();
+                  }
+               }
+            }
+         }
+      }
    }
 
    private void parseExcludes(final MethodCallExpression call) {
@@ -214,7 +247,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
                ConstantExpression expression = (ConstantExpression) method;
                if (expression.getValue().equals("integrationTest")) {
                   integrationTestLine = call.getLastLineNumber() + offset;
-                  
+
                   parseTaskDefinition(arguments);
                }
             }
@@ -248,6 +281,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       return testTaskProperties;
    }
 
+   public int getJunitLine() {
+      return junitLine;
+   }
+
    public int getAndroidLine() {
       return androidLine;
    }
@@ -279,7 +316,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    public int getIntegrationTestLine() {
       return integrationTestLine;
    }
-   
+
    public TestTaskParser getIntegrationTestTaskProperties() {
       return integrationTestTaskProperties;
    }
@@ -319,11 +356,11 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    public void setDefaultConfigLine(int defaultConfigEnd) {
       defaultConfigLine = defaultConfigEnd;
    }
-   
+
    public int getMinSdkVersion() {
       return minSdkVersion;
    }
-   
+
    public int getTargetSdkVersion() {
       return targetSdkVersion;
    }
@@ -333,9 +370,9 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    }
 
    public int getGradleVersionLine() {
-       return gradleVersionLine;
+      return gradleVersionLine;
    }
-   
+
    public int getAndroidPackagingOptions() {
       return androidPackagingOptions;
    }
@@ -365,7 +402,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       if (lineIndex < dependencyLine && dependencyLine != -1) {
          dependencyLine++;
       }
-      
+
       if (lineIndex < testLine && testLine != -1) {
          testLine++;
       }

@@ -56,6 +56,15 @@ public class TestBuildGradle {
 
       Assert.assertTrue(FileUtils.contentEquals(gradleFile, destFile));
    }
+   
+   @Test
+   public void testJUnitVersion() throws IOException {
+      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "OldJUnit.gradle");
+      final String gradleFileContents = updateGradleFile(gradleFile);
+
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("testImplementation(\"org.junit.jupiter:junit-jupiter:"+ MavenPomUtil.JUPITER_VERSION + "\")"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("testImplementation(\"org.commons:apache-something:1.2.3\""));
+   }
 
    @Test
    public void testSprintBootUpdate() throws IOException {
