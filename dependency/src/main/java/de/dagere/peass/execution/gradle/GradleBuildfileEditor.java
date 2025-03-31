@@ -143,6 +143,9 @@ public class GradleBuildfileEditor {
             }
             visitor.addLine(visitor.getDependencyLine() - 1, dependencyGradle);
          }
+         if (visitor.getJunitLine() != -1) {
+            visitor.getLines().set(visitor.getJunitLine() - 1, "testImplementation(\"org.junit.jupiter:junit-jupiter:" + MavenPomUtil.JUPITER_VERSION + "\")");
+         }
          if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()) {
             visitor.addLine(visitor.getDependencyLine() - 1, "    androidTestImplementation 'androidx.test:rules:1.4.0'");
          }

@@ -1,0 +1,20 @@
+plugins {
+	id 'java'
+}
+
+group = 'de.dagere.peass.base-module'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.commons:apache-something:1.2.3")
+}
