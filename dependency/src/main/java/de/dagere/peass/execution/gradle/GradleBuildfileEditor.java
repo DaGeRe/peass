@@ -145,7 +145,13 @@ public class GradleBuildfileEditor {
          }
          if (visitor.getJunitLine() != -1) {
             visitor.getLines().set(visitor.getJunitLine() - 1, "testImplementation(\"org.junit.jupiter:junit-jupiter:" + MavenPomUtil.JUPITER_VERSION + "\")");
+            if (visitor.getJunitPlatformLine() != -1) {
+               
+            } else {
+               visitor.addLine(visitor.getJunitLine() - 1, "testRuntimeOnly(\"org.junit.platform:junit-platform-launcher:" + MavenPomUtil.JUPITER_PLATFORM_VERSION + "\")");
+            }
          }
+         
          if (testTransformer.getConfig().getExecutionConfig().isUseAnbox()) {
             visitor.addLine(visitor.getDependencyLine() - 1, "    androidTestImplementation 'androidx.test:rules:1.4.0'");
          }

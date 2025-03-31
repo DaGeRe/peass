@@ -63,6 +63,8 @@ public class TestBuildGradle {
       final String gradleFileContents = updateGradleFile(gradleFile);
 
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("testImplementation(\"org.junit.jupiter:junit-jupiter:"+ MavenPomUtil.JUPITER_VERSION + "\")"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("org.junit.platform:junit-platform-launcher:"+ MavenPomUtil.JUPITER_PLATFORM_VERSION + "\")"));
+      
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("testImplementation(\"org.commons:apache-something:1.2.3\""));
    }
 
