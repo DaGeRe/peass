@@ -1,7 +1,6 @@
 package de.dagere.peass.measurement.utils.sjsw;
 
 import com.google.common.collect.Lists;
-import de.dagere.nodeDiffDetector.data.MethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
@@ -20,25 +19,22 @@ import java.util.stream.Collectors;
 public class SjswCctConverter {
     private static final Logger LOG = LogManager.getLogger(SjswCctConverter.class);
 
-    public static CallTreeNode convertCallContextTreeToCallTree(StackTraceTreeNode currentBAT,
-                                                                StackTraceTreeNode predecessorBAT, CallTreeNode ctn,
-                                                                String commit, String predecessor, MeasurementConfig config) {
+    public static CallTreeNode convertCallContextTreeToCallTree(final StackTraceTreeNode currentBAT,
+          final StackTraceTreeNode predecessorBAT, CallTreeNode ctn,
+          final String commit, final String predecessor, final MeasurementConfig config) {
         if (commit == null && predecessor == null) {
             throw new IllegalArgumentException("Commit and Predesseror cannot be null");
         }
 
         LOG.info("Current original node: {}", currentBAT.getPayload().getMethodName());
 
-        StackTraceTreeNode otherNode = predecessorBAT != null ? search(currentBAT, predecessorBAT) : null;
+        final StackTraceTreeNode otherNode = predecessorBAT != null ? search(currentBAT, predecessorBAT) : null;
 
         LOG.info("Other original node: {}", otherNode != null ? otherNode.getPayload().getMethodName() : null);
         LOG.info("Original node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
 
-        String methodNameWithNew = normalizeKiekerPattern(currentBAT);
-        if(methodNameWithNew.contains("<init>")) {
-            methodNameWithNew = "new " + methodNameWithNew;
-        }
-        String call = KiekerPatternConverter.getCall(methodNameWithNew);
+        final String methodNameWithNew = normalizeKiekerPattern(currentBAT);
+        final String call = KiekerPatternConverter.getCall(methodNameWithNew);
         if(ctn == null) {
             ctn = new CallTreeNode(call,
                     methodNameWithNew,
@@ -82,6 +78,11 @@ public class SjswCctConverter {
            String parameters = methodSignature.substring(indexOfParenthesis).replace(" ", "");
            methodSignature = partBeforeParenthesis + parameters;
         }
+        
+        //TODO That won't work in all cases, since the new needs to be behind the modifiers - but leaving it for now
+        if(methodSignature.contains("<init>")) {
+           methodSignature = "new " + methodSignature;
+       }
         return methodSignature;
     }
 
@@ -209,9 +210,11 @@ public class SjswCctConverter {
                 LOG.warn("No measurements found for VM {}", vm);
                 return;
             }
-            List<Double> measurements = vmMeasurements.get(0).getMeasurements();
-            final List<StatisticalSummary> values = new LinkedList<>();
+            final List<Double> measurements = vmMeasurements.get(0).getMeasurements();
+            LOG.debug("Call: {} VM: {} vmMeasurements: {} measurements: {}", peassNode.getCall(), 
+                  vm, vmMeasurements.size(), measurements.size());
             if(measurements.size() > 1) {
+                final List<StatisticalSummary> values = new LinkedList<>();
                 int sliceSize = Math.max(measurements.size() / iterations, 1);
                 LOG.info("Measurements: {} Iterations: {} Slice size: {}", measurements.size(), iterations, sliceSize);
                 List<List<Double>> slicedIterationMeasurements = Lists.partition(measurements, sliceSize);
@@ -223,6 +226,7 @@ public class SjswCctConverter {
                     });
                     values.add(statistic);
                 });
+                LOG.debug("Adding to {} - Values: {} ", peassNode.getCall(), values.size());
                 peassNode.addAggregatedMeasurement(commit, values);
             } else {
                 peassNode.initVMData(commit);
