@@ -54,6 +54,7 @@ public class SjswCctConverter {
 
         List<StackTraceTreeNode> children = currentBAT.getChildren();
         if (children.isEmpty() && ctn != null) {
+            LOG.info("Analyzing child");
             createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, true, config);
         }
         for (StackTraceTreeNode child : children) {
@@ -107,7 +108,7 @@ public class SjswCctConverter {
         return null;
     }
 
-    private static void createPeassNode(StackTraceTreeNode node, StackTraceTreeNode otherNode, CallTreeNode peassNode,
+    private static void createPeassNode(StackTraceTreeNode node, StackTraceTreeNode otherNode, final CallTreeNode peassNode,
                                         String commit, String oldCommit, boolean lastNode,
                                         MeasurementConfig config) {
         LOG.info("Creating peass node for stacktracetreenodes: {} -> {}", node.getPayload().getMethodName() + "(" + node.getMeasurements() + ")", otherNode != null ? otherNode.getPayload().getMethodName() + "(" + otherNode.getMeasurements() + ")" : null);
@@ -191,8 +192,8 @@ public class SjswCctConverter {
         }
     }
 
-    private static void addIterativeMeasurements(String commit, StackTraceTreeNode node, CallTreeNode peassNode,
-                                                 int vms, int iterations) {
+    private static void addIterativeMeasurements(final String commit, final StackTraceTreeNode node, final CallTreeNode peassNode,
+                                                 final int vms, final int iterations) {
         List<VmMeasurement> measurementsForSpecificCommit = node.getVmMeasurements().get(commit);
         if(measurementsForSpecificCommit == null || measurementsForSpecificCommit.isEmpty()) {
             throw new IllegalArgumentException("Possibly invalid iterative measurement data. Commit " +
