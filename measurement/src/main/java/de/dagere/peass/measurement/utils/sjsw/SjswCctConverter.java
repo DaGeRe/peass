@@ -112,6 +112,7 @@ public class SjswCctConverter {
                                         String commit, String oldCommit, boolean lastNode,
                                         MeasurementConfig config) {
         LOG.info("Creating peass node for stacktracetreenodes: {} -> {}", node.getPayload().getMethodName() + "(" + node.getMeasurements() + ")", otherNode != null ? otherNode.getPayload().getMethodName() + "(" + otherNode.getMeasurements() + ")" : null);
+        LOG.info("Peass node: " + peassNode);
         peassNode.initCommitData();
 
         if (config.isUseIterativeSampling()) {
@@ -227,7 +228,7 @@ public class SjswCctConverter {
         }
     }
 
-    public static CallTreeNode createOtherNodeRecursive(StackTraceTreeNode otherNode, StackTraceTreeNode node,
+    public static CallTreeNode createOtherNodeRecursive(final StackTraceTreeNode otherNode, StackTraceTreeNode node,
                                                         CallTreeNode otherCallTreeNode, String predecessor,
                                                         String commit, MeasurementConfig config) {
         if (commit == null && predecessor == null) {
@@ -236,9 +237,9 @@ public class SjswCctConverter {
 
         node = node != null ? search(otherNode, node) : null;
 
-        String methodNameWithNew = normalizeKiekerPattern(otherNode);
-        String call = KiekerPatternConverter.getCall(methodNameWithNew);
-        if(otherCallTreeNode == null) {
+        final String methodNameWithNew = normalizeKiekerPattern(otherNode);
+        final String call = KiekerPatternConverter.getCall(methodNameWithNew);
+        if (otherCallTreeNode == null) {
             otherCallTreeNode = new CallTreeNode(call,
                     methodNameWithNew,
                     methodNameWithNew,
