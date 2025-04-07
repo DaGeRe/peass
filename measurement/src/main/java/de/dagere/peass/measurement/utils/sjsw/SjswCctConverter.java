@@ -81,7 +81,7 @@ public class SjswCctConverter {
         }
         
         //TODO That won't work in all cases, since the new needs to be behind the modifiers - but leaving it for now
-        if(methodSignature.contains("<init>")) {
+        if (methodSignature.contains("<init>")) {
            methodSignature = "new " + methodSignature;
        }
         return methodSignature;
@@ -157,18 +157,7 @@ public class SjswCctConverter {
         // check is done as a workaround for Peass kieker pattern check
         String methodNameWithNew = normalizeKiekerPattern(node);
         String call = KiekerPatternConverter.getCall(methodNameWithNew);
-        if(node.getPayload().getMethodName().contains("<init>")) {
-            methodNameWithNew = "new " + methodNameWithNew;
-            peassNode.appendChild(call,
-                    methodNameWithNew,
-                    methodNameWithNew
-            );
-        } else {
-            peassNode.appendChild(call,
-                    methodNameWithNew,
-                    methodNameWithNew
-            );
-        }
+        peassNode.appendChild(call, methodNameWithNew, methodNameWithNew);
     }
 
     private static void addMeasurements(String commit, StackTraceTreeNode node, CallTreeNode peassNode, int vms) {
@@ -248,9 +237,6 @@ public class SjswCctConverter {
         node = node != null ? search(otherNode, node) : null;
 
         String methodNameWithNew = normalizeKiekerPattern(otherNode);
-        if(otherNode.getPayload().getMethodName().contains("<init>")) {
-            methodNameWithNew = "new " + otherNode.getPayload().getMethodName();
-        }
         String call = KiekerPatternConverter.getCall(methodNameWithNew);
         if(otherCallTreeNode == null) {
             otherCallTreeNode = new CallTreeNode(call,
