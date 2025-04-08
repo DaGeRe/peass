@@ -49,13 +49,13 @@ public class SjswCctConverterTest {
         printCallTreeNode(root);
  
         Assert.assertNotNull(root.getOtherCommitNode());
-        Assert.assertEquals(vms, root.getData().get(commit).getStatistics().getN());
-        Assert.assertEquals(vms, root.getData().get(oldCommit).getStatistics().getN());
+        Assert.assertEquals(vms, root.getOtherCommitNode().getData().get(commit).getStatistics().getN());
+        Assert.assertEquals(vms, root.getOtherCommitNode().getData().get(oldCommit).getStatistics().getN());
         
         System.out.println();
         printCallTreeNode(root.getOtherCommitNode());
 
-        Assert.assertTrue(root.getOtherCommitNode().getData().isEmpty());
+        Assert.assertTrue(root.getData().isEmpty());
 
         reproduceToEntityProblem(root, root.getOtherCommitNode());
     }

@@ -135,7 +135,7 @@ public class CallTreeNode extends BasicNode {
          LOG.error("Error occured in commit {}", commit);
          LOG.error("Node: {}", kiekerPattern);
          LOG.error("Other commit node: {}", getOtherKiekerPattern());
-         throw new RuntimeException("Added methods may not contain data, trying to add data for " + commit);
+         throw new RuntimeException("Added methods may not contain data, trying to add data for " + commit + " and " + call);
       }
       if (call.equals(CauseSearchData.ADDED) && commit.equals(config.getFixedCommitConfig().getCommitOld())) {
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + commit);
