@@ -40,10 +40,11 @@ public class SjswCctConverter {
                     methodNameWithNew,
                     methodNameWithNew,
                     config);
-            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, true, config);
+            buildPeassNodeStatistics(currentBAT, otherNode, ctn, commit, predecessor, true, config);
         } else {
-            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, false, config);
+            appendChild(currentBAT, ctn);
             ctn = ctn.getChildByKiekerPattern(methodNameWithNew);
+            buildPeassNodeStatistics(currentBAT, otherNode, ctn, commit, predecessor, false, config);
         }
 
         if (otherNode != null) {
@@ -53,10 +54,10 @@ public class SjswCctConverter {
         }
 
         List<StackTraceTreeNode> children = currentBAT.getChildren();
-        if (children.isEmpty() && ctn != null) {
-            LOG.info("Analyzing child");
-            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, true, config);
-        }
+//        if (children.isEmpty() && ctn != null) {
+//            LOG.info("Analyzing child");
+//            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, true, config);
+//        }
         for (StackTraceTreeNode child : children) {
             if (child != null) {
                 convertCallContextTreeToCallTree(child, otherNode, ctn, commit, predecessor, config);
@@ -108,9 +109,14 @@ public class SjswCctConverter {
         return null;
     }
 
-    private static void createPeassNode(StackTraceTreeNode node, StackTraceTreeNode otherNode, final CallTreeNode peassNode,
+    private static void buildPeassNodeStatistics(StackTraceTreeNode node, StackTraceTreeNode otherNode, final CallTreeNode peassNode,
                                         String commit, String oldCommit, boolean lastNode,
                                         MeasurementConfig config) {
+        
+        if (peassNode.getData() != null && 
+              (peassNode.getData().get(commit) != null || peassNode.getData().get(oldCommit) != null)) {
+           throw new RuntimeException("Tried to add data twice to " + peassNode.getCall());
+        }
         LOG.info("Creating peass node for stacktracetreenodes: {} -> {}", node.getPayload().getMethodName() + "(" + node.getMeasurements() + ")", otherNode != null ? otherNode.getPayload().getMethodName() + "(" + otherNode.getMeasurements() + ")" : null);
         LOG.info("Peass node: " + peassNode);
         peassNode.initCommitData();
@@ -130,8 +136,6 @@ public class SjswCctConverter {
         }
         peassNode.createStatistics(commit);
         peassNode.createStatistics(oldCommit);
-
-        if(!lastNode) appendChild(node, peassNode);
 
         LOG.info("Current stats: {} --> {}", commit, peassNode.getData().get(commit).getResults().size());
         if(otherNode != null) {
@@ -244,17 +248,17 @@ public class SjswCctConverter {
                     methodNameWithNew,
                     methodNameWithNew,
                     config);
-            createPeassNode(otherNode, node, otherCallTreeNode, commit, predecessor, true, config);
+//            createPeassNode(otherNode, node, otherCallTreeNode, commit, predecessor, true, config);
         } else {
-            createPeassNode(otherNode, node, otherCallTreeNode, commit, predecessor, false, config);
+//            createPeassNode(otherNode, node, otherCallTreeNode, commit, predecessor, false, config);
             otherCallTreeNode = otherCallTreeNode.getChildByKiekerPattern(methodNameWithNew);
         }
         
         if (otherCallTreeNode != null) {
            List<StackTraceTreeNode> children = otherNode.getChildren();
-           if (children.isEmpty() && otherCallTreeNode != null) {
-               createPeassNode(otherNode, node, otherCallTreeNode, commit, predecessor, true, config);
-           }
+//           if (children.isEmpty() && otherCallTreeNode != null) {
+//               createPeassNode(otherNode, node, otherCallTreeNode, commit, predecessor, true, config);
+//           }
            for (StackTraceTreeNode child : children) {
                createOtherNodeRecursive(child, node, otherCallTreeNode , predecessor, commit, config);
            }
