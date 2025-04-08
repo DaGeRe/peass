@@ -129,7 +129,7 @@ public class SjswCctConverter {
       return methodSignature;
    }
 
-   private void buildPeassNodeStatistics(StackTraceTreeNode node, StackTraceTreeNode otherNode, final CallTreeNode peassNode) {
+   private void buildPeassNodeStatistics(final StackTraceTreeNode node, final StackTraceTreeNode otherNode, final CallTreeNode peassNode) {
       if (peassNode.getData() != null &&
             (peassNode.getData().get(commit) != null || peassNode.getData().get(predecessor) != null)) {
          throw new RuntimeException("Tried to add data twice to " + peassNode.getCall());
@@ -142,19 +142,19 @@ public class SjswCctConverter {
 
       if (config.isUseIterativeSampling()) {
          if (node != null) {
-            addIterativeMeasurements(commit, node, peassNode, config.getVms(), config.getIterations());
+            addIterativeMeasurements(commit, node, peassNode);
          }
          if (otherNode != null) {
             LOG.info("Adding measurements for the other commit {}", predecessor);
-            addIterativeMeasurements(predecessor, otherNode, peassNode, config.getVms(), config.getIterations());
+            addIterativeMeasurements(predecessor, otherNode, peassNode);
          }
       } else {
          if (node != null) {
-            addMeasurements(commit, node, peassNode, config.getVms());
+            addMeasurements(commit, node, peassNode);
          }
          if (otherNode != null) {
             LOG.info("Adding measurements for the other commit {}", predecessor);
-            addMeasurements(predecessor, otherNode, peassNode, config.getVms());
+            addMeasurements(predecessor, otherNode, peassNode);
          }
       }
       peassNode.createStatistics(commit);
@@ -166,40 +166,39 @@ public class SjswCctConverter {
       }
    }
 
-   private static void addMeasurements(String commit, StackTraceTreeNode node, CallTreeNode peassNode, int vms) {
+   private void addMeasurements(String commit, StackTraceTreeNode node, CallTreeNode peassNode) {
       List<Double> measurementsForSpecificCommit = node.getMeasurements().get(commit);
       if (measurementsForSpecificCommit == null || measurementsForSpecificCommit.isEmpty()) {
          throw new IllegalArgumentException("Possibly invalid measurement data. Commit " +
                commit + " does not contain any measurement data.");
       }
 
-      if (measurementsForSpecificCommit.size() != vms) {
-         int missing = vms - measurementsForSpecificCommit.size();
+      if (measurementsForSpecificCommit.size() != config.getVms()) {
+         int missing = config.getVms() - measurementsForSpecificCommit.size();
          for (int i = 0; i < missing; i++) {
             measurementsForSpecificCommit.add(0.0);
          }
       }
 
-      for (int vm = 0; vm < vms; vm++) {
+      for (int vm = 0; vm < config.getVms(); vm++) {
          peassNode.initVMData(commit);
          double measurement = measurementsForSpecificCommit.get(vm);
          peassNode.addMeasurement(commit, (long) measurement);
       }
    }
 
-   private static void addIterativeMeasurements(final String commit, final StackTraceTreeNode node, final CallTreeNode peassNode,
-         final int vms, final int iterations) {
+   private void addIterativeMeasurements(final String commit, final StackTraceTreeNode node, final CallTreeNode peassNode) {
       List<VmMeasurement> measurementsForSpecificCommit = node.getVmMeasurements().get(commit);
       if (measurementsForSpecificCommit == null || measurementsForSpecificCommit.isEmpty()) {
          throw new IllegalArgumentException("Possibly invalid iterative measurement data. Commit " +
                commit + " does not contain any measurement data.");
       }
 
-      if (measurementsForSpecificCommit.size() != vms) {
-         LOG.error("Amount of measurements ({}) is not equal to the amount of VMs ({}).", measurementsForSpecificCommit.size(), vms);
+      if (measurementsForSpecificCommit.size() != config.getVms()) {
+         LOG.error("Amount of measurements ({}) is not equal to the amount of VMs ({}).", measurementsForSpecificCommit.size(), config.getVms());
       }
 
-      for (int vm = 0; vm < vms; vm++) {
+      for (int vm = 0; vm < config.getVms(); vm++) {
          final int vmfinal = vm;
          List<VmMeasurement> vmMeasurements = measurementsForSpecificCommit.stream().filter(vmm -> vmm.getVm() == vmfinal).collect(Collectors.toList());
          if (vmMeasurements.isEmpty() || vmMeasurements.get(0) == null) {
@@ -211,8 +210,8 @@ public class SjswCctConverter {
                vm, vmMeasurements.size(), measurements.size());
          if (measurements.size() > 1) {
             final List<StatisticalSummary> values = new LinkedList<>();
-            int sliceSize = Math.max(measurements.size() / iterations, 1);
-            LOG.info("Measurements: {} Iterations: {} Slice size: {}", measurements.size(), iterations, sliceSize);
+            int sliceSize = Math.max(measurements.size() / config.getIterations(), 1);
+            LOG.info("Measurements: {} Iterations: {} Slice size: {}", measurements.size(), config.getIterations(), sliceSize);
             List<List<Double>> slicedIterationMeasurements = Lists.partition(measurements, sliceSize);
             slicedIterationMeasurements.forEach(slice -> {
                final SummaryStatistics statistic = new SummaryStatistics();

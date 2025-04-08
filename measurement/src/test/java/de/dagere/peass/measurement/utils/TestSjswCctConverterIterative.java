@@ -23,7 +23,8 @@ public class TestSjswCctConverterIterative {
       File predecessorFile = new File(folder, "5a9a3a0763ca8103f0b9b267876eaa42082a78aa.json");
       StackTraceTreeNode predecessor = Constants.OBJECTMAPPER.readValue(predecessorFile, StackTraceTreeNode.class);
 
-      MeasurementConfig config = new MeasurementConfig(10, "f0729636eaa6e0f6f39b663b5231a8b28142731e", "5a9a3a0763ca8103f0b9b267876eaa42082a78aa");
+      MeasurementConfig config = new MeasurementConfig(3, "f0729636eaa6e0f6f39b663b5231a8b28142731e", "5a9a3a0763ca8103f0b9b267876eaa42082a78aa");
+      config.setIterations(20);
       config.setUseIterativeSampling(true);
       SjswCctConverter sjswCctConverter = new SjswCctConverter("f0729636eaa6e0f6f39b663b5231a8b28142731e", "5a9a3a0763ca8103f0b9b267876eaa42082a78aa",
             config);
