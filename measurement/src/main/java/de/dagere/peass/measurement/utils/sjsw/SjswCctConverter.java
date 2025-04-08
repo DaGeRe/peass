@@ -40,12 +40,11 @@ public class SjswCctConverter {
                     methodNameWithNew,
                     methodNameWithNew,
                     config);
-            buildPeassNodeStatistics(currentBAT, otherNode, ctn, commit, predecessor, true, config);
         } else {
             appendChild(currentBAT, ctn);
             ctn = ctn.getChildByKiekerPattern(methodNameWithNew);
-            buildPeassNodeStatistics(currentBAT, otherNode, ctn, commit, predecessor, false, config);
         }
+        buildPeassNodeStatistics(currentBAT, otherNode, ctn, commit, predecessor, config);
 
         if (otherNode != null) {
             CallTreeNode otherCallTreeNode = null;
@@ -110,7 +109,7 @@ public class SjswCctConverter {
     }
 
     private static void buildPeassNodeStatistics(StackTraceTreeNode node, StackTraceTreeNode otherNode, final CallTreeNode peassNode,
-                                        String commit, String oldCommit, boolean lastNode,
+                                        String commit, String oldCommit,
                                         MeasurementConfig config) {
         
         if (peassNode.getData() != null && 
