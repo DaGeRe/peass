@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class SjswCctConverter {
    private static final Logger LOG = LogManager.getLogger(SjswCctConverter.class);
-   
+
    private final String commit, predecessor;
    private final MeasurementConfig config;
 
@@ -28,8 +28,28 @@ public class SjswCctConverter {
       this.config = config;
    }
 
-   public CallTreeNode convertCallContextTreeToCallTree(final StackTraceTreeNode currentBAT,
-         final StackTraceTreeNode predecessorBAT, CallTreeNode ctn) {
+   public CallTreeNode convertToCCT(final StackTraceTreeNode currentBAT, final StackTraceTreeNode predecessorBAT) {
+      final String methodNameWithNew = normalizeKiekerPattern(currentBAT);
+      final String call = KiekerPatternConverter.getCall(methodNameWithNew);
+
+      CallTreeNode root = new CallTreeNode(call, methodNameWithNew, methodNameWithNew, config);
+      CallTreeNode otherNode = new CallTreeNode(call, methodNameWithNew, methodNameWithNew, config);
+
+      root.setOtherCommitNode(otherNode);
+      otherNode.setOtherCommitNode(root);
+      
+      buildPeassNodeStatistics(currentBAT, predecessorBAT, root);
+
+      for (StackTraceTreeNode child : currentBAT.getChildren()) {
+         StackTraceTreeNode otherChild = predecessorBAT.getChildren().get(0);
+         convertCallContextTreeToCallTree(child, otherChild, root);
+      }
+
+      return root;
+   }
+
+   private CallTreeNode convertCallContextTreeToCallTree(final StackTraceTreeNode currentBAT,
+         final StackTraceTreeNode predecessorBAT, final CallTreeNode parentNode) {
       if (commit == null && predecessor == null) {
          throw new IllegalArgumentException("Commit and Predesseror cannot be null");
       }
@@ -42,30 +62,23 @@ public class SjswCctConverter {
       LOG.info("Original node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
 
       final String methodNameWithNew = normalizeKiekerPattern(currentBAT);
-      final String call = KiekerPatternConverter.getCall(methodNameWithNew);
-      if (ctn == null) {
-         ctn = new CallTreeNode(call,
-               methodNameWithNew,
-               methodNameWithNew,
-               config);
-      } else {
-         appendChild(currentBAT, ctn);
-         ctn = ctn.getChildByKiekerPattern(methodNameWithNew);
-      }
+      
+      appendChild(currentBAT, parentNode);
+      final CallTreeNode currentNode = parentNode.getChildByKiekerPattern(methodNameWithNew);
 
       if (otherNode != null) {
          CallTreeNode otherCallTreeNode = createOtherNodeRecursive(otherNode, currentBAT, null);
-         ctn.setOtherCommitNode(otherCallTreeNode);
+         currentNode.setOtherCommitNode(otherCallTreeNode);
       }
 
       List<StackTraceTreeNode> children = currentBAT.getChildren();
       for (StackTraceTreeNode child : children) {
-         convertCallContextTreeToCallTree(child, otherNode, ctn);
+         convertCallContextTreeToCallTree(child, otherNode, currentNode);
       }
 
-      buildPeassNodeStatistics(currentBAT, otherNode, ctn);
+      buildPeassNodeStatistics(currentBAT, otherNode, currentNode);
 
-      return ctn;
+      return currentNode;
    }
 
    private static String normalizeKiekerPattern(StackTraceTreeNode node) {
