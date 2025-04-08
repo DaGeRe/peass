@@ -38,7 +38,7 @@ public class SjswCctConverterTest {
         printTrees(current, old);
 
         MeasurementConfig config = new MeasurementConfig(vms, commit, oldCommit);
-        CallTreeNode root = SjswCctConverter.convertCallContextTreeToCallTree(current, old, null, commit, oldCommit, config);
+        CallTreeNode root = new SjswCctConverter(commit, oldCommit,config).convertCallContextTreeToCallTree(current, old, null);
 
         CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, root.getOtherCommitNode());
         var bla = root.getOtherCommitNode();
@@ -47,12 +47,14 @@ public class SjswCctConverterTest {
         }
 
         printCallTreeNode(root);
+ 
         Assert.assertNotNull(root.getOtherCommitNode());
         Assert.assertEquals(vms, root.getData().get(commit).getStatistics().getN());
         Assert.assertEquals(vms, root.getData().get(oldCommit).getStatistics().getN());
         
         System.out.println();
         printCallTreeNode(root.getOtherCommitNode());
+
         Assert.assertTrue(root.getOtherCommitNode().getData().isEmpty());
 
         reproduceToEntityProblem(root, root.getOtherCommitNode());

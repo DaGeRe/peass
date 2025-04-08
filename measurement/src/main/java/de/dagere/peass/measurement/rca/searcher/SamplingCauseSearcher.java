@@ -157,7 +157,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
       // Convert BAT to CallTreeNode for both commits
       CallTreeNode root = null;
-      root = SjswCctConverter.convertCallContextTreeToCallTree(commitBAT, predecessorBAT, root, commits[1], commits[0], configuration);
+      root = new SjswCctConverter(commits[1], commits[0], configuration).convertCallContextTreeToCallTree(commitBAT, predecessorBAT, root);
 
       if (root == null) {
          throw new RuntimeException("CallTreeNode was null after attempted conversion from SJSW structure.");
@@ -191,7 +191,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       StackTraceTreeNode predecessorBAT = retrieveBatForCommit(commits[1], processor, resultsPath);
 
       // Convert BAT to CallTreeNode for both commits
-      CallTreeNode root =  SjswCctConverter.convertCallContextTreeToCallTree(commitBAT, predecessorBAT, null, commits[0], commits[1],  configuration);
+      CallTreeNode root = new SjswCctConverter(commits[0], commits[1],  configuration).convertCallContextTreeToCallTree(commitBAT, predecessorBAT, null);
 
       if (root == null) {
          throw new RuntimeException("CallTreeNode was null after attempted conversion from SJSW structure.");
