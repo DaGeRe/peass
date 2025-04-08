@@ -44,11 +44,9 @@ public class SjswCctConverter {
             appendChild(currentBAT, ctn);
             ctn = ctn.getChildByKiekerPattern(methodNameWithNew);
         }
-        buildPeassNodeStatistics(currentBAT, otherNode, ctn, commit, predecessor, config);
-
+        
         if (otherNode != null) {
-            CallTreeNode otherCallTreeNode = null;
-            otherCallTreeNode = createOtherNodeRecursive(otherNode, currentBAT, otherCallTreeNode, commit, predecessor, config);
+            CallTreeNode otherCallTreeNode = createOtherNodeRecursive(otherNode, currentBAT, null, commit, predecessor, config);
             ctn.setOtherCommitNode(otherCallTreeNode);
         }
 
@@ -58,10 +56,10 @@ public class SjswCctConverter {
 //            createPeassNode(currentBAT, otherNode, ctn, commit, predecessor, true, config);
 //        }
         for (StackTraceTreeNode child : children) {
-            if (child != null) {
-                convertCallContextTreeToCallTree(child, otherNode, ctn, commit, predecessor, config);
-            }
+           convertCallContextTreeToCallTree(child, otherNode, ctn, commit, predecessor, config);
         }
+
+        buildPeassNodeStatistics(currentBAT, otherNode, ctn, commit, predecessor, config);
 
         return ctn;
     }
