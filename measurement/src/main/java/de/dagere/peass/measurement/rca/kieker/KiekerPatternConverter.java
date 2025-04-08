@@ -35,10 +35,23 @@ public class KiekerPatternConverter {
       if (!kiekerPattern.contains("(") || !kiekerPattern.contains(")")) {
          throw new RuntimeException(kiekerPattern + " is supposed to contain ( and )");
       }
-      String beforeParameters = kiekerPattern.substring(0, kiekerPattern.indexOf('('));
-      String method = beforeParameters.substring(beforeParameters.lastIndexOf('.') + 1);
-      String clazz = beforeParameters.substring(beforeParameters.lastIndexOf(' ') + 1, beforeParameters.lastIndexOf('.'));
-      return clazz + "#" + method;
+      final String beforeParameters = kiekerPattern.substring(0, kiekerPattern.indexOf('('));
+      final String afterSpace = beforeParameters.substring(beforeParameters.lastIndexOf(' ') + 1);
+
+      final int dotIndex = afterSpace.lastIndexOf('.');
+      final String clazz, method;
+      if (dotIndex != -1) {
+         method = afterSpace.substring(dotIndex + 1);
+         clazz = afterSpace.substring(0, dotIndex);
+
+         return clazz + "#" + method;
+      } else {
+         final int doubleColonIndex = afterSpace.lastIndexOf("::");
+         method = afterSpace.substring(doubleColonIndex + 2);
+         clazz = afterSpace.substring(0, doubleColonIndex);
+
+         return clazz + "::" + method;
+      }
    }
 
    public static String addNewIfRequired(String kiekerPattern) {
