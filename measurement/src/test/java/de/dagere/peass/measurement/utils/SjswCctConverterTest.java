@@ -61,23 +61,6 @@ public class SjswCctConverterTest {
     }
 
     @Test
-    public void testCorrectCallString() {
-        String methodSignature = "public void org.example.testing(int, long)";
-        String call = SjswCctConverter.getCorrectCallString(methodSignature);
-        Assert.assertEquals("org.example#testing", call);
-    }
-
-    @Test
-    public void testCTNToEntity() {
-        String methodSignature = "public void org.example.testing(int, long)";
-        String call = SjswCctConverter.getCorrectCallString(methodSignature);
-        final CallTreeNode node = new CallTreeNode(call, methodSignature, methodSignature, (MeasurementConfig) null);
-        System.out.println("Node created: " + node.getCall() + ", " + node.getMethod());
-        MethodCall result = node.toEntity();
-        Assert.assertEquals(new MethodCall("org.example", "", "testing"), node.toEntity());
-    }
-
-    @Test
     public void testCTNToEntityWithRootNode() {
         String methodSignature = "Root.root()";
         String call = "Root#root";

@@ -166,21 +166,6 @@ public class SjswCctConverter {
       }
    }
 
-   public static String getCorrectCallString(String method) {
-      int lastParenthesisIndex = method.contains("(") ? method.lastIndexOf("(") : method.length() - 1;
-      String methodName = method.substring(0, lastParenthesisIndex);
-
-      String[] parts = methodName.split(" ");
-      String methodNameWithoutType = parts.length > 1 ? parts[parts.length - 1] : method;
-
-      int lastDotIndex = methodNameWithoutType.contains(".") ? methodNameWithoutType.lastIndexOf(".")
-            : -1;
-      String className = lastDotIndex > 0 ? methodNameWithoutType.substring(0, lastDotIndex) : "";
-      methodName = methodNameWithoutType.substring(lastDotIndex + 1);
-
-      return className + "#" + methodName;
-   }
-
    private static void addMeasurements(String commit, StackTraceTreeNode node, CallTreeNode peassNode, int vms) {
       List<Double> measurementsForSpecificCommit = node.getMeasurements().get(commit);
       if (measurementsForSpecificCommit == null || measurementsForSpecificCommit.isEmpty()) {
