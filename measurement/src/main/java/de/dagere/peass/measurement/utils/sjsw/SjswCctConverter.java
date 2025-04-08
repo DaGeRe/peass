@@ -26,6 +26,10 @@ public class SjswCctConverter {
       this.commit = commit;
       this.predecessor = predecessor;
       this.config = config;
+      
+      if (commit == null && predecessor == null) {
+         throw new IllegalArgumentException("Commit and Predesseror cannot be null");
+      }
    }
 
    public CallTreeNode convertToCCT(final StackTraceTreeNode currentBAT, final StackTraceTreeNode predecessorBAT) {
@@ -50,10 +54,6 @@ public class SjswCctConverter {
 
    private CallTreeNode convertCallContextTreeToCallTree(final StackTraceTreeNode currentBAT,
          final StackTraceTreeNode predecessorBAT, final CallTreeNode parentNode) {
-      if (commit == null && predecessor == null) {
-         throw new IllegalArgumentException("Commit and Predesseror cannot be null");
-      }
-
       LOG.info("Current original node: {}", currentBAT.getPayload().getMethodName());
 
       final StackTraceTreeNode otherNode = predecessorBAT != null ? search(currentBAT, predecessorBAT) : null;
