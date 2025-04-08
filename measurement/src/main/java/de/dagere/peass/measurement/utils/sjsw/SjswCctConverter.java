@@ -45,6 +45,7 @@ public class SjswCctConverter {
       buildPeassNodeStatistics(currentBAT, predecessorBAT, root);
 
       for (StackTraceTreeNode child : currentBAT.getChildren()) {
+         //TODO: Here, we need the correct node mapping, and this needs to be done for all nodes
          StackTraceTreeNode otherChild = predecessorBAT.getChildren().get(0);
          convertCallContextTreeToCallTree(child, otherChild, root);
       }
@@ -55,10 +56,7 @@ public class SjswCctConverter {
    private CallTreeNode convertCallContextTreeToCallTree(final StackTraceTreeNode currentBAT,
          final StackTraceTreeNode predecessorBAT, final CallTreeNode parentNode) {
       LOG.info("Current original node: {}", currentBAT.getPayload().getMethodName());
-
-      final StackTraceTreeNode otherNode = predecessorBAT != null ? search(currentBAT, predecessorBAT) : null;
-
-      LOG.info("Other original node: {}", otherNode != null ? otherNode.getPayload().getMethodName() : null);
+      LOG.info("Other original node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
       LOG.info("Original node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
 
       final String methodNameWithNew = normalizeKiekerPattern(currentBAT);
@@ -66,17 +64,19 @@ public class SjswCctConverter {
       appendChild(currentBAT, parentNode);
       final CallTreeNode currentNode = parentNode.getChildByKiekerPattern(methodNameWithNew);
 
-      if (otherNode != null) {
-         CallTreeNode otherCallTreeNode = createOtherNodeRecursive(otherNode, currentBAT, null);
+      if (predecessorBAT != null) {
+         appendChild(predecessorBAT, parentNode.getOtherCommitNode());
+         
+         CallTreeNode otherCallTreeNode = createOtherNodeRecursive(predecessorBAT, currentBAT, null);
          currentNode.setOtherCommitNode(otherCallTreeNode);
       }
 
       List<StackTraceTreeNode> children = currentBAT.getChildren();
       for (StackTraceTreeNode child : children) {
-         convertCallContextTreeToCallTree(child, otherNode, currentNode);
+         convertCallContextTreeToCallTree(child, predecessorBAT, currentNode);
       }
 
-      buildPeassNodeStatistics(currentBAT, otherNode, currentNode);
+      buildPeassNodeStatistics(currentBAT, predecessorBAT, currentNode);
 
       return currentNode;
    }
