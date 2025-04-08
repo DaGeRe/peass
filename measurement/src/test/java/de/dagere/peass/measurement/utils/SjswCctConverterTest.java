@@ -28,7 +28,7 @@ public class SjswCctConverterTest {
 
     @Test
     public void testWithoutEmptyNodes() {
-        int vms = 2;
+        int vms = 5;
         String commit = "a1";
         String oldCommit = "b2";
         StackTraceTreeNode current = prepareFakeTree(List.of(path1a, path1b), commit, vms);
@@ -47,8 +47,13 @@ public class SjswCctConverterTest {
         }
 
         printCallTreeNode(root);
+        Assert.assertNotNull(root.getOtherCommitNode());
+        Assert.assertEquals(vms, root.getData().get(commit).getStatistics().getN());
+        Assert.assertEquals(vms, root.getData().get(oldCommit).getStatistics().getN());
+        
         System.out.println();
         printCallTreeNode(root.getOtherCommitNode());
+        Assert.assertTrue(root.getOtherCommitNode().getData().isEmpty());
 
         reproduceToEntityProblem(root, root.getOtherCommitNode());
     }
