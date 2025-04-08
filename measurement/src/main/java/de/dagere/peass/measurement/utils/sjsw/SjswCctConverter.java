@@ -1,22 +1,22 @@
 package de.dagere.peass.measurement.utils.sjsw;
 
-import com.google.common.collect.Lists;
-import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.dagere.peass.measurement.rca.data.CauseSearchData;
-import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
-import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
-import io.github.terahidro2003.cct.result.StackTraceTreeNode;
-import io.github.terahidro2003.cct.result.VmMeasurement;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-import java.util.stream.Collectors;
+import com.google.common.collect.Lists;
+
+import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
+import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
+import io.github.terahidro2003.cct.result.StackTraceTreeNode;
+import io.github.terahidro2003.cct.result.VmMeasurement;
 
 public class SjswCctConverter {
    private static final Logger LOG = LogManager.getLogger(SjswCctConverter.class);
@@ -79,75 +79,30 @@ public class SjswCctConverter {
       LOG.info("Other original node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
       LOG.info("Original node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
 
-      System.out.println("Current children: " + parentNode.getChildren());
-      System.out.println("Other children: " + parentNode.getOtherCommitNode().getChildren());
-
       for (CallTreeNode childNode : parentNode.getChildren()) {
-         if (!childNode.getCall().equals(CauseSearchData.ADDED) &&
-               !childNode.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
-            StackTraceTreeNode childCurrentStack = findChild(currentBAT, childNode.getOtherCommitNode());
-            StackTraceTreeNode childPredecessorStack = findChild(predecessorBAT, childNode);
-            System.out.println("Adding data for " +
-                  (childCurrentStack != null ? childCurrentStack.getPayload().getMethodName() : null)
-                  + " " +
-                  (childPredecessorStack != null ? childPredecessorStack.getPayload().getMethodName() : null));
+         StackTraceTreeNode childCurrentStack = findChild(currentBAT, childNode.getOtherCommitNode());
+         StackTraceTreeNode childPredecessorStack = findChild(predecessorBAT, childNode);
+         
+         LOG.info("Adding data for " +
+               (childCurrentStack != null ? childCurrentStack.getPayload().getMethodName() : null)
+               + " " +
+               (childPredecessorStack != null ? childPredecessorStack.getPayload().getMethodName() : null));
 
-            buildPeassNodeStatistics(childCurrentStack, childPredecessorStack, childNode);
+         buildPeassNodeStatistics(childCurrentStack, childPredecessorStack, childNode);
 
-            appendAllChildren(childCurrentStack, childPredecessorStack, childNode.getOtherCommitNode(), childNode);
-            convertCallContextTreeToCallTree(childCurrentStack, childPredecessorStack, childNode);
-         } else if (childNode.getCall().equals(CauseSearchData.ADDED)) {
-            StackTraceTreeNode childCurrentStack = findChild(currentBAT, childNode.getOtherCommitNode());
-            System.out.println("Adding data for " +
-                  (childCurrentStack != null ? childCurrentStack.getPayload().getMethodName() : null)
-                  + " null (partial)");
-
-            buildPeassNodeStatistics(childCurrentStack, null, childNode);
-            
-            appendAllChildren(childCurrentStack, null, childNode.getOtherCommitNode(), childNode);
-            convertCallContextTreeToCallTree(childCurrentStack, null, childNode);
-         } else if (childNode.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
-            StackTraceTreeNode childPredecessorStack = findChild(predecessorBAT, childNode);
-            System.out.println("Adding data for " +
-                  null
-                  + " " +
-                  (childPredecessorStack != null ? childPredecessorStack.getPayload().getMethodName() : null));
-
-            buildPeassNodeStatistics(null, childPredecessorStack, childNode);
-            
-            appendAllChildren(null, childPredecessorStack, childNode.getOtherCommitNode(), childNode);
-            convertCallContextTreeToCallTree(null, childPredecessorStack, childNode);
-         }
+         appendAllChildren(childCurrentStack, childPredecessorStack, childNode.getOtherCommitNode(), childNode);
+         convertCallContextTreeToCallTree(childCurrentStack, childPredecessorStack, childNode);
       }
-
-      // final String methodNameWithNew = normalizeKiekerPattern(currentBAT);
-      //
-      // appendChild(currentBAT, parentNode);
-      // final CallTreeNode currentNode = parentNode.getChildByKiekerPattern(methodNameWithNew);
-      //
-      // if (predecessorBAT != null) {
-      // appendChild(predecessorBAT, parentNode.getOtherCommitNode());
-      //
-      // CallTreeNode otherCallTreeNode = createOtherNodeRecursive(predecessorBAT, currentBAT, null);
-      // currentNode.setOtherCommitNode(otherCallTreeNode);
-      // }
-
-      // List<StackTraceTreeNode> children = currentBAT.getChildren();
-      // for (StackTraceTreeNode child : children) {
-      // convertCallContextTreeToCallTree(child, predecessorBAT, currentNode);
-      // }
-      //
-      // buildPeassNodeStatistics(currentBAT, predecessorBAT, currentNode);
-
-      // return currentNode;
    }
 
    private StackTraceTreeNode findChild(final StackTraceTreeNode stackTraceParent, CallTreeNode childNode) {
       StackTraceTreeNode childCurrentStack = null;
-      for (StackTraceTreeNode stackTraceChild : stackTraceParent.getChildren()) {
-         String kiekerPattern = normalizeKiekerPattern(stackTraceChild);
-         if (kiekerPattern.equals(childNode.getKiekerPattern())) {
-            childCurrentStack = stackTraceChild;
+      if (stackTraceParent != null) {
+         for (StackTraceTreeNode stackTraceChild : stackTraceParent.getChildren()) {
+            String kiekerPattern = normalizeKiekerPattern(stackTraceChild);
+            if (kiekerPattern.equals(childNode.getKiekerPattern())) {
+               childCurrentStack = stackTraceChild;
+            }
          }
       }
       return childCurrentStack;
@@ -172,27 +127,6 @@ public class SjswCctConverter {
          methodSignature = "new " + methodSignature;
       }
       return methodSignature;
-   }
-
-   public static StackTraceTreeNode search(StackTraceTreeNode searchable, StackTraceTreeNode tree) {
-      Stack<StackTraceTreeNode> stack = new Stack<>();
-      stack.push(tree);
-
-      while (!stack.isEmpty()) {
-         StackTraceTreeNode currentNode = stack.pop();
-
-         if (searchable.equals(currentNode)) {
-            return currentNode;
-         }
-
-         for (StackTraceTreeNode child : currentNode.getChildren()) {
-            if (child != null) {
-               stack.push(child);
-            }
-         }
-      }
-
-      return null;
    }
 
    private void buildPeassNodeStatistics(StackTraceTreeNode node, StackTraceTreeNode otherNode, final CallTreeNode peassNode) {
@@ -245,13 +179,6 @@ public class SjswCctConverter {
       methodName = methodNameWithoutType.substring(lastDotIndex + 1);
 
       return className + "#" + methodName;
-   }
-
-   private static void appendChild(StackTraceTreeNode node, CallTreeNode peassNode) {
-      // check is done as a workaround for Peass kieker pattern check
-      String methodNameWithNew = normalizeKiekerPattern(node);
-      String call = KiekerPatternConverter.getCall(methodNameWithNew);
-      peassNode.appendChild(call, methodNameWithNew, methodNameWithNew);
    }
 
    private static void addMeasurements(String commit, StackTraceTreeNode node, CallTreeNode peassNode, int vms) {
@@ -319,32 +246,5 @@ public class SjswCctConverter {
             });
          }
       }
-   }
-
-   public CallTreeNode createOtherNodeRecursive(final StackTraceTreeNode otherNode, StackTraceTreeNode node,
-         CallTreeNode otherCallTreeNode) {
-      node = node != null ? search(otherNode, node) : null;
-
-      final String methodNameWithNew = normalizeKiekerPattern(otherNode);
-      final String call = KiekerPatternConverter.getCall(methodNameWithNew);
-      if (otherCallTreeNode == null) {
-         otherCallTreeNode = new CallTreeNode(call,
-               methodNameWithNew,
-               methodNameWithNew,
-               config);
-      } else {
-         otherCallTreeNode = otherCallTreeNode.getChildByKiekerPattern(methodNameWithNew);
-      }
-
-      if (otherCallTreeNode != null) {
-         List<StackTraceTreeNode> children = otherNode.getChildren();
-         for (StackTraceTreeNode child : children) {
-            createOtherNodeRecursive(child, node, otherCallTreeNode);
-         }
-      } else {
-         LOG.warn("Didn't find other call tree node for " + methodNameWithNew + " (Call: " + call + ")");
-      }
-
-      return otherCallTreeNode;
    }
 }
