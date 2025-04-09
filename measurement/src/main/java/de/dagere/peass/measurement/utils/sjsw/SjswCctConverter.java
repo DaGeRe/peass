@@ -145,11 +145,11 @@ public class SjswCctConverter {
       peassNode.initCommitData();
 
       if (config.isUseIterativeSampling()) {
-         if (node != null) {
+         if (node != null && node.getVmMeasurements().get(commit).size() > 1) {
             LOG.debug("Adding measurements for commit {}", commit);
             addIterativeMeasurements(commit, node, peassNode);
          }
-         if (otherNode != null) {
+         if (otherNode != null && otherNode.getVmMeasurements().get(predecessor).size() > 1) {
             LOG.debug("Adding measurements for predecessor {}", predecessor);
             addIterativeMeasurements(predecessor, otherNode, peassNode);
          }
