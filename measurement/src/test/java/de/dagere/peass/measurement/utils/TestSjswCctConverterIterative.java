@@ -7,7 +7,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.measurement.rca.CauseSearcherConfig;
+import de.dagere.peass.measurement.rca.CauseSearcherConfigMixin;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.utils.sjsw.SjswCctConverter;
 import de.dagere.peass.utils.Constants;
 import io.github.terahidro2003.cct.result.StackTraceTreeNode;
@@ -32,11 +35,27 @@ public class TestSjswCctConverterIterative {
 
       Assert.assertEquals(rootNode.getCall(), "de.dagere.peass.MainTest#testMe");
       SjswCctConverterTest.printCallTreeNode(rootNode);
-      
+
       System.out.println();
       System.out.println();
-      
+
       Assert.assertEquals(rootNode.getOtherCommitNode().getCall(), "de.dagere.peass.MainTest#testMe");
       SjswCctConverterTest.printCallTreeNode(rootNode.getOtherCommitNode());
+
+      CauseSearchData causeSearchData = new CauseSearchData(config, new CauseSearcherConfig(null, new CauseSearcherConfigMixin()));
+      causeSearchData.addDiff(rootNode);
+      causeSearchData.addDetailDiff(rootNode);
+
+      addMeasurements(rootNode, causeSearchData, causeSearchData);
    }
+
+   public void addMeasurements(CallTreeNode parent, CauseSearchData data, CauseSearchData dataDetails) {
+      for (CallTreeNode child : parent.getChildren()) {
+         System.out.println(child.getCall());
+         data.addDiff(child);
+         dataDetails.addDetailDiff(child);
+         addMeasurements(child, data, dataDetails);
+      }
+   }
+
 }

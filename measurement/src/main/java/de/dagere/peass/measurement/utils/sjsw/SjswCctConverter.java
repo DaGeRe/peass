@@ -50,7 +50,7 @@ public class SjswCctConverter {
 
       convertCallContextTreeToCallTree(currentBAT, predecessorBAT, root.getOtherCommitNode());
 
-      return root;
+      return otherNode;
    }
 
    private void appendAllChildren(final StackTraceTreeNode currentBAT, final StackTraceTreeNode predecessorBAT, CallTreeNode root, CallTreeNode otherNode) {
