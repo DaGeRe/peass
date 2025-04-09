@@ -100,7 +100,11 @@ public class CauseSearchData {
          LOG.debug(rawDataNode.getCall() + " " + rawDataNode.getOtherKiekerPattern());
          if (rawDataNode.getCall().equals(ADDED) &&
                  !rawDataNode.getOtherKiekerPattern().equals(ADDED)) {
-            serializeNode.setStatistic(rawDataNode.getOtherCommitNode().getPartialTestcaseStatistic());
+            if (rawDataNode.getData().isEmpty()) {
+               serializeNode.setStatistic(rawDataNode.getOtherCommitNode().getPartialTestcaseStatistic());
+            } else {
+               serializeNode.setStatistic(rawDataNode.getPartialTestcaseStatistic());
+            }
          } else {
             serializeNode.setStatistic(rawDataNode.getPartialTestcaseStatistic());
          }
