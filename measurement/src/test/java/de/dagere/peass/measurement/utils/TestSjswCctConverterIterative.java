@@ -51,7 +51,6 @@ public class TestSjswCctConverterIterative {
 
    public void addMeasurements(CallTreeNode parent, CauseSearchData data, CauseSearchData dataDetails) {
       for (CallTreeNode child : parent.getChildren()) {
-         System.out.println(child.getCall());
          data.addDiff(child);
          dataDetails.addDetailDiff(child);
          addMeasurements(child, data, dataDetails);

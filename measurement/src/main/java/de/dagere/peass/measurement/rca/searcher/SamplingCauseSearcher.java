@@ -170,38 +170,38 @@ public class SamplingCauseSearcher implements ICauseSearcher {
 
       CompleteTreeAnalyzer completeTreeAnalyzer = new CompleteTreeAnalyzer(root, root.getOtherCommitNode());
 
-      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode(), completeTreeAnalyzer);
+      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, completeTreeAnalyzer);
       return differentMethods;
    }
 
    private Set<MethodCall> analyseSamplingResultsWithIterations(SamplerResultsProcessor processor, MeasurementIdentifier identifier, int vms) {
-      CallTreeNode root = generateTree(processor, identifier, vms);
+      final CallTreeNode rootPredecessor = generateTree(processor, identifier, vms);
 
-      CompleteTreeAnalyzer completeTreeAnalyzer = new CompleteTreeAnalyzer(root, root.getOtherCommitNode());
+      CompleteTreeAnalyzer completeTreeAnalyzer = new CompleteTreeAnalyzer(rootPredecessor.getOtherCommitNode(), rootPredecessor);
 
-      Set<MethodCall> differentMethods = getDifferingMethodCalls(root, root.getOtherCommitNode(), completeTreeAnalyzer);
+      Set<MethodCall> differentMethods = getDifferingMethodCalls(rootPredecessor, completeTreeAnalyzer);
       return differentMethods;
    }
 
    public CallTreeNode generateTree(SamplerResultsProcessor processor, MeasurementIdentifier identifier, int vms) {
       Path resultsPath = retrieveSamplingResultsDirectory(identifier).toPath();
       var commits = getVersions();
-      StackTraceTreeNode commitBAT = retrieveBatForCommit(commits[0], processor, resultsPath);
-      StackTraceTreeNode predecessorBAT = retrieveBatForCommit(commits[1], processor, resultsPath);
+      StackTraceTreeNode commitBAT = retrieveBatForCommit(commits[1], processor, resultsPath);
+      StackTraceTreeNode predecessorBAT = retrieveBatForCommit(commits[0], processor, resultsPath);
 
       // Convert BAT to CallTreeNode for both commits
-      CallTreeNode root = new SjswCctConverter(commits[0], commits[1],  configuration).convertToCCT(commitBAT, predecessorBAT);
+      final CallTreeNode rootPredecessor = new SjswCctConverter(commits[1], commits[0],  configuration).convertToCCT(commitBAT, predecessorBAT);
 
-      if (root == null) {
+      if (rootPredecessor == null) {
          throw new RuntimeException("CallTreeNode was null after attempted conversion from SJSW structure.");
       }
 
       // Persist CallTreeNode
-      persistBasicCallTreeNode(root);
-      printCallTreeNode(root);
+      persistBasicCallTreeNode(rootPredecessor);
+      printCallTreeNode(rootPredecessor);
       System.out.println();
-      printCallTreeNode(root.getOtherCommitNode());
-      return root;
+      printCallTreeNode(rootPredecessor.getOtherCommitNode());
+      return rootPredecessor;
    }
 
    public static void printCallTreeNode(CallTreeNode root) {
@@ -233,7 +233,7 @@ public class SamplingCauseSearcher implements ICauseSearcher {
       }
    }
 
-   private Set<MethodCall> getDifferingMethodCalls(CallTreeNode currentRoot, CallTreeNode rootPredecessor, CompleteTreeAnalyzer analyzer) {
+   private Set<MethodCall> getDifferingMethodCalls(CallTreeNode rootPredecessor, CompleteTreeAnalyzer analyzer) {
       final List<CallTreeNode> predecessorNodeList = analyzer.getMeasurementNodesPredecessor();
       final List<CallTreeNode> includableNodes = getIncludableNodes(predecessorNodeList);
 
