@@ -163,12 +163,25 @@ public class SjswCctConverter {
             addMeasurements(predecessor, otherNode, peassNode);
          }
       }
-      peassNode.createStatistics(commit);
-      peassNode.createStatistics(predecessor);
 
-      LOG.info("Current stats: {} --> {}", commit, peassNode.getData().get(commit).getResults().size());
+      int size = peassNode.getData().get(commit).getResults().size();
+      LOG.info("Current stats: {} --> {}", commit, size);
+      if (size < 2) {
+         LOG.info("Clearing - less than 2 measurements");
+         peassNode.getData().get(commit).getResults().clear();
+      } else {
+         peassNode.createStatistics(commit);
+      }
+      
       if (otherNode != null) {
-         LOG.info("Current stats: {} --> {}", predecessor, peassNode.getData().get(predecessor).getResults().size());
+         int sizePredecessor = peassNode.getData().get(predecessor).getResults().size();
+         LOG.info("Current stats: {} --> {}", predecessor, sizePredecessor);
+         LOG.info("Clearing - less than 2 measurements");
+         if (sizePredecessor < 2) {
+            peassNode.getData().get(predecessor).getResults().clear();
+         }
+      } else {
+         peassNode.createStatistics(predecessor);
       }
    }
 
@@ -210,30 +223,31 @@ public class SjswCctConverter {
          if (vmMeasurements.isEmpty() || vmMeasurements.get(0) == null) {
             LOG.warn("No measurements found for VM {}", vm);
             return;
-         }
-         final List<Double> measurements = vmMeasurements.get(0).getMeasurements();
-         LOG.debug("Call: {} VM: {} vmMeasurements: {} measurements: {}", peassNode.getCall(),
-               vm, vmMeasurements.size(), measurements.size());
-         if (measurements.size() > 1) {
-            final List<StatisticalSummary> values = new LinkedList<>();
-            int sliceSize = Math.max(measurements.size() / config.getIterations(), 1);
-            LOG.info("Measurements: {} Iterations: {} Slice size: {}", measurements.size(), config.getIterations(), sliceSize);
-            List<List<Double>> slicedIterationMeasurements = Lists.partition(measurements, sliceSize);
-            slicedIterationMeasurements.forEach(slice -> {
-               final SummaryStatistics statistic = new SummaryStatistics();
-               slice.forEach(measurement -> {
-                  statistic.addValue((long) (double) measurement);
-                  LOG.info("Adding sjsw measurement: {}", measurement);
-               });
-               values.add(statistic);
-            });
-            LOG.debug("Adding to {} - Values: {} ", peassNode.getCall(), values.size());
-            peassNode.addAggregatedMeasurement(commit, values);
          } else {
-            peassNode.initVMData(commit);
-            measurements.forEach(measurement -> {
-               peassNode.addMeasurement(commit, (long) (double) measurement);
-            });
+            final List<Double> measurements = vmMeasurements.get(0).getMeasurements();
+            LOG.debug("Call: {} VM: {} vmMeasurements: {} measurements: {}", peassNode.getCall(),
+                  vm, vmMeasurements.size(), measurements.size());
+            if (measurements.size() > 1) {
+               final List<StatisticalSummary> values = new LinkedList<>();
+               int sliceSize = Math.max(measurements.size() / config.getIterations(), 1);
+               LOG.info("Measurements: {} Iterations: {} Slice size: {}", measurements.size(), config.getIterations(), sliceSize);
+               List<List<Double>> slicedIterationMeasurements = Lists.partition(measurements, sliceSize);
+               slicedIterationMeasurements.forEach(slice -> {
+                  final SummaryStatistics statistic = new SummaryStatistics();
+                  slice.forEach(measurement -> {
+                     statistic.addValue((long) (double) measurement);
+                     LOG.info("Adding sjsw measurement: {}", measurement);
+                  });
+                  values.add(statistic);
+               });
+               LOG.debug("Adding to {} - Values: {} ", peassNode.getCall(), values.size());
+               peassNode.addAggregatedMeasurement(commit, values);
+            } else {
+               peassNode.initVMData(commit);
+               measurements.forEach(measurement -> {
+                  peassNode.addMeasurement(commit, (long) (double) measurement);
+               });
+            }
          }
       }
    }
