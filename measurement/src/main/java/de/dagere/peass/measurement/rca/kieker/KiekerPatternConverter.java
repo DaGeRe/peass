@@ -2,6 +2,8 @@ package de.dagere.peass.measurement.rca.kieker;
 
 import java.io.File;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,13 +34,30 @@ public class KiekerPatternConverter {
    }
 
    public static String getCall(final String kiekerPattern) {
-      if (!kiekerPattern.contains("(") || !kiekerPattern.contains(")")) {
-         throw new RuntimeException(kiekerPattern + " is supposed to contain ( and )");
+      try {
+         if (!kiekerPattern.contains("(") || !kiekerPattern.contains(")")) {
+            throw new RuntimeException(kiekerPattern + " is supposed to contain ( and )");
+         }
+         final String beforeParameters = kiekerPattern.substring(0, kiekerPattern.indexOf('('));
+         final String afterSpace = beforeParameters.substring(beforeParameters.lastIndexOf(' ') + 1);
+
+         final int dotIndex = afterSpace.lastIndexOf('.');
+         final String clazz, method;
+         if (dotIndex != -1) {
+            method = afterSpace.substring(dotIndex + 1);
+            clazz = afterSpace.substring(0, dotIndex);
+
+            return clazz + "#" + method;
+         } else {
+            final int doubleColonIndex = afterSpace.lastIndexOf("::");
+            method = afterSpace.substring(doubleColonIndex + 2);
+            clazz = afterSpace.substring(0, doubleColonIndex);
+
+            return clazz + "::" + method;
+         }
+      } catch (Exception e) {
+         throw new RuntimeException("Parsing of " + kiekerPattern + " did not succeed", e);
       }
-      String beforeParameters = kiekerPattern.substring(0, kiekerPattern.indexOf('('));
-      String method = beforeParameters.substring(beforeParameters.lastIndexOf('.') + 1);
-      String clazz = beforeParameters.substring(beforeParameters.lastIndexOf(' ') + 1, beforeParameters.lastIndexOf('.'));
-      return clazz + "#" + method;
    }
 
    public static String addNewIfRequired(String kiekerPattern) {
