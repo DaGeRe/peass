@@ -28,7 +28,7 @@ public class SjswCctConverter {
       this.commit = commit;
       this.predecessor = predecessor;
       this.config = config;
-      
+
       LOG.info("Initializing with commit: " + commit + " predecessor: " + predecessor);
 
       if (commit == null && predecessor == null) {
@@ -45,7 +45,7 @@ public class SjswCctConverter {
 
       currentRoot.setOtherCommitNode(predecessorRoot);
       predecessorRoot.setOtherCommitNode(currentRoot);
-      
+
       System.out.println("Current root: " + System.identityHashCode(currentRoot));
       System.out.println("Predecessor root: " + System.identityHashCode(predecessorRoot));
 
@@ -61,21 +61,30 @@ public class SjswCctConverter {
    private void appendAllChildren(final StackTraceTreeNode currentBAT, final StackTraceTreeNode predecessorBAT, CallTreeNode currentParent, CallTreeNode predecessorParent) {
       if (currentBAT != null) {
          for (StackTraceTreeNode child : currentBAT.getChildren()) {
-            final String methodNameWithNewChild = normalizeKiekerPattern(child);
-            final String callChild = KiekerPatternConverter.getCall(methodNameWithNewChild);
-            currentParent.appendChild(callChild, methodNameWithNewChild, methodNameWithNewChild);
+            System.out.println(child.getPayload().getMethodName());
+            if (!isInternalMethod(child)) {
+               final String methodNameWithNewChild = normalizeKiekerPattern(child);
+               final String callChild = KiekerPatternConverter.getCall(methodNameWithNewChild);
+               currentParent.appendChild(callChild, methodNameWithNewChild, methodNameWithNewChild);
+            }
          }
       }
 
       if (predecessorBAT != null) {
          for (StackTraceTreeNode child : predecessorBAT.getChildren()) {
-            final String methodNameWithNewChild = normalizeKiekerPattern(child);
-            final String callChild = KiekerPatternConverter.getCall(methodNameWithNewChild);
-            predecessorParent.appendChild(callChild, methodNameWithNewChild, methodNameWithNewChild);
+            if (!isInternalMethod(child)) {
+               final String methodNameWithNewChild = normalizeKiekerPattern(child);
+               final String callChild = KiekerPatternConverter.getCall(methodNameWithNewChild);
+               predecessorParent.appendChild(callChild, methodNameWithNewChild, methodNameWithNewChild);
+            }
          }
       }
 
       TreeUtil.findChildMapping(currentParent, predecessorParent);
+   }
+
+   private boolean isInternalMethod(StackTraceTreeNode child) {
+      return child.getPayload().getMethodName().equals(" .I2C/C2I adapters()");
    }
 
    private void convertCallContextTreeToCallTree(final StackTraceTreeNode currentBAT,
@@ -172,7 +181,7 @@ public class SjswCctConverter {
       } else {
          peassNode.createStatistics(commit);
       }
-      
+
       if (otherNode != null) {
          int sizePredecessor = peassNode.getData().get(predecessor).getResults().size();
          LOG.info("Current stats: {} --> {}", predecessor, sizePredecessor);
