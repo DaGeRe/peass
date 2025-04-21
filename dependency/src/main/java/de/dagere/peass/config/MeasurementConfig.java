@@ -14,310 +14,312 @@ import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 
 public class MeasurementConfig implements Serializable {
 
-   private static final long serialVersionUID = -6936740902708676182L;
+	private static final long serialVersionUID = -6936740902708676182L;
 
-   public static final MeasurementConfig DEFAULT = new MeasurementConfig(30);
+	public static final MeasurementConfig DEFAULT = new MeasurementConfig(30);
 
-   private final int vms;
-   private boolean earlyStop = true;
-   private int warmup = 0;
-   private int iterations = 1;
-   private int repetitions = 1;
-   private boolean logFullData = true;
-   private boolean useGC = false;
-   private boolean directlyMeasureKieker = false;
+	private final int vms;
+	private boolean earlyStop = true;
+	private int warmup = 0;
+	private int iterations = 1;
+	private int repetitions = 1;
+	private boolean logFullData = true;
+	private boolean useGC = false;
+	private boolean directlyMeasureKieker = false;
 
-   private boolean callSyncBetweenVMs = true;
-   private int waitTimeBetweenVMs = 1000;
-   private int maxLogSizeInMb = 100;
+	private boolean callSyncBetweenVMs = true;
+	private int waitTimeBetweenVMs = 1000;
+	private int maxLogSizeInMb = 100;
 
-   private final KiekerConfig kiekerConfig;
+	private final KiekerConfig kiekerConfig;
 
-   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-   private boolean saveAll = true;
+	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+	private boolean saveAll = true;
 
-   private String javaVersion = System.getProperty("java.version");
+	private String javaVersion = System.getProperty("java.version");
 
-   private MeasurementStrategy measurementStrategy = MeasurementStrategy.PARALLEL;
+	private MeasurementStrategy measurementStrategy = MeasurementStrategy.PARALLEL;
 
-   private StatisticsConfig statisticsConfig = new StatisticsConfig();
-   private final ExecutionConfig executionConfig;
-   private FixedCommitConfig fixedCommitConfig;
+	private StatisticsConfig statisticsConfig = new StatisticsConfig();
+	private final ExecutionConfig executionConfig;
+	private FixedCommitConfig fixedCommitConfig;
 
-   public MeasurementConfig(final int vms) {
-      executionConfig = new ExecutionConfig(20);
-      kiekerConfig = new KiekerConfig();
-      fixedCommitConfig = new FixedCommitConfig();
-      this.vms = vms;
-      checkParameters(vms);
-   }
+	public MeasurementConfig(final int vms) {
+		executionConfig = new ExecutionConfig(20);
+		kiekerConfig = new KiekerConfig();
+		fixedCommitConfig = new FixedCommitConfig();
+		this.vms = vms;
+		checkParameters(vms);
+	}
 
-private void checkParameters(final int vms) {
-	if (vms < 2) {
-    	  throw new RuntimeException("Less than 2 VM executions is not possible");
-      }
-}
+	private void checkParameters(final int vms) {
+		if (vms < 1) {
+			throw new RuntimeException("Less than 2 VM executions is not possible");
+		}
+	}
 
-   public MeasurementConfig(final int vms, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig) {
-      this.executionConfig = new ExecutionConfig(executionConfig);
-      this.vms = vms;
-      this.kiekerConfig = new KiekerConfig(kiekerConfig);
-      checkParameters(vms);
-   }
+	public MeasurementConfig(final int vms, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig) {
+		this.executionConfig = new ExecutionConfig(executionConfig);
+		this.vms = vms;
+		this.kiekerConfig = new KiekerConfig(kiekerConfig);
+		checkParameters(vms);
+	}
 
-   public MeasurementConfig(final int vms, final String commit, final String commitOld) {
-      executionConfig = new ExecutionConfig(20);
-      kiekerConfig = new KiekerConfig();
-      fixedCommitConfig = new FixedCommitConfig();
-      this.vms = vms;
-      fixedCommitConfig.setCommit(commit);
-      fixedCommitConfig.setCommitOld(commitOld);
-      checkParameters(vms);
-   }
+	public MeasurementConfig(final int vms, final String commit, final String commitOld) {
+		executionConfig = new ExecutionConfig(20);
+		kiekerConfig = new KiekerConfig();
+		fixedCommitConfig = new FixedCommitConfig();
+		this.vms = vms;
+		fixedCommitConfig.setCommit(commit);
+		fixedCommitConfig.setCommitOld(commitOld);
+		checkParameters(vms);
+	}
 
-   public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin,
-         final StatisticsConfigMixin statisticMixin, final KiekerConfigMixin kiekerConfigMixin) {
-      executionConfig = executionMixin.getExecutionConfig();
-      kiekerConfig = kiekerConfigMixin.getKiekerConfig();
-      kiekerConfig.setRecord(mixin.getRecord());
-      statisticsConfig = statisticMixin.getStasticsConfig();
-      fixedCommitConfig = new FixedCommitConfig();
-      this.vms = mixin.getVms();
-      setEarlyStop(mixin.isEarlyStop());
-      getKiekerConfig().setUseKieker(mixin.isUseKieker());
-      setIterations(mixin.getIterations());
-      setWarmup(mixin.getWarmup());
-      setRepetitions(mixin.getRepetitions());
-      setMaxLogSizeInMb(mixin.getMaxLogSizeInMb());
-      setUseGC(mixin.isUseGC());
-      setMeasurementStrategy(mixin.getMeasurementStrategy());
-      this.directlyMeasureKieker = mixin.isDirectlyMeasureKieker();
+	public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin,
+			final StatisticsConfigMixin statisticMixin, final KiekerConfigMixin kiekerConfigMixin) {
+		executionConfig = executionMixin.getExecutionConfig();
+		kiekerConfig = kiekerConfigMixin.getKiekerConfig();
+		kiekerConfig.setRecord(mixin.getRecord());
+		statisticsConfig = statisticMixin.getStasticsConfig();
+		fixedCommitConfig = new FixedCommitConfig();
+		this.vms = mixin.getVms();
+		setEarlyStop(mixin.isEarlyStop());
+		getKiekerConfig().setUseKieker(mixin.isUseKieker());
+		setIterations(mixin.getIterations());
+		setWarmup(mixin.getWarmup());
+		setRepetitions(mixin.getRepetitions());
+		setMaxLogSizeInMb(mixin.getMaxLogSizeInMb());
+		setUseGC(mixin.isUseGC());
+		setMeasurementStrategy(mixin.getMeasurementStrategy());
+		this.directlyMeasureKieker = mixin.isDirectlyMeasureKieker();
 
-      saveAll = !mixin.isSaveNothing();
-      
-      checkParameters(vms);
-   }
+		saveAll = !mixin.isSaveNothing();
 
-   @JsonCreator
-   public MeasurementConfig(@JsonProperty("vms") final int vms,
-         @JsonProperty("earlystop") final boolean earlyStop) {
-      executionConfig = new ExecutionConfig();
-      kiekerConfig = new KiekerConfig();
-      this.vms = vms;
-      this.earlyStop = earlyStop;
-   }
+		checkParameters(vms);
+	}
 
-   public MeasurementConfig(final long timeout, final int vms, final boolean earlyStop, final String commit, final String commitOld) {
-      executionConfig = new ExecutionConfig();
-      executionConfig.setTimeout(timeout);
-      fixedCommitConfig = new FixedCommitConfig();
-      fixedCommitConfig.setCommit(commit);
-      fixedCommitConfig.setCommitOld(commitOld);
-      kiekerConfig = new KiekerConfig();
-      this.vms = vms;
-      this.earlyStop = earlyStop;
-   }
+	@JsonCreator
+	public MeasurementConfig(@JsonProperty("vms") final int vms, @JsonProperty("earlystop") final boolean earlyStop) {
+		executionConfig = new ExecutionConfig();
+		kiekerConfig = new KiekerConfig();
+		this.vms = vms;
+		this.earlyStop = earlyStop;
+	}
 
-   /**
-    * Copy constructor
-    * 
-    * @param other Configuration to copy
-    */
-   public MeasurementConfig(final MeasurementConfig other) {
-      executionConfig = new ExecutionConfig(other.getExecutionConfig());
-      statisticsConfig = new StatisticsConfig(other.getStatisticsConfig());
-      kiekerConfig = new KiekerConfig(other.getKiekerConfig());
-      fixedCommitConfig = new FixedCommitConfig(other.getFixedCommitConfig());
-      this.vms = other.vms;
-      this.earlyStop = other.earlyStop;
-      this.warmup = other.warmup;
-      this.iterations = other.iterations;
-      this.repetitions = other.repetitions;
-      this.logFullData = other.logFullData;
-      this.useGC = other.useGC;
-      this.javaVersion = other.javaVersion;
-      this.measurementStrategy = other.measurementStrategy;
-      this.saveAll = other.saveAll;
-      this.waitTimeBetweenVMs = other.waitTimeBetweenVMs;
-      this.directlyMeasureKieker = other.directlyMeasureKieker;
-      this.maxLogSizeInMb = other.maxLogSizeInMb;
-   }
+	public MeasurementConfig(final long timeout, final int vms, final boolean earlyStop, final String commit,
+			final String commitOld) {
+		executionConfig = new ExecutionConfig();
+		executionConfig.setTimeout(timeout);
+		fixedCommitConfig = new FixedCommitConfig();
+		fixedCommitConfig.setCommit(commit);
+		fixedCommitConfig.setCommitOld(commitOld);
+		kiekerConfig = new KiekerConfig();
+		this.vms = vms;
+		this.earlyStop = earlyStop;
+	}
 
-   public FixedCommitConfig getFixedCommitConfig() {
-      return fixedCommitConfig;
-   }
+	/**
+	 * Copy constructor
+	 * 
+	 * @param other Configuration to copy
+	 */
+	public MeasurementConfig(final MeasurementConfig other) {
+		executionConfig = new ExecutionConfig(other.getExecutionConfig());
+		statisticsConfig = new StatisticsConfig(other.getStatisticsConfig());
+		kiekerConfig = new KiekerConfig(other.getKiekerConfig());
+		fixedCommitConfig = new FixedCommitConfig(other.getFixedCommitConfig());
+		this.vms = other.vms;
+		this.earlyStop = other.earlyStop;
+		this.warmup = other.warmup;
+		this.iterations = other.iterations;
+		this.repetitions = other.repetitions;
+		this.logFullData = other.logFullData;
+		this.useGC = other.useGC;
+		this.javaVersion = other.javaVersion;
+		this.measurementStrategy = other.measurementStrategy;
+		this.saveAll = other.saveAll;
+		this.waitTimeBetweenVMs = other.waitTimeBetweenVMs;
+		this.directlyMeasureKieker = other.directlyMeasureKieker;
+		this.maxLogSizeInMb = other.maxLogSizeInMb;
+	}
 
-   public void setFixedCommitConfig(FixedCommitConfig fixedVersionConfig) {
-      this.fixedCommitConfig = fixedVersionConfig;
-   }
-   
-   public StatisticsConfig getStatisticsConfig() {
-      return statisticsConfig;
-   }
+	public FixedCommitConfig getFixedCommitConfig() {
+		return fixedCommitConfig;
+	}
 
-   public void setStatisticsConfig(final StatisticsConfig statisticsConfig) {
-      this.statisticsConfig = statisticsConfig;
-   }
+	public void setFixedCommitConfig(FixedCommitConfig fixedVersionConfig) {
+		this.fixedCommitConfig = fixedVersionConfig;
+	}
 
-   public void setSaveAll(final boolean saveAll) {
-      this.saveAll = saveAll;
-   }
+	public StatisticsConfig getStatisticsConfig() {
+		return statisticsConfig;
+	}
 
-   public boolean isSaveAll() {
-      return saveAll;
-   }
+	public void setStatisticsConfig(final StatisticsConfig statisticsConfig) {
+		this.statisticsConfig = statisticsConfig;
+	}
 
-   /**
-    * Whether to execute a GC before every iteration (bunch of repetitions)
-    * 
-    * @return
-    */
-   public boolean isUseGC() {
-      return useGC;
-   }
+	public void setSaveAll(final boolean saveAll) {
+		this.saveAll = saveAll;
+	}
 
-   public void setUseGC(final boolean useGC) {
-      this.useGC = useGC;
-   }
+	public boolean isSaveAll() {
+		return saveAll;
+	}
 
-   @JsonIgnore
-   public long getTimeoutInSeconds() {
-      return executionConfig.getTimeoutInSeconds();
-   }
+	/**
+	 * Whether to execute a GC before every iteration (bunch of repetitions)
+	 * 
+	 * @return
+	 */
+	public boolean isUseGC() {
+		return useGC;
+	}
 
-   public int getVms() {
-      return vms;
-   }
+	public void setUseGC(final boolean useGC) {
+		this.useGC = useGC;
+	}
 
-   public boolean isEarlyStop() {
-      return earlyStop;
-   }
+	@JsonIgnore
+	public long getTimeoutInSeconds() {
+		return executionConfig.getTimeoutInSeconds();
+	}
 
-   public void setEarlyStop(final boolean earlyStop) {
-      this.earlyStop = earlyStop;
-   }
+	public int getVms() {
+		return vms;
+	}
 
-   public int getWarmup() {
-      return warmup;
-   }
+	public boolean isEarlyStop() {
+		return earlyStop;
+	}
 
-   public void setWarmup(final int warmup) {
-      this.warmup = warmup;
-   }
+	public void setEarlyStop(final boolean earlyStop) {
+		this.earlyStop = earlyStop;
+	}
 
-   public int getIterations() {
-      return iterations;
-   }
+	public int getWarmup() {
+		return warmup;
+	}
 
-   /**
-    * Warmup could be considered by the measurement framework, however, this mostly leads to discarding the warmup values; therefore, we execute warmup + iterations and afterwards
-    * filter the measured values
-    * 
-    * @return All iterations that should be carried out
-    */
-   @JsonIgnore
-   public int getAllIterations() {
-      return iterations + warmup;
-   }
+	public void setWarmup(final int warmup) {
+		this.warmup = warmup;
+	}
 
-   public void setIterations(final int iterations) {
-      this.iterations = iterations;
-      if (iterations < 1) {
-         throw new RuntimeException("Iterations smaller than 1 are not allowed!");
-      }
-   }
+	public int getIterations() {
+		return iterations;
+	}
 
-   public int getRepetitions() {
-      return repetitions;
-   }
+	/**
+	 * Warmup could be considered by the measurement framework, however, this
+	 * mostly leads to discarding the warmup values; therefore, we execute
+	 * warmup + iterations and afterwards filter the measured values
+	 * 
+	 * @return All iterations that should be carried out
+	 */
+	@JsonIgnore
+	public int getAllIterations() {
+		return iterations + warmup;
+	}
 
-   public void setRepetitions(final int repetitions) {
-      this.repetitions = repetitions;
-   }
+	public void setIterations(final int iterations) {
+		this.iterations = iterations;
+		if (iterations < 1) {
+			throw new RuntimeException("Iterations smaller than 1 are not allowed!");
+		}
+	}
 
-   public boolean isLogFullData() {
-      return logFullData;
-   }
+	public int getRepetitions() {
+		return repetitions;
+	}
 
-   public void setLogFullData(final boolean logFullData) {
-      this.logFullData = logFullData;
-   }
+	public void setRepetitions(final int repetitions) {
+		this.repetitions = repetitions;
+	}
 
-   @JsonIgnore
-   public boolean isUseKieker() {
-      return kiekerConfig.isUseKieker();
-   }
+	public boolean isLogFullData() {
+		return logFullData;
+	}
 
-   public void setUseKieker(final boolean useKieker) {
-      kiekerConfig.setUseKieker(useKieker);
-   }
+	public void setLogFullData(final boolean logFullData) {
+		this.logFullData = logFullData;
+	}
 
-   public String getJavaVersion() {
-      return javaVersion;
-   }
+	@JsonIgnore
+	public boolean isUseKieker() {
+		return kiekerConfig.isUseKieker();
+	}
 
-   public void setJavaVersion(final String javaVersion) {
-      this.javaVersion = javaVersion;
-   }
+	public void setUseKieker(final boolean useKieker) {
+		kiekerConfig.setUseKieker(useKieker);
+	}
 
-   public MeasurementStrategy getMeasurementStrategy() {
-      return measurementStrategy;
-   }
+	public String getJavaVersion() {
+		return javaVersion;
+	}
 
-   public void setMeasurementStrategy(final MeasurementStrategy measurementStrategy) {
-      this.measurementStrategy = measurementStrategy;
-   }
+	public void setJavaVersion(final String javaVersion) {
+		this.javaVersion = javaVersion;
+	}
 
-   public boolean isCallSyncBetweenVMs() {
-      return callSyncBetweenVMs;
-   }
+	public MeasurementStrategy getMeasurementStrategy() {
+		return measurementStrategy;
+	}
 
-   public void setCallSyncBetweenVMs(final boolean callSyncBetweenVMs) {
-      this.callSyncBetweenVMs = callSyncBetweenVMs;
-   }
+	public void setMeasurementStrategy(final MeasurementStrategy measurementStrategy) {
+		this.measurementStrategy = measurementStrategy;
+	}
 
-   public int getWaitTimeBetweenVMs() {
-      return waitTimeBetweenVMs;
-   }
+	public boolean isCallSyncBetweenVMs() {
+		return callSyncBetweenVMs;
+	}
 
-   public void setWaitTimeBetweenVMs(final int waitTimeBetweenVMs) {
-      this.waitTimeBetweenVMs = waitTimeBetweenVMs;
-   }
-   
-   public int getMaxLogSizeInMb() {
-      return maxLogSizeInMb;
-   }
-   
-   public void setMaxLogSizeInMb(int logSizeInMb) {
-      this.maxLogSizeInMb = logSizeInMb;
-   }
+	public void setCallSyncBetweenVMs(final boolean callSyncBetweenVMs) {
+		this.callSyncBetweenVMs = callSyncBetweenVMs;
+	}
 
-   /**
-    * Returns the warmup that should be ignored when individual nodes are measured
-    * 
-    * @return
-    */
-   @JsonIgnore
-   public int getNodeWarmup() {
-      final int aggregationfactor = this.getKiekerConfig().isUseAggregation() ? this.getRepetitions() : 1;
-      final int warmup = this.getWarmup() * this.getRepetitions() / aggregationfactor;
-      return warmup;
-   }
+	public int getWaitTimeBetweenVMs() {
+		return waitTimeBetweenVMs;
+	}
 
-   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-   public boolean isDirectlyMeasureKieker() {
-      return directlyMeasureKieker;
-   }
+	public void setWaitTimeBetweenVMs(final int waitTimeBetweenVMs) {
+		this.waitTimeBetweenVMs = waitTimeBetweenVMs;
+	}
 
-   public void setDirectlyMeasureKieker(boolean directlyMeasureKieker) {
-      this.directlyMeasureKieker = directlyMeasureKieker;
-   }
+	public int getMaxLogSizeInMb() {
+		return maxLogSizeInMb;
+	}
 
-   public ExecutionConfig getExecutionConfig() {
-      return executionConfig;
-   }
+	public void setMaxLogSizeInMb(int logSizeInMb) {
+		this.maxLogSizeInMb = logSizeInMb;
+	}
 
-   public KiekerConfig getKiekerConfig() {
-      return kiekerConfig;
-   }
+	/**
+	 * Returns the warmup that should be ignored when individual nodes are
+	 * measured
+	 * 
+	 * @return
+	 */
+	@JsonIgnore
+	public int getNodeWarmup() {
+		final int aggregationfactor = this.getKiekerConfig().isUseAggregation() ? this.getRepetitions() : 1;
+		final int warmup = this.getWarmup() * this.getRepetitions() / aggregationfactor;
+		return warmup;
+	}
+
+	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+	public boolean isDirectlyMeasureKieker() {
+		return directlyMeasureKieker;
+	}
+
+	public void setDirectlyMeasureKieker(boolean directlyMeasureKieker) {
+		this.directlyMeasureKieker = directlyMeasureKieker;
+	}
+
+	public ExecutionConfig getExecutionConfig() {
+		return executionConfig;
+	}
+
+	public KiekerConfig getKiekerConfig() {
+		return kiekerConfig;
+	}
 }
