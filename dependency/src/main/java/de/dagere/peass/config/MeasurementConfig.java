@@ -49,12 +49,20 @@ public class MeasurementConfig implements Serializable {
       kiekerConfig = new KiekerConfig();
       fixedCommitConfig = new FixedCommitConfig();
       this.vms = vms;
+      checkParameters(vms);
    }
+
+private void checkParameters(final int vms) {
+	if (vms < 2) {
+    	  throw new RuntimeException("Less than 2 VM executions is not possible");
+      }
+}
 
    public MeasurementConfig(final int vms, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig) {
       this.executionConfig = new ExecutionConfig(executionConfig);
       this.vms = vms;
       this.kiekerConfig = new KiekerConfig(kiekerConfig);
+      checkParameters(vms);
    }
 
    public MeasurementConfig(final int vms, final String commit, final String commitOld) {
@@ -64,6 +72,7 @@ public class MeasurementConfig implements Serializable {
       this.vms = vms;
       fixedCommitConfig.setCommit(commit);
       fixedCommitConfig.setCommitOld(commitOld);
+      checkParameters(vms);
    }
 
    public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin,
@@ -85,6 +94,8 @@ public class MeasurementConfig implements Serializable {
       this.directlyMeasureKieker = mixin.isDirectlyMeasureKieker();
 
       saveAll = !mixin.isSaveNothing();
+      
+      checkParameters(vms);
    }
 
    @JsonCreator
