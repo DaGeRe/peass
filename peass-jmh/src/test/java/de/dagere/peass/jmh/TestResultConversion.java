@@ -122,7 +122,7 @@ public class TestResultConversion {
    }
    
    private Set<File> convert(final File jmhFile) {
-      JmhKoPeMeConverter converter = new JmhKoPeMeConverter(new MeasurementConfig(-1));
+      JmhKoPeMeConverter converter = new JmhKoPeMeConverter(new MeasurementConfig(2));
       Set<File> resultFiles = converter.convertToXMLData(jmhFile, CONVERSION_TEMP_FOLDER);
       return resultFiles;
    }
