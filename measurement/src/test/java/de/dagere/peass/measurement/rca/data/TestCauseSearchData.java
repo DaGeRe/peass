@@ -11,7 +11,7 @@ public class TestCauseSearchData {
    @Test
    public void testParent() throws Exception {
       CauseSearchData csd = new CauseSearchData();
-      MeasurementConfig config = new MeasurementConfig(-1);
+      MeasurementConfig config = new MeasurementConfig(2);
       config.getFixedCommitConfig().setCommit("2");
       config.getFixedCommitConfig().setCommitOld("1");
       csd.setConfig(config);
