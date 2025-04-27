@@ -14,6 +14,20 @@ import de.dagere.peass.testtransformation.JUnitTestTransformer;
 public class TestArgLineBuilder {
 
    @Test
+   public void testXmx() {
+      JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
+      MeasurementConfig config = new MeasurementConfig(2);
+      config.getExecutionConfig().setXmx("8g");
+      Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
+
+      ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer, new File("/tmp/asd"));
+
+      String argLineMaven = builder.buildArglineMaven(new File("/tmp/asd"));
+      MatcherAssert.assertThat(argLineMaven, Matchers.containsString("-Xmx8g"));
+
+   }
+
+   @Test
    public void testKieker() {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfig config = new MeasurementConfig(2);
@@ -25,12 +39,12 @@ public class TestArgLineBuilder {
 
       String argLineMaven = builder.buildArglineMaven(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineMaven, Matchers.containsString("-javaagent"));
-      
+
       String argLineGradle = builder.buildSystemPropertiesGradle(new File("/tmp/asd"));
-//      MatcherAssert.assertThat(argLineGradle, Matchers.containsString("-javaagent"));
+      // MatcherAssert.assertThat(argLineGradle, Matchers.containsString("-javaagent"));
       MatcherAssert.assertThat(argLineGradle, Matchers.containsString("kieker.monitoring.configuration"));
    }
-   
+
    @Test
    public void testNoKieker() {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
@@ -42,11 +56,11 @@ public class TestArgLineBuilder {
 
       String argLineMaven = builder.buildArglineMaven(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineMaven, Matchers.not(Matchers.containsString("-javaagent")));
-      
+
       String argLineGradle = builder.buildSystemPropertiesGradle(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineGradle, Matchers.not(Matchers.containsString("-javaagent")));
    }
-   
+
    @Test
    public void testAggregatedWriter() {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
@@ -55,9 +69,9 @@ public class TestArgLineBuilder {
       config.getKiekerConfig().setUseSourceInstrumentation(true);
       config.getKiekerConfig().setEnableAdaptiveMonitoring(true);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
-      
+
       ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer, new File("/tmp/asd"));
-      
+
       String argLineMaven = builder.buildArglineMaven(new File("/tmp/asd"));
       System.out.println(argLineMaven);
       MatcherAssert.assertThat(argLineMaven, Matchers.not(Matchers.containsString("  ")));

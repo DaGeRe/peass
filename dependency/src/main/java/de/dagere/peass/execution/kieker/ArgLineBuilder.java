@@ -46,8 +46,11 @@ public class ArgLineBuilder {
    }
 
    public String buildArglineMaven(final File tempFolder) {
-      final String argLine = buildGenericArgline(tempFolder, "=", " ", KIEKER_ARG_LINE_MAVEN);
-      LOG.debug("Created gradle argLine: {}", argLine);
+      String argLine = buildGenericArgline(tempFolder, "=", " ", KIEKER_ARG_LINE_MAVEN);
+      if (testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
+    	  argLine += " -Xmx" + testTransformer.getConfig().getExecutionConfig().getXmx();
+      }
+      LOG.debug("Created maven argLine: {}", argLine);
       return argLine;
    }
 
