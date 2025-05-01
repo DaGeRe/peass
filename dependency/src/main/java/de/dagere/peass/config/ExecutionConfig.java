@@ -132,6 +132,7 @@ public class ExecutionConfig implements FolderConfig, Serializable {
       this.onlyMeasureWorkload = other.onlyMeasureWorkload;
       this.showStart = other.showStart;
       this.redirectToNull = other.redirectToNull;
+      this.printCompilation = other.printCompilation;
 
       this.clazzFolders = other.clazzFolders;
       this.testClazzFolders = other.testClazzFolders;

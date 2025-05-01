@@ -544,6 +544,7 @@ public class ExecutionConfigMixin {
       config.setExcludeLog4jToSlf4j(excludeLog4jToSlf4j);
       config.setRedirectToNull(!dontRedirectToNull);
       config.setShowStart(showStart);
+      config.setPrintCompilation(printCompilation);
       config.setOnlyMeasureWorkload(onlyMeasureWorkload);
 
       if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
