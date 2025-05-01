@@ -68,6 +68,7 @@ public class ExecutionConfig implements FolderConfig, Serializable {
    private boolean showStart = false;
    private boolean redirectToNull = true;
    private boolean createDetailDebugFiles = true;
+   private boolean printCompilation = false;
 
    private String testTransformer = DEFAULT_TEST_TRANSFORMER;
    private String testExecutor = DEFAULT_TEST_EXECUTOR;
@@ -435,6 +436,14 @@ public class ExecutionConfig implements FolderConfig, Serializable {
 
    public boolean isCreateDetailDebugFiles() {
       return createDetailDebugFiles;
+   }
+   
+   public void setPrintCompilation(boolean printCompilation) {
+      this.printCompilation = printCompilation;
+   }
+   
+   public boolean isPrintCompilation() {
+      return printCompilation;
    }
 
    @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -50,6 +50,9 @@ public class ArgLineBuilder {
       if (testTransformer.getConfig().getExecutionConfig().getXmx() != null) {
     	  argLine += " -Xmx" + testTransformer.getConfig().getExecutionConfig().getXmx();
       }
+      if (testTransformer.getConfig().getExecutionConfig().isPrintCompilation()) {
+         argLine += " -XX:+PrintCompilation";
+      }
       LOG.debug("Created maven argLine: {}", argLine);
       return argLine;
    }
