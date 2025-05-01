@@ -106,6 +106,10 @@ public class ExecutionConfigMixin {
    @Option(names = { "-showStart",
          "--showStart" }, description = "Activates showing and end of each KoPeMe iteration (default false, and always activated for regression test selection)")
    protected boolean showStart = false;
+   
+   @Option(names = { "-printCompilation",
+   "--printCompilation" }, description = "Prints the compilation output (by adding -XX:+PrintCompilation and -X to the maven call, to avoid redirecting output to the dumpstream file)")
+   protected boolean printCompilation = false;
 
    @Option(names = { "-onlyMeasureWorkload", "--onlyMeasureWorkload" }, description = "Only measure workload (no @Before/@After)")
    protected boolean onlyMeasureWorkload = false;
