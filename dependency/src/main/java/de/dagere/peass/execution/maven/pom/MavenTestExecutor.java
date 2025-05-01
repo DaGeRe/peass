@@ -169,7 +169,12 @@ public class MavenTestExecutor extends KoPeMeExecutor {
     @Override
     protected void runTest(final File module, final File logFile, TestMethodCall test, final String testname, final long timeout) {
        try {
-          final Process process = buildMavenProcess(logFile, test, "-Dtest=" + testname);
+          final Process process;
+          if (testTransformer.getConfig().getExecutionConfig().isPrintCompilation()) {
+             process = buildMavenProcess(logFile, test, "-Dtest=" + testname, "-X");
+          } else {
+             process = buildMavenProcess(logFile, test, "-Dtest=" + testname);
+          }
           execute(testname, timeout, process);
        } catch (final InterruptedException | IOException e) {
           e.printStackTrace();
