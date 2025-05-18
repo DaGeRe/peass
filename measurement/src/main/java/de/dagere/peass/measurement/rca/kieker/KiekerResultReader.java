@@ -23,6 +23,7 @@ import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
+import de.dagere.peass.measurement.rca.RCAStrategy;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kiekerReading.KiekerDurationReader;
@@ -34,6 +35,7 @@ public class KiekerResultReader {
    private static final Logger LOG = LogManager.getLogger(KiekerResultReader.class);
 
    final boolean useAggregation;
+   private final RCAStrategy strategy;
    private final AllowedKiekerRecord usedRecord;
    private final Set<CallTreeNode> includedNodes;
    final String commit;
@@ -42,9 +44,10 @@ public class KiekerResultReader {
 
    boolean considerNodePosition = false;
 
-   public KiekerResultReader(final boolean useAggregation, final AllowedKiekerRecord usedRecord, final Set<CallTreeNode> includedNodes, final String commit,
+   public KiekerResultReader(final boolean useAggregation, final AllowedKiekerRecord usedRecord, RCAStrategy strategy, final Set<CallTreeNode> includedNodes, final String commit,
          final TestMethodCall testcase, final boolean otherCommit) {
       this.useAggregation = useAggregation;
+      this.strategy = strategy;
       this.usedRecord = usedRecord;
       this.includedNodes = includedNodes;
       this.commit = commit;
@@ -130,8 +133,10 @@ public class KiekerResultReader {
    }
 
    public void readNonAggregated(final File kiekerTraceFolder) throws AnalysisConfigurationException {
-      if (usedRecord == AllowedKiekerRecord.OPERATIONEXECUTION) {
+      if (usedRecord == AllowedKiekerRecord.OPERATIONEXECUTION && strategy != RCAStrategy.UNTIL_SOURCE_CHANGE) {
          KiekerDurationReader.executeDurationStage(kiekerTraceFolder, includedNodes, commit);
+      } else if (usedRecord == AllowedKiekerRecord.OPERATIONEXECUTION && strategy == RCAStrategy.UNTIL_SOURCE_CHANGE) {
+            KiekerDurationReader.executeUSCDurationStage(kiekerTraceFolder, includedNodes, commit);
       } else if (usedRecord == AllowedKiekerRecord.DURATION) {
          KiekerDurationReader.executeReducedDurationStage(kiekerTraceFolder, includedNodes, commit);
       }

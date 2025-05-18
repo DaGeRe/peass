@@ -20,6 +20,14 @@ import kieker.analysis.generic.ImplementsEventMatcher;
 import kieker.tools.source.LogsReaderCompositeStage;
 
 public class KiekerReaderConfigurationDuration extends KiekerReaderConfiguration {
+   
+   public void readUSCDurations(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String commit) {
+      OperationExecutionUSCStage stage = new OperationExecutionUSCStage(systemModelRepositoryNew, measuredNodes, commit);
+      
+      ExecutionRecordTransformationStage executionStage = prepareTillExecutions(kiekerTraceFolder);
+      this.connectPorts(executionStage.getOutputPort(), stage.getInputPort());
+   }
+   
    public void readDurations(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String commit) {
       OperationExecutionRCAStage stage = new OperationExecutionRCAStage(systemModelRepositoryNew, measuredNodes, commit);
       

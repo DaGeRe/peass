@@ -22,6 +22,7 @@ import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.folders.CauseSearchFolders;
+import de.dagere.peass.measurement.rca.RCAStrategy;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CallTreeStatistics;
 import de.dagere.peass.measurement.rca.data.OneVMResult;
@@ -271,7 +272,7 @@ public class FindLowestIterationsRCA {
 
    private void readLevel(final File versionFolder, final String version, final File levelFolder) throws AnalysisConfigurationException {
       nodesPredecessor.forEach(node -> node.initCommitData());
-      final KiekerResultReader kiekerResultReader = new KiekerResultReader(false, AllowedKiekerRecord.OPERATIONEXECUTION, nodesPredecessor, version, testcase, version.equals(mainVersion));
+      final KiekerResultReader kiekerResultReader = new KiekerResultReader(false, AllowedKiekerRecord.OPERATIONEXECUTION, RCAStrategy.COMPLETE, nodesPredecessor, version, testcase, version.equals(mainVersion));
       System.out.println("Reading: " + versionFolder.getName() + " from " + levelFolder + " Nodes: " + nodesPredecessor);
       for (final File kiekerResultFolder : levelFolder.listFiles((FilenameFilter) new RegexFileFilter("[0-9]*"))) {
          final File kiekerTraceFile = KiekerFolderUtil.getKiekerTraceFolder(kiekerResultFolder, testcase);

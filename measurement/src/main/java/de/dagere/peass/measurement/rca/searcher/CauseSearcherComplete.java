@@ -69,9 +69,6 @@ public class CauseSearcherComplete extends CauseSearcher {
          throw new RuntimeException("No aggregation and ignoreEOIs can currently be not combined, since this would require mapping of the original measured tree data to the ignore-EOI tree. "
                + "Currently, only aggregation + ignoreEOI both activated or both deactivated is possible. In the future, no aggregation and ignoreEOIs might become possible.");
       }
-      if (causeSearchConfig.getRcaStrategy().equals(RCAStrategy.UNTIL_SOURCE_CHANGE) && !causeSearchConfig.isIgnoreEOIs()) {
-         throw new RuntimeException("RCA strategy UNTIL_SOURCE_CHANGE and ignoreEOIs can currently not be combined, since partial instrumented exection requires EOI mapping to the original tree.");
-      }
    }
 
    @Override
