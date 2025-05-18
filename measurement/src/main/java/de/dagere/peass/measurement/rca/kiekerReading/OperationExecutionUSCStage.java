@@ -13,60 +13,29 @@ import kieker.analysis.architecture.trace.AbstractTraceProcessingStage;
 import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.Execution;
 
-class EOIESSIndex {
-   private final int ess;
-   private final int eoi;
-   private final String kiekerPattern;
+/**
+ * Reads the operations from an UNTIL_SOURCE_CHANGE strategy execution.
+ * 
+ * This is *not* the optimal solution, as it cannot distinguish between the same method signature being called from different contexts; however, this would require getting the
+ * reduced tree from another analysis-execution (like it is currently executed for getting the full tree), which is much more effort, so this is a viable workaround.
+ */
+public class OperationExecutionUSCStage extends AbstractTraceProcessingStage<Execution> {
 
-   public EOIESSIndex(int ess, int eoi, String kiekerPattern) {
-      this.ess = ess;
-      this.eoi = eoi;
-      this.kiekerPattern = kiekerPattern;
-   }
+   private static final Logger LOG = LogManager.getLogger(OperationExecutionUSCStage.class);
 
-   @Override
-   public int hashCode() {
-      return ess + eoi + kiekerPattern.hashCode();
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (obj instanceof EOIESSIndex) {
-         EOIESSIndex other = (EOIESSIndex) obj;
-         return other.ess == ess &&
-               other.eoi == eoi &&
-               other.kiekerPattern.equals(kiekerPattern);
-      } else {
-         return false;
-      }
-   }
-
-   @Override
-   public String toString() {
-      return eoi + "-" + ess + "-" + kiekerPattern;
-   }
-}
-
-public class OperationExecutionRCAStage extends AbstractTraceProcessingStage<Execution> {
-
-   private static final Logger LOG = LogManager.getLogger(OperationExecutionRCAStage.class);
-
-   private final Map<EOIESSIndex, CallTreeNode> measuredNodes = new HashMap<>();
+   private final Map<String, CallTreeNode> measuredNodes = new HashMap<>();
    private final String commit;
 
-   public OperationExecutionRCAStage(final SystemModelRepository systemModelRepository, final Set<CallTreeNode> measuredNodes, final String commit) {
+   public OperationExecutionUSCStage(final SystemModelRepository systemModelRepository, final Set<CallTreeNode> measuredNodes, final String commit) {
       super(systemModelRepository);
       for (CallTreeNode node : measuredNodes) {
-         int eoi = node.getEoi(commit);
-         int ess = node.getEss();
          String currentPattern;
          if (node.getConfig().getFixedCommitConfig().getCommitOld().equals(commit)) {
             currentPattern = node.getKiekerPattern();
          } else {
             currentPattern = node.getOtherKiekerPattern();
          }
-         EOIESSIndex index = new EOIESSIndex(ess, eoi, currentPattern);
-         this.measuredNodes.put(index, node);
+         this.measuredNodes.put(currentPattern, node);
       }
       this.commit = commit;
 
@@ -81,8 +50,7 @@ public class OperationExecutionRCAStage extends AbstractTraceProcessingStage<Exe
 
    private void addMeasurements(final Execution execution) {
       final String kiekerPattern = KiekerPatternConverter.getKiekerPattern(execution.getOperation());
-      EOIESSIndex lookupindex = new EOIESSIndex(execution.getEss(), execution.getEoi(), kiekerPattern);
-      CallTreeNode node = measuredNodes.get(lookupindex);
+      CallTreeNode node = measuredNodes.get(kiekerPattern);
       if (node != null) {
          // Get duration in mikroseconds - Kieker produces nanoseconds
          final long duration = (execution.getTout() - execution.getTin());

@@ -21,6 +21,14 @@ public class KiekerDurationReader {
       Execution execution = new Execution(configuration);
       execution.executeBlocking();
    }
+   
+   public static void executeUSCDurationStage(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String commit) {
+      KiekerReaderConfigurationDuration configuration = new KiekerReaderConfigurationDuration();
+      configuration.readUSCDurations(kiekerTraceFolder, measuredNodes, commit);
+
+      Execution execution = new Execution(configuration);
+      execution.executeBlocking();
+   }
 
    public static void executeReducedDurationStage(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String commit) {
       KiekerReaderConfigurationDuration configuration = new KiekerReaderConfigurationDuration();
