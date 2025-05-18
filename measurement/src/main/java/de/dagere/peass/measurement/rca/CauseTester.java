@@ -142,7 +142,9 @@ public class CauseTester extends AdaptiveTester {
          LOG.info("Did succeed in measurement - analyse values");
 
          boolean isOtherVersion = commit.equals(configuration.getFixedCommitConfig().getCommit());
-         final KiekerResultReader kiekerResultReader = new KiekerResultReader(configuration.getKiekerConfig().isUseAggregation(), configuration.getKiekerConfig().getRecord(),
+         final KiekerResultReader kiekerResultReader = new KiekerResultReader(configuration.getKiekerConfig().isUseAggregation(),
+               configuration.getKiekerConfig().getRecord(),
+               causeConfig.getRcaStrategy(), 
                includedNodes, commit, testcase,
                isOtherVersion);
          kiekerResultReader.setConsiderNodePosition(!configuration.getKiekerConfig().isUseAggregation());

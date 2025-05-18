@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.nodeDiffDetector.data.TestMethodCall;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.measurement.rca.RCAStrategy;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerResultReader;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
@@ -52,7 +53,8 @@ public class TestRealWorld {
 
    private void read(final File parentFolder, final String version, final Set<CallTreeNode> includedNodes) throws JsonParseException, JsonMappingException, IOException {
       final boolean isOtherVersionNode = !version.equals(version);
-      KiekerResultReader reader = new KiekerResultReader(true, AllowedKiekerRecord.OPERATIONEXECUTION, includedNodes,
+      KiekerResultReader reader = new KiekerResultReader(true, AllowedKiekerRecord.OPERATIONEXECUTION, 
+            RCAStrategy.COMPLETE, includedNodes,
             version, new TestMethodCall("de.peass.MainTest", "testMe"), isOtherVersionNode);
       File currentFolder = new File(parentFolder, version + "/0");
       for (File kiekerTraceContainingFolder : currentFolder.listFiles((FileFilter) new WildcardFileFilter("16*"))) {
