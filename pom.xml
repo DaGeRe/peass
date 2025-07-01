@@ -141,7 +141,7 @@
 
   <properties>
     <mockito.version>5.16.1</mockito.version>
-    <junit.version>5.12.1</junit.version>
+    <junit.version>5.13.2</junit.version>
     <kieker.version>2.0.2</kieker.version>
     <kopeme.version>1.4.2</kopeme.version>
     <zip4j.version>2.11.5</zip4j.version>
