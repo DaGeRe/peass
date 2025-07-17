@@ -58,6 +58,9 @@ public class AOPXMLHelper {
          } else if (kiekerConfig.isUseAggregation()) {
             writer.write("kieker.monitoring.writer=" + AGGREGATED_WRITER + "\n");
             writer.write(AggregatedTreeWriter.CONFIG_WRITE_INTERVAL + "=" + kiekerConfig.getKiekerAggregationInterval() + "\n");
+         } else if (kiekerConfig.isDisableKiekerKoPeMe()) {
+            writer.write("kieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=10001\n");
+            writer.write("kieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter\n");
          } else {
             writer.write("kieker.monitoring.writer=" + CHANGEABLE_WRITER + "\n");
             writer.write(CHANGEABLE_WRITER + ".realwriter=FileWriter\n");

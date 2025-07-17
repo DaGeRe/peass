@@ -59,8 +59,14 @@ public class OnceRunner extends AbstractMeasurementProcessRunner {
       LOG.debug("Handling Kieker results");
       resultHandler.handleKiekerResults(commit, currentOrganizer.getTempResultsFolder(commit));
 
-      LOG.info("Organizing result paths");
-      currentOrganizer.saveResultFiles(commit, vmid);
+      
+      if (!testTransformer.getConfig().getKiekerConfig().isDisableKiekerKoPeMe()) {
+         LOG.info("Organizing result paths");
+         currentOrganizer.saveResultFiles(commit, vmid);
+      } else {
+         LOG.info("Not organizing result paths since the export should go to ExplorViz");
+      }
+      
 
       cleanup();
    }
