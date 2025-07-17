@@ -37,6 +37,9 @@ public class RequiredDependency {
          all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit5", MavenPomUtil.KOPEME_VERSION, "", null));
       }
 
+      // In case an older version of jackson-databind is used, it needs to be overwritten for compatibility
+      all.add(new RequiredDependency("com.fasterxml.jackson.core", "jackson-databind", "2.19.1", "", null));
+
       all.add(new RequiredDependency("net.kieker-monitoring", "kieker", MavenPomUtil.KIEKER_VERSION, "", null));
       all.add(new RequiredDependency("net.kieker-monitoring", "kieker", MavenPomUtil.KIEKER_VERSION, "", "aspectj"));
       return all;
