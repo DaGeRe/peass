@@ -42,6 +42,9 @@ public class MeasureStarter extends PairProcessor {
 
    @Mixin
    protected StatisticsConfigMixin statisticConfigMixin;
+   
+   @Mixin
+   private KiekerConfigMixin kiekerConfigMixin;
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
@@ -89,7 +92,7 @@ public class MeasureStarter extends PairProcessor {
 
    private MeasurementConfig createConfig() {
       final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin,
-            statisticConfigMixin, new KiekerConfigMixin());
+            statisticConfigMixin, kiekerConfigMixin);
       return measurementConfiguration;
    }
 

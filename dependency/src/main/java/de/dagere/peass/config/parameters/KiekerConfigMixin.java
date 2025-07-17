@@ -60,6 +60,9 @@ public class KiekerConfigMixin {
    @Option(names = { "-writingType", "--writingType" }, description = "Writing type for RCA data. BinaryAggregated writes results in a given amount of seconds, BinarySimple writes results every individual repetition. The latter might produce big amounts of data, hence, BinaryAggregated is the default currently")
    protected WritingType writingType = WritingType.BinaryAggregated;
    
+   @Option(names = { "-disableKiekerKoPeMe", "--disableKiekerKoPeMe" }, description = "Disables the Kieker management by KoPeMe ")
+   protected boolean disableKiekerKoPeMe;
+   
    public int getWriteInterval() {
       return writeInterval;
    }
@@ -115,6 +118,14 @@ public class KiekerConfigMixin {
    public void setKiekerWaitTime(final int kiekerWaitTime) {
       this.kiekerWaitTime = kiekerWaitTime;
    }
+   
+   public void setDisableKiekerKoPeMe(boolean disableKiekerKoPeMe) {
+      this.disableKiekerKoPeMe = disableKiekerKoPeMe;
+   }
+   
+   public boolean isDisableKiekerKoPeMe() {
+      return disableKiekerKoPeMe;
+   }
 
    public KiekerConfig getKiekerConfig() {
       KiekerConfig kiekerConfig = new KiekerConfig(true);
@@ -137,6 +148,7 @@ public class KiekerConfigMixin {
          }
          kiekerConfig.setExcludeForTracing(excludedForTracing);
       }
+      kiekerConfig.setDisableKiekerKoPeMe(disableKiekerKoPeMe);
 
       kiekerConfig.check();
 

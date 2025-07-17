@@ -36,6 +36,7 @@ public class KiekerConfig implements Serializable {
    private boolean createDefaultConstructor = true;
    private int kiekerWaitTime = DEFAULT_KIEKER_WAIT_TIME;
    private WritingType writingType = WritingType.BinaryAggregated;
+   private boolean disableKiekerKoPeMe = false; 
    
    // We want a set that preserves insertion order, so we require a LinkedHashSet
    private LinkedHashSet<String> excludeForTracing = new LinkedHashSet<>();
@@ -227,5 +228,13 @@ public class KiekerConfig implements Serializable {
    
    public void setWritingType(WritingType writingType) {
       this.writingType = writingType;
+   }
+   
+   public boolean isDisableKiekerKoPeMe() {
+      return disableKiekerKoPeMe;
+   }
+   
+   public void setDisableKiekerKoPeMe(boolean disableKiekerKoPeMe) {
+      this.disableKiekerKoPeMe = disableKiekerKoPeMe;
    }
 }
