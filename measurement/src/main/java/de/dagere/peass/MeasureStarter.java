@@ -44,7 +44,7 @@ public class MeasureStarter extends PairProcessor {
    protected StatisticsConfigMixin statisticConfigMixin;
    
    @Mixin
-   private KiekerConfigMixin kiekerConfigMixin;
+   protected KiekerConfigMixin kiekerConfigMixin;
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;

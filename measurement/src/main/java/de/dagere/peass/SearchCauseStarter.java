@@ -42,9 +42,6 @@ public class SearchCauseStarter extends MeasureStarter {
    @Mixin
    private CauseSearcherConfigMixin causeSearchConfigMixin;
 
-   @Mixin
-   private KiekerConfigMixin kiekerConfigMixin;
-
    public static void main(final String[] args) {
       final SearchCauseStarter command = new SearchCauseStarter();
       final CommandLine commandLine = new CommandLine(command);
