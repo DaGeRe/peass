@@ -33,13 +33,13 @@ public class MavenUpdater {
       if (measurementConfig.getExecutionConfig().isRemoveSnapshots()) {
          SnapshotRemoveUtil.cleanSnapshotDependencies(pomFile);
       }
-      PomJavaUpdater.fixCompilerVersion(pomFile);
+      PomJavaUpdater.fixCompilerVersion(pomFile, measurementConfig.getExecutionConfig().getGoalCompilerVersion());
       for (File module : modules.getModules()) {
          final File pomFileModule = new File(module, "pom.xml");
          if (measurementConfig.getExecutionConfig().isRemoveSnapshots()) {
             SnapshotRemoveUtil.cleanSnapshotDependencies(pomFileModule);
          }
-         PomJavaUpdater.fixCompilerVersion(pomFileModule);
+         PomJavaUpdater.fixCompilerVersion(pomFileModule, measurementConfig.getExecutionConfig().getGoalCompilerVersion());
       }
    }
 }
