@@ -28,7 +28,7 @@ public class TestPomJavaUpdater {
 
       FileUtils.copyFile(originalPom, experimentFile);
 
-      PomJavaUpdater.fixCompilerVersion(experimentFile);
+      PomJavaUpdater.fixCompilerVersion(experimentFile, "1.8");
 
       final Xpp3Dom conf = getConfig();
       Xpp3Dom confPropertySource = conf.getChild("source");
@@ -54,7 +54,7 @@ public class TestPomJavaUpdater {
 
       FileUtils.copyFile(originalPom, experimentFile);
 
-      PomJavaUpdater.fixCompilerVersion(experimentFile);
+      PomJavaUpdater.fixCompilerVersion(experimentFile, "1.8");
 
       final Xpp3Dom conf = getConfig();
       Xpp3Dom confPropertySource = conf.getChild("source");
