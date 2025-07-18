@@ -72,7 +72,7 @@ public class MavenRunningTester implements BuildfileRunningTester {
 
    private String getGoal() {
       String goal = "test-compile";
-      if (folders.getProjectName().equals("jetty.project")) {
+      if (folders.getProjectName().equals("jetty.project") || folders.getProjectName().equals("openhab-core")) {
          goal = "package";
       }
       return goal;
