@@ -52,7 +52,6 @@ public class MavenTestExecutor extends KoPeMeExecutor {
 
    /** M5 has some problems finding JUnit 5 tests; so stay at M3 */
    public static final String SUREFIRE_VERSION = "3.5.3";
-   public static final String DEFAULT_JAVA_VERSION = "1.8";
 
    public static final String KIEKER_ADAPTIVE_FILENAME = "config" + File.separator + "kieker.adaptiveMonitoring.conf";
    public static final File KIEKER_ASPECTJ_JAR = new File(ArgLineBuilder.KIEKER_FOLDER_MAVEN.replace("${user.home}", System.getProperty("user.home")));
@@ -109,13 +108,13 @@ public class MavenTestExecutor extends KoPeMeExecutor {
          if (testTransformer.getConfig().getExecutionConfig().isRemoveSnapshots()) {
             SnapshotRemoveUtil.cleanSnapshotDependencies(pomFile);
          }
-         PomJavaUpdater.fixCompilerVersion(pomFile);
+         PomJavaUpdater.fixCompilerVersion(pomFile, testTransformer.getConfig().getExecutionConfig().getGoalCompilerVersion());
          for (File module : getModules().getModules()) {
             final File pomFileModule = new File(module, "pom.xml");
             if (testTransformer.getConfig().getExecutionConfig().isRemoveSnapshots()) {
                SnapshotRemoveUtil.cleanSnapshotDependencies(pomFileModule);
             }
-            PomJavaUpdater.fixCompilerVersion(pomFileModule);
+            PomJavaUpdater.fixCompilerVersion(pomFileModule, testTransformer.getConfig().getExecutionConfig().getGoalCompilerVersion());
          }
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();

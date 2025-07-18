@@ -81,6 +81,7 @@ public class ExecutionConfig implements FolderConfig, Serializable {
    private List<String> androidGradleTasks = new LinkedList<>();
    private String androidGradleVersion;
    private String androidTestPackageName;
+   private String goalCompilerVersion = null;
 
    private String xmx = null;
 
@@ -572,6 +573,14 @@ public class ExecutionConfig implements FolderConfig, Serializable {
 
    public void setIncreaseVariableValues(final List<String> increaseVariableValues) {
       this.increaseVariableValues = increaseVariableValues;
+   }
+   
+   public void setGoalCompilerVersion(String goalCompilerVersion) {
+      this.goalCompilerVersion = goalCompilerVersion;
+   }
+   
+   public String getGoalCompilerVersion() {
+      return goalCompilerVersion;
    }
 
    /**

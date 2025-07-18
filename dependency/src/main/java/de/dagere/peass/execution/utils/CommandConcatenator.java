@@ -10,7 +10,8 @@ public class CommandConcatenator {
          "-Djacoco.skip=true",
          "-Drat.skip=true",
          "-DfailIfNoTests=false",
-         "-Dsurefire.failIfNoSpecifiedTests=false"
+         "-Dsurefire.failIfNoSpecifiedTests=false",
+         "-Dspotless.check.skip=true"
    };
    
    public static String[] concatenateCommandArrays(final String[] first, final String[] second) {

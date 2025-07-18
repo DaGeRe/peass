@@ -21,14 +21,14 @@ public class PomJavaUpdater {
 
    private static final int CURRENT_MAVEN_DEFAULT = 5;
 
-   public static void fixCompilerVersion(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
+   public static void fixCompilerVersion(final File pom, String compilerVersion) throws FileNotFoundException, IOException, XmlPullParserException {
       int version = getCompilerVersion(pom);
-      if (version < 8) {
+      if (version < 8 && compilerVersion != null) {
          final Model model;
          try (FileInputStream inputStream = new FileInputStream(pom)) {
             final MavenXpp3Reader reader = new MavenXpp3Reader();
             model = reader.read(inputStream);
-            setCompiler(model, MavenTestExecutor.DEFAULT_JAVA_VERSION);
+            setCompiler(model, compilerVersion);
          }
 
          try (FileWriter fileWriter = new FileWriter(pom)) {
