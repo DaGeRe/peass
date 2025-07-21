@@ -1,8 +1,11 @@
 package de.dagere.peass;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
+
+import org.apache.commons.io.FileUtils;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
@@ -20,6 +23,7 @@ import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.CommitUtil;
+import de.dagere.peass.vcs.GitUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -45,19 +49,28 @@ public class GetTraceStarter implements Callable<Void> {
    
    @Override
    public Void call() throws Exception {
+//      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), projectFolder,
+//            executionConfigMixin.isLinearizeHistory());
+//      VersionComparator.setVersions(commits);
 
-      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), projectFolder,
-            executionConfigMixin.isLinearizeHistory());
-      VersionComparator.setVersions(commits);
-
-//      CommitComparatorInstance comparator = new CommitComparatorInstance(commits);
-      
       PeassFolders folders = new PeassFolders(projectFolder);
+      GitUtils.goToCommit(executionConfigMixin.getStartcommit(), projectFolder);
+      createTraces(folders);
+      
+      FileUtils.moveDirectory(folders.getTempDir(), new File(folders.getPeassFolder(), executionConfigMixin.getStartcommit()));
+      
+      GitUtils.goToCommit(executionConfigMixin.getEndcommit(), projectFolder);
+      createTraces(folders);
+      FileUtils.moveDirectory(folders.getTempDir(), new File(folders.getPeassFolder(), executionConfigMixin.getStartcommit()));
+      return null;
+   }
+
+   private void createTraces(PeassFolders folders) throws IOException {
       KiekerConfig kiekerConfig = new KiekerConfig(true);
       ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
       final KiekerResultManager tracereader = new KiekerResultManager(folders, executionConfig, kiekerConfig, new EnvironmentVariables());
      
-      TestTransformer transformer = RTSTestTransformerBuilder.createTestTransformer(new PeassFolders(projectFolder), executionConfig, kiekerConfig);
+      TestTransformer transformer = RTSTestTransformerBuilder.createTestTransformer(folders, executionConfig, kiekerConfig);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, transformer, new EnvironmentVariables());
       
       final ModuleClassMapping mapping = new ModuleClassMapping(executor);
@@ -67,6 +80,5 @@ public class GetTraceStarter implements Callable<Void> {
       TestSet tests = testFinder.findIncludedTests(mapping);
       
       tracereader.executeKoPeMeKiekerRun(tests, "1", folders.getDependencyLogFolder());
-      return null;
    }
 }
