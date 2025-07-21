@@ -108,7 +108,8 @@ public class DependencyManager extends KiekerResultManager {
       final ModuleClassMapping mapping = new ModuleClassMapping(executor);
       executor.loadClasses();
 
-      TestSet tests = findIncludedTests(mapping);
+      TestFinder testFinder = new TestFinder(executor);
+      TestSet tests = testFinder.findIncludedTests(mapping);
       if (tests.getTestMethods().isEmpty()) {
          LOG.error("No tests were selected - maybe the tests are all disabled or no tests meets the pattern");
          return false;
@@ -122,22 +123,7 @@ public class DependencyManager extends KiekerResultManager {
       }
    }
 
-   private TestSet findIncludedTests(final ModuleClassMapping mapping) throws IOException {
-      List<String> includedModules = getIncludedModules();
-
-      return testTransformer.findModuleTests(mapping, includedModules, executor.getModules());
-   }
-
-   private List<String> getIncludedModules() throws IOException {
-      List<String> includedModules;
-      if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
-         includedModules = MavenPomUtil.getDependentModules(folders.getProjectFolder(), testTransformer.getConfig().getExecutionConfig().getPl(), executor.getEnv());
-         LOG.debug("Included modules: {}", includedModules);
-      } else {
-         includedModules = null;
-      }
-      return includedModules;
-   }
+   
 
    private boolean printErrors() throws IOException {
       try {
