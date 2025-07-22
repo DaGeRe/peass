@@ -61,7 +61,7 @@ public class GetTraceStarter implements Callable<Void> {
       
       GitUtils.goToCommit(executionConfigMixin.getEndcommit(), projectFolder);
       createTraces(folders);
-      FileUtils.moveDirectory(folders.getTempDir(), new File(folders.getPeassFolder(), executionConfigMixin.getStartcommit()));
+      FileUtils.moveDirectory(folders.getTempDir(), new File(folders.getPeassFolder(), executionConfigMixin.getEndcommit()));
       return null;
    }
 
