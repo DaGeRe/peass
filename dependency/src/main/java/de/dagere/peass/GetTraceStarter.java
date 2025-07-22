@@ -57,16 +57,19 @@ public class GetTraceStarter implements Callable<Void> {
       GitUtils.goToCommit(executionConfigMixin.getStartcommit(), projectFolder);
       createTraces(folders);
       
-      FileUtils.moveDirectory(folders.getTempDir(), new File(folders.getPeassFolder(), executionConfigMixin.getStartcommit()));
+      FileUtils.moveDirectory(folders.getTempDir(), new File(folders.getPeassFolder(), executionConfigMixin.getStartcommit() + "_init"));
+      FileUtils.moveDirectory(folders.getTempMeasurementFolder(), new File(folders.getPeassFolder(), executionConfigMixin.getStartcommit() + "_main"));
       
       GitUtils.goToCommit(executionConfigMixin.getEndcommit(), projectFolder);
       createTraces(folders);
       FileUtils.moveDirectory(folders.getTempDir(), new File(folders.getPeassFolder(), executionConfigMixin.getEndcommit()));
+      FileUtils.moveDirectory(folders.getTempMeasurementFolder(), new File(folders.getPeassFolder(), executionConfigMixin.getEndcommit() + "_main"));
       return null;
    }
 
    private void createTraces(PeassFolders folders) throws IOException {
       KiekerConfig kiekerConfig = new KiekerConfig(true);
+      kiekerConfig.setUseAggregation(false);
       ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
       final KiekerResultManager tracereader = new KiekerResultManager(folders, executionConfig, kiekerConfig, new EnvironmentVariables());
      
