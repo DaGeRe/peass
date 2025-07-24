@@ -1,0 +1,263 @@
+package de.dagere.peass.measurement.utils.sjsw;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.Lists;
+
+import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
+import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
+import io.github.terahidro2003.cct.result.StackTraceTreeNode;
+import io.github.terahidro2003.cct.result.VmMeasurement;
+
+public class SjswCctConverter {
+   private static final Logger LOG = LogManager.getLogger(SjswCctConverter.class);
+
+   private final String commit, predecessor;
+   private final MeasurementConfig config;
+
+   public SjswCctConverter(String commit, String predecessor, MeasurementConfig config) {
+      this.commit = commit;
+      this.predecessor = predecessor;
+      this.config = config;
+
+      LOG.info("Initializing with commit: " + commit + " predecessor: " + predecessor);
+
+      if (commit == null && predecessor == null) {
+         throw new IllegalArgumentException("Commit and Predesseror cannot be null");
+      }
+   }
+
+   public CallTreeNode convertToCCT(final StackTraceTreeNode currentBAT, final StackTraceTreeNode predecessorBAT) {
+      final String methodNameWithNew = normalizeKiekerPattern(currentBAT);
+      final String call = KiekerPatternConverter.getCall(methodNameWithNew);
+
+      CallTreeNode currentRoot = new CallTreeNode(call, methodNameWithNew, methodNameWithNew, config);
+      CallTreeNode predecessorRoot = new CallTreeNode(call, methodNameWithNew, methodNameWithNew, config);
+
+      currentRoot.setOtherCommitNode(predecessorRoot);
+      predecessorRoot.setOtherCommitNode(currentRoot);
+
+      System.out.println("Current root: " + System.identityHashCode(currentRoot));
+      System.out.println("Predecessor root: " + System.identityHashCode(predecessorRoot));
+
+      buildPeassNodeStatistics(currentBAT, predecessorBAT, predecessorRoot);
+
+      appendAllChildren(currentBAT, predecessorBAT, currentRoot, predecessorRoot);
+
+      convertCallContextTreeToCallTree(currentBAT, predecessorBAT, currentRoot.getOtherCommitNode());
+
+      return predecessorRoot;
+   }
+
+   private void appendAllChildren(final StackTraceTreeNode currentBAT, final StackTraceTreeNode predecessorBAT, CallTreeNode currentParent, CallTreeNode predecessorParent) {
+      if (currentBAT != null) {
+         for (StackTraceTreeNode child : currentBAT.getChildren()) {
+            System.out.println(child.getPayload().getMethodName());
+            if (!isInternalMethod(child)) {
+               final String methodNameWithNewChild = normalizeKiekerPattern(child);
+               final String callChild = KiekerPatternConverter.getCall(methodNameWithNewChild);
+               currentParent.appendChild(callChild, methodNameWithNewChild, methodNameWithNewChild);
+            }
+         }
+      }
+
+      if (predecessorBAT != null) {
+         for (StackTraceTreeNode child : predecessorBAT.getChildren()) {
+            if (!isInternalMethod(child)) {
+               final String methodNameWithNewChild = normalizeKiekerPattern(child);
+               final String callChild = KiekerPatternConverter.getCall(methodNameWithNewChild);
+               predecessorParent.appendChild(callChild, methodNameWithNewChild, methodNameWithNewChild);
+            }
+         }
+      }
+
+      TreeUtil.findChildMapping(currentParent, predecessorParent);
+   }
+
+   private boolean isInternalMethod(StackTraceTreeNode child) {
+      return child.getPayload().getMethodName().equals(" .I2C/C2I adapters()");
+   }
+
+   private void convertCallContextTreeToCallTree(final StackTraceTreeNode currentBAT,
+         final StackTraceTreeNode predecessorBAT, final CallTreeNode parentNode) {
+      LOG.info("Current parent node: {}", currentBAT != null ? currentBAT.getPayload().getMethodName() : null);
+      LOG.info("Other parent node: {}", predecessorBAT != null ? predecessorBAT.getPayload().getMethodName() : null);
+
+      for (CallTreeNode childNode : parentNode.getChildren()) {
+         StackTraceTreeNode childCurrentStack = findChild(currentBAT, childNode.getOtherCommitNode());
+         StackTraceTreeNode childPredecessorStack = findChild(predecessorBAT, childNode);
+
+         LOG.info("Adding data for " +
+               (childCurrentStack != null ? childCurrentStack.getPayload().getMethodName() : null)
+               + " " +
+               (childPredecessorStack != null ? childPredecessorStack.getPayload().getMethodName() : null));
+
+         buildPeassNodeStatistics(childCurrentStack, childPredecessorStack, childNode);
+
+         appendAllChildren(childCurrentStack, childPredecessorStack, childNode.getOtherCommitNode(), childNode);
+         convertCallContextTreeToCallTree(childCurrentStack, childPredecessorStack, childNode);
+      }
+   }
+
+   private StackTraceTreeNode findChild(final StackTraceTreeNode stackTraceParent, CallTreeNode childNode) {
+      StackTraceTreeNode childCurrentStack = null;
+      if (stackTraceParent != null) {
+         for (StackTraceTreeNode stackTraceChild : stackTraceParent.getChildren()) {
+            String kiekerPattern = normalizeKiekerPattern(stackTraceChild);
+            if (kiekerPattern.equals(childNode.getKiekerPattern())) {
+               childCurrentStack = stackTraceChild;
+            }
+         }
+      }
+      return childCurrentStack;
+   }
+
+   private static String normalizeKiekerPattern(StackTraceTreeNode node) {
+      String methodSignature = node.getPayload().getMethodName();
+      if ("root".equals(methodSignature)) {
+         methodSignature = "RootClass.root";
+      }
+      if (!methodSignature.contains("(")) {
+         methodSignature = methodSignature + "()";
+      } else {
+         int indexOfParenthesis = methodSignature.indexOf('(');
+         String partBeforeParenthesis = methodSignature.substring(0, indexOfParenthesis);
+         String parameters = methodSignature.substring(indexOfParenthesis).replace(" ", "");
+         methodSignature = partBeforeParenthesis + parameters;
+      }
+
+      // TODO That won't work in all cases, since the new needs to be behind the modifiers - but leaving it for now
+      if (methodSignature.contains("<init>")) {
+         methodSignature = "new " + methodSignature;
+      }
+      return methodSignature;
+   }
+
+   private void buildPeassNodeStatistics(final StackTraceTreeNode node, final StackTraceTreeNode otherNode, final CallTreeNode peassNode) {
+      if (peassNode.getData() != null &&
+            (peassNode.getData().get(commit) != null || peassNode.getData().get(predecessor) != null)) {
+         throw new RuntimeException("Tried to add data twice to " + peassNode.getCall());
+      }
+      LOG.debug("Building statistics for stacktracetreenodes: {} -> {}",
+            node != null ? (node.getPayload().getMethodName() + "(" + node.getMeasurements() + ")") : null,
+            otherNode != null ? otherNode.getPayload().getMethodName() + "(" + otherNode.getMeasurements() + ")" : null);
+      LOG.debug("Peass node: {} {}", peassNode, System.identityHashCode(peassNode));
+      peassNode.initCommitData();
+
+      if (config.isUseIterativeSampling()) {
+         if (node != null && node.getVmMeasurements().get(commit).size() > 1) {
+            LOG.debug("Adding measurements for commit {}", commit);
+            addIterativeMeasurements(commit, node, peassNode);
+         }
+         if (otherNode != null && otherNode.getVmMeasurements().get(predecessor).size() > 1) {
+            LOG.debug("Adding measurements for predecessor {}", predecessor);
+            addIterativeMeasurements(predecessor, otherNode, peassNode);
+         }
+      } else {
+         if (node != null) {
+            LOG.debug("Adding measurements for commit {}", commit);
+            addMeasurements(commit, node, peassNode);
+         }
+         if (otherNode != null) {
+            LOG.debug("Adding measurements for predecessor {}", predecessor);
+            addMeasurements(predecessor, otherNode, peassNode);
+         }
+      }
+
+      int size = peassNode.getData().get(commit).getResults().size();
+      LOG.info("Current stats: {} --> {}", commit, size);
+      if (size < 2) {
+         LOG.info("Clearing - less than 2 measurements");
+         peassNode.getData().get(commit).getResults().clear();
+      } else {
+         peassNode.createStatistics(commit);
+      }
+
+      if (otherNode != null) {
+         int sizePredecessor = peassNode.getData().get(predecessor).getResults().size();
+         LOG.info("Current stats: {} --> {}", predecessor, sizePredecessor);
+         LOG.info("Clearing - less than 2 measurements");
+         if (sizePredecessor < 2) {
+            peassNode.getData().get(predecessor).getResults().clear();
+         }
+      } else {
+         peassNode.createStatistics(predecessor);
+      }
+   }
+
+   private void addMeasurements(String commit, StackTraceTreeNode node, CallTreeNode peassNode) {
+      List<Double> measurementsForSpecificCommit = node.getMeasurements().get(commit);
+      if (measurementsForSpecificCommit == null || measurementsForSpecificCommit.isEmpty()) {
+         throw new IllegalArgumentException("Possibly invalid measurement data. Commit " +
+               commit + " does not contain any measurement data.");
+      }
+
+      if (measurementsForSpecificCommit.size() != config.getVms()) {
+         int missing = config.getVms() - measurementsForSpecificCommit.size();
+         for (int i = 0; i < missing; i++) {
+            measurementsForSpecificCommit.add(0.0);
+         }
+      }
+
+      for (int vm = 0; vm < config.getVms(); vm++) {
+         peassNode.initVMData(commit);
+         double measurement = measurementsForSpecificCommit.get(vm);
+         peassNode.addMeasurement(commit, (long) measurement);
+      }
+   }
+
+   private void addIterativeMeasurements(final String commit, final StackTraceTreeNode node, final CallTreeNode peassNode) {
+      List<VmMeasurement> measurementsForSpecificCommit = node.getVmMeasurements().get(commit);
+      if (measurementsForSpecificCommit == null || measurementsForSpecificCommit.isEmpty()) {
+         throw new IllegalArgumentException("Possibly invalid iterative measurement data. Commit " +
+               commit + " does not contain any measurement data.");
+      }
+
+      if (measurementsForSpecificCommit.size() != config.getVms()) {
+         LOG.error("Amount of measurements ({}) is not equal to the amount of VMs ({}).", measurementsForSpecificCommit.size(), config.getVms());
+      }
+
+      for (int vm = 0; vm < config.getVms(); vm++) {
+         final int vmfinal = vm;
+         List<VmMeasurement> vmMeasurements = measurementsForSpecificCommit.stream().filter(vmm -> vmm.getVm() == vmfinal).collect(Collectors.toList());
+         if (vmMeasurements.isEmpty() || vmMeasurements.get(0) == null) {
+            LOG.warn("No measurements found for VM {}", vm);
+            return;
+         } else {
+            final List<Double> measurements = vmMeasurements.get(0).getMeasurements();
+            LOG.debug("Call: {} VM: {} vmMeasurements: {} measurements: {}", peassNode.getCall(),
+                  vm, vmMeasurements.size(), measurements.size());
+            if (measurements.size() > 1) {
+               final List<StatisticalSummary> values = new LinkedList<>();
+               int sliceSize = Math.max(measurements.size() / config.getIterations(), 1);
+               LOG.info("Measurements: {} Iterations: {} Slice size: {}", measurements.size(), config.getIterations(), sliceSize);
+               List<List<Double>> slicedIterationMeasurements = Lists.partition(measurements, sliceSize);
+               slicedIterationMeasurements.forEach(slice -> {
+                  final SummaryStatistics statistic = new SummaryStatistics();
+                  slice.forEach(measurement -> {
+                     statistic.addValue((long) (double) measurement);
+                     LOG.info("Adding sjsw measurement: {}", measurement);
+                  });
+                  values.add(statistic);
+               });
+               LOG.debug("Adding to {} - Values: {} ", peassNode.getCall(), values.size());
+               peassNode.addAggregatedMeasurement(commit, values);
+            } else {
+               peassNode.initVMData(commit);
+               measurements.forEach(measurement -> {
+                  peassNode.addMeasurement(commit, (long) (double) measurement);
+               });
+            }
+         }
+      }
+   }
+}

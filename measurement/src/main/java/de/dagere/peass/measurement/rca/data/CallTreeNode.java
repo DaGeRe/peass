@@ -51,6 +51,14 @@ public class CallTreeNode extends BasicNode {
    protected final List<CallTreeNode> children = new ArrayList<>();
    protected final Map<String, CallTreeStatistics> data = new HashMap<>();
 
+   public List<String> getKeys() {
+      return data.keySet().stream().collect(Collectors.toList());
+   }
+
+   public Map<String, CallTreeStatistics> getData() {
+      return data;
+   }
+
    @JsonIgnore
    protected MeasurementConfig config;
 
@@ -127,7 +135,7 @@ public class CallTreeNode extends BasicNode {
          LOG.error("Error occured in commit {}", commit);
          LOG.error("Node: {}", kiekerPattern);
          LOG.error("Other commit node: {}", getOtherKiekerPattern());
-         throw new RuntimeException("Added methods may not contain data, trying to add data for " + commit);
+         throw new RuntimeException("Added methods may not contain data, trying to add data for " + commit + " and " + call);
       }
       if (call.equals(CauseSearchData.ADDED) && commit.equals(config.getFixedCommitConfig().getCommitOld())) {
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + commit);
@@ -184,14 +192,23 @@ public class CallTreeNode extends BasicNode {
       return kiekerPattern.toString();
    }
 
+   private String extractMethodName(String call) {
+      int lastParenthesisIndex = call.contains("(") ? call.lastIndexOf("(") : call.length() -1;
+      String methodName = call.substring(0, lastParenthesisIndex);
+
+      String[] parts = methodName.split(" ");
+      return parts.length > 1 ? parts[parts.length - 1] : call;
+   }
+
    public MethodCall toEntity() {
       if (call.equals(CauseSearchData.ADDED)) {
-         String otherKiekerPattern = getOtherKiekerPattern();
-         String otherCall = otherKiekerPattern.substring(otherKiekerPattern.lastIndexOf(' '), otherKiekerPattern.indexOf('('));
+//         String otherKiekerPattern = getOtherKiekerPattern();
+         String otherCall = getOtherCommitNode().getCall();
          return MethodCall.createMethodCallFromString(otherCall);
       } else {
          final int index = call.lastIndexOf(MethodCall.METHOD_SEPARATOR);
          String method = call.substring(index + 1);
+         System.out.println(call + " " + method);
          final MethodCall entity;
          if (method.contains("(")) {
             entity = new MethodCall(call.substring(0, index), module, method.substring(0, method.indexOf('(')));
@@ -287,7 +304,7 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public String getMethod() {
-      final String method = call.substring(call.lastIndexOf('#'));
+      final String method = call.contains("#") ? call.substring(call.lastIndexOf('#')) : call;
       return method;
    }
 

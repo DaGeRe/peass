@@ -146,6 +146,22 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       cleanAboveSize(logFolder, "txt");
    }
 
+   @Override
+   public void executeTest(String javaAgent, final TestMethodCall test, final File logFolder, final long timeout) {
+      throw new RuntimeException("Functionality regarding running tests with javaagent on Gradle is not currently supported.");
+   }
+
+   /**
+    * Runs the given test and saves the results to the result folder.
+    * 
+    * @param specialResultFolder Folder for saving the results
+    * @param testname Name of the test that should be run
+    */
+    @Override
+    protected void runTest(String javaAgent, final File moduleFolder, final File methodLogFile, TestMethodCall test, final String testname, final long timeout) {
+       throw new RuntimeException("Functionality regarding running tests with javaagent on Gradle is not currently supported.");
+    }
+
    /**
     * Runs the given test and saves the results to the result folder.
     * 

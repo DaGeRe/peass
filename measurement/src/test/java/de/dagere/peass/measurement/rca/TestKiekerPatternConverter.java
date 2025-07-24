@@ -47,4 +47,10 @@ public class TestKiekerPatternConverter {
       String call = KiekerPatternConverter.getCall("public void de.dagere.peass.ClazzWithLongName.method(int,String,int[])");
       Assert.assertEquals("de.dagere.peass.ClazzWithLongName#method", call);
    }
+   
+   @Test
+   public void testPatternToCallNoPackage() {
+      String call = KiekerPatternConverter.getCall("libjvm.so.CompLevel CompilationPolicy::common<CallPredicate>()");
+      Assert.assertEquals("CompilationPolicy::common<CallPredicate>", call);
+   }
 }

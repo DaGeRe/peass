@@ -74,6 +74,10 @@ class DirectSubclass extends TestExecutor{
    @Override
    protected void clean(final File logFile) throws IOException, InterruptedException {
    }
+
+   @Override
+   public void executeTest(String javaAgent, TestMethodCall test, File logFolder, long timeout) {
+   }
    
 }
 

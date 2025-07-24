@@ -23,7 +23,6 @@ import de.dagere.peass.measurement.rca.analyzer.SourceChangeTreeAnalyzer;
 import de.dagere.peass.measurement.rca.analyzer.StructureChangeTreeAnalyzer;
 import de.dagere.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
-import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.dagere.peass.measurement.rca.searcher.ICauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
@@ -186,7 +185,9 @@ public class SearchCauseStarter extends MeasureStarter {
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator, env);
             break;
          case SAMPLING:
-            tester = new SamplingCauseSearcher(causeSearcherConfig.getTestCase(), measurementConfiguration, alternateFolders, env);
+            measurementConfiguration.setUseKieker(false);
+            tester = new SamplingCauseSearcher(causeSearcherConfig.getTestCase(), measurementConfiguration, alternateFolders, env, causeSearcherConfig);
+            break;
          default:
             throw new RuntimeException("Strategy " + causeSearcherConfig.getRcaStrategy() + " not expected");
          }

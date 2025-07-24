@@ -98,7 +98,16 @@ public class CauseSearchData {
          serializeNode.setStatistic(rawDataNode.getTestcaseStatistic());
       } else {
          LOG.debug(rawDataNode.getCall() + " " + rawDataNode.getOtherKiekerPattern());
-         serializeNode.setStatistic(rawDataNode.getPartialTestcaseStatistic());
+         if (rawDataNode.getCall().equals(ADDED) &&
+                 !rawDataNode.getOtherKiekerPattern().equals(ADDED)) {
+            if (rawDataNode.getData().isEmpty()) {
+               serializeNode.setStatistic(rawDataNode.getOtherCommitNode().getPartialTestcaseStatistic());
+            } else {
+               serializeNode.setStatistic(rawDataNode.getPartialTestcaseStatistic());
+            }
+         } else {
+            serializeNode.setStatistic(rawDataNode.getPartialTestcaseStatistic());
+         }
       }
    }
 

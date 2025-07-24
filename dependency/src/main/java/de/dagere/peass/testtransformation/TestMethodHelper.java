@@ -52,7 +52,7 @@ public class TestMethodHelper {
       final NormalAnnotationExpr performanceTestAnnotation = new NormalAnnotationExpr();
       performanceTestAnnotation.setName("de.dagere.kopeme.annotations.PerformanceTest");
       performanceTestAnnotation.addPair("iterations", "" + config.getAllIterations());
-      performanceTestAnnotation.addPair("warmup", "" + 0);
+      performanceTestAnnotation.addPair("warmup", "" + config.getWarmup()); // weird place (was just 0)
       performanceTestAnnotation.addPair("executeBeforeClassInMeasurement", "" + config.getExecutionConfig().isExecuteBeforeClassInMeasurement());
       performanceTestAnnotation.addPair("logFullData", "" + true);
       boolean useKiekerKoPeMe = config.getKiekerConfig().isUseKieker() && !config.getKiekerConfig().isDisableKiekerKoPeMe();
@@ -61,6 +61,15 @@ public class TestMethodHelper {
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
       performanceTestAnnotation.addPair("redirectToNull", "" + config.getExecutionConfig().isRedirectToNull());
       performanceTestAnnotation.addPair("showStart", "" + config.getExecutionConfig().isShowStart());
+      if (config.isUseIterativeSampling()) {
+         performanceTestAnnotation.addPair("useSampling", "" + true);
+         performanceTestAnnotation.addPair("samplingInterval", "" + config.getSamplingInterval());
+         if(config.getSamplingOutputFolder().isEmpty()) {
+            LOG.error("Sampling output folder is empty");
+         }
+         performanceTestAnnotation.addPair("samplingResultsFolder", "\"" + config.getSamplingOutputFolder() + "\"");
+
+      }
       if (config.getKiekerConfig().getKiekerWaitTime() != KiekerConfig.DEFAULT_KIEKER_WAIT_TIME) {
          performanceTestAnnotation.addPair("kiekerWaitTime", "" + config.getKiekerConfig().getKiekerWaitTime());
       }

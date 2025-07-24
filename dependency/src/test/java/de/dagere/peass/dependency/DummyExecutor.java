@@ -52,4 +52,10 @@ public class DummyExecutor extends TestExecutor{
       return true;
    }
 
+   @Override
+   public void executeTest(String javaAgent, TestMethodCall test, File logFolder, long timeout) {
+      // TODO Auto-generated method stub
+      throw new UnsupportedOperationException("Unimplemented method 'executeTest'");
+   }
+
 }

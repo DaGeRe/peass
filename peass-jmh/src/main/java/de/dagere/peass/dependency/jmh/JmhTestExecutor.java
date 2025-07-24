@@ -56,6 +56,11 @@ public class JmhTestExecutor extends TestExecutor {
    }
 
    @Override
+   public void executeTest(String javaAgent, final TestMethodCall test, final File logFolder, final long timeoutInSeconds) {
+      throw new RuntimeException("Not implemented yet");
+   }
+
+   @Override
    public void executeTest(final TestMethodCall test, final File logFolder, final long timeoutInSeconds) {
       checkConfiguration(timeoutInSeconds);
 

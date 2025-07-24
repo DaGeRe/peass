@@ -64,6 +64,8 @@ public abstract class TestExecutor {
 
    public abstract void executeTest(final TestMethodCall test, final File logFolder, long timeout);
 
+   public abstract void executeTest(final String javaAgent, final TestMethodCall test, final File logFolder, long timeout);
+
    /**
     * Deletes files which are bigger than sizeInMb Mb, since they pollute the disc space and will not be analyzable
     *
@@ -125,7 +127,7 @@ public abstract class TestExecutor {
 
    protected void execute(final String testname, final long timeoutInSeconds, final Process process) {
       if (timeoutInSeconds == -1) {
-         LOG.info("Executing without timeout!");
+         LOG.warn("Executing without timeout!");
          try {
             process.waitFor();
          } catch (InterruptedException e) {
