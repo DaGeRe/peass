@@ -8,7 +8,7 @@
   <parent>
     <groupId>de.dagere.peass</groupId>
     <artifactId>peass-parent</artifactId>
-    <version>0.4.1-SNAPSHOT</version>
+    <version>0.4.2-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -69,7 +69,6 @@
       <classifier>aspectj</classifier>
       <scope>runtime</scope>
     </dependency>
-
 
     <!-- Do not upgrade until whole project switches to Java 11, since jgrapht 1.5 is only available for Java 11 -->
     <dependency>

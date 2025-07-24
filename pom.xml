@@ -4,7 +4,7 @@
   <groupId>de.dagere.peass</groupId>
   <artifactId>peass-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.4.1-SNAPSHOT</version>
+  <version>0.4.2-SNAPSHOT</version>
   <name>Peass - Parent</name>
   <description>Tool for Analysing the Performance Changes in a Project</description>
   <url>https://github.com/DaGeRe/peass/</url>
@@ -93,7 +93,7 @@
         <extensions>true</extensions>
         <configuration>
           <serverId>sonatype-nexus-staging</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <nexusUrl>https://ossrh-staging-api.central.sonatype.com/</nexusUrl>
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
