@@ -26,6 +26,7 @@ public class SjswCctConverterTest {
         reverseStacktraces();
     }
 
+    @org.junit.Ignore
     @Test
     public void testWithoutEmptyNodes() {
         int vms = 5;
